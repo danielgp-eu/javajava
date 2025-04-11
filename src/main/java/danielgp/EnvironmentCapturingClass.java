@@ -132,7 +132,7 @@ public final class EnvironmentCapturingClass {
     /**
      * Display details
      * 
-     * @param Display crtDisplay
+     * @param crtDisplay
      * @return String
      */
     private static String digestDisplayDetails(final Display crtDisplay) {

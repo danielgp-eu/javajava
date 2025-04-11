@@ -13,7 +13,7 @@ public final class Common {
     /**
      * Counts number of parameters with in a string
      *
-     * @param String inputString
+     * @param inputString
      * @return int
      */
     public static int countParametersWithinString(final String inputString) {
@@ -27,9 +27,9 @@ public final class Common {
     }
 
     /**
-     * Cycle trough Map and build a JSON string out of it
+     * Cycle inside Map and build a JSON string out of it
      *
-     * @param Map<> arrayAttrib
+     * @param arrayAttrib
      * @return String
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
@@ -40,7 +40,7 @@ public final class Common {
             }
             strJsonSubString.append(String.format("\"%s\":\"%s\"", strKey, objValue.toString()));
         });
-        return String.format("{%s}", strJsonSubString.toString());
+        return String.format("{%s}", strJsonSubString);
     }
 
     // Private constructor to prevent instantiation

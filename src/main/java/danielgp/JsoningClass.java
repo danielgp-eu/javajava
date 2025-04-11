@@ -21,7 +21,7 @@ public class JsoningClass {
     /**
      * Load all JSON nodes from main configuration file
      * 
-     * @param File jsonFile
+     * @param jsonFile
      * @return JsonNode
      */
     protected static JsonNode getJsonFileNodes(final File jsonFile) {
@@ -41,8 +41,8 @@ public class JsoningClass {
     /**
      * get Sub-node from Tree
      * 
-     * @param JsonNode givenJsonNode
-     * @param String strJsonNodeName
+     * @param givenJsonNode
+     * @param strJsonNodeName
      * @return JsonNode
      */
     private static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -62,8 +62,8 @@ public class JsoningClass {
     /**
      * node capture into Properties
      * 
-     * @param JsonNode givenJsonNode
-     * @param String strJsonNodeName
+     * @param givenJsonNode
+     * @param strJsonNodeName
      * @return Properties
      */
     public static Properties getJsonNodeNameIntoProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -83,8 +83,8 @@ public class JsoningClass {
     /**
      * Node into List of Properties
      * 
-     * @param JsonNode givenJsonNode
-     * @param String strJsonNodeName
+     * @param givenJsonNode
+     * @param strJsonNodeName
      * @return List<Properties>
      */
     public static List<Properties> getJsonNodeNameListOfProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -106,8 +106,8 @@ public class JsoningClass {
     /**
      * get list of String from a JSON node
      * 
-     * @param JsonNode givenJsonNode
-     * @param String strJsonNodeName
+     * @param givenJsonNode
+     * @param strJsonNodeName
      * @return List<String>
      */
     protected static List<String> getJsonNodeNameListOfStrings(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -126,8 +126,8 @@ public class JsoningClass {
     /**
      * Properties from a JSON node 
      * 
-     * @param JsonNode givenJsonNode
-     * @param String strJsonNodeName
+     * @param givenJsonNode
+     * @param strJsonNodeName
      * @return Properties
      */
     protected static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -147,7 +147,7 @@ public class JsoningClass {
      * 
      * @param givenJsonNode
      * @param strJsonNode
-     * @return
+     * @return String
      */
     public static String getJsonValue(final JsonNode givenJsonNode, final String strJsonNode) {
         return getJsonNodeFromTree(givenJsonNode, strJsonNode).asText();

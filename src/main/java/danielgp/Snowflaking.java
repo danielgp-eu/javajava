@@ -56,9 +56,9 @@ public class Snowflaking extends DatabasingClass {
     /**
      * Initiate a Snowflake connection with Instance properties and DB specified
      * 
-     * @param Properties propertiesInstance
-     * @param String strDatabase
-     * @param String strNamedInstance
+     * @param propInstance
+     * @param strDatabase
+     * @param strNamedInstance
      * @return Connection
      */
     protected static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase, final String strNamedInstance) {
@@ -82,7 +82,7 @@ public class Snowflaking extends DatabasingClass {
     /**
      * build Snowflake Properties
      * 
-     * @param Properties propertiesInstance
+     * @param propInstance
      * @return Properties
      */
     protected static Properties getSnowflakeProperties(final Properties propInstance) {
@@ -94,8 +94,8 @@ public class Snowflaking extends DatabasingClass {
     /**
      * build Snowflake Properties
      * 
-     * @param String strDatabase
-     * @param Properties propertiesInstance
+     * @param strDatabase
+     * @param propInstance
      * @return Properties
      */
     private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
