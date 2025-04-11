@@ -3,6 +3,7 @@ package danielgp;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDateTime;
 
 /**
  * Shell execution methods
@@ -13,6 +14,43 @@ public final class ShellingClass {
      */
     public static String LOGGED_ACCOUNT;
 
+    /**
+     * Building Process for shell execution
+     * 
+     * @param strCommand
+     * @param strParameters
+     */
+    private static ProcessBuilder buildProcessForExecution(final String strCommand, final String strParameters) {
+        final ProcessBuilder builder = new ProcessBuilder();
+        if (strParameters.isEmpty()) {
+            builder.command(strCommand);
+        } else {
+            builder.command(strCommand, strParameters);
+        }
+        builder.directory(FileHandlingClass.getCurrentUserFolder());
+        return builder;
+    }
+
+    /**
+     * capture Process output
+     * 
+     * @param process
+     * @param strOutLineSep
+     * @return
+     * @throws IOException
+     */
+    private static String captureProcessOutput(final Process process, final String strOutLineSep) throws IOException {
+        String strReturn;
+        final StringBuilder processOutput = new StringBuilder();
+        try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String readLine;
+            while ((readLine = processOutReader.readLine()) != null) {
+                processOutput.append(readLine).append(strOutLineSep);
+            }
+            strReturn = processOutput.toString();
+        }
+        return strReturn;
+    }
 
     /**
      * Executes a shells command without any output captured
@@ -21,25 +59,21 @@ public final class ShellingClass {
      * @param strParameters
      */
     public static void executeShellUtility(final String strCommand, final String strParameters) {
-        final ProcessBuilder builder = new ProcessBuilder();
-        if (strParameters.isEmpty()) {
-            builder.command(strCommand);
-        } else {
-            builder.command(strCommand, strParameters);
-        }
-        builder.directory(FileHandlingClass.getCurrentUserFolder());
+        final LocalDateTime startTimeStamp = LocalDateTime.now();
+        final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
         try {
-            String strFeedback = String.format("I intend to execute following command %s", builder.command().toString());
-            LogHandlingClass.LOGGER.info(strFeedback);
+            String strFeedback = String.format("I intend to execute following command %s w/o output captured!", builder.command().toString());
+            LogHandlingClass.LOGGER.debug(strFeedback);
             final Process process = builder.start();
             final int exitCode = process.waitFor();
             process.destroy();
-            strFeedback = String.format("Process execution finished with error code %s", exitCode);
-            LogHandlingClass.LOGGER.info(strFeedback);
+            strFeedback = String.format("Process execution finished with exit code %d", exitCode);
+            LogHandlingClass.LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Error encountered on shell execution: %s", e.getStackTrace().toString());
+            final String strFeedback = String.format("Process Execution failed: %s", e.getStackTrace().toString()); 
             LogHandlingClass.LOGGER.error(strFeedback);
         }
+        TimingClass.logDuration(startTimeStamp, "Shell execution w/o output captured completed", "debug");
     }
 
     /**
@@ -51,35 +85,24 @@ public final class ShellingClass {
      * @return String
      */
     public static String executeShellUtility(final String strCommand, final String strParameters, final String strOutLineSep) {
+        final LocalDateTime startTimeStamp = LocalDateTime.now();
         String strReturn = "";
-        final ProcessBuilder builder = new ProcessBuilder();
-        if (strParameters.isEmpty()) {
-            builder.command(strCommand);
-        } else {
-            builder.command(strCommand, strParameters);
-        }
-        builder.directory(FileHandlingClass.getCurrentUserFolder());
-        builder.redirectErrorStream(true);
+        final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
         try {
-            String strFeedback = String.format("I intend to execute following command %s", builder.command().toString());
-            LogHandlingClass.LOGGER.info(strFeedback);
+            String strFeedback = String.format("I intend to execute following command %s WITH output captured!", builder.command().toString());
+            LogHandlingClass.LOGGER.debug(strFeedback);
+            builder.redirectErrorStream(true);
             final Process process = builder.start();
-            final StringBuilder processOutput = new StringBuilder();
-            try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                String readLine;
-                while ((readLine = processOutReader.readLine()) != null) {
-                    processOutput.append(readLine).append(strOutLineSep);
-                }
-                strReturn = processOutput.toString();
-            }
+            strReturn = captureProcessOutput(process, strOutLineSep);
             final int exitCode = process.waitFor();
             process.destroy();
-            strFeedback = String.format("Process execution finished with error code %s", exitCode);
-            LogHandlingClass.LOGGER.info(strFeedback);
+            strFeedback = String.format("Process execution finished with exit code %d", exitCode);
+            LogHandlingClass.LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Interrupted Execution: %s", e.getStackTrace().toString()); 
+            final String strFeedback = String.format("Process Execution failed: %s", e.getStackTrace().toString()); 
             LogHandlingClass.LOGGER.error(strFeedback);
         }
+        TimingClass.logDuration(startTimeStamp, "Shell execution WITH output captured completed", "debug");
         return strReturn;
     }
 
