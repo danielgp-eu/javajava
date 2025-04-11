@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Snowflake methods
  */
-public class Snowflaking extends DatabasingClass {
+public class Snowflaking extends DatabaseResultSetingClass {
 
     /**
      * Snowflake Bootstrap
@@ -22,7 +22,7 @@ public class Snowflaking extends DatabasingClass {
      */
     protected static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
         final String strQueryToUse = "ALTER SESSION SET JDBC_QUERY_RESULT_FORMAT='JSON';";
-        executeCustomQuery(objStatement, "Bootstrap", strQueryToUse);
+        executeQueryWithoutResultSet(objStatement, "Bootstrap", strQueryToUse);
     }
 
     /**
@@ -32,19 +32,32 @@ public class Snowflaking extends DatabasingClass {
      * @param strWhich
      */
     protected static void exposeSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich) {
-        String strQueryToUse;
+        final String strQueryToUse;
         String strFeedback;
         final Properties queryProperties = new Properties();
         switch(strWhich) {
-            case "CurrentAvailableRoles":
+            case "AvailableRoles":
                 strQueryToUse = "SELECT TRIM(VALUE) AS \"AssignedRoleName\" FROM TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));";
                 queryProperties.put("expectedExactNumberOfColumns", "1");
-                final ResultSet resultSet = executeCustomQuery(objStatement, "Current Available Roles", strQueryToUse, queryProperties);
-                final List<String> listRoles = getResultSetListOfStrings(resultSet);
-                strFeedback = String.format("Current roles were found: %s", listRoles.toString()); 
-                LogHandlingClass.LOGGER.info(strFeedback);
+                try (ResultSet resultSetRole = executeCustomQuery(objStatement, "Available Roles", strQueryToUse, queryProperties)) {
+                    final List<String> listRoles = getResultSetListOfStrings(resultSetRole);
+                    strFeedback = String.format("Current roles were found: %s", listRoles.toString()); 
+                    LogHandlingClass.LOGGER.info(strFeedback);
+                } catch (SQLException e) {
+                    strFeedback = String.format("Statement execution for %s has failed with following error: %s", strWhich, e.getLocalizedMessage());
+                    LogHandlingClass.LOGGER.error(strFeedback);
+                }
                 break;
-            case "TBD":
+            case "AvailableWarehouses":
+                strQueryToUse = "SHOW WAREHOUSES;";
+                final ResultSet rsWarehouse = executeCustomQuery(objStatement, "Available Warehouses", strQueryToUse, queryProperties);
+                getResultSetColumnStructure(rsWarehouse);
+                break;
+            case "Databases":
+                strQueryToUse = "SELECT \"DATABASE_NAME\", \"DATABASE_OWNER\", \"COMMENT\", \"CREATED\", \"LAST_ALTERED\", \"RETENTION_TIME\", \"TYPE\", CURRENT_ACCOUNT() AS \"SNOWFLAKE_INSTANCE\", SYSDATE() AS \"EXTRACTION_TIMESTAMP_UTC\" FROM \"INFORMATION_SCHEMA\".\"DATABASES\";";
+                final ResultSet rsDb = executeCustomQuery(objStatement, "Databases", strQueryToUse, queryProperties);
+                getResultSetColumnStructure(rsDb);
+                getResultSetColumnValues(rsDb);
                 break;
             default:
                 strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strWhich);
@@ -115,11 +128,11 @@ public class Snowflaking extends DatabasingClass {
      */
     private static void loadSnowflakeDriver() {
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
-        String strFeedback = String.format("Will attempt loading Snowflake driver %", strDriverName);
+        String strFeedback = String.format("Will attempt to load Snowflake driver %s", strDriverName);
         LogHandlingClass.LOGGER.debug(strFeedback);
         try {
             Class.forName(strDriverName);
-            strFeedback = String.format("Snowflake driver %s has been sucessfully loaded", strDriverName);
+            strFeedback = String.format("Snowflake driver %s has been successfully loaded", strDriverName);
             LogHandlingClass.LOGGER.debug(strFeedback);
         } catch (ClassNotFoundException ex) {
             strFeedback = String.format("Snowflake driver %s not found... :-(", strDriverName);
