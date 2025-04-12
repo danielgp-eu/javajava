@@ -34,6 +34,7 @@ public class Snowflaking extends DatabaseResultSetingClass {
     protected static void exposeSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich) {
         final String strQueryToUse;
         String strFeedback;
+        List<Properties> listStructure;
         final Properties queryProperties = new Properties();
         switch(strWhich) {
             case "AvailableRoles":
@@ -51,13 +52,22 @@ public class Snowflaking extends DatabaseResultSetingClass {
             case "AvailableWarehouses":
                 strQueryToUse = "SHOW WAREHOUSES;";
                 final ResultSet rsWarehouse = executeCustomQuery(objStatement, "Available Warehouses", strQueryToUse, queryProperties);
-                getResultSetColumnStructure(rsWarehouse);
+                listStructure = getResultSetColumnStructure(rsWarehouse);
+                strFeedback = String.format("Structure list for Warehouses is %s", listStructure.toString());
+                LogHandlingClass.LOGGER.info(strFeedback);
+                final List<Properties> listWarehouses = getResultSetColumnValues(rsWarehouse);
+                strFeedback = String.format("Final list of Warehouses is %s", listWarehouses.toString());
+                LogHandlingClass.LOGGER.info(strFeedback);
                 break;
             case "Databases":
                 strQueryToUse = "SELECT \"DATABASE_NAME\", \"DATABASE_OWNER\", \"COMMENT\", \"CREATED\", \"LAST_ALTERED\", \"RETENTION_TIME\", \"TYPE\", CURRENT_ACCOUNT() AS \"SNOWFLAKE_INSTANCE\", SYSDATE() AS \"EXTRACTION_TIMESTAMP_UTC\" FROM \"INFORMATION_SCHEMA\".\"DATABASES\";";
                 final ResultSet rsDb = executeCustomQuery(objStatement, "Databases", strQueryToUse, queryProperties);
-                getResultSetColumnStructure(rsDb);
-                getResultSetColumnValues(rsDb);
+                listStructure = getResultSetColumnStructure(rsDb);
+                strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());
+                LogHandlingClass.LOGGER.info(strFeedback);
+                final List<Properties> listDbs = getResultSetColumnValues(rsDb);
+                strFeedback = String.format("Final list of Databases is %s", listDbs.toString());
+                LogHandlingClass.LOGGER.info(strFeedback);
                 break;
             default:
                 strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strWhich);
