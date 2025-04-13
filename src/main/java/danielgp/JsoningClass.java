@@ -153,7 +153,9 @@ public class JsoningClass {
         return getJsonNodeFromTree(givenJsonNode, strJsonNode).asText();
     }
 
-    // constructor
+    /**
+     * Constructor
+     */
     protected JsoningClass() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }

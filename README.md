@@ -27,8 +27,10 @@ Various Java classes to be re-used
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
 * [Java Best Practices That Every Java Developer Should Know in 2024](https://medium.com/@learnwithakshay/java-best-practices-that-every-java-developer-should-know-in-2024-ea84bc0b0fec)
 * [Java LocalDateTime](https://howtodoinjava.com/java/date-time/java-localdatetime-class/)
+* [Java Naming Conventions - Best Practices](https://www.javaguides.net/2018/08/java-standard-naming-conventions.html)
 * [java.time.LocalDateTime Class in Java](https://www.geeksforgeeks.org/java-time-localdatetime-class-in-java/)
 * [JDK Releases](https://www.java.com/releases/matrix/)
+* [Java SE - Naming Conventions](https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html)
 * [Secure Coding Guidelines for Java SE](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
 * [Top 10 Java Programming Best Practices](https://www.geeksforgeeks.org/java-best-practices/)
 
@@ -49,8 +51,17 @@ Various Java classes to be re-used
 
 ### Testing in Java
 
-* [Mocking JDBC for Unit Testing](https://www.baeldung.com/mocking-jdbc-unit-testing)
+* [Guide to JUnit 5 Parameterized Tests](https://www.baeldung.com/parameterized-tests-junit-5)
+* [Introduction to JUnit 5](https://www.geeksforgeeks.org/introduction-to-junit-5/)
 * [JUnit 5](https://junit.org/junit5/)
+* [JUnit 5 Tutorial (with Examples)](https://howtodoinjava.com/junit-5-tutorial/)
+* [Mocking JDBC for Unit Testing](https://www.baeldung.com/mocking-jdbc-unit-testing)
+
+
+### Eclipse
+
+* [Java Dependency Viewer](https://marketplace.eclipse.org/content/java-dependency-viewer)
+* [Understanding Maven Dependency Graph or Tree](https://www.baeldung.com/maven-dependency-graph)
 
 
 ## Execution Remarks

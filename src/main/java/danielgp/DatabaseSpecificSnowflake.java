@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Snowflake methods
  */
-public class Snowflaking extends DatabaseResultSetingClass {
+public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
 
     /**
      * Snowflake Bootstrap
@@ -34,7 +34,7 @@ public class Snowflaking extends DatabaseResultSetingClass {
     protected static void exposeSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich) {
         final String strQueryToUse;
         String strFeedback;
-        List<Properties> listStructure;
+        final List<Properties> listStructure;
         final Properties queryProperties = new Properties();
         switch(strWhich) {
             case "AvailableRoles":
@@ -153,7 +153,7 @@ public class Snowflaking extends DatabaseResultSetingClass {
     /**
      * constructor
      */
-    protected Snowflaking() {
+    protected DatabaseSpecificSnowflake() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

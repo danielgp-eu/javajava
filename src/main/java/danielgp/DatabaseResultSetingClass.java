@@ -112,7 +112,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 listResultSet.add(colProperties);
             }
             strFeedback = String.format("Current ResultSet structure is : %s", listResultSet.toString());
-            LogHandlingClass.LOGGER.info(strFeedback);
+            LogHandlingClass.LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());
             LogHandlingClass.LOGGER.error(strFeedback);
@@ -148,7 +148,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                     listResultSet.add(currentRow);
                 }
                 strFeedback = String.format("Final list of values is %s", listResultSet.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
+                LogHandlingClass.LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
             strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());

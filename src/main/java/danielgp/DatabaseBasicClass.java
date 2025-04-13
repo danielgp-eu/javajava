@@ -1,7 +1,6 @@
 package danielgp;
 /* SQL classes */
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
@@ -93,27 +92,6 @@ public class DatabaseBasicClass {
             LogHandlingClass.LOGGER.error(strFeedback);
         }
         return objStatement;
-    }
-
-    /**
-     * Initiates a SQLite connection
-     * 
-     * @param strSqLiteFile
-     * @return Connection
-     */
-    protected static Connection getSqLiteConnection(final String strSqLiteFile) {
-        String strFeedback = String.format("Will attempt to create a SQLite connection to %s file", strSqLiteFile);
-        LogHandlingClass.LOGGER.debug(strFeedback);
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:" + strSqLiteFile);
-            strFeedback = String.format("SQLite connection to %s database was successfully established!", strSqLiteFile);
-            LogHandlingClass.LOGGER.debug(strFeedback);
-        } catch(SQLException e) {
-            strFeedback = String.format("Connection failed: %s", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
-        }
-        return connection;
     }
 
     /**

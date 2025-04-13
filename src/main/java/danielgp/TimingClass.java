@@ -165,7 +165,7 @@ public final class TimingClass {
             case "error":
                 LogHandlingClass.LOGGER.error(strFeedback);
                 break;
-            case "infor":
+            case "info":
                 LogHandlingClass.LOGGER.info(strFeedback);
                 break;
             default:
