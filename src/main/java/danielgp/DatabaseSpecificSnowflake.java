@@ -2,7 +2,6 @@ package danielgp;
 /* SQL classes */
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 /* Utility classes */
@@ -23,103 +22,6 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
     protected static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
         final String strQueryToUse = "ALTER SESSION SET JDBC_QUERY_RESULT_FORMAT='JSON';";
         executeQueryWithoutResultSet(objStatement, "Bootstrap", strQueryToUse);
-    }
-
-    /**
-     * Log to Info details from Snowflake
-     * 
-     * @param objStatement
-     * @param strWhich
-     */
-    protected static void exposeSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich) {
-        final String strQueryToUse;
-        String strFeedback;
-        final List<Properties> listStructure;
-        final Properties queryProperties = new Properties();
-        switch(strWhich) {
-            case "AvailableRoles":
-                strQueryToUse = """
-SELECT
-    TRIM(VALUE) AS \"AssignedRoleName\"
-FROM
-    TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));
-                """;
-                queryProperties.put("expectedExactNumberOfColumns", "1");
-                try (ResultSet resultSetRole = executeCustomQuery(objStatement, "Available Roles", strQueryToUse, queryProperties)) {
-                    final List<String> listRoles = getResultSetListOfStrings(resultSetRole);
-                    strFeedback = String.format("Current roles were found: %s", listRoles.toString()); 
-                    LogHandlingClass.LOGGER.info(strFeedback);
-                } catch (SQLException e) {
-                    strFeedback = String.format("Statement execution for %s has failed with following error: %s", strWhich, e.getLocalizedMessage());
-                    LogHandlingClass.LOGGER.error(strFeedback);
-                }
-                break;
-            case "AvailableWarehouses":
-                strQueryToUse = "SHOW WAREHOUSES;";
-                final ResultSet rsWarehouse = executeCustomQuery(objStatement, "Available Warehouses", strQueryToUse, queryProperties);
-                listStructure = getResultSetColumnStructure(rsWarehouse);
-                strFeedback = String.format("Structure list for Warehouses is %s", listStructure.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
-                final List<Properties> listWarehouses = getResultSetColumnValues(rsWarehouse);
-                strFeedback = String.format("Final list of Warehouses is %s", listWarehouses.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
-                break;
-            case "Databases":
-                strQueryToUse = """
-SELECT
-      "DATABASE_NAME"
-    , "DATABASE_OWNER"
-    , "COMMENT"
-    , "CREATED"
-    , "LAST_ALTERED"
-    , "RETENTION_TIME"
-    , "TYPE"
-    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
-    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
-FROM
-    "INFORMATION_SCHEMA"."DATABASES";
-                """;
-                final ResultSet rsDb = executeCustomQuery(objStatement, "Databases", strQueryToUse, queryProperties);
-                listStructure = getResultSetColumnStructure(rsDb);
-                strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
-                final List<Properties> listDbs = getResultSetColumnValues(rsDb);
-                strFeedback = String.format("Final list of Databases is %s", listDbs.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
-                break;
-            case "Schemas":
-                strQueryToUse = """
-SELECT
-      "CATALOG_NAME"
-    , "SCHEMA_NAME"
-    , "SCHEMA_OWNER"
-    , "IS_TRANSIENT"
-    , "IS_MANAGED_ACCESS"
-    , "RETENTION_TIME"
-    , "DEFAULT_CHARACTER_SET_CATALOG"
-    , "DEFAULT_CHARACTER_SET_SCHEMA"
-    , "DEFAULT_CHARACTER_SET_NAME"
-    , "SQL_PATH"
-    , "CREATED"
-    , "LAST_ALTERED"
-    , "COMMENT"
-    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
-FROM
-    "INFORMATION_SCHEMA"."SCHEMATA";
-                """;
-                final ResultSet rsSchemas = executeCustomQuery(objStatement, "Schemas", strQueryToUse, queryProperties);
-                listStructure = getResultSetColumnStructure(rsSchemas);
-                strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
-                final List<Properties> listSchemas = getResultSetColumnValues(rsSchemas);
-                strFeedback = String.format("Final list of Databases is %s", listSchemas.toString());
-                LogHandlingClass.LOGGER.info(strFeedback);
-                break;
-            default:
-                strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strWhich);
-                LogHandlingClass.LOGGER.error(strFeedback);
-                break;
-        }
     }
 
     /**
@@ -177,6 +79,116 @@ FROM
         properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
         properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
         return properties;
+    }
+
+    /**
+     * get standardized Information from Snowflake
+     * 
+     * @param objStatement
+     * @param strWhich
+     * @param strKind
+     */
+    protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+        String strQueryToUse = "";
+        final Properties queryProperties = new Properties();
+        switch(strWhich) {
+            case "Columns":
+                // TODO: reflect standard fields + logic for DDL
+                break;
+            case "Databases":
+                strQueryToUse = """
+SELECT
+      "DATABASE_NAME"
+    , "DATABASE_OWNER"
+    , "COMMENT"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "RETENTION_TIME"
+    , "TYPE"
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."DATABASES";
+                """;
+                break;
+            case "Roles":
+                strQueryToUse = """
+SELECT
+    TRIM(VALUE) AS \"AssignedRoleName\"
+FROM
+    TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));
+                """;
+                queryProperties.put("expectedExactNumberOfColumns", "1");
+                break;
+            case "Schemas":
+                strQueryToUse = """
+SELECT
+      "CATALOG_NAME"
+    , "SCHEMA_NAME"
+    , "SCHEMA_OWNER"
+    , "IS_TRANSIENT"
+    , "IS_MANAGED_ACCESS"
+    , "RETENTION_TIME"
+    , "DEFAULT_CHARACTER_SET_CATALOG"
+    , "DEFAULT_CHARACTER_SET_SCHEMA"
+    , "DEFAULT_CHARACTER_SET_NAME"
+    , "SQL_PATH"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "COMMENT"
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."SCHEMATA";
+                """;
+                break;
+            case "TablesAndViews":
+                strQueryToUse = """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "TABLE_OWNER"
+    , "TABLE_TYPE"
+    , "IS_TRANSIENT"
+    , "CLUSTERING_KEY"
+    , "ROW_COUNT"
+    , "BYTES"
+    , "RETENTION_TIME"
+    , "SELF_REFERENCING_COLUMN_NAME"
+    , "REFERENCE_GENERATION"
+    , "USER_DEFINED_TYPE_CATALOG"
+    , "USER_DEFINED_TYPE_SCHEMA"
+    , "USER_DEFINED_TYPE_NAME"
+    , "IS_INSERTABLE_INTO"
+    , "IS_TYPED"
+    , "COMMIT_ACTION"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "LAST_DDL"
+    , "LAST_DDL_BY"
+    , "AUTO_CLUSTERING_ON"
+    , "COMMENT"
+    , "IS_TEMPORARY"
+    , "IS_ICEBERG"
+    , "IS_DYNAMIC"
+    , "IS_IMMUTABLE"
+    , `IS_HYBRID`
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    `information_schema`.`TABLES`;
+                """;
+                break;
+            case "Warehouses":
+                strQueryToUse = "SHOW WAREHOUSES;";
+                break;
+            default:
+                final String strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strWhich);
+                LogHandlingClass.LOGGER.error(strFeedback);
+                break;
+        }
+        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
     }
 
     /**

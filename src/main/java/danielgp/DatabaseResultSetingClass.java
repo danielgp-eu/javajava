@@ -212,9 +212,40 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
     }
 
     /**
+     * get standardized Information
+     * @param objStatement
+     * @param strWhich
+     * @param strQueryToUse
+     * @param queryProperties
+     * @param strKind
+     */
+    protected static List<Properties> getResultSetStandardized(final Statement objStatement, final String strWhich, final String strQueryToUse, final Properties queryProperties, final String strKind) {
+        String strFeedback;
+        List<Properties> listReturn = null;
+        try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties);) {
+            switch(strKind) {
+                case "Structure":
+                    listReturn = getResultSetColumnStructure(rsStandard);
+                    break;
+                case "Values":
+                    listReturn = getResultSetColumnValues(rsStandard);
+                    break;
+                default:
+                    strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strKind);
+                    LogHandlingClass.LOGGER.error(strFeedback);
+                    break;
+            }
+        } catch (SQLException e) {
+            strFeedback = String.format("Statement execution for %s has failed with following error: %s", strWhich, e.getLocalizedMessage());
+            LogHandlingClass.LOGGER.error(strFeedback);
+        }
+        return listReturn;
+    }
+
+    /**
      * constructor
      */
-    protected DatabaseResultSetingClass() {
+    public DatabaseResultSetingClass() {
         super();
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
