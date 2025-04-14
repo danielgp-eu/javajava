@@ -154,6 +154,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
      * constructor
      */
     protected DatabaseSpecificSnowflake() {
+        super();
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

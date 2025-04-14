@@ -104,6 +104,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
      * constructor
      */
     protected DatabaseSpecificMySql() {
+        super();
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

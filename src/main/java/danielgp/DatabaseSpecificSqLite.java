@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /**
  * SQLite methods
  */
-public class DatabaseSpecificSqLite {
+public class DatabaseSpecificSqLite extends DatabaseResultSetingClass {
 
     /**
      * Initiates a SQLite connection
@@ -33,7 +33,8 @@ public class DatabaseSpecificSqLite {
     /**
      * constructor
      */
-    protected DatabaseSpecificSqLite() {
+    public DatabaseSpecificSqLite() {
+        super();
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 

@@ -215,6 +215,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
      * constructor
      */
     protected DatabaseResultSetingClass() {
+        super();
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
