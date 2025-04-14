@@ -87,6 +87,34 @@ FROM
                 strFeedback = String.format("Final list of Databases is %s", listDbs.toString());
                 LogHandlingClass.LOGGER.info(strFeedback);
                 break;
+            case "Schemas":
+                strQueryToUse = """
+SELECT
+      "CATALOG_NAME"
+    , "SCHEMA_NAME"
+    , "SCHEMA_OWNER"
+    , "IS_TRANSIENT"
+    , "IS_MANAGED_ACCESS"
+    , "RETENTION_TIME"
+    , "DEFAULT_CHARACTER_SET_CATALOG"
+    , "DEFAULT_CHARACTER_SET_SCHEMA"
+    , "DEFAULT_CHARACTER_SET_NAME"
+    , "SQL_PATH"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "COMMENT"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."SCHEMATA";
+                """;
+                final ResultSet rsSchemas = executeCustomQuery(objStatement, "Schemas", strQueryToUse, queryProperties);
+                listStructure = getResultSetColumnStructure(rsSchemas);
+                strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());
+                LogHandlingClass.LOGGER.info(strFeedback);
+                final List<Properties> listSchemas = getResultSetColumnValues(rsSchemas);
+                strFeedback = String.format("Final list of Databases is %s", listSchemas.toString());
+                LogHandlingClass.LOGGER.info(strFeedback);
+                break;
             default:
                 strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strWhich);
                 LogHandlingClass.LOGGER.error(strFeedback);
