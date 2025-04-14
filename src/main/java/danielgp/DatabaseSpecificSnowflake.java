@@ -38,7 +38,12 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
         final Properties queryProperties = new Properties();
         switch(strWhich) {
             case "AvailableRoles":
-                strQueryToUse = "SELECT TRIM(VALUE) AS \"AssignedRoleName\" FROM TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));";
+                strQueryToUse = """
+SELECT
+    TRIM(VALUE) AS \"AssignedRoleName\"
+FROM
+    TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));
+                """;
                 queryProperties.put("expectedExactNumberOfColumns", "1");
                 try (ResultSet resultSetRole = executeCustomQuery(objStatement, "Available Roles", strQueryToUse, queryProperties)) {
                     final List<String> listRoles = getResultSetListOfStrings(resultSetRole);
@@ -60,7 +65,20 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
                 LogHandlingClass.LOGGER.info(strFeedback);
                 break;
             case "Databases":
-                strQueryToUse = "SELECT \"DATABASE_NAME\", \"DATABASE_OWNER\", \"COMMENT\", \"CREATED\", \"LAST_ALTERED\", \"RETENTION_TIME\", \"TYPE\", CURRENT_ACCOUNT() AS \"SNOWFLAKE_INSTANCE\", SYSDATE() AS \"EXTRACTION_TIMESTAMP_UTC\" FROM \"INFORMATION_SCHEMA\".\"DATABASES\";";
+                strQueryToUse = """
+SELECT
+      "DATABASE_NAME"
+    , "DATABASE_OWNER"
+    , "COMMENT"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "RETENTION_TIME"
+    , "TYPE"
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."DATABASES";
+                """;
                 final ResultSet rsDb = executeCustomQuery(objStatement, "Databases", strQueryToUse, queryProperties);
                 listStructure = getResultSetColumnStructure(rsDb);
                 strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());

@@ -27,7 +27,17 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
         final Properties queryProperties = new Properties();
         switch(strWhich) {
             case "Databases":
-                strQueryToUse = "SELECT `CATALOG_NAME`, `SCHEMA_NAME`, `DEFAULT_CHARACTER_SET_NAME`, `DEFAULT_COLLATION_NAME`, `SQL_PATH`, UTC_TIMESTAMP() AS `EXTRACTION_TIMESTAMP_UTC` FROM `information_schema`.`SCHEMATA`;";
+                strQueryToUse = """
+SELECT
+      `CATALOG_NAME`
+    , `SCHEMA_NAME`
+    , `DEFAULT_CHARACTER_SET_NAME`
+    , `DEFAULT_COLLATION_NAME`
+    , `SQL_PATH`
+    , UTC_TIMESTAMP()               AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`SCHEMATA`;
+                """;
                 final ResultSet rsDb = executeCustomQuery(objStatement, "Databases", strQueryToUse, queryProperties);
                 listStructure = getResultSetColumnStructure(rsDb);
                 strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());
@@ -37,7 +47,33 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
                 LogHandlingClass.LOGGER.info(strFeedback);
                 break;
             case "TablesAndViews":
-                strQueryToUse = "SELECT `TABLE_CATALOG`, `TABLE_SCHEMA`, `TABLE_NAME`, `TABLE_TYPE`, `ENGINE`, `VERSION`, `ROW_FORMAT`, `TABLE_ROWS`, `AVG_ROW_LENGTH`, `DATA_LENGTH`, `MAX_DATA_LENGTH`, `INDEX_LENGTH`, `DATA_FREE`, `AUTO_INCREMENT`, `CREATE_TIME`, `UPDATE_TIME`, `CHECK_TIME`, `TABLE_COLLATION`, `CHECKSUM`, `CREATE_OPTIONS`, `TABLE_COMMENT`, UTC_TIMESTAMP() AS `EXTRACTION_TIMESTAMP_UTC` FROM `information_schema`.`TABLES`;";
+                strQueryToUse = """
+SELECT
+    `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `TABLE_TYPE`
+    , `ENGINE`
+    , `VERSION`
+    , `ROW_FORMAT`
+    , `TABLE_ROWS`
+    , `AVG_ROW_LENGTH`
+    , `DATA_LENGTH`
+    , `MAX_DATA_LENGTH`
+    , `INDEX_LENGTH`
+    , `DATA_FREE`
+    , `AUTO_INCREMENT`
+    , `CREATE_TIME`
+    , `UPDATE_TIME`
+    , `CHECK_TIME`
+    , `TABLE_COLLATION`
+    , `CHECKSUM`
+    , `CREATE_OPTIONS`
+    , `TABLE_COMMENT`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`TABLES`;
+                """;
                 final ResultSet rsTables = executeCustomQuery(objStatement, "Databases", strQueryToUse, queryProperties);
                 listStructure = getResultSetColumnStructure(rsTables);
                 strFeedback = String.format("Structure list for Databases is %s", listStructure.toString());
@@ -90,12 +126,12 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
         properties.put("user", propInstance.get("Username").toString());
         properties.put("password", propInstance.get("Password").toString());
         properties.put("serverTimezone", propInstance.get("ServerTimezone").toString());
-        properties.put("autoReconnect", "true");
-        properties.put("allowPublicKeyRetrieval", "true");
-        properties.put("useSSL", "false");
-        properties.put("useUnicode", "true");
-        properties.put("useJDBCCompliantTimezoneShift", "true");
-        properties.put("useLegacyDatetimeCode", "false");
+        properties.put("autoReconnect", true);
+        properties.put("allowPublicKeyRetrieval", true);
+        properties.put("useSSL", false);
+        properties.put("useUnicode", true);
+        properties.put("useJDBCCompliantTimezoneShift", true);
+        properties.put("useLegacyDatetimeCode", false);
         properties.put("characterEncoding", "UTF-8");
         return properties;
     }
