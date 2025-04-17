@@ -30,10 +30,10 @@ public final class TimingClass {
         switch(strRule) {
             case "HumanReadableTime":
                 final String strFinalRule = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
-                arrayStrings = new String[] {strFinalRule,strFinalRule,strFinalRule,strFinalRule};
+                arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                 break;
             case "TimeClock":
-                arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero","TwoDigitNumber","SemicolumnAndTwoDigitNumber","DotAndTwoDigitNumber"};
+                arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndTwoDigitNumber"};
                 break;
             default:
                 final String methodName = new Throwable().getStackTrace()[0].getMethodName(); 
