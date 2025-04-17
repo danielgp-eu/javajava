@@ -119,7 +119,7 @@ public final class FileHandlingClass {
      * 
      * @return String
      */
-    public static String getMainConfigurationFile(final String strFilePattern) {
+    public static String getJsonConfigurationFile(final String strFilePattern) {
         final Properties propsFile = new Properties();
         propsFile.put("Minified", String.format(strFilePattern, "min."));
         propsFile.put("PreetyPrint", String.format(strFilePattern, ""));
