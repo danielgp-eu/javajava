@@ -24,7 +24,7 @@ public class JsoningClass {
      * @param jsonFile
      * @return JsonNode
      */
-    protected static JsonNode getJsonFileNodes(final File jsonFile) {
+    public static JsonNode getJsonFileNodes(final File jsonFile) {
         JsonNode jsonRootNode = null;
         final ObjectMapper objectMapper = new ObjectMapper();
         try {
