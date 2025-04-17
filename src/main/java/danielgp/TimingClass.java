@@ -27,13 +27,16 @@ public final class TimingClass {
      */
     public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
         final String[] arrayStrings;
+        final String strFinalOne;
         switch(strRule) {
             case "HumanReadableTime":
                 final String strFinalRule = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
                 arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
+                strFinalOne = "Nanosecond";
                 break;
             case "TimeClock":
-                arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndTwoDigitNumber"};
+                arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndThreeDigitNumber"};
+                strFinalOne = "Millisecond";
                 break;
             default:
                 final String methodName = new Throwable().getStackTrace()[0].getMethodName(); 
@@ -44,7 +47,7 @@ public final class TimingClass {
                 + getDurationWithCustomRules(duration, "Hour", arrayStrings[1])
                 + getDurationWithCustomRules(duration, "Minute", arrayStrings[2])
                 + getDurationWithCustomRules(duration, "Second", arrayStrings[2])
-                + getDurationWithCustomRules(duration, "Nanosecond", arrayStrings[3])
+                + getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3])
             ).trim();
     }
 
@@ -119,11 +122,11 @@ public final class TimingClass {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
         String strReturn = "";
         switch(strHow) {
-            case "DotAndTwoDigitNumber":
-                strReturn = String.format(".%02d", lngNumber);
+            case "DotAndNineDigitNumber":
+                strReturn = String.format(".%09d", lngNumber);
                 break;
-            case "NineDigitNumber":
-                strReturn = String.format("%09d", lngNumber);
+            case "DotAndThreeDigitNumber":
+                strReturn = String.format(".%03d", lngNumber);
                 break;
             case "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero":
                 if (lngNumber > 0) {
