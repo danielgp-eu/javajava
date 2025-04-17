@@ -79,7 +79,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param connection
      * @return Statement
      */
-    protected static Statement getSqlStatement(final String strDatabaseType, final Connection connection) {
+    public static Statement getSqlStatement(final String strDatabaseType, final Connection connection) {
         String strFeedback = String.format("Will attempt to instantiate a %s statement", strDatabaseType);
         LogHandlingClass.LOGGER.debug(strFeedback);
         Statement objStatement = null;

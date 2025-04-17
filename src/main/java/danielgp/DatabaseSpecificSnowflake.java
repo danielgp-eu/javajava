@@ -19,7 +19,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
      * 
      * @param objStatement
      */
-    protected static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
+    public static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
         final String strQueryToUse = "ALTER SESSION SET JDBC_QUERY_RESULT_FORMAT='JSON';";
         executeQueryWithoutResultSet(objStatement, "Bootstrap", strQueryToUse);
     }
