@@ -102,7 +102,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
             final ResultSetMetaData metaData = resultSet.getMetaData();
             final Integer columnCount = metaData.getColumnCount();
             for (int columnNumber = 1; columnNumber <= columnCount; columnNumber++) {
-                final Properties colProperties = new Properties();
+                final Properties colProperties = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
                 colProperties.put("Display Size", metaData.getColumnDisplaySize(columnNumber));
                 colProperties.put("Name", metaData.getColumnName(columnNumber));
                 colProperties.put("Precision", metaData.getPrecision(columnNumber));
@@ -137,7 +137,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
                 final Integer columnCount = resultSetMetaData.getColumnCount();
                 while (resultSet.next()) {
-                    final Properties currentRow = new Properties();
+                    final Properties currentRow = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
                     for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
                         String crtValue = resultSet.getString(colIndex);
                         if (resultSet.wasNull()) {
@@ -240,14 +240,6 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
             LogHandlingClass.LOGGER.error(strFeedback);
         }
         return listReturn;
-    }
-
-    /**
-     * constructor
-     */
-    public DatabaseResultSetingClass() {
-        super();
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
 }
