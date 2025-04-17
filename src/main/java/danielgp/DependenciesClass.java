@@ -42,8 +42,9 @@ public final class DependenciesClass {
             final DocumentBuilder docBuilder = dbf.newDocumentBuilder(); 
             final Document doc = docBuilder.parse(fileDependency); 
             doc.getDocumentElement().normalize(); 
-            final NodeList nodeList = doc.getElementsByTagName("dependency"); 
-            for (int i = 0; i < nodeList.getLength(); ++i) { 
+            final NodeList nodeList = doc.getElementsByTagName("dependency");
+            final int intListSize = nodeList.getLength();
+            for (int i = 0; i < intListSize; ++i) { 
                 final Node node = nodeList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) { 
                     final Element tElement = (Element)node;
