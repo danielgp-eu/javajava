@@ -152,6 +152,31 @@ public final class FileHandlingClass {
     }
 
     /**
+     * Get list of sub-folders from a given folder
+     * 
+     * @param strFolderName
+     * @return
+     */
+    public static List<String> getSubFolderFromFolder(final String strFolderName) {
+        String strFeedback = String.format("Will attempt to get all sub-folders from within \"%s\" folder...", strFolderName);
+        LogHandlingClass.LOGGER.debug(strFeedback);
+        final List<String> arraySubFolders = new ArrayList<>();
+        final Path directory = Paths.get(strFolderName);
+        // use DirectoryStream to list files which are present in specific
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (final Path entry : stream) {
+                if (Files.isDirectory(entry)) {
+                    arraySubFolders.add(entry.toString());
+                }
+            }
+        } catch (IOException ex) {
+            strFeedback = String.format("Error encountered when attempting to get sub-folders from %s folder... %s", strFolderName, ex.getStackTrace().toString());
+            LogHandlingClass.LOGGER.error(strFeedback);
+        }
+        return arraySubFolders;
+    }
+
+    /**
      * Archives single file to new location
      * 
      * @param strFileName
