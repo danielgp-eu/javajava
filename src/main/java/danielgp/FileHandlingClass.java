@@ -129,19 +129,19 @@ public final class FileHandlingClass {
      */
     public static List<String> getSpecificFilesFromFolder(final String strFolderName, final String strExtension) {
         String strFeedback = String.format("Will attempt to get all files with \"%s\" extensions from within \"%s\" folder...", strExtension, strFolderName);
-        LogHandlingClass.LOGGER.info(strFeedback);
+        LogHandlingClass.LOGGER.debug(strFeedback);
         final List<String> arrayFiles = new ArrayList<>();
         final Path directory = Paths.get(strFolderName);
         // use DirectoryStream to list files which are present in specific
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-          //with forEach loop get all the path of files present in directory  
+            // with forEach loop get all the path of files present in directory  
             for (final Path file : stream) {
                 if (file.getFileName().toString().endsWith(strExtension)) {
                     final String strFile  = file.getParent().toString()
                             + File.separator + file.getFileName().toString();
                     arrayFiles.add(strFile);
                     strFeedback = String.format("Found a file with %s extension: %s", strExtension, strFile);
-                    LogHandlingClass.LOGGER.info(strFeedback);
+                    LogHandlingClass.LOGGER.debug(strFeedback);
                 }
             }
         } catch (IOException ex) {
