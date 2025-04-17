@@ -40,7 +40,7 @@ public final class ShellingClass {
      * @throws IOException
      */
     private static String captureProcessOutput(final Process process, final String strOutLineSep) throws IOException {
-        String strReturn;
+        final String strReturn;
         final StringBuilder processOutput = new StringBuilder();
         try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String readLine;

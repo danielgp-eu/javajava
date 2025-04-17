@@ -26,7 +26,7 @@ public final class TimingClass {
      * @return String
      */
     public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
-        String[] arrayStrings;
+        final String[] arrayStrings;
         switch(strRule) {
             case "HumanReadableTime":
                 final String strFinalRule = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
