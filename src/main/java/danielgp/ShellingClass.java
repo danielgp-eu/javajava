@@ -12,7 +12,7 @@ public final class ShellingClass {
     /**
      * holding the Use account currently logged on
      */
-    public static String LOGGED_ACCOUNT;
+    public static String LOGGED_ACCOUNT = ""; // NOPMD by Daniel Popiniuc on 17.04.2025, 16:26
 
     /**
      * Building Process for shell execution

@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * JSON handling
  */
-public class JsoningClass {
+public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
 
     /**
      * Load all JSON nodes from main configuration file
@@ -156,7 +156,7 @@ public class JsoningClass {
     /**
      * Constructor
      */
-    protected JsoningClass() {
+    private JsoningClass() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }

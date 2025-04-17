@@ -23,11 +23,11 @@ public final class EnvironmentCapturingClass {
     /**
      * Hardware info
      */
-    private final static HardwareAbstractionLayer hardware = new SystemInfo().getHardware();
+    private final static HardwareAbstractionLayer hardware = new SystemInfo().getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * OS info
      */
-    private final static OperatingSystem operatingSystem = new SystemInfo().getOperatingSystem();
+    private final static OperatingSystem operatingSystem = new SystemInfo().getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
 
     // Private constructor to prevent instantiation
     private EnvironmentCapturingClass() {
@@ -111,7 +111,7 @@ public final class EnvironmentCapturingClass {
      */
     private static String getDetailsAboutGraphicCards() {
         final StringBuilder strJsonString = new StringBuilder(50);
-        final List<GraphicsCard> graphicCards = hardware.getGraphicsCards();
+        final List<GraphicsCard> graphicCards = hardware.getGraphicsCards(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
         int intCounter = 0;
         for (final GraphicsCard  graphicCard : graphicCards) {
             if (intCounter > 0) {
@@ -172,7 +172,7 @@ public final class EnvironmentCapturingClass {
      */
     private static String getDetailsAboutMonitor() {
         final StringBuilder strJsonString = new StringBuilder();
-        final List<Display> displays = hardware.getDisplays();
+        final List<Display> displays = hardware.getDisplays(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
         int intCounter = 0;
         for (final Display crtDisplay : displays) {
             if (intCounter > 0) {

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 /**
  * Database methods
  */
-public class DatabaseBasicClass {
+public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:11
 
     /**
      * Connection closing
@@ -92,13 +92,6 @@ public class DatabaseBasicClass {
             LogHandlingClass.LOGGER.error(strFeedback);
         }
         return objStatement;
-    }
-
-    /**
-     * constructor
-     */
-    protected DatabaseBasicClass() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
 }

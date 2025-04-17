@@ -21,11 +21,6 @@ import org.w3c.dom.NodeList;
  */
 public final class DependenciesClass {
 
-    // Private constructor to prevent instantiation
-    private DependenciesClass() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
-
     /**
      * Gets a complete list of dependencies as JSON string
      * 
@@ -61,5 +56,10 @@ public final class DependenciesClass {
             LogHandlingClass.LOGGER.error(strFeedback);
         }
         return Common.getMapIntoJsonString(arrayAttributes);
+    }
+
+    // Private constructor to prevent instantiation
+    private DependenciesClass() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }
