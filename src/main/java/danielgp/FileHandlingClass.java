@@ -20,30 +20,6 @@ import java.util.Map.Entry;
  */
 public final class FileHandlingClass {
 
-    // Private constructor to prevent instantiation
-    private FileHandlingClass() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
-
-    /**
-     * Archives single file to new location
-     * 
-     * @param strFileName
-     * @param strDestFolder
-     */
-    public static void archiveFileToNewLocation(final String strFileName, final String strDestFolder) {
-        try {
-            final File strSourceFile = new File(strFileName); 
-            final File strDestFile = new File(strDestFolder);
-            LogHandlingClass.LOGGER.info("Will attempt to move \"%s\" file to \"%s\" folder", strFileName, strDestFolder);
-            org.apache.commons.io.FileUtils.moveFileToDirectory(strSourceFile, strDestFile, true);
-            LogHandlingClass.LOGGER.info("Success file \"%s\" has been moved to \"%s\" folder", strFileName, strDestFolder);
-        } catch (IOException ex) {
-            final String strFeedback = String.format("Error when attempting to move \"%s\" file to \"%s\": %s", strFileName, strDestFolder, ex.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
-        }
-    }
-
     /**
      * Checking if a file exists and is readable
      * 
@@ -176,6 +152,25 @@ public final class FileHandlingClass {
     }
 
     /**
+     * Archives single file to new location
+     * 
+     * @param strFileName
+     * @param strDestFolder
+     */
+    public static void moveFileToNewLocation(final String strFileName, final String strDestFolder) {
+        try {
+            final File strSourceFile = new File(strFileName); 
+            final File strDestFile = new File(strDestFolder);
+            LogHandlingClass.LOGGER.info("Will attempt to move \"%s\" file to \"%s\" folder", strFileName, strDestFolder);
+            org.apache.commons.io.FileUtils.moveFileToDirectory(strSourceFile, strDestFile, true);
+            LogHandlingClass.LOGGER.info("Success file \"%s\" has been moved to \"%s\" folder", strFileName, strDestFolder);
+        } catch (IOException ex) {
+            final String strFeedback = String.format("Error when attempting to move \"%s\" file to \"%s\": %s", strFileName, strDestFolder, ex.getStackTrace().toString());
+            LogHandlingClass.LOGGER.error(strFeedback);
+        }
+    }
+
+    /**
      * Removes a files if already exists
      * 
      * @param strFileName
@@ -214,5 +209,10 @@ public final class FileHandlingClass {
             final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, ex.getStackTrace().toString());
             LogHandlingClass.LOGGER.error(strFeedback);
         }
+    }
+
+    // Private constructor to prevent instantiation
+    private FileHandlingClass() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }
