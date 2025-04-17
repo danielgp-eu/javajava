@@ -51,37 +51,6 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
     }
 
     /**
-     * build Snowflake Properties
-     * 
-     * @param propInstance
-     * @return Properties
-     */
-    protected static Properties getSnowflakeProperties(final Properties propInstance) {
-        final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
-        return getSnowflakeProperties(strDatabase, propInstance);
-    }
-
-
-    /**
-     * build Snowflake Properties
-     * 
-     * @param strDatabase
-     * @param propInstance
-     * @return Properties
-     */
-    private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
-        final Properties properties = new Properties();
-        properties.put("user", ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault()));
-        properties.put("db", strDatabase);
-        properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
-        properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
-        properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
-        properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
-        properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
-        return properties;
-    }
-
-    /**
      * get standardized Information from Snowflake
      * 
      * @param objStatement
@@ -89,11 +58,75 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
      * @param strKind
      */
     protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
-        String strQueryToUse = "";
         final Properties queryProperties = new Properties();
+        if ("Roles".equalsIgnoreCase(strWhich)) { // NOPMD by Daniel Popiniuc on 17.04.2025, 22:21
+            queryProperties.put("expectedExactNumberOfColumns", "1");
+        }
+        final String strQueryToUse = getSnowflakePreDefinedMetadataQuery(strWhich);
+        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
+    }
+
+    /**
+     * returns standard Metadata query specific to Snowflake
+     * 
+     * @param strWhich
+     * @return
+     */
+    public static String getSnowflakePreDefinedMetadataQuery(final String strWhich) {
+        String strQueryToUse = "";
         switch(strWhich) {
             case "Columns":
-                // TODO: reflect standard fields + logic for DDL
+                strQueryToUse = """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "ORDINAL_POSITION"
+    , "COLUMN_NAME"
+    , "DATA_TYPE"
+    , CASE
+        WHEN "DATA_TYPE" = 'TEXT'
+            AND ("CHARACTER_MAXIMUM_LENGTH" >= 16777215)    THEN
+            "DATA_TYPE"
+        WHEN "DATA_TYPE" = 'TEXT'                           THEN
+            'VARCHAR('
+                || TO_CHAR("CHARACTER_MAXIMUM_LENGTH")
+                || ')'
+        WHEN "DATA_TYPE" = 'FLOAT'                          THEN
+            "DATA_TYPE"
+        WHEN "DATA_TYPE" = 'NUMBER'                         THEN
+            'NUMBER('
+                || TO_CHAR("NUMERIC_PRECISION")
+                || ',' 
+                || TO_CHAR("NUMERIC_SCALE")
+                || ')'
+        WHEN "DATA_TYPE" IN ('ARRAY'
+            , 'BINARY'
+            , 'BOOLEAN'
+            , 'DATE'
+            , 'OBJECT'
+            , 'TIME'
+            , 'VARIANT')                                    THEN
+            "DATA_TYPE"
+        WHEN "DATA_TYPE" IN ('TIMESTAMP'
+            , 'TIMESTAMP_LTZ'
+            , 'TIMESTAMP_NTZ'
+            , 'TIMESTAMP_TZ')                               THEN
+            "DATA_TYPE"
+                || '('
+                ||  "DATETIME_PRECISION"
+                || ')'
+        ELSE
+            '???'
+        END                 AS "Data_Type_Full"
+    , "IS_NULLABLE"
+    , "COLUMN_DEFAULT"
+    , "COMMENT"
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."COLUMNS";
+                """;
                 break;
             case "Databases":
                 strQueryToUse = """
@@ -118,7 +151,6 @@ SELECT
 FROM
     TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));
                 """;
-                queryProperties.put("expectedExactNumberOfColumns", "1");
                 break;
             case "Schemas":
                 strQueryToUse = """
@@ -177,7 +209,36 @@ SELECT
     , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
     , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
 FROM
-    `information_schema`.`TABLES`;
+    "INFORMATION_SCHEMA"."TABLES";
+                """;
+                break;
+            case "Views":
+                strQueryToUse = """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "TABLE_OWNER"
+    , "VIEW_DEFINITION"
+    , "IS_SECURE"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "LAST_DDL"
+    , "LAST_DDL_BY"
+    , "COMMENT"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS"
+                """;
+                break;
+            case "Views_Light":
+                strQueryToUse = """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "VIEW_DEFINITION"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS"
                 """;
                 break;
             case "Warehouses":
@@ -188,7 +249,38 @@ FROM
                 LogHandlingClass.LOGGER.error(strFeedback);
                 break;
         }
-        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
+        return strQueryToUse;
+    }
+
+    /**
+     * build Snowflake Properties
+     * 
+     * @param propInstance
+     * @return Properties
+     */
+    protected static Properties getSnowflakeProperties(final Properties propInstance) {
+        final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
+        return getSnowflakeProperties(strDatabase, propInstance);
+    }
+
+
+    /**
+     * build Snowflake Properties
+     * 
+     * @param strDatabase
+     * @param propInstance
+     * @return Properties
+     */
+    private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
+        final Properties properties = new Properties();
+        properties.put("user", ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault()));
+        properties.put("db", strDatabase);
+        properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
+        properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
+        properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
+        properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
+        properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
+        return properties;
     }
 
     /**

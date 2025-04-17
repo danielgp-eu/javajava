@@ -45,11 +45,42 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
      * @param strWhich
      */
     public static  List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
-        String strQueryToUse = "";
+        final String strQueryToUse = getMySqlPreDefinedMetadataQuery(strWhich);
         final Properties queryProperties = new Properties();
+        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
+    }
+
+    /**
+     * returns standard Metadata query specific to Snowflake
+     * 
+     * @param strWhich
+     * @return
+     */
+    protected static String getMySqlPreDefinedMetadataQuery(final String strWhich) {
+        String strQueryToUse = "";
         switch(strWhich) {
             case "Columns":
-                // TODO: reflect standard fields + logic for DDL
+                strQueryToUse = """
+SELECT
+      `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `COLUMN_NAME`
+    , `ORDINAL_POSITION`
+    , `COLUMN_DEFAULT`
+    , `IS_NULLABLE`
+    , `DATA_TYPE`
+    , `CHARACTER_SET_NAME`
+    , `COLLATION_NAME`
+    , `COLUMN_TYPE`
+    , `COLUMN_KEY`
+    , `EXTRA`
+    , `COLUMN_COMMENT`
+    , `GENERATION_EXPRESSION`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`SCHEMATA`;
+                """;
                 break;
             case "Databases":
                 strQueryToUse = """
@@ -93,11 +124,39 @@ FROM
     `information_schema`.`TABLES`;
                 """;
                 break;
+            case "Views":
+                strQueryToUse = """
+SELECT
+      `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `VIEW_DEFINITION`
+    , `CHECK_OPTION`
+    , `DEFINER`
+    , `SECURITY_TYPE`
+    , `CHARACTER_SET_CLIENT`
+    , `COLLATION_CONNECTION`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`VIEWS`;
+                """;
+                break;
+            case "Views_Light":
+                strQueryToUse = """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "VIEW_DEFINITION"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS"
+                """;
+                break;
             default:
                 final String strFeedback = String.format("This %s type of predefined action is unknown...", strWhich);
                 throw new UnsupportedOperationException(strFeedback);
         }
-        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
+        return strQueryToUse;
     }
 
     /**
