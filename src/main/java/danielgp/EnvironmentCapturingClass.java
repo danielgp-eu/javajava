@@ -43,7 +43,7 @@ public final class EnvironmentCapturingClass {
         final StringBuilder strJsonString = new StringBuilder(100);
         strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor()));
         LogHandlingClass.LOGGER.debug("I just captured Hardware information...");
-        strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s}", getDetailsAboutOperatingSystem(), getDetailsAboutSoftwarePlatformJava()));
+        strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), getDetailsAboutSoftwarePlatformJava(), getDetailsAboutSoftwareUser()));
         LogHandlingClass.LOGGER.debug("I just captured Software information...");
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
         LogHandlingClass.LOGGER.debug("I just captured Application information...");
@@ -94,7 +94,7 @@ public final class EnvironmentCapturingClass {
         final CentralProcessor processor = hardware.getProcessor();
         final CentralProcessor.ProcessorIdentifier procIdentif = processor.getProcessorIdentifier();
         return Common.getMapIntoJsonString(Map.of(
-            "Feature Flags", processor.getFeatureFlags().toString(),
+            "Feature Flags", processor.getFeatureFlags().toString().replace("[", "[\"").replace(", ", "\",\"").replace("]", "\"]"),
             "Family", procIdentif.getFamily(),
             "Identifier", procIdentif.getIdentifier(),
             "Local Processors", processor.getLogicalProcessorCount(),
@@ -241,9 +241,28 @@ public final class EnvironmentCapturingClass {
      */
     private static String getDetailsAboutSoftwarePlatformJava() {
         return Common.getMapIntoJsonString(Map.of(
+            "Date", System.getProperty("java.version.date"),
+            "Release", System.getProperty("java.vendor.version"),
             "Runtime", System.getProperty("java.runtime.name"),
             "Version", System.getProperty("java.version"),
-            "Vendor", System.getProperty("java.vendor")
+            "Vendor", System.getProperty("java.vendor"),
+            "VM", System.getProperty("java.vm.name")
+        ));
+    }
+
+    /**
+     * JAVA info
+     * 
+     * @return String
+     */
+    private static String getDetailsAboutSoftwareUser() {
+        return Common.getMapIntoJsonString(Map.of(
+            "Country", System.getProperty("user.country"),
+            "Country.Format", System.getProperty("user.country.format"),
+            "Language", System.getProperty("user.language"),
+            "Language.Format", System.getProperty("user.language.format"),
+            "User.Name", System.getProperty("user.name"),
+            "Timezone", System.getProperty("user.timezone")
         ));
     }
 }
