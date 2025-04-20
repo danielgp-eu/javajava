@@ -28,7 +28,8 @@ public final class DependenciesClass {
      */
     public static String getCurrentDependencies() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final String strDependencyFile = FileHandlingClass.getCurrentProjectRootFolder() + File.separator + "pom.xml";
+        FileHandlingClass.loadProjectFolder();
+        final String strDependencyFile = FileHandlingClass.strProjectFolder + File.separator + "pom.xml";
         String strFeedback = String.format("Will get dependency details from %s file", strDependencyFile);
         LogHandlingClass.LOGGER.debug(strFeedback);
         final File fileDependency = new File(strDependencyFile);

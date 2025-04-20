@@ -19,6 +19,10 @@ import java.util.Map.Entry;
  * File operation class
  */
 public final class FileHandlingClass {
+    /**
+     * Project Folder
+     */
+    public static String strProjectFolder; // NOPMD by Daniel Popiniuc on 20.04.2025, 22:19
 
     /**
      * Checking if a file exists and is readable
@@ -43,23 +47,6 @@ public final class FileHandlingClass {
             propertiesReturn.put("DOES_NOT_EXIST", String.format("Given file %s does NOT exist!", strFileName));
         }
         return propertiesReturn;
-    }
-
-    /**
-     * Getting current project folder
-     * 
-     * @return
-     */
-    public static String getCurrentProjectRootFolder() {
-        String strFolder = "";
-        final File directory = new File("");// parameter is empty
-        try {
-            strFolder = directory.getCanonicalPath();
-        } catch (IOException ex) {
-            final String strFeedback = String.format("Error encountered... %s", ex.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
-        }
-        return strFolder;
     }
 
     /**
@@ -174,6 +161,23 @@ public final class FileHandlingClass {
             LogHandlingClass.LOGGER.error(strFeedback);
         }
         return arraySubFolders;
+    }
+
+    /**
+     * Getting current project folder
+     * 
+     * @return
+     */
+    public static void loadProjectFolder() {
+        if (strProjectFolder == null) {
+            final File directory = new File("");// parameter is empty
+            try {
+                strProjectFolder = directory.getCanonicalPath();
+            } catch (IOException ex) {
+                final String strFeedback = String.format("Error encountered... %s", ex.getStackTrace().toString());
+                LogHandlingClass.LOGGER.error(strFeedback);
+            }
+        }
     }
 
     /**
