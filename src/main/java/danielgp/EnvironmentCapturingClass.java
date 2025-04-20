@@ -29,9 +29,40 @@ public final class EnvironmentCapturingClass {
      */
     private final static OperatingSystem operatingSystem = new SystemInfo().getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
 
-    // Private constructor to prevent instantiation
-    private EnvironmentCapturingClass() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    /**
+     * Display details
+     * 
+     * @param crtDisplay
+     * @return String
+     */
+    private static String digestDisplayDetails(final Display crtDisplay) {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
+        final String[] arrayDetails = crtDisplay.toString().replaceAll("[^a-zA-Z0-9\\s]", "").split("\n");
+        for (final String crtLine : arrayDetails) {
+            final String strSlimLine = crtLine.trim();
+            if (crtLine.endsWith(" in") && crtLine.contains(" cm ")) {
+                final int intCmPos = strSlimLine.indexOf(" cm ");
+                arrayAttributes.put("Physical Dimensions [in]", strSlimLine.substring(0, intCmPos));
+                final int intInPos = strSlimLine.indexOf(" in");
+                arrayAttributes.put("Physical Dimensions [cm]", strSlimLine.substring(intCmPos + 4, intInPos));
+            }
+            if (strSlimLine.startsWith("Monitor Name")) {
+                arrayAttributes.put("Monitor Name", strSlimLine.replace("Monitor Name ", ""));
+            }
+            if (crtLine.trim().startsWith("Preferred Timing Clock")) {
+                final int intClockLen = "Preferred Timing Clock".length();
+                final int intPixelPos = strSlimLine.indexOf("Active Pixels");
+                arrayAttributes.put("Preferred Timing Clock", strSlimLine.substring(intClockLen, intPixelPos).trim());
+                arrayAttributes.put("Active Pixels", strSlimLine.substring(intPixelPos, strSlimLine.length()).replace("Active Pixels ", "").trim());
+            }
+            if (crtLine.trim().startsWith("Range Limits")) {
+                arrayAttributes.put("Range Limits", strSlimLine.replace("Range Limits ", ""));
+            }
+            if (crtLine.trim().startsWith("Serial Number")) {
+                arrayAttributes.put("Serial Number", strSlimLine.replace("Serial Number ", ""));
+            }
+        }
+        return Common.getMapIntoJsonString(arrayAttributes);
     }
 
     /**
@@ -130,42 +161,6 @@ public final class EnvironmentCapturingClass {
     }
 
     /**
-     * Display details
-     * 
-     * @param crtDisplay
-     * @return String
-     */
-    private static String digestDisplayDetails(final Display crtDisplay) {
-        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final String[] arrayDetails = crtDisplay.toString().replaceAll("[^a-zA-Z0-9\\s]", "").split("\n");
-        for (final String crtLine : arrayDetails) {
-            final String strSlimLine = crtLine.trim();
-            if (crtLine.endsWith(" in") && crtLine.contains(" cm ")) {
-                final int intCmPos = strSlimLine.indexOf(" cm ");
-                arrayAttributes.put("Physical Dimensions [in]", strSlimLine.substring(0, intCmPos));
-                final int intInPos = strSlimLine.indexOf(" in");
-                arrayAttributes.put("Physical Dimensions [cm]", strSlimLine.substring(intCmPos + 4, intInPos));
-            }
-            if (strSlimLine.startsWith("Monitor Name")) {
-                arrayAttributes.put("Monitor Name", strSlimLine.replace("Monitor Name ", ""));
-            }
-            if (crtLine.trim().startsWith("Preferred Timing Clock")) {
-                final int intClockLen = "Preferred Timing Clock".length();
-                final int intPixelPos = strSlimLine.indexOf("Active Pixels");
-                arrayAttributes.put("Preferred Timing Clock", strSlimLine.substring(intClockLen, intPixelPos).trim());
-                arrayAttributes.put("Active Pixels", strSlimLine.substring(intPixelPos, strSlimLine.length()).replace("Active Pixels ", "").trim());
-            }
-            if (crtLine.trim().startsWith("Range Limits")) {
-                arrayAttributes.put("Range Limits", strSlimLine.replace("Range Limits ", ""));
-            }
-            if (crtLine.trim().startsWith("Serial Number")) {
-                arrayAttributes.put("Serial Number", strSlimLine.replace("Serial Number ", ""));
-            }
-        }
-        return Common.getMapIntoJsonString(arrayAttributes);
-    }
-
-    /**
      * GPU info
      * 
      * @return String
@@ -182,6 +177,25 @@ public final class EnvironmentCapturingClass {
             intCounter++;
         }
         return String.format("[%s]", strJsonString.toString());
+    }
+
+    /**
+     * Operating System details
+     * 
+     * @return String
+     */
+    private static String getDetailsAboutOperatingSystem() {
+        final OperatingSystem.OSVersionInfo versionInfo = operatingSystem.getVersionInfo();
+        return Common.getMapIntoJsonString(Map.of(
+            "Architecture", System.getProperty("os.arch"),
+            "Build", versionInfo.getBuildNumber(),
+            "Code", versionInfo.getCodeName(),
+            "Family", operatingSystem.getFamily(),
+            "Manufacturer", operatingSystem.getManufacturer(),
+            "Name", System.getProperty("os.name"),
+            "Platform", SystemInfo.getCurrentPlatform().toString(),
+            "Version", versionInfo.getVersion()
+        ));
     }
 
     /**
@@ -216,25 +230,6 @@ public final class EnvironmentCapturingClass {
     }
 
     /**
-     * Operating System details
-     * 
-     * @return String
-     */
-    private static String getDetailsAboutOperatingSystem() {
-        final OperatingSystem.OSVersionInfo versionInfo = operatingSystem.getVersionInfo();
-        return Common.getMapIntoJsonString(Map.of(
-            "Architecture", System.getProperty("os.arch"),
-            "Build", versionInfo.getBuildNumber(),
-            "Code", versionInfo.getCodeName(),
-            "Family", operatingSystem.getFamily(),
-            "Manufacturer", operatingSystem.getManufacturer(),
-            "Name", System.getProperty("os.name"),
-            "Platform", SystemInfo.getCurrentPlatform().toString(),
-            "Version", versionInfo.getVersion()
-        ));
-    }
-
-    /**
      * JAVA info
      * 
      * @return String
@@ -264,5 +259,10 @@ public final class EnvironmentCapturingClass {
             "User.Name", System.getProperty("user.name"),
             "Timezone", System.getProperty("user.timezone")
         ));
+    }
+
+    // Private constructor to prevent instantiation
+    private EnvironmentCapturingClass() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }
