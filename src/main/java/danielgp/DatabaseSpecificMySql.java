@@ -182,6 +182,22 @@ FROM
     }
 
     /**
+     * Execute SQLite pre-defined actions
+     * 
+     * @param String strWhich
+     * @param Properties givenProperties
+     */
+    public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
+        try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
+            Statement objStatement = getSqlStatement("MySQL", objConnection);) {
+            getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
+        } catch(SQLException e){
+            final String strFeedback = String.format("Error", e.getStackTrace().toString());
+            LogHandlingClass.LOGGER.error(strFeedback);
+        }
+    }
+
+    /**
      * constructor
      */
     protected DatabaseSpecificMySql() {
