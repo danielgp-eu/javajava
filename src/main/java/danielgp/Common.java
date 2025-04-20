@@ -38,7 +38,11 @@ public final class Common {
             if (!strJsonSubString.isEmpty()) {
                 strJsonSubString.append(',');
             }
-            strJsonSubString.append(String.format("\"%s\":\"%s\"", strKey, objValue.toString()));
+            String strRaw = "\"%s\":\"%s\"";
+            if (objValue.toString().startsWith("[") && objValue.toString().endsWith("]")) {
+                strRaw = "\"%s\":%s";
+            }
+            strJsonSubString.append(String.format(strRaw, strKey, objValue.toString()));
         });
         return String.format("{%s}", strJsonSubString);
     }
