@@ -46,7 +46,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return JsonNode
      */
     private static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
-        String strFeedback = String.format("Will attempt to search for node named \"%s\"...", givenJsonNode);
+        String strFeedback = String.format("Will attempt to search for node named \"%s\"...", strJsonNodeName);
         LogHandlingClass.LOGGER.debug(strFeedback);
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
