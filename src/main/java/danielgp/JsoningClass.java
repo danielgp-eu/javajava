@@ -1,4 +1,7 @@
 package danielgp;
+/* Jackson classes for fast JSON handling */
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 /* I/O classes */
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
-/* Jackson classes for fast JSON handling */
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * JSON handling

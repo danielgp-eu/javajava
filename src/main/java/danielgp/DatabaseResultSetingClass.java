@@ -1,10 +1,12 @@
 package danielgp;
-
+/* SQL classes */
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+/* Time classes */
 import java.time.LocalDateTime;
+/* Utility classes */
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
