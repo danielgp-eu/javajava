@@ -128,7 +128,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
      * @param resultSet
      * @return List of Properties
      */
-    protected static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
+    public static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
         final List<Properties> listResultSet = new ArrayList<>();
         String strFeedback;
         try {

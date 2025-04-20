@@ -156,7 +156,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * Constructor
      */
-    private JsoningClass() {
+    protected JsoningClass() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 }
