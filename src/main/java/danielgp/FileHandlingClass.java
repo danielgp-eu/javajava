@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 /* Java util classes */
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Map.Entry;
 
@@ -169,7 +170,7 @@ public final class FileHandlingClass {
      * @return
      */
     public static void loadProjectFolder() {
-        if (strProjectFolder == null) {
+        if (Objects.isNull(strProjectFolder)) {
             final File directory = new File("");// parameter is empty
             try {
                 strProjectFolder = directory.getCanonicalPath();
