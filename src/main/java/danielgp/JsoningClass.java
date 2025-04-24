@@ -19,6 +19,26 @@ import java.util.Map.Entry;
 public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
 
     /**
+     * Load all JSON nodes from String
+     * 
+     * @param strJson
+     * @return JsonNode
+     */
+    public static JsonNode getJsonFileNodes(final String strJson) {
+        JsonNode jsonRootNode = null;
+        final ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            jsonRootNode = objectMapper.readTree(strJson);
+            final String strFeedback = String.format("JSON string %s loaded...", strJson);
+            LogHandlingClass.LOGGER.debug(strFeedback);
+        } catch (IOException ex) {
+            final String strFeedback = String.format("Error encountered when attempting to load \"%s\" JSON file... %s", strJson, ex.getStackTrace().toString());
+            LogHandlingClass.LOGGER.error(strFeedback);
+        }
+        return jsonRootNode;
+    }
+
+    /**
      * Load all JSON nodes from main configuration file
      * 
      * @param jsonFile
@@ -45,7 +65,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName
      * @return JsonNode
      */
-    private static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
+    protected static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
         String strFeedback = String.format("Will attempt to search for node named \"%s\"...", strJsonNodeName);
         LogHandlingClass.LOGGER.debug(strFeedback);
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
