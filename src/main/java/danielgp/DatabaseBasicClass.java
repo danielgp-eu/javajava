@@ -5,6 +5,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 /* Time classes */
 import java.time.LocalDateTime;
+/* Utility classes */
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Properties;
 
 /**
  * Database methods
@@ -43,6 +47,36 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
             final String strFeedback = String.format("Closing %s statement failed: %s", strDatabaseType, e.getLocalizedMessage()); 
             LogHandlingClass.LOGGER.error(strFeedback);
         }
+    }
+
+    /**
+     * Fill values into a dynamic query 
+     * @param queryProperties
+     * @param strRawQuery
+     * @param arrayCleanable
+     * @param arrayNullable
+     * @return
+     */
+    public static String distributePropertiesToQuery(final Properties queryProperties, final String strRawQuery, final String[] arrayCleanable, final String... arrayNullable) {
+        String strQueryToReturn = strRawQuery;
+        final Iterator<Object> keyIterator = queryProperties.keySet().iterator();
+        while(keyIterator.hasNext()){
+            final String strKey = (String) keyIterator.next();
+            final String strOriginalValue = queryProperties.getProperty(strKey);
+            String strValueToUse = String.format("\"%s\"", strOriginalValue);
+            if (strOriginalValue.matches("NULL")) {
+                strValueToUse = strOriginalValue;
+            } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
+                strValueToUse = String.format("\"%s\"", strOriginalValue.replaceAll("(\"|')", ""));
+                if (strOriginalValue.isEmpty()) {
+                    strValueToUse = "NULL";
+                }
+            } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
+                strValueToUse = "NULL";
+            }
+            strQueryToReturn = strQueryToReturn.replace(String.format("{%s}", strKey), strValueToUse);
+        }
+        return strQueryToReturn;
     }
 
     /**
