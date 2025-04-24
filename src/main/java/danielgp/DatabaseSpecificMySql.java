@@ -1,4 +1,6 @@
 package danielgp;
+/* Jackson classes for fast JSON handling */
+import com.fasterxml.jackson.databind.JsonNode;
 /* SQL classes */
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -14,6 +16,28 @@ import java.util.Properties;
 public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
 
     /**
+     * Getting Connection Properties For MySQL from Environment variable
+     * @return
+     */
+    protected static Properties getConnectionPropertiesForMySQL() {
+        final Properties properties = new Properties();
+        final String strEnv = "MYSQL";
+        final String strEnvMySql = System.getenv(strEnv);
+        if (strEnvMySql == null) {
+            final String strFeedback = String.format("Environment variable %s not found!", strEnv);
+            LogHandlingClass.LOGGER.error(strFeedback);
+        } else {
+            final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(strEnvMySql);
+            properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
+            properties.put("Port", JsoningClass.getJsonValue(ndMySQL, "/Port"));
+            properties.put("Username", JsoningClass.getJsonValue(ndMySQL, "/Username"));
+            properties.put("Password", JsoningClass.getJsonValue(ndMySQL, "/Password"));
+            properties.put("ServerTimezone", JsoningClass.getJsonValue(ndMySQL, "/ServerTimezone"));
+        }
+        return properties;
+    }
+
+    /**
      * Initiate a MySQL connection with Instance properties and DB specified
      * 
      * @param propInstance
@@ -21,19 +45,25 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
      */
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
         Connection connection = null;
-        final String strServer = propInstance.get("ServerName").toString();
-        final String strPort = propInstance.get("Port").toString();
-        final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
-        final Properties propConnection = getMySqlProperties(propInstance);
-        String strFeedback = String.format("Will attempt to create a MySQL connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection.toString());
-        LogHandlingClass.LOGGER.debug(strFeedback);
-        try {
-            connection = DriverManager.getConnection(strConnection, propConnection);
-            strFeedback = String.format("MySQL connection to database %s was successfully established!", strDatabase);
-            LogHandlingClass.LOGGER.debug(strFeedback);
-        } catch(SQLException e) {
-            strFeedback = String.format("Connection failed: ", e.getLocalizedMessage());
+        String strFeedback;
+        if (propInstance.isEmpty()) {
+            strFeedback = "MySQL connection properties seems to be empty, hence connection cannot be initiated";
             LogHandlingClass.LOGGER.error(strFeedback);
+        } else {
+            final String strServer = propInstance.get("ServerName").toString();
+            final String strPort = propInstance.get("Port").toString();
+            try {
+                final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
+                final Properties propConnection = getMySqlProperties(propInstance);
+                strFeedback = String.format("Will attempt to create a MySQL connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection.toString());
+                LogHandlingClass.LOGGER.debug(strFeedback);
+                connection = DriverManager.getConnection(strConnection, propConnection);
+                strFeedback = String.format("MySQL connection to server %s, port %s and database %s was successfully established!", strServer, strPort, strDatabase);
+                LogHandlingClass.LOGGER.debug(strFeedback);
+            } catch(SQLException e) {
+                strFeedback = String.format("MySQL connection to server %s, port %s and database %s failed: ", strServer, strPort, strDatabase, e.getLocalizedMessage());
+                LogHandlingClass.LOGGER.error(strFeedback);
+            }
         }
         return connection;
     }
@@ -160,9 +190,8 @@ FROM
     }
 
     /**
-     * build MySQL Properties
+     * get MySQL Properties
      * 
-     * @param strDatabase
      * @param propInstance
      * @return Properties
      */
@@ -191,7 +220,7 @@ FROM
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
             Statement objStatement = getSqlStatement("MySQL", objConnection);) {
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
-        } catch(SQLException e){
+        } catch(SQLException e) {
             final String strFeedback = String.format("Error", e.getStackTrace().toString());
             LogHandlingClass.LOGGER.error(strFeedback);
         }
