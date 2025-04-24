@@ -23,7 +23,7 @@ public final class FileHandlingClass {
     /**
      * Project Folder
      */
-    public static String strProjectFolder; // NOPMD by Daniel Popiniuc on 20.04.2025, 22:19
+    public static String strProjectFolder; // NOPMD by Daniel Popiniuc on 20.04.2025, 23:29
 
     /**
      * Checking if a file exists and is readable
@@ -170,8 +170,8 @@ public final class FileHandlingClass {
      * @return
      */
     public static void loadProjectFolder() {
-        if (Objects.isNull(strProjectFolder)) {
-            final File directory = new File("");// parameter is empty
+        if (Objects.isNull(strProjectFolder)) { 
+            final File directory = new File(""); // parameter is empty
             try {
                 strProjectFolder = directory.getCanonicalPath();
             } catch (IOException ex) {
