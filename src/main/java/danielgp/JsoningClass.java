@@ -12,11 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * JSON handling
  */
 public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(JsoningClass.class);
 
     /**
      * Load all JSON nodes from String
@@ -30,10 +37,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         try {
             jsonRootNode = objectMapper.readTree(strJson);
             final String strFeedback = String.format("JSON string %s loaded...", strJson);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (IOException ex) {
             final String strFeedback = String.format("Error encountered when attempting to load \"%s\" JSON file... %s", strJson, ex.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return jsonRootNode;
     }
@@ -50,10 +57,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         try {
             jsonRootNode = objectMapper.readTree(jsonFile);
             final String strFeedback = String.format("JSON file %s loaded...", jsonFile.toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (IOException ex) {
             final String strFeedback = String.format("Error encountered when attempting to load \"%s\" JSON file... %s", jsonFile.toString(), ex.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return jsonRootNode;
     }
@@ -67,14 +74,14 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      */
     protected static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
         String strFeedback = String.format("Will attempt to search for node named \"%s\"...", strJsonNodeName);
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
             strFeedback = String.format("Relevant node \"%s\" was NOT found within \"%s\"...", strJsonNodeName, givenJsonNode.toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         } else {
             strFeedback = String.format("Relevant node \"%s\" was found...", givenJsonNode);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         }
         return jsonNode;
     }
@@ -95,7 +102,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
                 properties.put(field.getKey(), field.getValue());
             });
             final String strFeedback = String.format("For node \"%s\" we found following List of Properties: %s", strJsonNodeName, properties.toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         }
         return properties;
     }
@@ -118,7 +125,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
                 listProperties.add(properties);
             });
             final String strFeedback = String.format("For node \"%s\" we found following List of Properties: %s", strJsonNodeName, listProperties.toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         }
         return listProperties;
     }
@@ -138,7 +145,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
                 listStrings.add(jsonSingleNode.asText());
             });
             final String strFeedback = String.format("For node \"%s\" we found following List of Strings: %s", strJsonNodeName, listStrings.toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         }
         return listStrings;
     }
@@ -158,7 +165,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
             properties.put(field.getKey(), field.getValue());
         });
         final String strFeedback = String.format("For node \"%s\" following Properties were found %s", strJsonNodeName, properties.toString());
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         return properties;
     }
 

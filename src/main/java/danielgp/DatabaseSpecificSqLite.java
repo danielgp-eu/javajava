@@ -23,12 +23,12 @@ public class DatabaseSpecificSqLite extends DatabaseResultSetingClass {
      */
     public static Connection getSqLiteConnection(final String strSqLiteFile) {
         String strFeedback = String.format("Will attempt to create a SQLite connection to %s file", strSqLiteFile);
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         Connection connection = null;
         try {
             connection = DriverManager.getConnection("jdbc:sqlite:" + strSqLiteFile);
             strFeedback = String.format("SQLite connection to %s database was successfully established!", strSqLiteFile);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
             Function.create(connection, "REGEXP_LIKE", new Function() {
                 @Override
                 protected void xFunc() throws SQLException {
@@ -41,7 +41,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSetingClass {
             });
         } catch(SQLException e) {
             strFeedback = String.format("Connection failed: %s", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return connection;
     }

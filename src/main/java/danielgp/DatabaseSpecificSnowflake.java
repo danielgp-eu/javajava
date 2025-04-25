@@ -38,14 +38,14 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
         String strFeedback = String.format("Will attempt to create a Snowflake connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection.toString());
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         try {
             connection = DriverManager.getConnection(strConnection, propConnection);
             strFeedback = String.format("Snowflake connection to database %s was successfully established!", strDatabase);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch(SQLException e) {
             strFeedback = String.format("Connection failed: ", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return connection;
     }
@@ -245,8 +245,11 @@ FROM
                 strQueryToUse = "SHOW WAREHOUSES;";
                 break;
             default:
-                final String strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strWhich);
-                LogHandlingClass.LOGGER.error(strFeedback);
+                final String strFeedback = String.format("Parameter %s is not defined in %s...", strWhich, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
+                LOGGER.error(strFeedback);
                 break;
         }
         return strQueryToUse;
@@ -289,14 +292,14 @@ FROM
     private static void loadSnowflakeDriver() {
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
         String strFeedback = String.format("Will attempt to load Snowflake driver %s", strDriverName);
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         try {
             Class.forName(strDriverName);
             strFeedback = String.format("Snowflake driver %s has been successfully loaded", strDriverName);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (ClassNotFoundException ex) {
             strFeedback = String.format("Snowflake driver %s not found... :-(", strDriverName);
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
     }
 

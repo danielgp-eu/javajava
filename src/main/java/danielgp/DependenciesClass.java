@@ -9,6 +9,9 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /* for XML exception */
 import org.xml.sax.SAXException;
 /* W3C DOM classes */
@@ -20,6 +23,10 @@ import org.w3c.dom.NodeList;
  * Capturing details of dependencies from current Maven POM file
  */
 public final class DependenciesClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(DependenciesClass.class);
 
     /**
      * Gets a complete list of dependencies as JSON string
@@ -31,7 +38,7 @@ public final class DependenciesClass {
         FileHandlingClass.loadProjectFolder();
         final String strDependencyFile = FileHandlingClass.strProjectFolder + File.separator + "pom.xml";
         String strFeedback = String.format("Will get dependency details from %s file", strDependencyFile);
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         final File fileDependency = new File(strDependencyFile);
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try { 
@@ -51,10 +58,10 @@ public final class DependenciesClass {
                 }
             }
             strFeedback = String.format("Dependency details from %s file were sucessfully captured!", strDependencyFile);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (IOException | ParserConfigurationException | SAXException ex) {
             strFeedback = String.format("Error encountered... %s", ex.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return Common.getMapIntoJsonString(arrayAttributes);
     }

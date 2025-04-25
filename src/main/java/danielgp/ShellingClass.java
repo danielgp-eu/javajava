@@ -5,11 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 /* Time classes */
 import java.time.LocalDateTime;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Shell execution methods
  */
 public final class ShellingClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(ShellingClass.class);
     /**
      * holding the Use account currently logged on
      */
@@ -64,15 +71,15 @@ public final class ShellingClass {
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
         try {
             String strFeedback = String.format("I intend to execute following command %s w/o output captured!", builder.command().toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
             final Process process = builder.start();
             final int exitCode = process.waitFor();
             process.destroy();
             strFeedback = String.format("Process execution finished with exit code %d", exitCode);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
             final String strFeedback = String.format("Process Execution failed: %s", e.getStackTrace().toString()); 
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         TimingClass.logDuration(startTimeStamp, "Shell execution w/o output captured completed", "debug");
     }
@@ -91,17 +98,17 @@ public final class ShellingClass {
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
         try {
             String strFeedback = String.format("I intend to execute following command %s WITH output captured!", builder.command().toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
             builder.redirectErrorStream(true);
             final Process process = builder.start();
             strReturn = captureProcessOutput(process, strOutLineSep);
             final int exitCode = process.waitFor();
             process.destroy();
             strFeedback = String.format("Process execution finished with exit code %d", exitCode);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
             final String strFeedback = String.format("Process Execution failed: %s", e.getStackTrace().toString()); 
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         TimingClass.logDuration(startTimeStamp, "Shell execution WITH output captured completed", "debug");
         return strReturn;

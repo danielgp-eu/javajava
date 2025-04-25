@@ -12,11 +12,18 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Example class
  */
 public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(Example.class);
 
     /**
      * defining Arguments
@@ -38,9 +45,9 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
         String strFeedback = "NEW App Execution" + new String(new char[80]).replace("\0", "=");
-        LogHandlingClass.LOGGER.debug(strFeedback);
-        LogHandlingClass.LOGGER.error(strFeedback);
-        LogHandlingClass.LOGGER.info(strFeedback);
+        LOGGER.debug(strFeedback);
+        LOGGER.error(strFeedback);
+        LOGGER.info(strFeedback);
         final Options options = definedArguments();
         final CommandLineParser parser = new DefaultParser();
         try {
@@ -48,7 +55,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             performAction(cmd);
         } catch (ParseException e) {
             strFeedback = String.format("Parameter parsing error: %s", e.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("Following mandatory arguments are: ", options);
             System.exit(1);
@@ -70,7 +77,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
         switch(prmActionValue) {
             case "LogEnvironmentDetails":
                 strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
-                LogHandlingClass.LOGGER.info(strFeedback);
+                LOGGER.info(strFeedback);
                 break;
             case "getMySQL_Databases":
                 DatabaseSpecificMySql.performMySqlPreDefinedAction("Databases", properties);
@@ -81,14 +88,17 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             case "getSubFoldersFromFolder":
                 final List<String> listSubFolders = FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
                 listSubFolders.forEach(strSubFolder -> {
-                    LogHandlingClass.LOGGER.info(strSubFolder);
+                    LOGGER.info(strSubFolder);
                 });
                 break;
             case "TEST":
                 break;
             default:
-                strFeedback = String.format("Unknown %s argument received, do not know what to do with it, therefore will quit, bye!", prmActionValue);
-                LogHandlingClass.LOGGER.info(strFeedback);
+                strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", prmActionValue, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
+                LOGGER.info(strFeedback);
                 break;
         }
     }

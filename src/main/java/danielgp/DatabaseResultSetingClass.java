@@ -32,32 +32,36 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
         while(keyIterator.hasNext()){
             final String key = (String) keyIterator.next();
             strFeedback = String.format("Evaluating ResultSet for %s...", key);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
             switch(key) {
                 case "expectedExactNumberOfColumns":
                     final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
                     if (intColumnsIs != intColumnsShould) {
                         strFeedback = String.format("For the \"%s\" query the Resultset was expected to have exact %s column(s) but a %s were found...", strPurpose, intColumnsShould, intColumnsIs);
-                        LogHandlingClass.LOGGER.error(strFeedback);
+                        LOGGER.error(strFeedback);
                     }
                     break;
                 case "expectedExactNumberOfRows":
                     final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
                     if (intResultSetRows != intExpectedRows) {
                         strFeedback = String.format("For the \"%s\" query the Resultset was expected to have exact %s row(s) but a %s was/were found...", strPurpose, intExpectedRows, intResultSetRows);
-                        LogHandlingClass.LOGGER.error(strFeedback);
+                        LOGGER.error(strFeedback);
                     }
                     break;
                 case "exposeNumberOfColumns":
                     strFeedback = String.format("Number of columns retrieved is %d", intColumnsIs);
-                    LogHandlingClass.LOGGER.info(strFeedback);
+                    LOGGER.info(strFeedback);
                     break;
                 case "exposeNumberOfRows":
                     strFeedback = String.format("Number of rows retrieved is %d", intResultSetRows);
-                    LogHandlingClass.LOGGER.info(strFeedback);
+                    LOGGER.info(strFeedback);
                     break;
                 default:
-                    strFeedback = String.format("Feature %s is NOT known...", key);
+                    strFeedback = String.format("Feature %s is NOT known in %s...", key, StackWalker.getInstance()
+                            .walk(frames -> frames.findFirst()
+                            .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                            .orElse("Unknown")));
+                    LOGGER.error(strFeedback);
                     throw new UnsupportedOperationException(strFeedback);
             }
         }
@@ -76,15 +80,15 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
             String strFeedback = String.format("Will execute %s query which is defined as: %s", strQueryPurpose, strQueryToUse);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
                 strFeedback = String.format("Executing %s query was successful!", strQueryPurpose);
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
                 digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
                 strFeedback = String.format("Statement execution for %s has failed with following error: %s", strQueryPurpose, e.getLocalizedMessage());
-                LogHandlingClass.LOGGER.error(strFeedback);
+                LOGGER.error(strFeedback);
             }
             TimingClass.logDuration(startTimeStamp, String.format("Finished executing %s query", strQueryPurpose), "debug");
         }
@@ -114,10 +118,10 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 listResultSet.add(colProperties);
             }
             strFeedback = String.format("Current ResultSet structure is : %s", listResultSet.toString());
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return listResultSet;
     }
@@ -134,7 +138,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
         try {
             if (resultSet == null) {
                 strFeedback = "ResultSet is null";
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
             } else {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
                 final Integer columnCount = resultSetMetaData.getColumnCount();
@@ -150,11 +154,11 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                     listResultSet.add(currentRow);
                 }
                 strFeedback = String.format("Final list of values is %s", listResultSet.toString());
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
             strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return listResultSet;
     }
@@ -173,7 +177,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
             }
         } catch (SQLException e) {
             final String strFeedback = String.format("Unable to get list of strings from ResultSet...", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return listStrings;
     }
@@ -191,7 +195,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
             final String strFeedback = String.format("Unable to get the # of columns in the ResultSet...", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return intColumns;
     }
@@ -208,7 +212,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
             intResultSetRows = resultSet.getFetchSize() + 1;
         } catch (SQLException e) {
             final String strFeedback = String.format("Unable to get the # of columns in the ResultSet...", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return intResultSetRows;
     }
@@ -233,13 +237,16 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                     listReturn = getResultSetColumnValues(rsStandard);
                     break;
                 default:
-                    strFeedback = String.format("Provided %s is not defined, hence nothing will be actually executed...", strKind);
-                    LogHandlingClass.LOGGER.error(strFeedback);
+                    strFeedback = String.format("Provided %s is not defined in %s, hence nothing will be actually executed...", strKind, StackWalker.getInstance()
+                            .walk(frames -> frames.findFirst()
+                            .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                            .orElse("Unknown")));
+                    LOGGER.error(strFeedback);
                     break;
             }
         } catch (SQLException e) {
             strFeedback = String.format("Statement execution for %s has failed with following error: %s", strWhich, e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return listReturn;
     }

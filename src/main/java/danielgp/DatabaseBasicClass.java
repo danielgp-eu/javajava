@@ -9,11 +9,18 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Properties;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Database methods
  */
 public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:11
+    /**
+     * pointer for all logs
+     */
+    protected static final Logger LOGGER = LogManager.getLogger(DatabaseBasicClass.class);
 
     /**
      * Connection closing
@@ -25,10 +32,10 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
         try {
             givenConnection.close();
             final String strFeedback = String.format("%s connection sucessfully closed!", strDatabaseType);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             final String strFeedback = String.format("Closing %s connection failed with following error: %s", strDatabaseType, e.getLocalizedMessage()); 
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
     }
 
@@ -42,10 +49,10 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
         try {
             givenStatement.close();
             final String strFeedback = String.format("%s statement sucessfully closed!", strDatabaseType); 
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             final String strFeedback = String.format("Closing %s statement failed: %s", strDatabaseType, e.getLocalizedMessage()); 
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
     }
 
@@ -90,7 +97,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
             String strFeedback = String.format("Will execute %s query", strQueryPurpose);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
                     objStatement.executeLargeUpdate(strQueryToUse);
@@ -98,10 +105,10 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
                     objStatement.execute(strQueryToUse);
                 }
                 strFeedback = String.format("Executing %s query was successful!", strQueryPurpose);
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
             } catch (SQLException e) {
                 strFeedback = String.format("Executionfor %s has failed: %s...%", strQueryPurpose, e.getLocalizedMessage(), e.getStackTrace());
-                LogHandlingClass.LOGGER.error(strFeedback);
+                LOGGER.error(strFeedback);
             }
             TimingClass.logDuration(startTimeStamp, String.format("Finished executing %s query", strQueryPurpose), "debug");
         }
@@ -116,15 +123,15 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      */
     public static Statement getSqlStatement(final String strDatabaseType, final Connection connection) {
         String strFeedback = String.format("Will attempt to instantiate a %s statement", strDatabaseType);
-        LogHandlingClass.LOGGER.debug(strFeedback);
+        LOGGER.debug(strFeedback);
         Statement objStatement = null;
         try {
             objStatement = connection.createStatement();
             strFeedback = String.format("A %s statement successfully instantiated!", strDatabaseType);
-            LogHandlingClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             strFeedback = String.format("Statement creation failed: ", e.getLocalizedMessage());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
         return objStatement;
     }

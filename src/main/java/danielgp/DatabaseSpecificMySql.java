@@ -9,11 +9,18 @@ import java.sql.Statement;
 /* Utility classes */
 import java.util.List;
 import java.util.Properties;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * MySQL methods
  */
 public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(DatabaseResultSetingClass.class);
 
     /**
      * Getting Connection Properties For MySQL from Environment variable
@@ -25,7 +32,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
         final String strEnvMySql = System.getenv(strEnv);
         if (strEnvMySql == null) {
             final String strFeedback = String.format("Environment variable %s not found!", strEnv);
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         } else {
             final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(strEnvMySql);
             properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
@@ -48,7 +55,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
         String strFeedback;
         if (propInstance.isEmpty()) {
             strFeedback = "MySQL connection properties seems to be empty, hence connection cannot be initiated";
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
             final String strPort = propInstance.get("Port").toString();
@@ -56,13 +63,13 @@ public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
                 strFeedback = String.format("Will attempt to create a MySQL connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection.toString());
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
                 connection = DriverManager.getConnection(strConnection, propConnection);
                 strFeedback = String.format("MySQL connection to server %s, port %s and database %s was successfully established!", strServer, strPort, strDatabase);
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
             } catch(SQLException e) {
                 strFeedback = String.format("MySQL connection to server %s, port %s and database %s failed: ", strServer, strPort, strDatabase, e.getLocalizedMessage());
-                LogHandlingClass.LOGGER.error(strFeedback);
+                LOGGER.error(strFeedback);
             }
         }
         return connection;
@@ -183,7 +190,10 @@ FROM
                 """;
                 break;
             default:
-                final String strFeedback = String.format("This %s type of predefined action is unknown...", strWhich);
+                final String strFeedback = String.format("This %s type of predefined action is unknown in %s...", strWhich, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return strQueryToUse;
@@ -222,7 +232,7 @@ FROM
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
             final String strFeedback = String.format("Error", e.getStackTrace().toString());
-            LogHandlingClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
     }
 

@@ -3,6 +3,9 @@ package danielgp;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /* OSHI Hardware/Software classes */
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -20,6 +23,10 @@ import oshi.util.FormatUtil;
  * Capturing current environment details
  */
 public final class EnvironmentCapturingClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(EnvironmentCapturingClass.class);
     /**
      * Hardware info
      */
@@ -73,13 +80,13 @@ public final class EnvironmentCapturingClass {
     public static String getCurrentEnvironmentDetails() {
         final StringBuilder strJsonString = new StringBuilder(100);
         strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor()));
-        LogHandlingClass.LOGGER.debug("I just captured Hardware information...");
+        LOGGER.debug("I just captured Hardware information...");
         strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), getDetailsAboutSoftwarePlatformJava(), getDetailsAboutSoftwareUser()));
-        LogHandlingClass.LOGGER.debug("I just captured Software information...");
+        LOGGER.debug("I just captured Software information...");
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
-        LogHandlingClass.LOGGER.debug("I just captured Application information...");
+        LOGGER.debug("I just captured Application information...");
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
-        LogHandlingClass.LOGGER.debug("I just captured Environment information...");
+        LOGGER.debug("I just captured Environment information...");
         return String.format("{%s}", strJsonString.toString());
     }
 

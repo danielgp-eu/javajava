@@ -5,11 +5,18 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+/* LOGGing classes */
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Time methods
  */
 public final class TimingClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(TimingClass.class);
     /**
      * standard message
      */
@@ -39,8 +46,10 @@ public final class TimingClass {
                 strFinalOne = "Millisecond";
                 break;
             default:
-                final String methodName = new Throwable().getStackTrace()[0].getMethodName(); 
-                final String strFeedback = String.format(strOtherSwitch, strRule, methodName);
+                final String strFeedback = String.format("Unknown %s rule received in %s...", strRule, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
@@ -104,8 +113,10 @@ public final class TimingClass {
                 lngNumber = duration.toSecondsPart();
                 break;
             default:
-                final String methodName = new Throwable().getStackTrace()[0].getMethodName(); 
-                final String strFeedback = String.format(strOtherSwitch, strWhich, methodName);
+                final String strFeedback = String.format("Unknown %s rule received in %s...", strWhich, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return lngNumber;
@@ -145,8 +156,10 @@ public final class TimingClass {
                 }
                 break;
             default:
-                final String methodName = new Throwable().getStackTrace()[0].getMethodName(); 
-                final String strFeedback = String.format(strOtherSwitch, strHow, methodName);
+                final String strFeedback = String.format("Unknown %s rule received in %s...", strHow, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return strReturn;
@@ -163,17 +176,19 @@ public final class TimingClass {
         String strFeedback = String.format(strDuration, strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
         switch(strWhere) {
             case "debug":
-                LogHandlingClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
                 break;
             case "error":
-                LogHandlingClass.LOGGER.error(strFeedback);
+                LOGGER.error(strFeedback);
                 break;
             case "info":
-                LogHandlingClass.LOGGER.info(strFeedback);
+                LOGGER.info(strFeedback);
                 break;
             default:
-                final String methodName = new Throwable().getStackTrace()[0].getMethodName(); 
-                strFeedback = String.format(strOtherSwitch, strWhere, methodName);
+                strFeedback = String.format("Unknown %s rule received in %s...", strWhere, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse("Unknown")));
                 throw new UnsupportedOperationException(strFeedback);
         }
     }
