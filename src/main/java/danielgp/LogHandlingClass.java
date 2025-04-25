@@ -10,5 +10,5 @@ public class LogHandlingClass {
     /**
      * pointer for all logs
      */
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger(Example.class);
 }

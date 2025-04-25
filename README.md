@@ -22,6 +22,7 @@ Various Java classes to be re-used
 
 * [Clean Coding in Java](https://www.baeldung.com/java-clean-code)
 * [How to Run a Shell Command in Java](https://www.baeldung.com/run-shell-command-in-java)
+* [Internationalization and Localization in Java](https://www.baeldung.com/java-8-localization)
 * [Java Configuring Multiple Appenders](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/#5-the-log4j2xml-file-location)
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)

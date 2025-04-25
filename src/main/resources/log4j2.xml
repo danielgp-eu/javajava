@@ -65,7 +65,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="com.compliance.Sample" additivity="false" level="debug">
+        <Logger name="io.github.danielgp-eu.javajava" additivity="false" level="debug">
             <AppenderRef ref="debugLog" />
             <AppenderRef ref="errorLog" />
             <AppenderRef ref="infoLog" />
