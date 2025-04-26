@@ -68,7 +68,6 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      * @param cmd
      */
     private static void performAction(final CommandLine cmd) {
-        String strFeedback; // NOPMD by Daniel Popiniuc on 24.04.2025, 23:40
         final String prmActionValue = cmd.getOptionValue("action");
         Properties properties = null;
         if (prmActionValue.startsWith("getMySQL_")) {
@@ -76,7 +75,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
         }
         switch(prmActionValue) {
             case "LogEnvironmentDetails":
-                strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
+                final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
                 LOGGER.info(strFeedback);
                 break;
             case "getMySQL_Databases":
@@ -94,11 +93,11 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             case "TEST":
                 break;
             default:
-                strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", prmActionValue, StackWalker.getInstance()
+                final String strMsg = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", prmActionValue, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
                         .orElse(Common.strUnknown)));
-                LOGGER.info(strFeedback);
+                LOGGER.info(strMsg);
                 break;
         }
     }

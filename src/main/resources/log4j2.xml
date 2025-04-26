@@ -5,7 +5,6 @@
         <Property name="FILE_NAME_PREFIX">app-danielgp-eu-</Property>
         <Property name="FILE_PATTERN_SUFFIX">%d{yyyy-MM-dd-hh}-%i</Property>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%-6p] %C{3}.%M(%F:%L) - %m%n</Property>
-        <Property name="LOG_PATTERN_OLD">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
     </Properties>
     <Appenders>
         <!-- Console Appender -->

@@ -35,6 +35,10 @@ public final class EnvironmentCapturingClass {
      * OS info
      */
     private final static OperatingSystem operatingSystem = new SystemInfo().getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    /**
+     * standard String
+     */
+    private final static String strName = "Name";
 
     /**
      * Display details
@@ -110,7 +114,7 @@ public final class EnvironmentCapturingClass {
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
                 "Mount", fileStore.getMount().replace("\\", "\\\\"),
-                "Name", fileStore.getName(), // NOPMD by E303778 on 10.04.2025, 17:16
+                strName, fileStore.getName(),
                 "Options", fileStore.getOptions(),
                 "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
                 "Type", fileStore.getType(),
@@ -137,7 +141,7 @@ public final class EnvironmentCapturingClass {
             "Identifier", procIdentif.getIdentifier(),
             "Local Processors", processor.getLogicalProcessorCount(),
             "Model", procIdentif.getModel(),
-            "Name", procIdentif.getName(),
+            strName, procIdentif.getName(),
             "Physical", processor.getPhysicalProcessorCount()
         ));
     }
@@ -157,7 +161,7 @@ public final class EnvironmentCapturingClass {
             }
             strJsonString.append(Common.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
-                "Name", graphicCard.getName(),
+                strName, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
                 "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
                 "Driver Version", graphicCard.getVersionInfo()

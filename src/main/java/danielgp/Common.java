@@ -55,6 +55,33 @@ public final class Common {
         return String.format("{%s}", strJsonSubString);
     }
 
+    /**
+     * handle NameUnformated
+     * @param intRsParams
+     * @param strNameUnformated
+     * @param strReplacement1
+     * @param strReplacement2
+     * @return
+     */
+    public static String handleNameUnformatedMessage(final int intRsParams, final String strNameUnformated, final String strReplacement1, final String strReplacement2) {
+        String strMessage = "";
+        switch(intRsParams) {
+            case 1:
+                strMessage = String.format(strNameUnformated, strReplacement1);
+                break;
+            case 2:
+                strMessage = String.format(strNameUnformated, strReplacement1, strReplacement2);
+                break;
+            default:
+                final String strFeedback = String.format(strOtherSwitch, intRsParams, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst()
+                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                        .orElse(strUnknown)));
+                throw new UnsupportedOperationException(strFeedback);
+        }
+        return strMessage;
+    }
+
     // Private constructor to prevent instantiation
     private Common() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
