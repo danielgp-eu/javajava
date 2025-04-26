@@ -13,6 +13,10 @@ import java.util.Properties;
  * Snowflake methods
  */
 public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
+    /**
+     * standard String
+     */
+    private final static String strRoles = "Roles";
 
     /**
      * Snowflake Bootstrap
@@ -59,7 +63,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
      */
     protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final Properties queryProperties = new Properties();
-        if ("Roles".equalsIgnoreCase(strWhich)) { // NOPMD by Daniel Popiniuc on 17.04.2025, 22:21
+        if (strRoles.equalsIgnoreCase(strWhich)) {
             queryProperties.put("expectedExactNumberOfColumns", "1");
         }
         final String strQueryToUse = getSnowflakePreDefinedMetadataQuery(strWhich);
