@@ -12,7 +12,7 @@ import java.util.Properties;
 /**
  * Snowflake methods
  */
-public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
+public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
     /**
      * standard String
      */
@@ -41,14 +41,14 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSetingClass {
         Connection connection = null;
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
-        String strFeedback = String.format("Will attempt to create a Snowflake connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection.toString());
+        String strFeedback = String.format("Will attempt to create a Snowflake connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection);
         LOGGER.debug(strFeedback);
         try {
             connection = DriverManager.getConnection(strConnection, propConnection);
             strFeedback = String.format("Snowflake connection to database %s was successfully established!", strDatabase);
             LOGGER.debug(strFeedback);
         } catch(SQLException e) {
-            strFeedback = String.format("Connection failed: ", e.getLocalizedMessage());
+            strFeedback = String.format("Connection failed: %s", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return connection;
@@ -101,7 +101,7 @@ SELECT
         WHEN "DATA_TYPE" = 'NUMBER'                         THEN
             'NUMBER('
                 || TO_CHAR("NUMERIC_PRECISION")
-                || ',' 
+                || ','
                 || TO_CHAR("NUMERIC_SCALE")
                 || ')'
         WHEN "DATA_TYPE" IN ('ARRAY'
@@ -151,7 +151,7 @@ FROM
             case "Roles":
                 strQueryToUse = """
 SELECT
-    TRIM(VALUE) AS \"AssignedRoleName\"
+    TRIM(VALUE) AS "AssignedRoleName"
 FROM
     TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));
                 """;

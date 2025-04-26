@@ -5,7 +5,7 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-/* LOGGing classes */
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +25,8 @@ public final class TimingClass {
     /**
      * Convert Nanoseconds to a more digest-able string
      * 
-     * @param givenDuration
+     * @param duration
+     * @param strRule
      * @return String
      */
     public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
@@ -88,34 +89,21 @@ public final class TimingClass {
      * @return
      */
     private static long getDurationPartNumber(final Duration duration, final String strWhich) {
-        long lngNumber = 0;
-        switch(strWhich) {
-            case "Day":
-                lngNumber = duration.toDaysPart();
-                break;
-            case "Hour":
-                lngNumber = duration.toHoursPart();
-                break;
-            case "Millisecond":
-                lngNumber = duration.toMillisPart();
-                break;
-            case "Minute":
-                lngNumber = duration.toMinutesPart();
-                break;
-            case "Nanosecond":
-                lngNumber = duration.toNanosPart();
-                break;
-            case "Second":
-                lngNumber = duration.toSecondsPart();
-                break;
-            default:
+        return switch (strWhich) {
+            case "Day" -> duration.toDaysPart();
+            case "Hour" -> duration.toHoursPart();
+            case "Millisecond" -> duration.toMillisPart();
+            case "Minute" -> duration.toMinutesPart();
+            case "Nanosecond" -> duration.toNanosPart();
+            case "Second" -> duration.toSecondsPart();
+            default -> {
                 final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(Common.strUnknown)));
+                                .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                                .orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
-        }
-        return lngNumber;
+            }
+        };
     }
 
     /**
@@ -164,8 +152,9 @@ public final class TimingClass {
     /**
      * log a duration
      * 
-     * @param lngStartNano
+     * @param startTimeStamp
      * @param strPartial
+     * @param strWhere
      */
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());

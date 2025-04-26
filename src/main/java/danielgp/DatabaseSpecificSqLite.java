@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 /**
  * SQLite methods
  */
-public class DatabaseSpecificSqLite extends DatabaseResultSetingClass {
+public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
 
     /**
      * Initiates a SQLite connection

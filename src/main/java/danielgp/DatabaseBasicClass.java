@@ -7,9 +7,8 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 /* Utility classes */
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Properties;
-/* LOGGing classes */
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +30,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
         try {
             givenConnection.close();
-            final String strFeedback = String.format("%s connection sucessfully closed!", strDatabaseType);
+            final String strFeedback = String.format("%s connection successfully closed!", strDatabaseType);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             final String strFeedback = String.format("Closing %s connection failed with following error: %s", strDatabaseType, e.getLocalizedMessage()); 
@@ -48,7 +47,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
         try {
             givenStatement.close();
-            final String strFeedback = String.format("%s statement sucessfully closed!", strDatabaseType); 
+            final String strFeedback = String.format("%s statement successfully closed!", strDatabaseType);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             final String strFeedback = String.format("Closing %s statement failed: %s", strDatabaseType, e.getLocalizedMessage()); 
@@ -66,9 +65,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      */
     public static String distributePropertiesToQuery(final Properties queryProperties, final String strRawQuery, final String[] arrayCleanable, final String... arrayNullable) {
         String strQueryToReturn = strRawQuery;
-        final Iterator<Object> keyIterator = queryProperties.keySet().iterator();
-        while(keyIterator.hasNext()){
-            final String strKey = (String) keyIterator.next();
+        for (final Object obj : queryProperties.keySet()) {
+            final String strKey = (String) obj;
             final String strOriginalValue = queryProperties.getProperty(strKey);
             String strValueToUse = String.format("\"%s\"", strOriginalValue);
             if (strOriginalValue.matches("NULL")) {
@@ -107,7 +105,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
                 strFeedback = String.format("Executing %s query was successful!", strQueryPurpose);
                 LOGGER.debug(strFeedback);
             } catch (SQLException e) {
-                strFeedback = String.format("Executionfor %s has failed: %s...%", strQueryPurpose, e.getLocalizedMessage(), e.getStackTrace());
+                strFeedback = String.format("Execution for %s has failed: %s... %s", strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LOGGER.error(strFeedback);
             }
             TimingClass.logDuration(startTimeStamp, String.format("Finished executing %s query", strQueryPurpose), "debug");
@@ -130,7 +128,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
             strFeedback = String.format("A %s statement successfully instantiated!", strDatabaseType);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
-            strFeedback = String.format("Statement creation failed: ", e.getLocalizedMessage());
+            strFeedback = String.format("Statement creation failed: %s", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return objStatement;

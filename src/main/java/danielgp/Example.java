@@ -2,6 +2,7 @@ package danielgp;
 /* Time class */
 import java.time.LocalDateTime;
 /* Util classes */
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 /* Daniel-Gheorghe Popiniuc classes */
@@ -12,7 +13,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-/* LOGGing classes */
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +55,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             final CommandLine cmd = parser.parse(options, args);
             performAction(cmd);
         } catch (ParseException e) {
-            strFeedback = String.format("Parameter parsing error: %s", e.getStackTrace().toString());
+            strFeedback = String.format("Parameter parsing error: %s", Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("Following mandatory arguments are: ", options);
@@ -78,17 +79,24 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
                 LOGGER.info(strFeedback);
                 break;
+            case "getMySQL_Columns":
+                DatabaseSpecificMySql.performMySqlPreDefinedAction("Columns", properties);
+                break;
             case "getMySQL_Databases":
                 DatabaseSpecificMySql.performMySqlPreDefinedAction("Databases", properties);
                 break;
             case "getMySQL_TableAndViews":
                 DatabaseSpecificMySql.performMySqlPreDefinedAction("TablesAndViews", properties);
                 break;
+            case "getMySQL_Views":
+                DatabaseSpecificMySql.performMySqlPreDefinedAction("Views", properties);
+                break;
+            case "getMySQL_ViewsLight":
+                DatabaseSpecificMySql.performMySqlPreDefinedAction("Views_Light", properties);
+                break;
             case "getSubFoldersFromFolder":
                 final List<String> listSubFolders = FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
-                listSubFolders.forEach(strSubFolder -> {
-                    LOGGER.info(strSubFolder);
-                });
+                listSubFolders.forEach(LOGGER::info);
                 break;
             case "TEST":
                 break;

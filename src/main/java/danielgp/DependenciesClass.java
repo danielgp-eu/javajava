@@ -3,13 +3,14 @@ package danielgp;
 import java.io.File;
 import java.io.IOException;
 /* Utility classes */
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 /* XML classes */
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-/* LOGGing classes */
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 /* for XML exception */
@@ -57,10 +58,10 @@ public final class DependenciesClass {
                         , tElement.getElementsByTagName("version").item(0).getTextContent());
                 }
             }
-            strFeedback = String.format("Dependency details from %s file were sucessfully captured!", strDependencyFile);
+            strFeedback = String.format("Dependency details from %s file were successfully captured!", strDependencyFile);
             LOGGER.debug(strFeedback);
         } catch (IOException | ParserConfigurationException | SAXException ex) {
-            strFeedback = String.format("Error encountered... %s", ex.getStackTrace().toString());
+            strFeedback = String.format("Error encountered... %s", Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return Common.getMapIntoJsonString(arrayAttributes);

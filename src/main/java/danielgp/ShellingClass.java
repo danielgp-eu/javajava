@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 /* Time classes */
 import java.time.LocalDateTime;
-/* LOGGing classes */
+import java.util.Arrays;
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,7 +79,7 @@ public final class ShellingClass {
             strFeedback = String.format("Process execution finished with exit code %d", exitCode);
             LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Process Execution failed: %s", e.getStackTrace().toString()); 
+            final String strFeedback = String.format("Process Execution failed: %s", Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         TimingClass.logDuration(startTimeStamp, "Shell execution w/o output captured completed", "debug");
@@ -107,7 +108,7 @@ public final class ShellingClass {
             strFeedback = String.format("Process execution finished with exit code %d", exitCode);
             LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Process Execution failed: %s", e.getStackTrace().toString()); 
+            final String strFeedback = String.format("Process Execution failed: %s", Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         TimingClass.logDuration(startTimeStamp, "Shell execution WITH output captured completed", "debug");
@@ -128,8 +129,6 @@ public final class ShellingClass {
 
     /**
      * load current logged account name
-     * 
-     * @return
      */
     private static void loadCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");

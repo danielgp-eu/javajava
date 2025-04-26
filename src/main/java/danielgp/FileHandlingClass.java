@@ -10,12 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 /* Java util classes */
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 import java.util.Map.Entry;
-/* LOGGing classes */
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,7 +76,7 @@ public final class FileHandlingClass {
         try {
             strReturn = new String(Files.readAllBytes(Paths.get(strFileName)));
         } catch (IOException e) {
-            strFeedback = String.format("Error when attempting to get content of file \"%s\": %s", strFileName, e.getStackTrace().toString());
+            strFeedback = String.format("Error when attempting to get content of file \"%s\": %s", strFileName, Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return strReturn;
@@ -97,13 +94,13 @@ public final class FileHandlingClass {
         String strFileJson = null;
         final Properties propsMinified = checkFileExistanceAndReadability(propsFile.getProperty("Minified"));
         for(final Entry<Object, Object> eMinified : propsMinified.entrySet()) {
-            final Boolean isItOk = "OK".equals(eMinified.getKey()); 
+            final boolean isItOk = "OK".equals(eMinified.getKey());
             if (isItOk) {
                 strFileJson = eMinified.getValue().toString();
             } else {
                 final Properties propsPreety = checkFileExistanceAndReadability(propsFile.getProperty("PreetyPrint"));
                 for(final Entry<Object, Object> ePreety : propsPreety.entrySet()) {
-                    final Boolean isItOk2 = "OK".equals(ePreety.getKey()); 
+                    final boolean isItOk2 = "OK".equals(ePreety.getKey());
                     if (isItOk2) {
                         strFileJson = ePreety.getValue().toString();
                     } else {
@@ -133,14 +130,14 @@ public final class FileHandlingClass {
             for (final Path file : stream) {
                 if (file.getFileName().toString().endsWith(strExtension)) {
                     final String strFile  = file.getParent().toString()
-                            + File.separator + file.getFileName().toString();
+                            + File.separator + file.getFileName();
                     arrayFiles.add(strFile);
                     strFeedback = String.format("Found a file with %s extension: %s", strExtension, strFile);
                     LOGGER.debug(strFeedback);
                 }
             }
         } catch (IOException ex) {
-            strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder... %s", strExtension, strFolderName, ex.getStackTrace().toString());
+            strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder... %s", strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return arrayFiles;
@@ -165,7 +162,7 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            strFeedback = String.format("Error encountered when attempting to get sub-folders from %s folder... %s", strFolderName, ex.getStackTrace().toString());
+            strFeedback = String.format("Error encountered when attempting to get sub-folders from %s folder... %s", strFolderName, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return arraySubFolders;
@@ -173,8 +170,6 @@ public final class FileHandlingClass {
 
     /**
      * Getting current project folder
-     * 
-     * @return
      */
     public static void loadProjectFolder() {
         if (Objects.isNull(strProjectFolder)) { 
@@ -182,7 +177,7 @@ public final class FileHandlingClass {
             try {
                 strProjectFolder = directory.getCanonicalPath();
             } catch (IOException ex) {
-                final String strFeedback = String.format("Error encountered... %s", ex.getStackTrace().toString());
+                final String strFeedback = String.format("Error encountered... %s", Arrays.toString(ex.getStackTrace()));
                 LOGGER.error(strFeedback);
             }
         }
@@ -198,11 +193,13 @@ public final class FileHandlingClass {
         try {
             final File strSourceFile = new File(strFileName); 
             final File strDestFile = new File(strDestFolder);
-            LOGGER.info("Will attempt to move \"%s\" file to \"%s\" folder", strFileName, strDestFolder);
+            String strFeedback = String.format("Will attempt to move \"%s\" file to \"%s\" folder", strFileName, strDestFolder);
+            LOGGER.info(strFeedback);
             org.apache.commons.io.FileUtils.moveFileToDirectory(strSourceFile, strDestFile, true);
-            LOGGER.info("Success file \"%s\" has been moved to \"%s\" folder", strFileName, strDestFolder);
+            strFeedback = String.format("Success file \"%s\" has been moved to \"%s\" folder", strFileName, strDestFolder);
+            LOGGER.info(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format("Error when attempting to move \"%s\" file to \"%s\": %s", strFileName, strDestFolder, ex.getStackTrace().toString());
+            final String strFeedback = String.format("Error when attempting to move \"%s\" file to \"%s\": %s", strFileName, strDestFolder, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }
@@ -217,7 +214,7 @@ public final class FileHandlingClass {
             final Path filePath = Paths.get(strFileName);
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, e.getStackTrace().toString());
+            final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }
@@ -236,14 +233,14 @@ public final class FileHandlingClass {
                     bwr.write(strLine);
                     bwr.newLine();
                 } catch (IOException er) {
-                    final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, er.getStackTrace().toString());
+                    final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, Arrays.toString(er.getStackTrace()));
                     LOGGER.error(strFeedback);
                 }
             });
-            final String strFeedback = String.format("Writing list to to %s file(s) completed successfuly!", strFileName);
+            final String strFeedback = String.format("Writing list to to %s file(s) completed successfully!", strFileName);
             LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, ex.getStackTrace().toString());
+            final String strFeedback = String.format("Error encountered when attempting to write to %s file(s) ... %s", strFileName, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }

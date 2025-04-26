@@ -8,14 +8,13 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 /* Utility classes */
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 /**
  * Basic features for Databases 
  */
-public class DatabaseResultSetingClass extends DatabaseBasicClass {
+public class DatabaseResultSettingClass extends DatabaseBasicClass {
 
     /**
      * extends functionality for Executions
@@ -28,12 +27,11 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
         String strFeedback;
         final int intResultSetRows = getResultSetNumberOfRows(resultSet);
         final int intColumnsIs = getResultSetNumberOfColumns(resultSet);
-        final Iterator<Object> keyIterator = objProperties.keySet().iterator();
-        while(keyIterator.hasNext()){
-            final String key = (String) keyIterator.next();
+        for (final Object obj : objProperties.keySet()) {
+            final String key = (String) obj;
             strFeedback = String.format("Evaluating ResultSet for %s...", key);
             LOGGER.debug(strFeedback);
-            switch(key) {
+            switch (key) {
                 case "expectedExactNumberOfColumns":
                     final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
                     if (intColumnsIs != intColumnsShould) {
@@ -59,8 +57,8 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 default:
                     strFeedback = String.format(Common.strOtherSwitch, key, StackWalker.getInstance()
                             .walk(frames -> frames.findFirst()
-                            .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                            .orElse(Common.strUnknown)));
+                                    .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                                    .orElse(Common.strUnknown)));
                     LOGGER.error(strFeedback);
                     throw new UnsupportedOperationException(strFeedback);
             }
@@ -106,7 +104,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
         String strFeedback;
         try {
             final ResultSetMetaData metaData = resultSet.getMetaData();
-            final Integer columnCount = metaData.getColumnCount();
+            final int columnCount = metaData.getColumnCount();
             for (int columnNumber = 1; columnNumber <= columnCount; columnNumber++) {
                 final Properties colProperties = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
                 colProperties.put("Display Size", metaData.getColumnDisplaySize(columnNumber));
@@ -117,7 +115,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 colProperties.put("Nullable", metaData.isNullable(columnNumber));
                 listResultSet.add(colProperties);
             }
-            strFeedback = String.format("Current ResultSet structure is : %s", listResultSet.toString());
+            strFeedback = String.format("Current ResultSet structure is : %s", listResultSet);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());
@@ -141,7 +139,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 LOGGER.debug(strFeedback);
             } else {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-                final Integer columnCount = resultSetMetaData.getColumnCount();
+                final int columnCount = resultSetMetaData.getColumnCount();
                 while (resultSet.next()) {
                     final Properties currentRow = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
                     for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
@@ -153,7 +151,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                     }
                     listResultSet.add(currentRow);
                 }
-                strFeedback = String.format("Final list of values is %s", listResultSet.toString());
+                strFeedback = String.format("Final list of values is %s", listResultSet);
                 LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
@@ -176,7 +174,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                 listStrings.add(resultSet.getString(1));
             }
         } catch (SQLException e) {
-            final String strFeedback = String.format("Unable to get list of strings from ResultSet...", e.getLocalizedMessage());
+            final String strFeedback = String.format("Unable to get list of strings from ResultSet... %s", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listStrings;
@@ -194,7 +192,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
-            final String strFeedback = String.format("Unable to get the # of columns in the ResultSet...", e.getLocalizedMessage());
+            final String strFeedback = String.format("Unable to get the # of columns in the ResultSet... %s", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return intColumns;
@@ -211,7 +209,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
         try {
             intResultSetRows = resultSet.getFetchSize() + 1;
         } catch (SQLException e) {
-            final String strFeedback = String.format("Unable to get the # of columns in the ResultSet...", e.getLocalizedMessage());
+            final String strFeedback = String.format("Unable to get the # of columns in the ResultSet... %s", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return intResultSetRows;
@@ -228,7 +226,7 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
     protected static List<Properties> getResultSetStandardized(final Statement objStatement, final String strWhich, final String strQueryToUse, final Properties queryProperties, final String strKind) {
         String strFeedback;
         List<Properties> listReturn = null;
-        try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties);) {
+        try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties)) {
             switch(strKind) {
                 case "Structure":
                     listReturn = getResultSetColumnStructure(rsStandard);

@@ -3,7 +3,7 @@ package danielgp;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
-/* LOGGing classes */
+/* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 /* OSHI Hardware/Software classes */
@@ -64,7 +64,7 @@ public final class EnvironmentCapturingClass {
                 final int intClockLen = "Preferred Timing Clock".length();
                 final int intPixelPos = strSlimLine.indexOf("Active Pixels");
                 arrayAttributes.put("Preferred Timing Clock", strSlimLine.substring(intClockLen, intPixelPos).trim());
-                arrayAttributes.put("Active Pixels", strSlimLine.substring(intPixelPos, strSlimLine.length()).replace("Active Pixels ", "").trim());
+                arrayAttributes.put("Active Pixels", strSlimLine.substring(intPixelPos).replace("Active Pixels ", "").trim());
             }
             if (crtLine.trim().startsWith("Range Limits")) {
                 arrayAttributes.put("Range Limits", strSlimLine.replace("Range Limits ", ""));
@@ -91,7 +91,7 @@ public final class EnvironmentCapturingClass {
         LOGGER.debug("I just captured Application information...");
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
         LOGGER.debug("I just captured Environment information...");
-        return String.format("{%s}", strJsonString.toString());
+        return String.format("{%s}", strJsonString);
     }
 
     /**
@@ -168,7 +168,7 @@ public final class EnvironmentCapturingClass {
             )));
             intCounter++;
         }
-        return String.format("[%s]", strJsonString.toString()); 
+        return String.format("[%s]", strJsonString);
     }
 
     /**
@@ -187,7 +187,7 @@ public final class EnvironmentCapturingClass {
             strJsonString.append(digestDisplayDetails(crtDisplay));
             intCounter++;
         }
-        return String.format("[%s]", strJsonString.toString());
+        return String.format("[%s]", strJsonString);
     }
 
     /**

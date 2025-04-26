@@ -42,7 +42,7 @@ public final class Common {
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
         final StringBuffer strJsonSubString = new StringBuffer();
-        arrayAttrib.forEach((strKey, objValue)->{
+        arrayAttrib.forEach((strKey, objValue) -> {
             if (!strJsonSubString.isEmpty()) {
                 strJsonSubString.append(',');
             }
@@ -50,36 +50,31 @@ public final class Common {
             if (objValue.toString().startsWith("[") && objValue.toString().endsWith("]")) {
                 strRaw = "\"%s\":%s";
             }
-            strJsonSubString.append(String.format(strRaw, strKey, objValue.toString()));
+            strJsonSubString.append(String.format(strRaw, strKey, objValue));
         });
         return String.format("{%s}", strJsonSubString);
     }
 
     /**
-     * handle NameUnformated
+     * handle NameUnformatted
      * @param intRsParams
-     * @param strNameUnformated
+     * @param strUnformatted
      * @param strReplacement1
      * @param strReplacement2
      * @return
      */
-    public static String handleNameUnformatedMessage(final int intRsParams, final String strNameUnformated, final String strReplacement1, final String strReplacement2) {
-        String strMessage = "";
-        switch(intRsParams) {
-            case 1:
-                strMessage = String.format(strNameUnformated, strReplacement1);
-                break;
-            case 2:
-                strMessage = String.format(strNameUnformated, strReplacement1, strReplacement2);
-                break;
-            default:
+    public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final String strReplacement1, final String strReplacement2) {
+        return switch (intRsParams) {
+            case 1 -> String.format(strUnformatted, strReplacement1);
+            case 2 -> String.format(strUnformatted, strReplacement1, strReplacement2);
+            default -> {
                 final String strFeedback = String.format(strOtherSwitch, intRsParams, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(strUnknown)));
+                                .map(frame -> frame.getClassName() + "." + frame.getMethodName())
+                                .orElse(strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
-        }
-        return strMessage;
+            }
+        };
     }
 
     // Private constructor to prevent instantiation
