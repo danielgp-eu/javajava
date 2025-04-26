@@ -30,6 +30,11 @@ Various Java classes to be re-used
 * [Java SE - Naming Conventions](https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html)
 
 
+### Java Internationalization
+
+* [Internationalization and Localization in Java](https://www.baeldung.com/java-8-localization)
+
+
 ### Java coding
 
 * [Clean Coding in Java](https://www.baeldung.com/java-clean-code)

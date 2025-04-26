@@ -247,6 +247,6 @@ public final class FileHandlingClass {
 
     // Private constructor to prevent instantiation
     private FileHandlingClass() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
     }
 }

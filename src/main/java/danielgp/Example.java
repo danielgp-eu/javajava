@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 /* Util classes */
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
-/* Daniel-Gheorghe Popiniuc classes */
+/* Command Line classes */
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -32,7 +33,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     private static Options definedArguments() {
         final Options options = new Options();
-        final Option paramAct = new Option("act", "action", true, "Action to perform");
+        final Option paramAct = new Option("act", "action", true, DanielLocalization.getMessage("i18nAppParamAct"));
         paramAct.setRequired(true);
         options.addOption(paramAct);
         return options;
@@ -45,7 +46,12 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        String strFeedback = "NEW App Execution" + new String(new char[80]).replace("\0", "=");
+        /**
+         * will attempt to set Locale from current user
+         * but if that is missing en-US will be used
+         */
+        DanielLocalization.setLocale(Locale.forLanguageTag(DanielLocalization.getUserLocale()));
+        String strFeedback = DanielLocalization.getMessage("i18nNewExec") + new String(new char[80]).replace("\0", "=");
         LOGGER.debug(strFeedback);
         LOGGER.error(strFeedback);
         LOGGER.info(strFeedback);
@@ -55,13 +61,13 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             final CommandLine cmd = parser.parse(options, args);
             performAction(cmd);
         } catch (ParseException e) {
-            strFeedback = String.format("Parameter parsing error: %s", Arrays.toString(e.getStackTrace()));
+            strFeedback = String.format(DanielLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
             final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("Following mandatory arguments are: ", options);
+            formatter.printHelp(DanielLocalization.getMessage("i18nMndtParamsAre"), options);
             System.exit(1);
         }
-        TimingClass.logDuration(startTimeStamp, String.format("Entire operation %s completed", args[0]), "info");
+        TimingClass.logDuration(startTimeStamp, String.format(DanielLocalization.getMessage("i18nEntOp"), args[0]), "info");
     }
 
     /**
@@ -101,7 +107,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             case "TEST":
                 break;
             default:
-                final String strMsg = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", prmActionValue, StackWalker.getInstance()
+                final String strMsg = String.format(DanielLocalization.getMessage("i18nUnknParamFinal"), prmActionValue, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
                         .orElse(Common.strUnknown)));

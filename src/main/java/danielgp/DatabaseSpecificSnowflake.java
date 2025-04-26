@@ -312,6 +312,6 @@ FROM
      */
     protected DatabaseSpecificSnowflake() {
         super();
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
     }
 }

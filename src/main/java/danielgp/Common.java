@@ -79,6 +79,6 @@ public final class Common {
 
     // Private constructor to prevent instantiation
     private Common() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
     }
 }

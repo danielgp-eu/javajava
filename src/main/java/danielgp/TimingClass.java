@@ -17,10 +17,6 @@ public final class TimingClass {
      * pointer for all logs
      */
     private static final Logger LOGGER = LogManager.getLogger(TimingClass.class);
-    /**
-     * standard duration feedback
-     */
-    private static final String strDuration = "%s within a duration of %s (which is %s | %s)";
 
     /**
      * Convert Nanoseconds to a more digest-able string
@@ -125,7 +121,7 @@ public final class TimingClass {
                 break;
             case "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero":
                 if (lngNumber > 0) {
-                    strReturn = String.format(" %02d %s", lngNumber, strWhich);
+                    strReturn = String.format(" %02d %s", lngNumber, DanielLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
                 }
                 break;
             case "SemicolumnAndTwoDigitNumber":
@@ -158,7 +154,7 @@ public final class TimingClass {
      */
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        String strFeedback = String.format(strDuration, strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nWthDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
         switch(strWhere) {
             case "debug":
                 LOGGER.debug(strFeedback);
@@ -180,6 +176,6 @@ public final class TimingClass {
 
     // Private constructor to prevent instantiation
     private TimingClass() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
     }
 }
