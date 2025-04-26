@@ -18,10 +18,6 @@ public final class TimingClass {
      */
     private static final Logger LOGGER = LogManager.getLogger(TimingClass.class);
     /**
-     * standard message
-     */
-    private static final String strOtherSwitch = "Feature %s is NOT known in %s...";
-    /**
      * standard duration feedback
      */
     private static final String strDuration = "%s within a duration of %s (which is %s | %s)";
@@ -46,10 +42,10 @@ public final class TimingClass {
                 strFinalOne = "Millisecond";
                 break;
             default:
-                final String strFeedback = String.format("Unknown %s rule received in %s...", strRule, StackWalker.getInstance()
+                final String strFeedback = String.format(Common.strOtherSwitch, strRule, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
@@ -113,10 +109,10 @@ public final class TimingClass {
                 lngNumber = duration.toSecondsPart();
                 break;
             default:
-                final String strFeedback = String.format("Unknown %s rule received in %s...", strWhich, StackWalker.getInstance()
+                final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return lngNumber;
@@ -156,10 +152,10 @@ public final class TimingClass {
                 }
                 break;
             default:
-                final String strFeedback = String.format("Unknown %s rule received in %s...", strHow, StackWalker.getInstance()
+                final String strFeedback = String.format(Common.strOtherSwitch, strHow, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return strReturn;
@@ -185,10 +181,10 @@ public final class TimingClass {
                 LOGGER.info(strFeedback);
                 break;
             default:
-                strFeedback = String.format("Unknown %s rule received in %s...", strWhere, StackWalker.getInstance()
+                strFeedback = String.format(Common.strOtherSwitch, strWhere, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
     }

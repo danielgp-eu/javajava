@@ -97,7 +97,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", prmActionValue, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 LOGGER.info(strFeedback);
                 break;
         }

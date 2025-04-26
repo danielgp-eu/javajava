@@ -9,18 +9,11 @@ import java.sql.Statement;
 /* Utility classes */
 import java.util.List;
 import java.util.Properties;
-/* LOGGing classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * MySQL methods
  */
 public class DatabaseSpecificMySql extends DatabaseResultSetingClass {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(DatabaseResultSetingClass.class);
 
     /**
      * Getting Connection Properties For MySQL from Environment variable
@@ -190,10 +183,10 @@ FROM
                 """;
                 break;
             default:
-                final String strFeedback = String.format("This %s type of predefined action is unknown in %s...", strWhich, StackWalker.getInstance()
+                final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return strQueryToUse;

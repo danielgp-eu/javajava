@@ -57,10 +57,10 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                     LOGGER.info(strFeedback);
                     break;
                 default:
-                    strFeedback = String.format("Feature %s is NOT known in %s...", key, StackWalker.getInstance()
+                    strFeedback = String.format(Common.strOtherSwitch, key, StackWalker.getInstance()
                             .walk(frames -> frames.findFirst()
                             .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                            .orElse("Unknown")));
+                            .orElse(Common.strUnknown)));
                     LOGGER.error(strFeedback);
                     throw new UnsupportedOperationException(strFeedback);
             }
@@ -237,10 +237,10 @@ public class DatabaseResultSetingClass extends DatabaseBasicClass {
                     listReturn = getResultSetColumnValues(rsStandard);
                     break;
                 default:
-                    strFeedback = String.format("Provided %s is not defined in %s, hence nothing will be actually executed...", strKind, StackWalker.getInstance()
+                    strFeedback = String.format(Common.strOtherSwitch, strKind, StackWalker.getInstance()
                             .walk(frames -> frames.findFirst()
                             .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                            .orElse("Unknown")));
+                            .orElse(Common.strUnknown)));
                     LOGGER.error(strFeedback);
                     break;
             }

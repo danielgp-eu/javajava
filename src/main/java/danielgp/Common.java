@@ -9,6 +9,14 @@ import java.util.regex.Pattern;
  * Class with common features
  */
 public final class Common {
+    /**
+     * standard message
+     */
+    public static final String strOtherSwitch = "Feature %s is NOT known in %s...";
+    /**
+     * standard duration feedback
+     */
+    public static final String strUnknown = "Unknown";
 
     /**
      * Counts number of parameters with in a string

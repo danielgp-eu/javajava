@@ -245,10 +245,10 @@ FROM
                 strQueryToUse = "SHOW WAREHOUSES;";
                 break;
             default:
-                final String strFeedback = String.format("Parameter %s is not defined in %s...", strWhich, StackWalker.getInstance()
+                final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst()
                         .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse("Unknown")));
+                        .orElse(Common.strUnknown)));
                 LOGGER.error(strFeedback);
                 break;
         }
