@@ -23,7 +23,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * pointer for all logs
      */
-    private static final Logger LOGGER = LogManager.getLogger(JsoningClass.class);
+    protected static final Logger LOGGER = LogManager.getLogger(JsoningClass.class);
 
     /**
      * Load all JSON nodes from String

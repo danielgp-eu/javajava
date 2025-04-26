@@ -28,7 +28,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param strDatabaseType
      * @param givenConnection
      */
-    protected static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
+    public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
         try {
             givenConnection.close();
             final String strFeedback = String.format("%s connection sucessfully closed!", strDatabaseType);
@@ -45,7 +45,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param strDatabaseType
      * @param givenStatement
      */
-    protected static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
+    public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
         try {
             givenStatement.close();
             final String strFeedback = String.format("%s statement sucessfully closed!", strDatabaseType); 
