@@ -274,6 +274,6 @@ public final class EnvironmentCapturingClass {
 
     // Private constructor to prevent instantiation
     private EnvironmentCapturingClass() {
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

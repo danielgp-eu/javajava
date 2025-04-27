@@ -1,4 +1,6 @@
 package danielgp;
+/* ICU classes */
+import com.ibm.icu.text.PluralRules;
 /* Text classes */
 import java.text.MessageFormat;
 /* Utility classes */
@@ -57,7 +59,8 @@ public final class DanielLocalization {
      * @return
      */
     public static String getMessageWithPlural(final String baseKey, final long count) {
-        final String pluralKey = count == 1 ? baseKey + ".one" : baseKey + ".other";
+        final PluralRules pluralRules = PluralRules.forLocale(getLocale());
+        final String pluralKey = baseKey + "." + pluralRules.select(count);
         return bundle.getString(pluralKey);
     }
 
@@ -104,6 +107,6 @@ public final class DanielLocalization {
      * constructor
      */
     private DanielLocalization() {
-        throw new UnsupportedOperationException(getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

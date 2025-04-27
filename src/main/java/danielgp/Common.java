@@ -10,13 +10,17 @@ import java.util.regex.Pattern;
  */
 public final class Common {
     /**
-     * standard message
+     * standard Application class feedback
      */
-    public static final String strOtherSwitch = "Feature %s is NOT known in %s...";
+    public static final String strAppClsWrng = DanielLocalization.getMessage("i18nAppClassWarning");
     /**
-     * standard duration feedback
+     * standard Unknown feature
      */
-    public static final String strUnknown = "Unknown";
+    public static final String strUnknFtrs = DanielLocalization.getMessage("i18nUnknFtrs");
+    /**
+     * standard Unknown
+     */
+    public static final String strUnknown = DanielLocalization.getMessage("i18nUnknown");
 
     /**
      * Counts number of parameters with in a string
@@ -68,10 +72,8 @@ public final class Common {
             case 1 -> String.format(strUnformatted, strReplacement1);
             case 2 -> String.format(strUnformatted, strReplacement1, strReplacement2);
             default -> {
-                final String strFeedback = String.format(strOtherSwitch, intRsParams, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                                .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                                .orElse(strUnknown)));
+                final String strFeedback = String.format(strUnknFtrs, intRsParams, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -79,6 +81,6 @@ public final class Common {
 
     // Private constructor to prevent instantiation
     private Common() {
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(strAppClsWrng);
     }
 }

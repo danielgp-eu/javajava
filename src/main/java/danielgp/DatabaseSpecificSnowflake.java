@@ -77,10 +77,8 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
      * @return
      */
     public static String getSnowflakePreDefinedMetadataQuery(final String strWhich) {
-        String strQueryToUse = "";
-        switch(strWhich) {
-            case "Columns":
-                strQueryToUse = """
+        return switch (strWhich) {
+            case "Columns" -> """
 SELECT
       "TABLE_CATALOG"
     , "TABLE_SCHEMA"
@@ -129,11 +127,8 @@ SELECT
     , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
     , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
 FROM
-    "INFORMATION_SCHEMA"."COLUMNS";
-                """;
-                break;
-            case "Databases":
-                strQueryToUse = """
+    "INFORMATION_SCHEMA"."COLUMNS";""";
+            case "Databases" -> """
 SELECT
       "DATABASE_NAME"
     , "DATABASE_OWNER"
@@ -145,19 +140,13 @@ SELECT
     , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
     , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
 FROM
-    "INFORMATION_SCHEMA"."DATABASES";
-                """;
-                break;
-            case "Roles":
-                strQueryToUse = """
+    "INFORMATION_SCHEMA"."DATABASES";""";
+            case "Roles" -> """
 SELECT
     TRIM(VALUE) AS "AssignedRoleName"
 FROM
-    TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));
-                """;
-                break;
-            case "Schemas":
-                strQueryToUse = """
+    TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));""";
+            case "Schemas" -> """
 SELECT
       "CATALOG_NAME"
     , "SCHEMA_NAME"
@@ -175,11 +164,8 @@ SELECT
     , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
     , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
 FROM
-    "INFORMATION_SCHEMA"."SCHEMATA";
-                """;
-                break;
-            case "TablesAndViews":
-                strQueryToUse = """
+    "INFORMATION_SCHEMA"."SCHEMATA";""";
+            case "TablesAndViews" -> """
 SELECT
       "TABLE_CATALOG"
     , "TABLE_SCHEMA"
@@ -213,11 +199,8 @@ SELECT
     , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
     , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
 FROM
-    "INFORMATION_SCHEMA"."TABLES";
-                """;
-                break;
-            case "Views":
-                strQueryToUse = """
+    "INFORMATION_SCHEMA"."TABLES";""";
+            case "Views" -> """
 SELECT
       "TABLE_CATALOG"
     , "TABLE_SCHEMA"
@@ -231,32 +214,23 @@ SELECT
     , "LAST_DDL_BY"
     , "COMMENT"
 FROM
-    "INFORMATION_SCHEMA"."VIEWS"
-                """;
-                break;
-            case "Views_Light":
-                strQueryToUse = """
+    "INFORMATION_SCHEMA"."VIEWS";""";
+            case "Views_Light" -> """
 SELECT
       "TABLE_CATALOG"
     , "TABLE_SCHEMA"
     , "TABLE_NAME"
     , "VIEW_DEFINITION"
 FROM
-    "INFORMATION_SCHEMA"."VIEWS"
-                """;
-                break;
-            case "Warehouses":
-                strQueryToUse = "SHOW WAREHOUSES;";
-                break;
-            default:
-                final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(Common.strUnknown)));
+    "INFORMATION_SCHEMA"."VIEWS";""";
+            case "Warehouses" -> "SHOW WAREHOUSES;";
+            default -> {
+                final String strFeedback = String.format(Common.strUnknFtrs, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 LOGGER.error(strFeedback);
-                break;
-        }
-        return strQueryToUse;
+                throw new UnsupportedOperationException(strFeedback);
+            }
+        };
     }
 
     /**
@@ -312,6 +286,6 @@ FROM
      */
     protected DatabaseSpecificSnowflake() {
         super();
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

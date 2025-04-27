@@ -51,7 +51,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
      */
     public DatabaseSpecificSqLite() {
         super();
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 
 }

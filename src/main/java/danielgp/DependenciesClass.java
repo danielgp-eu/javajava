@@ -37,7 +37,7 @@ public final class DependenciesClass {
     public static String getCurrentDependencies() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         FileHandlingClass.loadProjectFolder();
-        final String strDependencyFile = FileHandlingClass.strProjectFolder + File.separator + "pom.xml";
+        final String strDependencyFile = FileHandlingClass.APP_FOLDER + File.separator + "pom.xml";
         String strFeedback = String.format("Will get dependency details from %s file", strDependencyFile);
         LOGGER.debug(strFeedback);
         final File fileDependency = new File(strDependencyFile);
@@ -69,6 +69,6 @@ public final class DependenciesClass {
 
     // Private constructor to prevent instantiation
     private DependenciesClass() {
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

@@ -109,8 +109,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
                         , `GENERATION_EXPRESSION`
                         , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
                     FROM
-                        `information_schema`.`SCHEMATA`;
-                    """;
+                        `information_schema`.`SCHEMATA`;""";
             case "Databases" -> """
                     SELECT
                           `CATALOG_NAME`
@@ -120,8 +119,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
                         , `SQL_PATH`
                         , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
                     FROM
-                        `information_schema`.`SCHEMATA`;
-                    """;
+                        `information_schema`.`SCHEMATA`;""";
             case "TablesAndViews" -> """
                     SELECT
                           `TABLE_CATALOG`
@@ -147,8 +145,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
                         , `TABLE_COMMENT`
                         , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
                     FROM
-                        `information_schema`.`TABLES`;
-                    """;
+                        `information_schema`.`TABLES`;""";
             case "Views" -> """
                     SELECT
                           `TABLE_CATALOG`
@@ -162,8 +159,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
                         , `COLLATION_CONNECTION`
                         , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
                     FROM
-                        `information_schema`.`VIEWS`;
-                    """;
+                        `information_schema`.`VIEWS`;""";
             case "Views_Light" -> """
                     SELECT
                           "TABLE_CATALOG"
@@ -171,13 +167,11 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
                         , "TABLE_NAME"
                         , "VIEW_DEFINITION"
                     FROM
-                        "INFORMATION_SCHEMA"."VIEWS"
-                    """;
+                        "INFORMATION_SCHEMA"."VIEWS";""";
             default -> {
-                final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                                .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                                .orElse(Common.strUnknown)));
+                final String strFeedback = String.format(Common.strUnknFtrs, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
+                LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -225,6 +219,6 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     protected DatabaseSpecificMySql() {
         super();
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

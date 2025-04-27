@@ -55,10 +55,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     LOGGER.info(strFeedback);
                     break;
                 default:
-                    strFeedback = String.format(Common.strOtherSwitch, key, StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst()
-                                    .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                                    .orElse(Common.strUnknown)));
+                    strFeedback = String.format(Common.strUnknFtrs, key, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                     LOGGER.error(strFeedback);
                     throw new UnsupportedOperationException(strFeedback);
             }
@@ -235,10 +233,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     listReturn = getResultSetColumnValues(rsStandard);
                     break;
                 default:
-                    strFeedback = String.format(Common.strOtherSwitch, strKind, StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst()
-                            .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                            .orElse(Common.strUnknown)));
+                    strFeedback = String.format(Common.strUnknFtrs, strKind, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                     LOGGER.error(strFeedback);
                     break;
             }

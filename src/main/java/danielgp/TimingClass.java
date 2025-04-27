@@ -39,10 +39,8 @@ public final class TimingClass {
                 strFinalOne = "Millisecond";
                 break;
             default:
-                final String strFeedback = String.format(Common.strOtherSwitch, strRule, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(Common.strUnknown)));
+                final String strFeedback = String.format(Common.strUnknFtrs, strRule, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
@@ -93,10 +91,8 @@ public final class TimingClass {
             case "Nanosecond" -> duration.toNanosPart();
             case "Second" -> duration.toSecondsPart();
             default -> {
-                final String strFeedback = String.format(Common.strOtherSwitch, strWhich, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                                .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                                .orElse(Common.strUnknown)));
+                final String strFeedback = String.format(Common.strUnknFtrs, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -136,10 +132,8 @@ public final class TimingClass {
                 }
                 break;
             default:
-                final String strFeedback = String.format(Common.strOtherSwitch, strHow, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(Common.strUnknown)));
+                final String strFeedback = String.format(Common.strUnknFtrs, strHow, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return strReturn;
@@ -154,7 +148,7 @@ public final class TimingClass {
      */
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        String strFeedback = String.format(DanielLocalization.getMessage("i18nWthDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
         switch(strWhere) {
             case "debug":
                 LOGGER.debug(strFeedback);
@@ -166,16 +160,14 @@ public final class TimingClass {
                 LOGGER.info(strFeedback);
                 break;
             default:
-                strFeedback = String.format(Common.strOtherSwitch, strWhere, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(Common.strUnknown)));
+                strFeedback = String.format(Common.strUnknFtrs, strWhere, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 throw new UnsupportedOperationException(strFeedback);
         }
     }
 
     // Private constructor to prevent instantiation
     private TimingClass() {
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

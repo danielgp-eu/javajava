@@ -108,9 +108,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 break;
             default:
                 final String strMsg = String.format(DanielLocalization.getMessage("i18nUnknParamFinal"), prmActionValue, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst()
-                        .map(frame -> frame.getClassName() + "." + frame.getMethodName())
-                        .orElse(Common.strUnknown)));
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 LOGGER.info(strMsg);
                 break;
         }

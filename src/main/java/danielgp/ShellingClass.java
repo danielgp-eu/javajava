@@ -140,6 +140,6 @@ public final class ShellingClass {
 
     // Private constructor to prevent instantiation
     private ShellingClass() {
-        throw new UnsupportedOperationException(DanielLocalization.getMessage("i18nAppClassWarning"));
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

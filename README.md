@@ -32,7 +32,15 @@ Various Java classes to be re-used
 
 ### Java Internationalization
 
+* [com.ibm.icu.text.PluralRules Java Examples ](https://www.programcreek.com/java-api-examples/index%A3%A9%A4%F2%D2%8A%A4%C4%A4%B1%A4%DE%A4%B7%A4%BF%A1%A3%A5%AA%A5%D6%A5%B8%A5%A7%A5%AF%A5%C8%A4%CE%D3%B0%A4%F2%97%CA%B3%F6%A4%B7%A4%C6%CF%F7%B3%FD%A4%B9%A4%EB%A4%CB%A4%CF%A4%C9%A4%A6%A4%B9%A4%EC%A4%D0%A4%A4%A4%A4%A4%CE%A4%C7%A4%B7%A4%E7%A4%A6%A4%AB%A3%BF%A3%A9%A4%B3%A4%B3%A4%C7%A4%CF%A1%A2%A5%AA%A5%D6%A5%B8%A5%A7%A5%AF%A5%C8%A4%CE%D3%B0%A4%F2%97%CA%B3%F6%A4%B7%A4%C6%CF%F7%B3%FD%A4%B9%A4%EB%B7%BD%B7%A8%A4%CB%A4%C4%A4%A4%A4%C6%D5h%C3%F7%A4%B7%A4%DE%A4%B9%A1%A3%84e%A4%CE%C0%FD%5D%A3%A8http/xaydungtrangtrinoithat.com/thau-xay-dung-tai-binh-thuan/?api=com.ibm.icu.text.PluralRules)
+* [Common Pitfalls in Java Application Internationalization](https://javanexus.com/blog/common-pitfalls-java-internationalization)
+* [Finally Doing Pluralization Right](https://medium.com/expedia-group-tech/finally-doing-pluralization-right-948e2e9d40bb)
+* [Handling Plurals](https://docs.oracle.com/javase/tutorial/i18n/format/choiceFormat.html)
+* [How to Handle Internationalization (i18n) in Java with Correct Pluralization](https://codingtechroom.com/question/understanding-java-internationalization-i18n-with-proper-pluralization)
 * [Internationalization and Localization in Java](https://www.baeldung.com/java-8-localization)
+* [Java Internationalization And Localization](https://peerdh.com/blogs/programming-insights/java-internationalization-and-localization)
+* [Real life Java: From numbers to localized text ordinals using ICU4J](https://medium.com/@d.lopez.j/real-life-java-from-numbers-to-localized-text-ordinals-using-icu4j-f8146d64b0fd)
+* [The Java i18n Guide You’ve Been Waiting For](https://phrase.com/blog/posts/java-i18n-guide/)
 
 
 ### Java coding
