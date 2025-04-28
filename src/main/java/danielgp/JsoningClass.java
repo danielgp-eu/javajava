@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 /* Utility classes */
 import java.util.*;
-import java.util.Map.Entry;
 /* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -83,25 +82,6 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     }
 
     /**
-     * node capture into Properties
-     * 
-     * @param givenJsonNode
-     * @param strJsonNodeName
-     * @return Properties
-     */
-    public static Properties getJsonNodeNameIntoProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
-        final Properties properties = new Properties();
-        final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
-        if(!jsonNode.isEmpty()) {
-            final Iterator<Entry<String, JsonNode>> fields = jsonNode.fields();
-            fields.forEachRemaining(field -> properties.put(field.getKey(), field.getValue()));
-            final String strFeedback = String.format("For node \"%s\" we found following List of Properties: %s", strJsonNodeName, properties);
-            LOGGER.debug(strFeedback);
-        }
-        return properties;
-    }
-
-    /**
      * Node into List of Properties
      * 
      * @param givenJsonNode
@@ -114,8 +94,9 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         if(!jsonNode.isEmpty()) {
             jsonNode.forEach(arrayElement->{
                 final Properties properties = new Properties();
-                final Iterator<Map.Entry<String, JsonNode>> fields = arrayElement.fields();
-                fields.forEachRemaining(field-> properties.put(field.getKey(), field.getValue()));
+                for (final Map.Entry<String, JsonNode> entry : arrayElement.properties()) {
+                    properties.put(entry.getKey(), entry.getValue());
+                }
                 listProperties.add(properties);
             });
             final String strFeedback = String.format("For node \"%s\" we found following List of Properties: %s", strJsonNodeName, listProperties);
@@ -152,8 +133,9 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     protected static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         final Properties properties = new Properties();
-        final Iterator<Map.Entry<String, JsonNode>> fields = jsonNode.fields();
-        fields.forEachRemaining(field -> properties.put(field.getKey(), field.getValue()));
+        for (final Map.Entry<String, JsonNode> entry : jsonNode.properties()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
         final String strFeedback = String.format("For node \"%s\" following Properties were found %s", strJsonNodeName, properties);
         LOGGER.debug(strFeedback);
         return properties;
