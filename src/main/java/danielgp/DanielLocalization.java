@@ -35,7 +35,7 @@ public final class DanielLocalization {
 
     /**
      * getting Message
-     * @param args
+     * @param key
      */
     public static String getMessage(final String key) {
         setBundle();
