@@ -46,10 +46,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        /**
-         * will attempt to set Locale from current user
-         * but if that is missing en-US will be used
-         */
+        // will attempt to set Locale from current user if that is missing en-US will be used
         DanielLocalization.setLocale(Locale.forLanguageTag(DanielLocalization.getUserLocale()));
         String strFeedback = DanielLocalization.getMessage("i18nNewExec") + new String(new char[80]).replace("\0", "=");
         LOGGER.debug(strFeedback);
