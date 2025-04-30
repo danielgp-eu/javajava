@@ -7,6 +7,7 @@ Various Java classes to be re-used
 
 | Utility              | Name w. Project URL                                                         | Maven build                                                                    |
 |:---------------------|:----------------------------------------------------------------------------|:-------------------------------------------------------------------------------|
+| Database - MySQL     | [mysql/mysql-connector-j](https://github.com/mysql/mysql-connector-j)       | https://mvnrepository.com/artifact/com.mysql/mysql-connector-j                 |
 | Database - Snowflake | [snowflakedb/snowflake-jdbc](https://github.com/snowflakedb/snowflake-jdbc) | https://mvnrepository.com/artifact/net.snowflake/snowflake-jdbc                |
 | Database - SQLite    | [xerial/sqlite-jdbc](https://github.com/xerial/sqlite-jdbc)                 | https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc                      |
 | JSON                 | [FasterXML/jackson](https://github.com/FasterXML/jackson)                   | https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind |
