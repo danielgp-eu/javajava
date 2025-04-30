@@ -1,6 +1,9 @@
 package danielgp;
 /* Jackson classes for fast JSON handling */
 import com.fasterxml.jackson.databind.JsonNode;
+/* I/O classes */
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 /* SQL classes */
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -28,7 +31,8 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
             final String strFeedback = String.format("Environment variable %s not found!", strEnv);
             LOGGER.error(strFeedback);
         } else {
-            final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(strEnvMySql);
+            final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
+            final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
             properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
             properties.put("Port", JsoningClass.getJsonValue(ndMySQL, "/Port"));
             properties.put("Username", JsoningClass.getJsonValue(ndMySQL, "/Username"));

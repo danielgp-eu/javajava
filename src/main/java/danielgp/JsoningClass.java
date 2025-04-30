@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /* I/O classes */
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 /* Utility classes */
 import java.util.*;
 /* Logging classes */
@@ -26,7 +27,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJson
      * @return JsonNode
      */
-    public static JsonNode getJsonFileNodes(final String strJson) {
+    public static JsonNode getJsonFileNodes(final InputStream strJson) {
         JsonNode jsonRootNode = null;
         final ObjectMapper objectMapper = new ObjectMapper();
         try {

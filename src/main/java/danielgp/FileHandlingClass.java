@@ -3,6 +3,7 @@ package danielgp;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 /* Java NIO classes */
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
@@ -10,8 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 /* Java util classes */
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Properties;
 /* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -80,6 +85,21 @@ public final class FileHandlingClass {
             LOGGER.error(strFeedback);
         }
         return strReturn;
+    }
+
+    /**
+     * Get file content into InputStream
+     * 
+     * @param strFileName
+     * @return
+     */
+    public static InputStream getIncludedFileContentIntoInputStream(final String strFileName) {
+        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentIntoString"), strFileName);
+        LOGGER.debug(strFeedback);
+        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader(); // NOPMD by E303778 on 30.04.2025, 15:47
+        final InputStream inputStream = classLoader.getResourceAsStream(strFileName); // NOPMD by E303778 on 30.04.2025, 15:47
+        LOGGER.debug("Got entire stream");
+        return inputStream;
     }
 
     /**

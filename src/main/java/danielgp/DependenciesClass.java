@@ -1,6 +1,7 @@
 package danielgp;
 /* Input/Output classes */
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 /* Utility classes */
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 /**
  * Capturing details of dependencies from current Maven POM file
  */
@@ -28,6 +30,10 @@ public final class DependenciesClass {
      * pointer for all logs
      */
     private static final Logger LOGGER = LogManager.getLogger(DependenciesClass.class);
+    /**
+     * current class path
+     */
+    /* default */ final static String classPath = System.getProperty("java.class.path");
 
     /**
      * Gets a complete list of dependencies as JSON string
@@ -35,36 +41,68 @@ public final class DependenciesClass {
      * @return String
      */
     public static String getCurrentDependencies() {
+        final String strDependencyFile = getDependencyFile();
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        FileHandlingClass.loadProjectFolder();
-        final String strDependencyFile = FileHandlingClass.APP_FOLDER + File.separator + "pom.xml";
-        String strFeedback = String.format("Will get dependency details from %s file", strDependencyFile);
+        final Document doc = getDocumentWithDependencies(strDependencyFile);
+        final NodeList nodeList = doc.getElementsByTagName("dependency");
+        final int intListSize = nodeList.getLength();
+        for (int i = 0; i < intListSize; ++i) {
+            final Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                final Element tElement = (Element)node;
+                arrayAttributes.put(tElement.getElementsByTagName("groupId").item(0).getTextContent()
+                    + "/"
+                    + tElement.getElementsByTagName("artifactId").item(0).getTextContent()
+                    , tElement.getElementsByTagName("version").item(0).getTextContent());
+            }
+        }
+        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
         LOGGER.debug(strFeedback);
-        final File fileDependency = new File(strDependencyFile);
-        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try { 
-            final DocumentBuilder docBuilder = dbf.newDocumentBuilder(); 
-            final Document doc = docBuilder.parse(fileDependency); 
-            doc.getDocumentElement().normalize(); 
-            final NodeList nodeList = doc.getElementsByTagName("dependency");
-            final int intListSize = nodeList.getLength();
-            for (int i = 0; i < intListSize; ++i) { 
-                final Node node = nodeList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) { 
-                    final Element tElement = (Element)node;
-                    arrayAttributes.put(tElement.getElementsByTagName("groupId").item(0).getTextContent()
-                        + "/"
-                        + tElement.getElementsByTagName("artifactId").item(0).getTextContent()
-                        , tElement.getElementsByTagName("version").item(0).getTextContent());
+        return Common.getMapIntoJsonString(arrayAttributes);
+    }
+
+    /**
+     * get Dependency file
+     * @return
+     */
+    private static String getDependencyFile() {
+        FileHandlingClass.loadProjectFolder();
+        String strDependencyFile = FileHandlingClass.APP_FOLDER + "/pom.xml";
+        if (!classPath.contains(";")) {
+            strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
+        }
+        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
+        LOGGER.debug(strFeedback);
+        return strDependencyFile;
+    }
+
+    /**
+     * Dependencies Document
+     * @param strDependencyFile
+     * @return
+     */
+    private static Document getDocumentWithDependencies(final String strDependencyFile) {
+        Document doc = null; // NOPMD by Daniel Popiniuc on 30.04.2025, 02:18
+        try {
+            final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+            if (classPath.contains(";")) {
+                doc = docBuilder.parse(new File(strDependencyFile));
+                doc.getDocumentElement().normalize();
+            } else {
+                try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
+                    LOGGER.debug(xmlContent);
+                    doc = docBuilder.parse(xmlContent);
+                } catch (IOException e) {
+                    final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
+                    LOGGER.error(strFeedback);
                 }
             }
-            strFeedback = String.format("Dependency details from %s file were successfully captured!", strDependencyFile);
-            LOGGER.debug(strFeedback);
         } catch (IOException | ParserConfigurationException | SAXException ex) {
-            strFeedback = String.format("Error encountered... %s", Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
-        return Common.getMapIntoJsonString(arrayAttributes);
+        return doc;
     }
 
     // Private constructor to prevent instantiation
