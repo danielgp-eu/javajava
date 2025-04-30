@@ -210,7 +210,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = getSqlStatement("MySQL", objConnection)) {
+            Statement objStatement = createSqlStatement("MySQL", objConnection)) {
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
             final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));

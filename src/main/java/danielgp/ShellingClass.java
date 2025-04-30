@@ -36,6 +36,8 @@ public final class ShellingClass {
         } else {
             builder.command(strCommand, strParameters);
         }
+        final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
+        LOGGER.debug(strFeedback);
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
     }
@@ -49,7 +51,7 @@ public final class ShellingClass {
      * @throws IOException
      */
     private static String captureProcessOutput(final Process process, final String strOutLineSep) throws IOException {
-        final String strReturn;
+        String strReturn = null;
         final StringBuilder processOutput = new StringBuilder();
         try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String readLine;
@@ -57,6 +59,9 @@ public final class ShellingClass {
                 processOutput.append(readLine).append(strOutLineSep);
             }
             strReturn = processOutput.toString();
+        } catch (IOException ex) {
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
+            LOGGER.error(strFeedback);
         }
         return strReturn;
     }
@@ -71,18 +76,16 @@ public final class ShellingClass {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
         try {
-            String strFeedback = String.format("I intend to execute following command %s w/o output captured!", builder.command().toString());
-            LOGGER.debug(strFeedback);
             final Process process = builder.start();
             final int exitCode = process.waitFor();
             process.destroy();
-            strFeedback = String.format("Process execution finished with exit code %d", exitCode);
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
             LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Process Execution failed: %s", Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
-        TimingClass.logDuration(startTimeStamp, "Shell execution w/o output captured completed", "debug");
+        TimingClass.logDuration(startTimeStamp, DanielLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"), "debug");
     }
 
     /**
@@ -98,20 +101,18 @@ public final class ShellingClass {
         String strReturn = "";
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
         try {
-            String strFeedback = String.format("I intend to execute following command %s WITH output captured!", builder.command().toString());
-            LOGGER.debug(strFeedback);
             builder.redirectErrorStream(true);
             final Process process = builder.start();
             strReturn = captureProcessOutput(process, strOutLineSep);
             final int exitCode = process.waitFor();
             process.destroy();
-            strFeedback = String.format("Process execution finished with exit code %d", exitCode);
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
             LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Process Execution failed: %s", Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
-        TimingClass.logDuration(startTimeStamp, "Shell execution WITH output captured completed", "debug");
+        TimingClass.logDuration(startTimeStamp, DanielLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"), "debug");
         return strReturn;
     }
 
@@ -132,7 +133,9 @@ public final class ShellingClass {
      */
     private static void loadCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
-        if (strUser.startsWith("ERROR: Unable to get User Principal Name (UPN)")) {
+        if (strUser.startsWith("ERROR:")) {
+            final String strFeedback = DanielLocalization.getMessage("i18nUserPrincipalNameError");
+            LOGGER.warn(strFeedback);
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         LOGGED_ACCOUNT = strUser;
