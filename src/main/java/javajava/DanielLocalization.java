@@ -1,4 +1,4 @@
-package javaJava;
+package javajava;
 /* ICU classes */
 import com.ibm.icu.text.PluralRules;
 /* Text classes */

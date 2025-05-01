@@ -1,4 +1,4 @@
-package javaJava;
+package javajava;
 /* Utility classes */
 import java.util.Map;
 /* Regular Expressions classes */

@@ -1,4 +1,4 @@
-package javaJava;
+package javajava;
 /* Java IO classes */
 import java.io.BufferedWriter;
 import java.io.File;

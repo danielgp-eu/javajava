@@ -1,4 +1,4 @@
-package javaJava;
+package javajava;
 /* Input/Output classes */
 import java.io.File;
 import java.io.InputStream;
