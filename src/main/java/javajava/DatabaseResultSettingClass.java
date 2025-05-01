@@ -116,7 +116,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
             strFeedback = String.format(DanielLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
-            strFeedback = String.format(Common.strStatementUnableX, "structures", e.getLocalizedMessage());
+            strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listResultSet;
@@ -153,7 +153,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
-            strFeedback = String.format(Common.strStatementUnableX, "structures", e.getLocalizedMessage());
+            strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listResultSet;
@@ -172,7 +172,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 listStrings.add(resultSet.getString(1));
             }
         } catch (SQLException e) {
-            final String strFeedback = String.format(Common.strStatementUnableX, "list of strings", e.getLocalizedMessage());
+            final String strFeedback = String.format(Common.strStmntUnableX, "list of strings", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listStrings;
@@ -190,7 +190,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
-            final String strFeedback = String.format(Common.strStatementUnableX, "columns", e.getLocalizedMessage());
+            final String strFeedback = String.format(Common.strStmntUnableX, "columns", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return intColumns;
@@ -207,7 +207,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         try {
             intResultSetRows = resultSet.getFetchSize() + 1;
         } catch (SQLException e) {
-            final String strFeedback = String.format(Common.strStatementUnableX, "rows", e.getLocalizedMessage());
+            final String strFeedback = String.format(Common.strStmntUnableX, "rows", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return intResultSetRows;

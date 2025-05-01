@@ -28,9 +28,11 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
         final String strEnv = "MYSQL";
         final String strEnvMySql = System.getenv(strEnv);
         if (strEnvMySql == null) {
-            final String strFeedback = String.format("Environment variable %s not found!", strEnv);
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
             LOGGER.error(strFeedback);
         } else {
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nEnvironmentVariableFound"), strEnv);
+            LOGGER.error(strFeedback);
             final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
             final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
             properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
@@ -52,7 +54,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
         Connection connection = null;
         String strFeedback;
         if (propInstance.isEmpty()) {
-            strFeedback = "MySQL connection properties seems to be empty, hence connection cannot be initiated";
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionPropertiesEmpty"), Common.strDbMySQL);
             LOGGER.error(strFeedback);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
@@ -60,13 +62,13 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
-                strFeedback = String.format("Will attempt to create a MySQL connection to database %s using %s as connection string and %s properties", strDatabase, strConnection, propConnection);
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbMySQL, strDatabase, strConnection, propConnection);
                 LOGGER.debug(strFeedback);
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                strFeedback = String.format("MySQL connection to server %s, port %s and database %s was successfully established!", strServer, strPort, strDatabase);
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationSuccess"), Common.strDbMySQL, strServer, strPort, strDatabase);
                 LOGGER.debug(strFeedback);
             } catch(SQLException e) {
-                strFeedback = String.format("MySQL connection to server %s, port %s and database %s failed: %s", strServer, strPort, strDatabase, e.getLocalizedMessage());
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationFailed"), Common.strDbMySQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
                 LOGGER.error(strFeedback);
             }
         }
@@ -210,7 +212,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = createSqlStatement("MySQL", objConnection)) {
+            Statement objStatement = createSqlStatement(Common.strDbMySQL, objConnection)) {
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
             final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));

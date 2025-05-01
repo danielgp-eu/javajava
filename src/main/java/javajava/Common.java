@@ -14,6 +14,18 @@ public final class Common {
      */
     public static final String strAppClsWrng = DanielLocalization.getMessage("i18nAppClassWarning");
     /**
+     * Database MySQL
+     */
+    public static final String strDbMySQL = "MySQL";
+    /**
+     * Database Snowflake
+     */
+    public static final String strDbSnowflake = "Snowflake";
+    /**
+     * standard SQL statement unable
+     */
+    public static final String strStmntUnableX = DanielLocalization.getMessage("i18nSQLstatementUnableToGetX");
+    /**
      * standard Unknown feature
      */
     public static final String strUnknFtrs = DanielLocalization.getMessage("i18nUnknFtrs");
@@ -21,11 +33,6 @@ public final class Common {
      * standard Unknown
      */
     public static final String strUnknown = DanielLocalization.getMessage("i18nUnknown");
-    /**
-     * standard Unknown
-     */
-    public static final String strStatementUnableX = DanielLocalization.getMessage("i18nSQLstatementUnableToGetX");
-
     /**
      * Counts number of parameters with in a string
      *
