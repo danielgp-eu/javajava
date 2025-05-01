@@ -41,14 +41,14 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
         Connection connection = null;
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
-        String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbSnowflake, strDatabase, strConnection, propConnection);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbSnowflake, strDatabase, strConnection, propConnection);
         LOGGER.debug(strFeedback);
         try {
             connection = DriverManager.getConnection(strConnection, propConnection);
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSnowflake, strDatabase);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSnowflake, strDatabase);
             LOGGER.debug(strFeedback);
         } catch(SQLException e) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSnowflake, e.getLocalizedMessage());
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSnowflake, e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return connection;
@@ -269,14 +269,14 @@ FROM
      */
     private static void loadSnowflakeDriver() {
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
-        String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLdriverLoadingAttempt"), Common.strDbSnowflake, strDriverName);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingAttempt"), Common.strDbSnowflake, strDriverName);
         LOGGER.debug(strFeedback);
         try {
             Class.forName(strDriverName);
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLdriverLoadingSuccess"), Common.strDbSnowflake, strDriverName);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingSuccess"), Common.strDbSnowflake, strDriverName);
             LOGGER.debug(strFeedback);
         } catch (ClassNotFoundException ex) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.strDbSnowflake, strDriverName);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.strDbSnowflake, strDriverName);
             LOGGER.error(strFeedback);
         }
     }

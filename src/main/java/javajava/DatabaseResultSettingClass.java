@@ -29,29 +29,29 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         final int intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
             final String key = (String) obj;
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
             LOGGER.debug(strFeedback);
             switch (key) {
                 case "expectedExactNumberOfColumns":
                     final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
                     if (intColumnsIs != intColumnsShould) {
-                        strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
+                        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
                         LOGGER.error(strFeedback);
                     }
                     break;
                 case "expectedExactNumberOfRows":
                     final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
                     if (intResultSetRows != intExpectedRows) {
-                        strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
+                        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
                         LOGGER.error(strFeedback);
                     }
                     break;
                 case "exposeNumberOfColumns":
-                    strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
                     LOGGER.info(strFeedback);
                     break;
                 case "exposeNumberOfRows":
-                    strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
                     LOGGER.info(strFeedback);
                     break;
                 default:
@@ -75,18 +75,18 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
+            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
             LOGGER.debug(strFeedback);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
                 LOGGER.debug(strFeedback);
                 digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
                 LOGGER.error(strFeedback);
             }
-            TimingClass.logDuration(startTimeStamp, String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose), "debug");
+            TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose), "debug");
         }
         return resultSet;
     }
@@ -113,7 +113,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 colProperties.put("Nullable", metaData.isNullable(columnNumber));
                 listResultSet.add(colProperties);
             }
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
             strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
@@ -133,7 +133,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         String strFeedback;
         try {
             if (resultSet == null) {
-                strFeedback = DanielLocalization.getMessage("i18nSQLresultSetNull");
+                strFeedback = JavaJavaLocalization.getMessage("i18nSQLresultSetNull");
                 LOGGER.debug(strFeedback);
             } else {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
@@ -149,7 +149,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     }
                     listResultSet.add(currentRow);
                 }
-                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
                 LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
@@ -239,7 +239,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     break;
             }
         } catch (SQLException e) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listReturn;

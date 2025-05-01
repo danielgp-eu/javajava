@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 /**
  * Internationalization
  */
-public final class DanielLocalization {
+public final class JavaJavaLocalization {
     /**
      * localization
      */
@@ -21,9 +21,13 @@ public final class DanielLocalization {
      */
     private final static String DEFAULT_LOCALE = "en-US";
     /**
+     * locale folder
+     */
+    private final static String MESSAGES_FOLDER = "JavaJavaBundle";
+    /**
      * locale file prefix
      */
-    private final static String MESSAGES_KEY = "JavaJavaTranslations";
+    private final static String MESSAGES_KEY = "JavaJavaTranslation";
 
     /**
      * getting Locale
@@ -69,7 +73,8 @@ public final class DanielLocalization {
      * @return
      */
     public static String getUserLocale() {
-        return System.getProperty("user.language.format") + "-" + System.getProperty("user.country.format");
+        return System.getProperty("user.language.format")
+            + "-" + System.getProperty("user.country.format");
     }
 
     /**
@@ -87,7 +92,7 @@ public final class DanielLocalization {
      */
     private static void setBundle() {
         if (Objects.isNull(bundle)) {
-            bundle = ResourceBundle.getBundle(MESSAGES_KEY);
+            bundle = ResourceBundle.getBundle(MESSAGES_FOLDER + "/" + MESSAGES_KEY);
         }
     }
 
@@ -106,7 +111,7 @@ public final class DanielLocalization {
     /**
      * constructor
      */
-    private DanielLocalization() {
+    private JavaJavaLocalization() {
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

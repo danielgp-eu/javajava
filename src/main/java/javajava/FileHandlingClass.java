@@ -48,13 +48,13 @@ public final class FileHandlingClass {
                 if (fileGiven.canRead()) {
                     propertiesReturn.put("OK", strFileName);
                 } else {
-                    propertiesReturn.put("NOT_READABLE", String.format(DanielLocalization.getMessage("i18nFileUnreadable"), strFileName));
+                    propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalization.getMessage("i18nFileUnreadable"), strFileName));
                 }
             } else {
-                propertiesReturn.put("NOT_A_FILE", String.format(DanielLocalization.getMessage("i18nFileNotAfile"), strFileName));
+                propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalization.getMessage("i18nFileNotAfile"), strFileName));
             }
         } else {
-            propertiesReturn.put("DOES_NOT_EXIST", String.format(DanielLocalization.getMessage("i18nFileDoesNotExist"), strFileName));
+            propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalization.getMessage("i18nFileDoesNotExist"), strFileName));
         }
         return propertiesReturn;
     }
@@ -75,13 +75,13 @@ public final class FileHandlingClass {
      * @return String
      */
     public static String getFileContentIntoString(final String strFileName) {
-        String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentIntoString"), strFileName);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
         LOGGER.debug(strFeedback);
         String strReturn = "";
         try {
             strReturn = new String(Files.readAllBytes(Paths.get(strFileName)));
         } catch (IOException e) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return strReturn;
@@ -94,7 +94,7 @@ public final class FileHandlingClass {
      * @return
      */
     public static InputStream getIncludedFileContentIntoInputStream(final String strFileName) {
-        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentIntoString"), strFileName);
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
         LOGGER.debug(strFeedback);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader(); // NOPMD by E303778 on 30.04.2025, 15:47
         final InputStream inputStream = classLoader.getResourceAsStream(strFileName); // NOPMD by E303778 on 30.04.2025, 15:47
@@ -124,7 +124,7 @@ public final class FileHandlingClass {
                     if (isItOk2) {
                         strFileJson = ePreety.getValue().toString();
                     } else {
-                        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileConfigurationNotFound"), propsFile.getProperty("Minified"), propsFile.getProperty("PrettyPrint"));
+                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound"), propsFile.getProperty("Minified"), propsFile.getProperty("PrettyPrint"));
                         throw new IllegalArgumentException(strFeedback);
                     }
                 }
@@ -141,7 +141,7 @@ public final class FileHandlingClass {
      * @return
      */
     public static List<String> getSpecificFilesFromFolder(final String strFolderName, final String strExtension) {
-        String strFeedback = String.format(DanielLocalization.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName);
         LOGGER.debug(strFeedback);
         final List<String> arrayFiles = new ArrayList<>();
         final Path directory = Paths.get(strFolderName);
@@ -153,12 +153,12 @@ public final class FileHandlingClass {
                     final String strFile  = file.getParent().toString()
                             + File.separator + file.getFileName();
                     arrayFiles.add(strFile);
-                    strFeedback = String.format(DanielLocalization.getMessage("i18nFileFound"), strExtension, strFile);
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFound"), strExtension, strFile);
                     LOGGER.debug(strFeedback);
                 }
             }
         } catch (IOException ex) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return arrayFiles;
@@ -171,7 +171,7 @@ public final class FileHandlingClass {
      * @return
      */
     public static List<String> getSubFolderFromFolder(final String strFolderName) {
-        String strFeedback = String.format(DanielLocalization.getMessage("i18nFileSubFoldersAttempt"), strFolderName);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersAttempt"), strFolderName);
         LOGGER.debug(strFeedback);
         final List<String> arraySubFolders = new ArrayList<>();
         final Path directory = Paths.get(strFolderName);
@@ -182,7 +182,7 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return arraySubFolders;
@@ -197,7 +197,7 @@ public final class FileHandlingClass {
             try {
                 APP_FOLDER = directory.getCanonicalPath();
             } catch (IOException ex) {
-                final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
                 LOGGER.error(strFeedback);
             }
         }
@@ -213,13 +213,13 @@ public final class FileHandlingClass {
         try {
             final File strSourceFile = new File(strFileName); 
             final File strDestFile = new File(strDestFolder);
-            String strFeedback = String.format(DanielLocalization.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder);
+            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder);
             LOGGER.info(strFeedback);
             org.apache.commons.io.FileUtils.moveFileToDirectory(strSourceFile, strDestFile, true);
-            strFeedback = String.format(DanielLocalization.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder);
             LOGGER.info(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }
@@ -234,7 +234,7 @@ public final class FileHandlingClass {
             final Path filePath = Paths.get(strFileName);
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }
@@ -253,14 +253,14 @@ public final class FileHandlingClass {
                     bwr.write(strLine);
                     bwr.newLine();
                 } catch (IOException er) {
-                    final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
                     LOGGER.error(strFeedback);
                 }
             });
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileWritingSuccess"), strFileName);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingSuccess"), strFileName);
             LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }

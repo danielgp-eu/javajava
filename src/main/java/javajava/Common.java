@@ -12,7 +12,7 @@ public final class Common {
     /**
      * standard Application class feedback
      */
-    public static final String strAppClsWrng = DanielLocalization.getMessage("i18nAppClassWarning");
+    public static final String strAppClsWrng = JavaJavaLocalization.getMessage("i18nAppClassWarning");
     /**
      * Database MySQL
      */
@@ -24,15 +24,15 @@ public final class Common {
     /**
      * standard SQL statement unable
      */
-    public static final String strStmntUnableX = DanielLocalization.getMessage("i18nSQLstatementUnableToGetX");
+    public static final String strStmntUnableX = JavaJavaLocalization.getMessage("i18nSQLstatementUnableToGetX");
     /**
      * standard Unknown feature
      */
-    public static final String strUnknFtrs = DanielLocalization.getMessage("i18nUnknFtrs");
+    public static final String strUnknFtrs = JavaJavaLocalization.getMessage("i18nUnknFtrs");
     /**
      * standard Unknown
      */
-    public static final String strUnknown = DanielLocalization.getMessage("i18nUnknown");
+    public static final String strUnknown = JavaJavaLocalization.getMessage("i18nUnknown");
     /**
      * Counts number of parameters with in a string
      *

@@ -28,10 +28,10 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
         final String strEnv = "MYSQL";
         final String strEnvMySql = System.getenv(strEnv);
         if (strEnvMySql == null) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
             LOGGER.error(strFeedback);
         } else {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nEnvironmentVariableFound"), strEnv);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableFound"), strEnv);
             LOGGER.error(strFeedback);
             final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
             final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
@@ -54,7 +54,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
         Connection connection = null;
         String strFeedback;
         if (propInstance.isEmpty()) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionPropertiesEmpty"), Common.strDbMySQL);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionPropertiesEmpty"), Common.strDbMySQL);
             LOGGER.error(strFeedback);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
@@ -62,13 +62,13 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
-                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbMySQL, strDatabase, strConnection, propConnection);
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbMySQL, strDatabase, strConnection, propConnection);
                 LOGGER.debug(strFeedback);
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationSuccess"), Common.strDbMySQL, strServer, strPort, strDatabase);
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccess"), Common.strDbMySQL, strServer, strPort, strDatabase);
                 LOGGER.debug(strFeedback);
             } catch(SQLException e) {
-                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCreationFailed"), Common.strDbMySQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailed"), Common.strDbMySQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
                 LOGGER.error(strFeedback);
             }
         }

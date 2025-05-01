@@ -56,7 +56,7 @@ public final class DependenciesClass {
                     , tElement.getElementsByTagName("version").item(0).getTextContent());
             }
         }
-        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
         LOGGER.debug(strFeedback);
         return Common.getMapIntoJsonString(arrayAttributes);
     }
@@ -71,7 +71,7 @@ public final class DependenciesClass {
         if (!classPath.contains(";")) {
             strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
         }
-        final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
         LOGGER.debug(strFeedback);
         return strDependencyFile;
     }
@@ -94,12 +94,12 @@ public final class DependenciesClass {
                     LOGGER.debug(xmlContent);
                     doc = docBuilder.parse(xmlContent);
                 } catch (IOException e) {
-                    final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
                     LOGGER.error(strFeedback);
                 }
             }
         } catch (IOException | ParserConfigurationException | SAXException ex) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return doc;

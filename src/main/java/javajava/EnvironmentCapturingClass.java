@@ -267,7 +267,8 @@ public final class EnvironmentCapturingClass {
             "Country.Format", System.getProperty("user.country.format"),
             "Language", System.getProperty("user.language"),
             "Language.Format", System.getProperty("user.language.format"),
-            "User.Name", System.getProperty("user.name"),
+            "Home", System.getProperty("user.home"),
+            "Name", System.getProperty("user.name"),
             "Timezone", System.getProperty("user.timezone")
         ));
     }
