@@ -1,4 +1,4 @@
-package javajava;
+package danielgp;
 /* Jackson classes for fast JSON handling */
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,10 +32,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final ObjectMapper objectMapper = new ObjectMapper();
         try {
             jsonRootNode = objectMapper.readTree(strJson);
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), strJson);
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONstringLoaded"), strJson);
             LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONloadErrorInputStream"), strJson, Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONloadErrorInputStream"), strJson, Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return jsonRootNode;
@@ -52,10 +52,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final ObjectMapper objectMapper = new ObjectMapper();
         try {
             jsonRootNode = objectMapper.readTree(jsonFile);
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
             LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONloadErrorFile"), jsonFile.toString(), Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONloadErrorFile"), jsonFile.toString(), Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return jsonRootNode;
@@ -69,14 +69,14 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return JsonNode
      */
     protected static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
         LOGGER.debug(strFeedback);
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
             LOGGER.error(strFeedback);
         } else {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFound"), givenJsonNode);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nJSONnodeSearchFound"), givenJsonNode);
             LOGGER.debug(strFeedback);
         }
         return jsonNode;
@@ -100,7 +100,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
                 }
                 listProperties.add(properties);
             });
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Properties", strJsonNodeName, listProperties);
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Properties", strJsonNodeName, listProperties);
             LOGGER.debug(strFeedback);
         }
         return listProperties;
@@ -118,7 +118,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         if(!jsonNode.isEmpty()) {
             jsonNode.forEach(jsonSingleNode-> listStrings.add(jsonSingleNode.asText()));
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Strings", strJsonNodeName, listStrings);
+            final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Strings", strJsonNodeName, listStrings);
             LOGGER.debug(strFeedback);
         }
         return listStrings;
@@ -137,7 +137,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         for (final Map.Entry<String, JsonNode> entry : jsonNode.properties()) {
             properties.put(entry.getKey(), entry.getValue());
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "Properties", strJsonNodeName, properties);
+        final String strFeedback = String.format(DanielLocalization.getMessage("i18nJSONnodeSearchFoundX"), "Properties", strJsonNodeName, properties);
         LOGGER.debug(strFeedback);
         return properties;
     }

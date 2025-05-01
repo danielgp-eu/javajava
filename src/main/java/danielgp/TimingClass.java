@@ -1,4 +1,4 @@
-package javajava;
+package danielgp;
 /* Time classes */
 import java.time.LocalDateTime;
 import java.time.Duration;
@@ -117,7 +117,7 @@ public final class TimingClass {
                 break;
             case "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero":
                 if (lngNumber > 0) {
-                    strReturn = String.format(" %02d %s", lngNumber, JavaJavaLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
+                    strReturn = String.format(" %02d %s", lngNumber, DanielLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
                 }
                 break;
             case "SemicolumnAndTwoDigitNumber":
@@ -148,7 +148,7 @@ public final class TimingClass {
      */
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
         switch(strWhere) {
             case "debug":
                 LOGGER.debug(strFeedback);

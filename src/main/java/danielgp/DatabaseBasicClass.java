@@ -1,4 +1,4 @@
-package javajava;
+package danielgp;
 /* SQL classes */
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,14 +28,14 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param givenConnection
      */
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
         LOGGER.debug(strFeedback);
         try {
             givenConnection.close();
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
     }
@@ -47,14 +47,14 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param givenStatement
      */
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
         LOGGER.debug(strFeedback);
         try {
             givenStatement.close();
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
     }
@@ -67,15 +67,15 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @return Statement
      */
     public static Statement createSqlStatement(final String strDatabaseType, final Connection connection) {
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
+        String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
         LOGGER.debug(strFeedback);
         Statement objStatement = null;
         try {
             objStatement = connection.createStatement();
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return objStatement;
@@ -120,7 +120,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
+            String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
             LOGGER.debug(strFeedback);
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
@@ -128,13 +128,13 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
                 LOGGER.debug(strFeedback);
             } catch (SQLException e) {
-                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LOGGER.error(strFeedback);
             }
-            TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose), "debug");
+            TimingClass.logDuration(startTimeStamp, String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose), "debug");
         }
     }
 

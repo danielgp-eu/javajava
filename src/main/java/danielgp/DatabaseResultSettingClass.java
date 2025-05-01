@@ -1,4 +1,4 @@
-package javajava;
+package danielgp;
 /* SQL classes */
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
