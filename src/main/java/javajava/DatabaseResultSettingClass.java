@@ -29,29 +29,29 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         final int intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
             final String key = (String) obj;
-            strFeedback = String.format("Evaluating ResultSet for %s...", key);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
             LOGGER.debug(strFeedback);
             switch (key) {
                 case "expectedExactNumberOfColumns":
                     final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
                     if (intColumnsIs != intColumnsShould) {
-                        strFeedback = String.format("For the \"%s\" query the Resultset was expected to have exact %s column(s) but a %s were found...", strPurpose, intColumnsShould, intColumnsIs);
+                        strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
                         LOGGER.error(strFeedback);
                     }
                     break;
                 case "expectedExactNumberOfRows":
                     final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
                     if (intResultSetRows != intExpectedRows) {
-                        strFeedback = String.format("For the \"%s\" query the Resultset was expected to have exact %s row(s) but a %s was/were found...", strPurpose, intExpectedRows, intResultSetRows);
+                        strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
                         LOGGER.error(strFeedback);
                     }
                     break;
                 case "exposeNumberOfColumns":
-                    strFeedback = String.format("Number of columns retrieved is %d", intColumnsIs);
+                    strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
                     LOGGER.info(strFeedback);
                     break;
                 case "exposeNumberOfRows":
-                    strFeedback = String.format("Number of rows retrieved is %d", intResultSetRows);
+                    strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
                     LOGGER.info(strFeedback);
                     break;
                 default:
@@ -75,18 +75,18 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            String strFeedback = String.format("Will execute %s query which is defined as: %s", strQueryPurpose, strQueryToUse);
+            String strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
             LOGGER.debug(strFeedback);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                strFeedback = String.format("Executing %s query was successful!", strQueryPurpose);
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
                 LOGGER.debug(strFeedback);
                 digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                strFeedback = String.format("Statement execution for %s has failed with following error: %s", strQueryPurpose, e.getLocalizedMessage());
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
                 LOGGER.error(strFeedback);
             }
-            TimingClass.logDuration(startTimeStamp, String.format("Finished executing %s query", strQueryPurpose), "debug");
+            TimingClass.logDuration(startTimeStamp, String.format(DanielLocalization.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose), "debug");
         }
         return resultSet;
     }
@@ -113,10 +113,10 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 colProperties.put("Nullable", metaData.isNullable(columnNumber));
                 listResultSet.add(colProperties);
             }
-            strFeedback = String.format("Current ResultSet structure is : %s", listResultSet);
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
             LOGGER.debug(strFeedback);
         } catch (SQLException e) {
-            strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());
+            strFeedback = String.format(Common.strStatementUnableX, "structures", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listResultSet;
@@ -133,7 +133,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         String strFeedback;
         try {
             if (resultSet == null) {
-                strFeedback = "ResultSet is null";
+                strFeedback = DanielLocalization.getMessage("i18nSQLresultSetNull");
                 LOGGER.debug(strFeedback);
             } else {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
@@ -149,11 +149,11 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     }
                     listResultSet.add(currentRow);
                 }
-                strFeedback = String.format("Final list of values is %s", listResultSet);
+                strFeedback = String.format(DanielLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
                 LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
-            strFeedback = String.format("Unable to get ResultSet structures and error is: %s", e.getLocalizedMessage());
+            strFeedback = String.format(Common.strStatementUnableX, "structures", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listResultSet;
@@ -172,7 +172,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 listStrings.add(resultSet.getString(1));
             }
         } catch (SQLException e) {
-            final String strFeedback = String.format("Unable to get list of strings from ResultSet... %s", e.getLocalizedMessage());
+            final String strFeedback = String.format(Common.strStatementUnableX, "list of strings", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listStrings;
@@ -190,7 +190,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
-            final String strFeedback = String.format("Unable to get the # of columns in the ResultSet... %s", e.getLocalizedMessage());
+            final String strFeedback = String.format(Common.strStatementUnableX, "columns", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return intColumns;
@@ -207,7 +207,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         try {
             intResultSetRows = resultSet.getFetchSize() + 1;
         } catch (SQLException e) {
-            final String strFeedback = String.format("Unable to get the # of columns in the ResultSet... %s", e.getLocalizedMessage());
+            final String strFeedback = String.format(Common.strStatementUnableX, "rows", e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return intResultSetRows;
@@ -239,7 +239,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     break;
             }
         } catch (SQLException e) {
-            strFeedback = String.format("Statement execution for %s has failed with following error: %s", strWhich, e.getLocalizedMessage());
+            strFeedback = String.format(DanielLocalization.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return listReturn;

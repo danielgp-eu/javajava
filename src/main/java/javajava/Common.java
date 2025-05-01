@@ -21,6 +21,10 @@ public final class Common {
      * standard Unknown
      */
     public static final String strUnknown = DanielLocalization.getMessage("i18nUnknown");
+    /**
+     * standard Unknown
+     */
+    public static final String strStatementUnableX = DanielLocalization.getMessage("i18nSQLstatementUnableToGetX");
 
     /**
      * Counts number of parameters with in a string
