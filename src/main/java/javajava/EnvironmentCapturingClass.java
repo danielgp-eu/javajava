@@ -1,4 +1,4 @@
-package danielgp;
+package javajava;
 /* Java utility classes */
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;

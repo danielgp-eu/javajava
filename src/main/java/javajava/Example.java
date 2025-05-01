@@ -1,4 +1,4 @@
-package danielgp;
+package javajava;
 /* Time class */
 import java.time.LocalDateTime;
 /* Util classes */
@@ -33,7 +33,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     private static Options definedArguments() {
         final Options options = new Options();
-        final Option paramAct = new Option("act", "action", true, DanielLocalization.getMessage("i18nAppParamAct"));
+        final Option paramAct = new Option("act", "action", true, JavaJavaLocalization.getMessage("i18nAppParamAct"));
         paramAct.setRequired(true);
         options.addOption(paramAct);
         return options;
@@ -47,8 +47,8 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
         // setting Locale from current user, if missing en-US will be used
-        DanielLocalization.setLocale(Locale.forLanguageTag(DanielLocalization.getUserLocale()));
-        String strFeedback = DanielLocalization.getMessage("i18nNewExec")
+        JavaJavaLocalization.setLocale(Locale.forLanguageTag(JavaJavaLocalization.getUserLocale()));
+        String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec")
             + new String(new char[80]).replace("\0", "=");
         LOGGER.debug(strFeedback);
         LOGGER.error(strFeedback);
@@ -59,13 +59,13 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             final CommandLine cmd = parser.parse(options, args);
             performAction(cmd);
         } catch (ParseException e) {
-            strFeedback = String.format(DanielLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
             final HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp(DanielLocalization.getMessage("i18nMndtParamsAre"), options);
+            formatter.printHelp(JavaJavaLocalization.getMessage("i18nMndtParamsAre"), options);
             System.exit(1);
         }
-        TimingClass.logDuration(startTimeStamp, String.format(DanielLocalization.getMessage("i18nEntOp"), args[0]), "info");
+        TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]), "info");
     }
 
     /**
@@ -105,7 +105,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             case "TEST":
                 break;
             default:
-                final String strMsg = String.format(DanielLocalization.getMessage("i18nUnknParamFinal"), prmActionValue, StackWalker.getInstance()
+                final String strMsg = String.format(JavaJavaLocalization.getMessage("i18nUnknParamFinal"), prmActionValue, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
                 LOGGER.info(strMsg);
                 break;

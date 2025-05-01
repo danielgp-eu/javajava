@@ -1,4 +1,4 @@
-package danielgp;
+package javajava;
 /* SQL classes */
 import java.sql.Connection;
 import java.sql.DriverManager;

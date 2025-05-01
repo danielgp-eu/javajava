@@ -1,4 +1,4 @@
-package danielgp;
+package javajava;
 /* I/O classes */
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public final class ShellingClass {
         } else {
             builder.command(strCommand, strParameters);
         }
-        final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
         LOGGER.debug(strFeedback);
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
@@ -60,7 +60,7 @@ public final class ShellingClass {
             }
             strReturn = processOutput.toString();
         } catch (IOException ex) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
             LOGGER.error(strFeedback);
         }
         return strReturn;
@@ -79,13 +79,13 @@ public final class ShellingClass {
             final Process process = builder.start();
             final int exitCode = process.waitFor();
             process.destroy();
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
             LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
-        TimingClass.logDuration(startTimeStamp, DanielLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"), "debug");
+        TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"), "debug");
     }
 
     /**
@@ -106,13 +106,13 @@ public final class ShellingClass {
             strReturn = captureProcessOutput(process, strOutLineSep);
             final int exitCode = process.waitFor();
             process.destroy();
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
             LOGGER.debug(strFeedback);
         } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format(DanielLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
-        TimingClass.logDuration(startTimeStamp, DanielLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"), "debug");
+        TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"), "debug");
         return strReturn;
     }
 
@@ -134,7 +134,7 @@ public final class ShellingClass {
     private static void loadCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
-            final String strFeedback = DanielLocalization.getMessage("i18nUserPrincipalNameError");
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
             LOGGER.warn(strFeedback);
             strUser = executeShellUtility("WHOAMI", "", "");
         }

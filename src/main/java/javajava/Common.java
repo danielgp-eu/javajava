@@ -1,4 +1,4 @@
-package danielgp;
+package javajava;
 /* Utility classes */
 import java.util.Map;
 /* Regular Expressions classes */
@@ -12,15 +12,15 @@ public final class Common {
     /**
      * standard Application class feedback
      */
-    public static final String strAppClsWrng = DanielLocalization.getMessage("i18nAppClassWarning");
+    public static final String strAppClsWrng = JavaJavaLocalization.getMessage("i18nAppClassWarning");
     /**
      * standard Unknown feature
      */
-    public static final String strUnknFtrs = DanielLocalization.getMessage("i18nUnknFtrs");
+    public static final String strUnknFtrs = JavaJavaLocalization.getMessage("i18nUnknFtrs");
     /**
      * standard Unknown
      */
-    public static final String strUnknown = DanielLocalization.getMessage("i18nUnknown");
+    public static final String strUnknown = JavaJavaLocalization.getMessage("i18nUnknown");
 
     /**
      * Counts number of parameters with in a string

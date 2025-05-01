@@ -1,4 +1,4 @@
-package danielgp;
+package javajava;
 /* ICU classes */
 import com.ibm.icu.text.PluralRules;
 /* Text classes */
@@ -11,7 +11,7 @@ import java.util.ResourceBundle;
 /**
  * Internationalization
  */
-public final class DanielLocalization {
+public final class JavaJavaLocalization {
     /**
      * localization
      */
@@ -23,7 +23,7 @@ public final class DanielLocalization {
     /**
      * locale file prefix
      */
-    private final static String MESSAGES_KEY = "DanielTranslations";
+    private final static String MESSAGES_KEY = "JavaJavaTranslations";
 
     /**
      * getting Locale
@@ -106,7 +106,7 @@ public final class DanielLocalization {
     /**
      * constructor
      */
-    private DanielLocalization() {
+    private JavaJavaLocalization() {
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }
