@@ -1,4 +1,4 @@
-package danielgp;
+package javaJava;
 /* ICU classes */
 import com.ibm.icu.text.PluralRules;
 /* Text classes */
@@ -23,7 +23,7 @@ public final class DanielLocalization {
     /**
      * locale file prefix
      */
-    private final static String MESSAGES_KEY = "DanielTranslations";
+    private final static String MESSAGES_KEY = "JavaJavaTranslations";
 
     /**
      * getting Locale

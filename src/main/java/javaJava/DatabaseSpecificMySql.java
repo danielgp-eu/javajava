@@ -1,4 +1,4 @@
-package danielgp;
+package javaJava;
 /* Jackson classes for fast JSON handling */
 import com.fasterxml.jackson.databind.JsonNode;
 /* I/O classes */
