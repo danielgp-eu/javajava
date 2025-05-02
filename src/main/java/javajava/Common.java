@@ -22,6 +22,10 @@ public final class Common {
      */
     public static final String strDbSnowflake = "Snowflake";
     /**
+     * Database SQLite
+     */
+    public static final String strDbSqLite = "SQLite";
+    /**
      * standard SQL statement unable
      */
     public static final String strStmntUnableX = JavaJavaLocalization.getMessage("i18nSQLstatementUnableToGetX");

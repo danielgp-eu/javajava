@@ -94,11 +94,12 @@ public final class FileHandlingClass {
      * @return
      */
     public static InputStream getIncludedFileContentIntoInputStream(final String strFileName) {
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
         LOGGER.debug(strFeedback);
         final ClassLoader classLoader = Thread.currentThread().getContextClassLoader(); // NOPMD by E303778 on 30.04.2025, 15:47
         final InputStream inputStream = classLoader.getResourceAsStream(strFileName); // NOPMD by E303778 on 30.04.2025, 15:47
-        LOGGER.debug("Got entire stream");
+        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);
+        LOGGER.debug(strFeedback);
         return inputStream;
     }
 

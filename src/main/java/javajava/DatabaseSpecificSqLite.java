@@ -23,12 +23,12 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
      */
     public static Connection getSqLiteConnection(final String strSqLiteFile) {
         final String strConnection = "jdbc:sqlite:" + strSqLiteFile.replace("\\", "/");
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nDatabaseSqLiteConnectionAttempt"), strConnection);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttemptLight"), Common.strDbSqLite, strSqLiteFile, strConnection);
         LOGGER.debug(strFeedback);
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(strConnection);
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nDatabaseSqLiteConnectionSuccess"), strSqLiteFile);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSqLite, strSqLiteFile);
             LOGGER.debug(strFeedback);
             Function.create(connection, "REGEXP_LIKE", new Function() {
                 @Override
@@ -41,7 +41,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
                 }
             });
         } catch(SQLException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nDatabaseSqLiteConnectionFiled"), e.getLocalizedMessage());
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSqLite, e.getLocalizedMessage());
             LOGGER.error(strFeedback);
         }
         return connection;

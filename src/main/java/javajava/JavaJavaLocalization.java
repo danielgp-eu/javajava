@@ -23,7 +23,7 @@ public final class JavaJavaLocalization {
     /**
      * locale folder
      */
-    private final static String MESSAGES_FOLDER = "JavaJavaBundle";
+    private final static String MESSAGES_FOLDER = "JavaJavaBundle/";
     /**
      * locale file prefix
      */
@@ -92,7 +92,7 @@ public final class JavaJavaLocalization {
      */
     private static void setBundle() {
         if (Objects.isNull(bundle)) {
-            bundle = ResourceBundle.getBundle(MESSAGES_FOLDER + "/" + MESSAGES_KEY);
+            bundle = ResourceBundle.getBundle(MESSAGES_FOLDER + MESSAGES_KEY);
         }
     }
 
