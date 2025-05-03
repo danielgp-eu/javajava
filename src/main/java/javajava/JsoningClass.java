@@ -113,7 +113,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName
      * @return List<String>
      */
-    protected static List<String> getJsonNodeNameListOfStrings(final JsonNode givenJsonNode, final String strJsonNodeName) {
+    public static List<String> getJsonNodeNameListOfStrings(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final List<String> listStrings = new ArrayList<>();
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         if(!jsonNode.isEmpty()) {
@@ -131,7 +131,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName
      * @return Properties
      */
-    protected static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
+    public static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         final Properties properties = new Properties();
         for (final Map.Entry<String, JsonNode> entry : jsonNode.properties()) {

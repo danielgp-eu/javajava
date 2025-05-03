@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
 /**
  * Internationalization
  */
@@ -23,7 +24,7 @@ public final class JavaJavaLocalization {
     /**
      * locale folder
      */
-    private final static String MESSAGES_FOLDER = "JavaJavaBundle/";
+    private final static String MESSAGES_FOLDER = "Locale/JavaJavaBundle/";
     /**
      * locale file prefix
      */
