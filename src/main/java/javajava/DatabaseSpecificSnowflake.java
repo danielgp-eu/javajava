@@ -36,7 +36,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
      * @param strNamedInstance
      * @return Connection
      */
-    protected static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase, final String strNamedInstance) {
+    protected static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
         loadSnowflakeDriver();
         Connection connection = null;
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
@@ -277,6 +277,22 @@ FROM
             LOGGER.debug(strFeedback);
         } catch (ClassNotFoundException ex) {
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.strDbSnowflake, strDriverName);
+            LOGGER.error(strFeedback);
+        }
+    }
+
+    /**
+     * Execute Snowflake pre-defined actions
+     * @param strWhich
+     * @param objProps
+     */
+    public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
+        try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
+            Statement objStatement = createSqlStatement("Snowflake", objConnection);) {
+            executeSnowflakeBootstrapQuery(objStatement);
+            getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
+        } catch(SQLException e){
+            final String strFeedback = String.format("Error", e.getStackTrace().toString());
             LOGGER.error(strFeedback);
         }
     }

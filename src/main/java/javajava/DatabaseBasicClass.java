@@ -104,6 +104,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
                 }
             } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
                 strValueToUse = "NULL";
+            } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
+                strValueToUse = String.format("\"%s\"", strOriginalValue.replace("\"", "\"\""));
             }
             strQueryToReturn = strQueryToReturn.replace(String.format("{%s}", strKey), strValueToUse);
         }
@@ -124,6 +126,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
             LOGGER.debug(strFeedback);
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryToUse);
+                    LOGGER.debug(strFeedback);
                     objStatement.executeLargeUpdate(strQueryToUse);
                 } else {
                     objStatement.execute(strQueryToUse);

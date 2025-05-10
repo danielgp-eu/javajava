@@ -98,6 +98,12 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             case "getMySQL_ViewsLight":
                 DatabaseSpecificMySql.performMySqlPreDefinedAction("Views_Light", properties);
                 break;
+            case "getSnowflake_CurrentUserAssignedRoles":
+                DatabaseSpecificSnowflake.performSnowflakePreDefinedAction("AvailableRoles", properties);
+                break;
+            case "getSnowflake_Warehouses":
+                DatabaseSpecificSnowflake.performSnowflakePreDefinedAction("AvailableWarehouses", properties);
+                break;
             case "getSubFoldersFromFolder":
                 final List<String> listSubFolders = FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
                 listSubFolders.forEach(LOGGER::info);
