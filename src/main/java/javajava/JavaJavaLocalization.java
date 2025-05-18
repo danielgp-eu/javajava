@@ -32,7 +32,7 @@ public final class JavaJavaLocalization {
 
     /**
      * getting Locale
-     * @return
+     * @return Locale
      */
     public static Locale getLocale() {
         return Locale.getDefault();
@@ -40,7 +40,8 @@ public final class JavaJavaLocalization {
 
     /**
      * getting Message
-     * @param key
+     * @param key translation bundle name
+     * @return String
      */
     public static String getMessage(final String key) {
         setBundle();
@@ -49,9 +50,9 @@ public final class JavaJavaLocalization {
 
     /**
      * Formatted message
-     * @param key
-     * @param arguments
-     * @return
+     * @param key translation bundle name
+     * @param arguments localization arguments
+     * @return String
      */
     public static String getMessage(final String key, final Object ... arguments) {
         return MessageFormat.format(getMessage(key), arguments);
@@ -59,9 +60,9 @@ public final class JavaJavaLocalization {
 
     /**
      * message with Plural
-     * @param baseKey
-     * @param count
-     * @return
+     * @param baseKey translation bundle
+     * @param count number to evaluate for plural rules
+     * @return String
      */
     public static String getMessageWithPlural(final String baseKey, final long count) {
         final PluralRules pluralRules = PluralRules.forLocale(getLocale());
@@ -71,7 +72,7 @@ public final class JavaJavaLocalization {
 
     /**
      * get User locale
-     * @return
+     * @return String
      */
     public static String getUserLocale() {
         return System.getProperty("user.language.format")
@@ -80,8 +81,8 @@ public final class JavaJavaLocalization {
 
     /**
      * Supported check
-     * @param locale
-     * @return
+     * @param locale localization to use
+     * @return boolean
      */
     public static boolean isSupported(final Locale locale) {
         final Locale[] availableLocales = Locale.getAvailableLocales();
@@ -99,7 +100,7 @@ public final class JavaJavaLocalization {
 
     /**
      * setting Locale
-     * @param locale
+     * @param locale localization to use
      */
     public static void setLocale(final Locale locale) {
         if (isSupported(locale)) {

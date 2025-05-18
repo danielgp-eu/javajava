@@ -29,7 +29,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
 
     /**
      * defining Arguments
-     * @return
+     * @return Options
      */
     private static Options definedArguments() {
         final Options options = new Options();
@@ -42,7 +42,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
     /**
      * Constructor
      * 
-     * @param args
+     * @param args command-line arguments
      */
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
@@ -70,7 +70,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
 
     /**
      * Action logic
-     * @param cmd
+     * @param cmd command-line arguments
      */
     private static void performAction(final CommandLine cmd) {
         final String prmActionValue = cmd.getOptionValue("action");
@@ -116,5 +116,12 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 LOGGER.info(strMsg);
                 break;
         }
+    }
+
+    /**
+     * Constructor
+     */
+    private Example() {
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 }

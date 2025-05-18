@@ -63,7 +63,7 @@ public final class DependenciesClass {
 
     /**
      * get Dependency file
-     * @return
+     * @return String
      */
     private static String getDependencyFile() {
         FileHandlingClass.loadProjectFolder();
@@ -78,8 +78,8 @@ public final class DependenciesClass {
 
     /**
      * Dependencies Document
-     * @param strDependencyFile
-     * @return
+     * @param strDependencyFile string with dependency details
+     * @return Document
      */
     private static Document getDocumentWithDependencies(final String strDependencyFile) {
         Document doc = null; // NOPMD by Daniel Popiniuc on 30.04.2025, 02:18

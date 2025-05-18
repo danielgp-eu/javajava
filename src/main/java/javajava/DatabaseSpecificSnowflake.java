@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 /* Utility classes */
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -21,7 +22,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
     /**
      * Snowflake Bootstrap
      * 
-     * @param objStatement
+     * @param objStatement statement
      */
     public static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
         final String strQueryToUse = "ALTER SESSION SET JDBC_QUERY_RESULT_FORMAT='JSON';";
@@ -31,9 +32,8 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
     /**
      * Initiate a Snowflake connection with Instance properties and DB specified
      * 
-     * @param propInstance
-     * @param strDatabase
-     * @param strNamedInstance
+     * @param propInstance instance properties
+     * @param strDatabase database to connect to
      * @return Connection
      */
     protected static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
@@ -57,9 +57,10 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
     /**
      * get standardized Information from Snowflake
      * 
-     * @param objStatement
-     * @param strWhich
-     * @param strKind
+     * @param objStatement statement
+     * @param strWhich which action
+     * @param strKind kind of output
+     * @return List of Properties
      */
     protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final Properties queryProperties = new Properties();
@@ -73,8 +74,8 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
     /**
      * returns standard Metadata query specific to Snowflake
      * 
-     * @param strWhich
-     * @return
+     * @param strWhich which action
+     * @return String
      */
     public static String getSnowflakePreDefinedMetadataQuery(final String strWhich) {
         return switch (strWhich) {
@@ -236,7 +237,7 @@ FROM
     /**
      * build Snowflake Properties
      * 
-     * @param propInstance
+     * @param propInstance instance properties
      * @return Properties
      */
     protected static Properties getSnowflakeProperties(final Properties propInstance) {
@@ -249,7 +250,7 @@ FROM
      * build Snowflake Properties
      * 
      * @param strDatabase
-     * @param propInstance
+     * @param propInstance instance properties
      * @return Properties
      */
     private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
@@ -283,16 +284,16 @@ FROM
 
     /**
      * Execute Snowflake pre-defined actions
-     * @param strWhich
-     * @param objProps
+     * @param strWhich which action to perform
+     * @param objProps object properties
      */
     public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-            Statement objStatement = createSqlStatement("Snowflake", objConnection);) {
+            Statement objStatement = createSqlStatement("Snowflake", objConnection)) {
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e){
-            final String strFeedback = String.format("Error", e.getStackTrace().toString());
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
         }
     }

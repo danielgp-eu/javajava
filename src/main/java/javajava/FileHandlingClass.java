@@ -37,7 +37,7 @@ public final class FileHandlingClass {
     /**
      * Checking if a file exists and is readable
      * 
-     * @param strFileName
+     * @param strFileName file name
      * @return Properties
      */
     public static Properties checkFileExistanceAndReadability(final String strFileName) {
@@ -62,7 +62,7 @@ public final class FileHandlingClass {
     /**
      * Getting current user
      * 
-     * @return
+     * @return File
      */
     public static File getCurrentUserFolder() {
         return new File(System.getProperty("user.home"));
@@ -71,7 +71,7 @@ public final class FileHandlingClass {
     /**
      * Get file content into String
      * 
-     * @param strFileName
+     * @param strFileName file name
      * @return String
      */
     public static String getFileContentIntoString(final String strFileName) {
@@ -90,8 +90,8 @@ public final class FileHandlingClass {
     /**
      * Get file content into InputStream
      * 
-     * @param strFileName
-     * @return
+     * @param strFileName file name
+     * @return input stream
      */
     public static InputStream getIncludedFileContentIntoInputStream(final String strFileName) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
@@ -105,7 +105,7 @@ public final class FileHandlingClass {
 
     /**
      * read Main configuration file
-     * 
+     * @param strFilePattern file pattern to use
      * @return String
      */
     public static String getJsonConfigurationFile(final String strFilePattern) {
@@ -137,9 +137,9 @@ public final class FileHandlingClass {
     /**
      * Get list of files from a given folder
      * 
-     * @param strFolderName
-     * @param strExtension
-     * @return
+     * @param strFolderName folder name to look into
+     * @param strExtension extension to isolate
+     * @return List of Strings
      */
     public static List<String> getSpecificFilesFromFolder(final String strFolderName, final String strExtension) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName);
@@ -168,8 +168,8 @@ public final class FileHandlingClass {
     /**
      * Get list of sub-folders from a given folder
      * 
-     * @param strFolderName
-     * @return
+     * @param strFolderName folder name to look into
+     * @return List of String
      */
     public static List<String> getSubFolderFromFolder(final String strFolderName) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersAttempt"), strFolderName);
@@ -207,8 +207,8 @@ public final class FileHandlingClass {
     /**
      * Archives single file to new location
      * 
-     * @param strFileName
-     * @param strDestFolder
+     * @param strFileName file name in scope for archivation
+     * @param strDestFolder destination folder
      */
     public static void moveFileToNewLocation(final String strFileName, final String strDestFolder) {
         try {
@@ -228,7 +228,7 @@ public final class FileHandlingClass {
     /**
      * Removes a files if already exists
      * 
-     * @param strFileName
+     * @param strFileName file name to search
      */
     private static void removeFileIfExists(final String strFileName) {
         try {
@@ -243,8 +243,8 @@ public final class FileHandlingClass {
     /**
      * Write list of single values to File
      * 
-     * @param listStrings
-     * @param strFileName
+     * @param listStrings List of Strings
+     * @param strFileName file name to write to
      */
     public static void writeListToTextFile(final List<String> listStrings, final String strFileName) {
         removeFileIfExists(strFileName);
@@ -266,7 +266,9 @@ public final class FileHandlingClass {
         }
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Constructor
+     */
     private FileHandlingClass() {
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }

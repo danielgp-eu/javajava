@@ -21,7 +21,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
 
     /**
      * Getting Connection Properties For MySQL from Environment variable
-     * @return
+     * @return Properties
      */
     protected static Properties getConnectionPropertiesForMySQL() {
         final Properties properties = new Properties();

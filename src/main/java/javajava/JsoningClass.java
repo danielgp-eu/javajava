@@ -24,7 +24,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * Load all JSON nodes from String
      * 
-     * @param strJson
+     * @param strJson Input stream as source
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final InputStream strJson) {
@@ -44,7 +44,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * Load all JSON nodes from main configuration file
      * 
-     * @param jsonFile
+     * @param jsonFile file with expected JSON content
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final File jsonFile) {
@@ -64,8 +64,8 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * get Sub-node from Tree
      * 
-     * @param givenJsonNode
-     * @param strJsonNodeName
+     * @param givenJsonNode JSON node
+     * @param strJsonNodeName name to search
      * @return JsonNode
      */
     protected static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -85,9 +85,9 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * Node into List of Properties
      * 
-     * @param givenJsonNode
-     * @param strJsonNodeName
-     * @return List<Properties>
+     * @param givenJsonNode JSON node
+     * @param strJsonNodeName name to search
+     * @return List of Properties
      */
     public static List<Properties> getJsonNodeNameListOfProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final List<Properties> listProperties = new ArrayList<>();
@@ -109,9 +109,9 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * get list of String from a JSON node
      * 
-     * @param givenJsonNode
-     * @param strJsonNodeName
-     * @return List<String>
+     * @param givenJsonNode JSON node
+     * @param strJsonNodeName name to search
+     * @return List of String
      */
     public static List<String> getJsonNodeNameListOfStrings(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final List<String> listStrings = new ArrayList<>();
@@ -127,8 +127,8 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * Properties from a JSON node 
      * 
-     * @param givenJsonNode
-     * @param strJsonNodeName
+     * @param givenJsonNode JSON node
+     * @param strJsonNodeName name to search
      * @return Properties
      */
     public static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
@@ -145,8 +145,8 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     /**
      * Single value from a JSON node
      * 
-     * @param givenJsonNode
-     * @param strJsonNode
+     * @param givenJsonNode JSON node
+     * @param strJsonNode name to search
      * @return String
      */
     public static String getJsonValue(final JsonNode givenJsonNode, final String strJsonNode) {

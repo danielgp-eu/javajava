@@ -19,9 +19,9 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * extends functionality for Executions
      * 
-     * @param strPurpose
-     * @param resultSet
-     * @param objProperties
+     * @param strPurpose purpose of query
+     * @param resultSet result-set
+     * @param objProperties properties (with features to apply)
      */
     private static void digestCustomQueryProperties(final String strPurpose, final ResultSet resultSet, final Properties objProperties) {
         String strFeedback;
@@ -65,10 +65,10 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
 
     /**
      * Execute a custom query with result-set expected
-     * @param objStatement
-     * @param strQueryPurpose
-     * @param strQueryToUse
-     * @param objProperties
+     * @param objStatement statement
+     * @param strQueryPurpose query purpose
+     * @param strQueryToUse query to use
+     * @param objProperties properties (with features to apply)
      * @return ResultSet
      */
     public static ResultSet executeCustomQuery(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse, final Properties objProperties) {
@@ -94,7 +94,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * get structure from ResultSet
      * 
-     * @param resultSet
+     * @param resultSet result-set
      * @return List of Properties
      */
     protected static List<Properties> getResultSetColumnStructure(final ResultSet resultSet) {
@@ -125,7 +125,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * get column values from ResultSet
      * 
-     * @param resultSet
+     * @param resultSet result-set
      * @return List of Properties
      */
     public static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
@@ -162,8 +162,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * get list of values
      * 
-     * @param resultSet
-     * @return
+     * @param resultSet result-set
+     * @return list of strings
      */
     protected static List<String> getResultSetListOfStrings(final ResultSet resultSet) {
         final List<String> listStrings = new ArrayList<>();
@@ -181,7 +181,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * get # of Columns from ResultSet 
      * 
-     * @param resultSet
+     * @param resultSet result-set
      * @return number of columns
      */
     private static int getResultSetNumberOfColumns(final ResultSet resultSet) {
@@ -199,7 +199,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * get # of Columns from ResultSet 
      * 
-     * @param resultSet
+     * @param resultSet result-set
      * @return number of rows
      */
     private static int getResultSetNumberOfRows(final ResultSet resultSet) {
@@ -215,11 +215,12 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
 
     /**
      * get standardized Information
-     * @param objStatement
-     * @param strWhich
-     * @param strQueryToUse
-     * @param queryProperties
-     * @param strKind
+     * @param objStatement statement
+     * @param strWhich which type of output would be needed from result-set
+     * @param strQueryToUse query to use
+     * @param queryProperties properties (with features to apply)
+     * @param strKind which type of output would be needed
+     * @return List of Properties
      */
     protected static List<Properties> getResultSetStandardized(final Statement objStatement, final String strWhich, final String strQueryToUse, final Properties queryProperties, final String strKind) {
         String strFeedback;
@@ -243,6 +244,13 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
             LOGGER.error(strFeedback);
         }
         return listReturn;
+    }
+
+    /**
+     * Constructor
+     */
+    public void DatabaseResultSettingClass() {
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 
 }

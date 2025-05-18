@@ -26,8 +26,8 @@ public final class ShellingClass {
     /**
      * Building Process for shell execution
      * 
-     * @param strCommand
-     * @param strParameters
+     * @param strCommand command to execute
+     * @param strParameters command parameters
      */
     private static ProcessBuilder buildProcessForExecution(final String strCommand, final String strParameters) {
         final ProcessBuilder builder = new ProcessBuilder();
@@ -45,9 +45,9 @@ public final class ShellingClass {
     /**
      * capture Process output
      * 
-     * @param process
-     * @param strOutLineSep
-     * @return
+     * @param process process in scope
+     * @param strOutLineSep line separator for the output
+     * @return String
      * @throws IOException
      */
     private static String captureProcessOutput(final Process process, final String strOutLineSep) throws IOException {
@@ -69,8 +69,8 @@ public final class ShellingClass {
     /**
      * Executes a shells command without any output captured
      * 
-     * @param strCommand
-     * @param strParameters
+     * @param strCommand command to execute
+     * @param strParameters command parameters
      */
     public static void executeShellUtility(final String strCommand, final String strParameters) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
@@ -91,9 +91,9 @@ public final class ShellingClass {
     /**
      * Executes a shells command with capturing the output to a String
      * 
-     * @param strCommand
-     * @param strParameters
-     * @param strOutLineSep
+     * @param strCommand command to execute
+     * @param strParameters command parameters
+     * @param strOutLineSep line separator for the output
      * @return String
      */
     public static String executeShellUtility(final String strCommand, final String strParameters, final String strOutLineSep) {
@@ -118,8 +118,7 @@ public final class ShellingClass {
 
     /**
      * Getting current logged account name
-     * 
-     * @return
+     * @return String
      */
     public static String getCurrentUserAccount() {
         if (LOGGED_ACCOUNT == null) {
@@ -141,7 +140,9 @@ public final class ShellingClass {
         LOGGED_ACCOUNT = strUser;
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Constructor
+     */
     private ShellingClass() {
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }

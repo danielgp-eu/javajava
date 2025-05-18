@@ -40,8 +40,8 @@ public final class Common {
     /**
      * Counts number of parameters with in a string
      *
-     * @param inputString
-     * @return int
+     * @param inputString string to evaluate
+     * @return number of parameters within given string
      */
     public static int countParametersWithinString(final String inputString) {
         final Pattern pattern = Pattern.compile("%[a-zA-Z]");
@@ -56,7 +56,7 @@ public final class Common {
     /**
      * Cycle inside Map and build a JSON string out of it
      *
-     * @param arrayAttrib
+     * @param arrayAttrib array with attribute values
      * @return String
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
@@ -76,11 +76,11 @@ public final class Common {
 
     /**
      * handle NameUnformatted
-     * @param intRsParams
-     * @param strUnformatted
-     * @param strReplacement1
-     * @param strReplacement2
-     * @return
+     * @param intRsParams number for parameters
+     * @param strUnformatted original string
+     * @param strReplacement1 1st replacement
+     * @param strReplacement2 2nd replacement
+     * @return string
      */
     public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final String strReplacement1, final String strReplacement2) {
         return switch (intRsParams) {

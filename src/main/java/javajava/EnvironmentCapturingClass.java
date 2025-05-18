@@ -43,7 +43,7 @@ public final class EnvironmentCapturingClass {
     /**
      * Display details
      * 
-     * @param crtDisplay
+     * @param crtDisplay current Display object
      * @return String
      */
     private static String digestDisplayDetails(final Display crtDisplay) {
@@ -273,7 +273,9 @@ public final class EnvironmentCapturingClass {
         ));
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Constructor
+     */
     private EnvironmentCapturingClass() {
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }

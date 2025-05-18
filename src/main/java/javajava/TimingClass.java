@@ -21,8 +21,8 @@ public final class TimingClass {
     /**
      * Convert Nanoseconds to a more digest-able string
      * 
-     * @param duration
-     * @param strRule
+     * @param duration actual duration in nano-seconds
+     * @param strRule rule to use for conversion
      * @return String
      */
     public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
@@ -54,7 +54,7 @@ public final class TimingClass {
     /**
      * Get current time formatted as needed/desired 
      * 
-     * @param strDtTmPattern
+     * @param strDtTmPattern Date and time pattern to use
      * @return String
      */
     public static String getCurrentTimestamp(final String strDtTmPattern) {
@@ -66,7 +66,8 @@ public final class TimingClass {
     /**
      * Get current time formatted as needed/desired with specified Time Zone
      * 
-     * @param strDtTmPattern
+     * @param strDtTmPattern Date and time pattern to use
+     * @param strZoneName time zone name
      * @return String
      */
     public static String getCurrentTimestamp(final String strDtTmPattern, final String strZoneName) {
@@ -78,9 +79,9 @@ public final class TimingClass {
     /**
      * get number for Duration
      * 
-     * @param duration
-     * @param strWhich
-     * @return
+     * @param duration actual duration in nano-seconds
+     * @param strWhich which part of Date or Time to use for conversion
+     * @return final part of Date or Time
      */
     private static long getDurationPartNumber(final Duration duration, final String strWhich) {
         return switch (strWhich) {
@@ -101,8 +102,8 @@ public final class TimingClass {
     /**
      * outputs partial duration
      * 
-     * @param duration
-     * @param strWhich
+     * @param duration actual duration in nano-seconds
+     * @param strWhich which rule to apply
      * @return String
      */
     private static String getDurationWithCustomRules(final Duration duration, final String strWhich, final String strHow) {
@@ -142,9 +143,9 @@ public final class TimingClass {
     /**
      * log a duration
      * 
-     * @param startTimeStamp
-     * @param strPartial
-     * @param strWhere
+     * @param startTimeStamp timestamp value seen at start
+     * @param strPartial prefix for feedback
+     * @param strWhere hwo to reflect log output
      */
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
@@ -166,7 +167,9 @@ public final class TimingClass {
         }
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Constructor
+     */
     private TimingClass() {
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }

@@ -9,7 +9,6 @@ import org.sqlite.Function;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-
 /**
  * SQLite methods
  */
@@ -18,7 +17,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
     /**
      * Initiates a SQLite connection
      * 
-     * @param strSqLiteFile
+     * @param strSqLiteFile file with SQLite database
      * @return Connection
      */
     public static Connection getSqLiteConnection(final String strSqLiteFile) {

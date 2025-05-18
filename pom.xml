@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                    https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>0.8.8</version>
+    <version>0.9.0</version>
     <name>JavaJava</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,24 +31,60 @@
     </developers>
     <build>
         <plugins>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
                 <configuration>
                     <release>21</release>
+                    <failOnError>true</failOnError>
                 </configuration>
             </plugin>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-jar-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-jar-plugin</artifactId>  
+                <version>3.4.2</version>  
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>true</addMavenDescriptor>
+                        <compress>true</compress>
+                        <manifest>
+                            <addExtensions>true</addExtensions>
+                            <mainClass>danielgp.Example</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.6.0</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createSourcesJar>true</createSourcesJar>
+                            <minimizeJar>true</minimizeJar>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
@@ -58,17 +97,42 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>  
-                <groupId>org.apache.maven.plugins</groupId>  
-                <artifactId>maven-jar-plugin</artifactId>  
-                <version>3.4.2</version>  
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>danielgp.Example</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-checksums</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="MD5" property="jar.md5.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}.jar.md5">${jar.md5.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="MD5" property="jar.md5.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.md5">${jar.md5.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="MD5" property="jar.md5.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.md5">${jar.md5.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}.jar.sha1">${jar.sha1.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.sha1">${jar.sha1.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha1">${jar.sha1.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}.jar.sha256">${jar.sha256.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.sha256">${jar.sha256.checksum}</echo>
+                                <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
+                                <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha256">${jar.sha256.checksum}</echo>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -133,6 +197,12 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>2.24.3</version>
             <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.maven/maven-core -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.9.9</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
         <dependency>

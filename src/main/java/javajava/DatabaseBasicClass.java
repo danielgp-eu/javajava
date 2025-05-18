@@ -24,8 +24,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     /**
      * Connection closing
      * 
-     * @param strDatabaseType
-     * @param givenConnection
+     * @param strDatabaseType type of database (mainly for meaningful feedback)
+     * @param givenConnection connection object
      */
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
@@ -43,8 +43,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     /**
      * Statement closing
      * 
-     * @param strDatabaseType
-     * @param givenStatement
+     * @param strDatabaseType type of database (mainly for meaningful feedback)
+     * @param givenStatement statement
      */
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
@@ -62,8 +62,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     /**
      * Instantiating a statement
      * 
-     * @param strDatabaseType
-     * @param connection
+     * @param strDatabaseType type of database (mainly for meaningful feedback)
+     * @param connection connection to use
      * @return Statement
      */
     public static Statement createSqlStatement(final String strDatabaseType, final Connection connection) {
@@ -83,11 +83,11 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
 
     /**
      * Fill values into a dynamic query 
-     * @param queryProperties
-     * @param strRawQuery
-     * @param arrayCleanable
-     * @param arrayNullable
-     * @return
+     * @param queryProperties properties for connection
+     * @param strRawQuery raw query
+     * @param arrayCleanable array with fields to clean
+     * @param arrayNullable array with nullable fields
+     * @return final query
      */
     public static String distributePropertiesToQuery(final Properties queryProperties, final String strRawQuery, final String[] arrayCleanable, final String... arrayNullable) {
         String strQueryToReturn = strRawQuery;
@@ -115,9 +115,9 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
     /**
      * Execute a custom query w/o any result-set
      * 
-     * @param objStatement
-     * @param strQueryPurpose
-     * @param strQueryToUse
+     * @param objStatement statement
+     * @param strQueryPurpose purpose of query
+     * @param strQueryToUse query to use
      */
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
@@ -142,4 +142,10 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
         }
     }
 
+    /**
+     * Constructor
+     */
+    protected DatabaseBasicClass() {
+        throw new UnsupportedOperationException(Common.strAppClsWrng);
+    }
 }
