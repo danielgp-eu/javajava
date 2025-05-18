@@ -104,7 +104,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>generate-checksums</id>
+                        <id>generate-checksums-build</id>
                         <phase>package</phase>
                         <goals>
                             <goal>run</goal>
@@ -130,6 +130,24 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha256">${jar.sha256.checksum}</echo>
                             </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <passphraseEnvName>MAVEN_GPG_PASSPHRASE</passphraseEnvName>
                         </configuration>
                     </execution>
                 </executions>

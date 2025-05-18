@@ -88,7 +88,7 @@
         <version>3.1.0</version>
         <executions>
           <execution>
-            <id>generate-checksums</id>
+            <id>generate-checksums-build</id>
             <phase>package</phase>
             <goals>
               <goal>run</goal>
@@ -114,6 +114,23 @@
                 <checksum />
                 <echo>${jar.sha256.checksum}</echo>
               </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.2.7</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+            <configuration>
+              <excludes>**/*.pom</excludes>
+              <passphraseEnvName>MAVEN_GPG_PASSPHRASE</passphraseEnvName>
             </configuration>
           </execution>
         </executions>

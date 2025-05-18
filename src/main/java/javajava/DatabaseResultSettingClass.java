@@ -214,9 +214,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     }
 
     /**
-     * get standardized Information
      * @param objStatement statement
-     * @param strWhich which type of output would be needed from result-set
+     * @param strWhich output type from result-set
      * @param strQueryToUse query to use
      * @param queryProperties properties (with features to apply)
      * @param strKind which type of output would be needed
@@ -249,7 +248,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     /**
      * Constructor
      */
-    public void DatabaseResultSettingClass() {
+    public DatabaseResultSettingClass() { // NOPMD by Daniel Popiniuc on 18.05.2025, 04:19
         throw new UnsupportedOperationException(Common.strAppClsWrng);
     }
 
