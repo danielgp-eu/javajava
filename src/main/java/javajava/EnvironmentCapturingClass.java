@@ -82,15 +82,21 @@ public final class EnvironmentCapturingClass {
      * @return String
      */
     public static String getCurrentEnvironmentDetails() {
+        String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
+        LOGGER.error(strFeedback);
         final StringBuilder strJsonString = new StringBuilder(100);
         strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor()));
-        LOGGER.debug("I just captured Hardware information...");
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
+        LOGGER.error(strFeedback);
         strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), getDetailsAboutSoftwarePlatformJava(), getDetailsAboutSoftwareUser()));
-        LOGGER.debug("I just captured Software information...");
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
+        LOGGER.error(strFeedback);
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
-        LOGGER.debug("I just captured Application information...");
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
+        LOGGER.error(strFeedback);
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
-        LOGGER.debug("I just captured Environment information...");
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
+        LOGGER.error(strFeedback);
         return String.format("{%s}", strJsonString);
     }
 

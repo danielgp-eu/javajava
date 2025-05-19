@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
-                    https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project    xmlns="http://maven.apache.org/POM/4.0.0" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                                https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.2</version>
     <name>JavaJava</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -111,18 +111,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                         </goals>
                         <configuration>
                             <target>
+                                <!-- MD5 checksums -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="MD5" property="jar.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.md5">${jar.md5.checksum}</echo>
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="MD5" property="jar.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.md5">${jar.md5.checksum}</echo>
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="MD5" property="jar.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.md5">${jar.md5.checksum}</echo>
+                                <!-- SHA-1 checksums -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.sha1">${jar.sha1.checksum}</echo>
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.sha1">${jar.sha1.checksum}</echo>
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha1">${jar.sha1.checksum}</echo>
+                                <!-- SHA-256 checksums -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.sha256">${jar.sha256.checksum}</echo>
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
