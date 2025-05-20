@@ -4,16 +4,19 @@ import java.time.LocalDateTime;
 /* Util classes */
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 /* Command Line classes */
+import org.apache.commons.cli.AlreadySelectedException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.MissingArgumentException;
+import org.apache.commons.cli.MissingOptionException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.UnrecognizedOptionException;
 /* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,10 +36,23 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     private static Options definedArguments() {
         final Options options = new Options();
+        // Mandatory command line arguments
         final Option paramAct = new Option("act", "action", true, JavaJavaLocalization.getMessage("i18nAppParamAct"));
+        paramAct.setArgs(1);
         paramAct.setRequired(true);
         options.addOption(paramAct);
         return options;
+    }
+
+    /**
+     * log Application Start
+     */
+    private static void logApplicationStart() {
+        final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec")
+            + new String(new char[80]).replace("\0", "-");
+        LOGGER.debug(strFeedback);
+        LOGGER.error(strFeedback);
+        LOGGER.info(strFeedback);
     }
 
     /**
@@ -46,19 +62,22 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        // setting Locale from current user, if missing en-US will be used
-        JavaJavaLocalization.setLocale(Locale.forLanguageTag(JavaJavaLocalization.getUserLocale()));
-        String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec")
-            + new String(new char[80]).replace("\0", "=");
+        String strFeedback = new String(new char[80]).replace("\0", "=");
         LOGGER.debug(strFeedback);
-        LOGGER.error(strFeedback);
-        LOGGER.info(strFeedback);
+        JavaJavaLocalization.setLocaleByString(JavaJavaLocalization.getUserLocale());
         final Options options = definedArguments();
         final CommandLineParser parser = new DefaultParser();
         try {
             final CommandLine cmd = parser.parse(options, args);
+            logApplicationStart();
             performAction(cmd);
+        } catch (AlreadySelectedException | MissingArgumentException | MissingOptionException | UnrecognizedOptionException ex) {
+            strFeedback = ex.getLocalizedMessage(); 
+            LOGGER.error(strFeedback);
+            System.exit(1);
         } catch (ParseException e) {
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppParamParsOptList"), options);
+            LOGGER.error(strFeedback);
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
             LOGGER.error(strFeedback);
             final HelpFormatter formatter = new HelpFormatter();
@@ -79,10 +98,6 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             properties = DatabaseSpecificMySql.getConnectionPropertiesForMySQL();
         }
         switch(prmActionValue) {
-            case "LogEnvironmentDetails":
-                final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
-                LOGGER.info(strFeedback);
-                break;
             case "getMySQL_Columns":
                 DatabaseSpecificMySql.performMySqlPreDefinedAction("Columns", properties);
                 break;
@@ -107,6 +122,10 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             case "getSubFoldersFromFolder":
                 final List<String> listSubFolders = FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
                 listSubFolders.forEach(LOGGER::info);
+                break;
+            case "LogEnvironmentDetails":
+                final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
+                LOGGER.info(strFeedback);
                 break;
             case "TEST":
                 break;

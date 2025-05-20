@@ -4,7 +4,7 @@
   <groupId>io.github.danielgp-eu</groupId>
   <artifactId>javajava</artifactId>
   <name>JavaJava</name>
-  <version>0.9.0</version>
+  <version>0.9.2</version>
   <developers>
     <developer>
       <name>Daniel Popiniuc-Gheorghe</name>
@@ -113,6 +113,8 @@
                 <echo>${jar.sha256.checksum}</echo>
                 <checksum />
                 <echo>${jar.sha256.checksum}</echo>
+                <checksum />
+                <echo>${jar.sha256.checksum}</echo>
               </target>
             </configuration>
           </execution>
@@ -129,7 +131,6 @@
               <goal>sign</goal>
             </goals>
             <configuration>
-              <excludes>**/*.pom</excludes>
               <passphraseEnvName>MAVEN_GPG_PASSPHRASE</passphraseEnvName>
             </configuration>
           </execution>
