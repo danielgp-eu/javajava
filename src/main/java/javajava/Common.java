@@ -44,7 +44,7 @@ public final class Common {
      * @return number of parameters within given string
      */
     public static int countParametersWithinString(final String inputString) {
-        final Pattern pattern = Pattern.compile("%[a-zA-Z]");
+        final Pattern pattern = Pattern.compile("%(|[1-9]{1}\\$)(|,[0-9]{1,3}|\\+|\\(|\\,)(|\\.[1-9]{1}|[0-9]{1,2})(a|b|c|d|e|f|g|h|n|o|s|t|x)");
         final Matcher matcher = pattern.matcher(inputString);
         int count = 0;
         while (matcher.find()) {
