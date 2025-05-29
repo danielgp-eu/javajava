@@ -4,7 +4,7 @@
   <groupId>io.github.danielgp-eu</groupId>
   <artifactId>javajava</artifactId>
   <name>JavaJava</name>
-  <version>0.9.2</version>
+  <version>0.9.4</version>
   <developers>
     <developer>
       <name>Daniel Popiniuc-Gheorghe</name>
@@ -107,8 +107,6 @@
                 <echo>${jar.sha1.checksum}</echo>
                 <checksum />
                 <echo>${jar.sha1.checksum}</echo>
-                <checksum />
-                <echo>${jar.sha256.checksum}</echo>
                 <checksum />
                 <echo>${jar.sha256.checksum}</echo>
                 <checksum />
