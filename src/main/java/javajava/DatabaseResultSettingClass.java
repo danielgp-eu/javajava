@@ -225,7 +225,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         String strFeedback;
         List<Properties> listReturn = null;
         try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties)) {
-            switch(strKind) {
+            switch (strKind) {
                 case "Structure":
                     listReturn = getResultSetColumnStructure(rsStandard);
                     break;

@@ -28,7 +28,7 @@ public final class TimingClass {
     public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
         final String[] arrayStrings;
         final String strFinalOne;
-        switch(strRule) {
+        switch (strRule) {
             case "HumanReadableTime":
                 final String strFinalRule = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
                 arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
@@ -109,7 +109,7 @@ public final class TimingClass {
     private static String getDurationWithCustomRules(final Duration duration, final String strWhich, final String strHow) {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
         String strReturn = "";
-        switch(strHow) {
+        switch (strHow) {
             case "DotAndNineDigitNumber":
                 strReturn = String.format(".%09d", lngNumber);
                 break;
@@ -150,7 +150,7 @@ public final class TimingClass {
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
-        switch(strWhere) {
+        switch (strWhere) {
             case "debug":
                 LOGGER.debug(strFeedback);
                 break;
