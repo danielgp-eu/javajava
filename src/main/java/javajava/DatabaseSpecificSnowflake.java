@@ -240,6 +240,7 @@ FROM
      * @param propInstance instance properties
      * @return Properties
      */
+    @SuppressWarnings("unused")
     protected static Properties getSnowflakeProperties(final Properties propInstance) {
         final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
         return getSnowflakeProperties(strDatabase, propInstance);
@@ -249,7 +250,7 @@ FROM
     /**
      * build Snowflake Properties
      * 
-     * @param strDatabase
+     * @param strDatabase Database name to connect to
      * @param propInstance instance properties
      * @return Properties
      */

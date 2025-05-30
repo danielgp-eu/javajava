@@ -42,12 +42,12 @@ public final class Common {
 
     /**
      * Counts number of parameters with in a string
-     *
      * @param inputString string to evaluate
      * @return number of parameters within given string
      */
+    @SuppressWarnings("unused")
     public static int countParametersWithinString(final String inputString) {
-        final Pattern pattern = Pattern.compile("%(|[1-9]{1}\\$)(|,[0-9]{1,3}|\\+|\\(|\\,)(|\\.[1-9]{1}|[0-9]{1,2})(a|b|c|d|e|f|g|h|n|o|s|t|x)");
+        final Pattern pattern = Pattern.compile("%(|[1-9]\\$)(|,[0-9]{1,3}|\\+|\\(|,)(|\\.[1-9]|[0-9]{1,2})[abcdefghnostx]");
         final Matcher matcher = pattern.matcher(inputString);
         int count = 0;
         while (matcher.find()) {
@@ -58,12 +58,12 @@ public final class Common {
 
     /**
      * Build a pair of Key and Value for JSON
-     * @param strKey
-     * @param objValue
-     * @return
+     * @param strKey Key to be used
+     * @param objValue Value to be used
+     * @return String with a pair of key and value
      */
     private static String getJsonKeyAndValue(final String strKey, final Object objValue) {
-        Boolean needsQuotesAround = false;
+        boolean needsQuotesAround = false;
         final List<String> unquotedValues = Arrays.asList("null", "true", "false");
         if (objValue instanceof Integer) {
             needsQuotesAround = true;
@@ -102,9 +102,9 @@ public final class Common {
 
     /**
      * Checks if given string is included in a given List of Strings
-     * @param str
-     * @param substrings
-     * @return bollean true if found, false otherwise
+     * @param str String to search into
+     * @param substrings Strings to search for
+     * @return boolean true if found, false otherwise
      */
     private static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
         return substrings.stream().anyMatch(str::contains);
@@ -118,6 +118,7 @@ public final class Common {
      * @param strReplacement2 2nd replacement
      * @return string
      */
+    @SuppressWarnings("unused")
     public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final String strReplacement1, final String strReplacement2) {
         return switch (intRsParams) {
             case 1 -> String.format(strUnformatted, strReplacement1);
@@ -137,7 +138,7 @@ public final class Common {
      * @return True if given String is actually Numeric
      */
     private static Boolean isStringActuallyNumeric(final String inputString) {
-        Boolean bolReturn = false;
+        boolean bolReturn = false;
         if (inputString != null) {
             final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
             bolReturn = pattern.matcher(inputString).matches();

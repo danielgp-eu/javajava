@@ -48,7 +48,7 @@ public final class ShellingClass {
      * @param process process in scope
      * @param strOutLineSep line separator for the output
      * @return String
-     * @throws IOException
+     * @throws IOException capturing any error on reading the input stream
      */
     private static String captureProcessOutput(final Process process, final String strOutLineSep) throws IOException {
         String strReturn = null;
@@ -72,6 +72,7 @@ public final class ShellingClass {
      * @param strCommand command to execute
      * @param strParameters command parameters
      */
+    @SuppressWarnings("unused")
     public static void executeShellUtility(final String strCommand, final String strParameters) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);

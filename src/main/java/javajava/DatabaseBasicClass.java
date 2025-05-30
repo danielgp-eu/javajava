@@ -27,6 +27,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param strDatabaseType type of database (mainly for meaningful feedback)
      * @param givenConnection connection object
      */
+    @SuppressWarnings("unused")
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
         LOGGER.debug(strFeedback);
@@ -46,6 +47,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param strDatabaseType type of database (mainly for meaningful feedback)
      * @param givenStatement statement
      */
+    @SuppressWarnings("unused")
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
         LOGGER.debug(strFeedback);
@@ -89,6 +91,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
      * @param arrayNullable array with nullable fields
      * @return final query
      */
+    @SuppressWarnings("unused")
     public static String distributePropertiesToQuery(final Properties queryProperties, final String strRawQuery, final String[] arrayCleanable, final String... arrayNullable) {
         String strQueryToReturn = strRawQuery;
         for (final Object obj : queryProperties.keySet()) {
@@ -98,7 +101,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
             if (strOriginalValue.matches("NULL")) {
                 strValueToUse = strOriginalValue;
             } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                strValueToUse = String.format("\"%s\"", strOriginalValue.replaceAll("(\"|')", ""));
+                strValueToUse = String.format("\"%s\"", strOriginalValue.replaceAll("([\"'])", ""));
                 if (strOriginalValue.isEmpty()) {
                     strValueToUse = "NULL";
                 }

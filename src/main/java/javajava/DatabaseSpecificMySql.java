@@ -47,7 +47,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
     /**
      * Initiate a MySQL connection with Instance properties and DB specified
      * 
-     * @param propInstance
+     * @param propInstance Properties for Instance
      * @return Connection
      */
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
@@ -78,9 +78,10 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
     /**
      * get standardized Information from MySQL
      * 
-     * @param objStatement
-     * @param strWhich
-     * @param strKind
+     * @param objStatement Statement
+     * @param strWhich Which query is needed
+     * @param strKind which type of output would be needed
+     * @return List with Properties
      */
     public static  List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final String strQueryToUse = getMySqlPreDefinedMetadataQuery(strWhich);
@@ -91,8 +92,8 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
     /**
      * returns standard Metadata query specific to Snowflake
      * 
-     * @param strWhich
-     * @return
+     * @param strWhich Which kind of query is needed
+     * @return Query as String
      */
     protected static String getMySqlPreDefinedMetadataQuery(final String strWhich) {
         return switch (strWhich) {
@@ -186,7 +187,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
     /**
      * get MySQL Properties
      * 
-     * @param propInstance
+     * @param propInstance Instance Properties
      * @return Properties
      */
     private static Properties getMySqlProperties(final Properties propInstance) {
@@ -207,8 +208,8 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
     /**
      * Execute SQLite pre-defined actions
      * 
-     * @param strWhich
-     * @param givenProperties
+     * @param strWhich Which kind of query is needed
+     * @param givenProperties Connection Properties
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");

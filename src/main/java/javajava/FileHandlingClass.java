@@ -74,6 +74,7 @@ public final class FileHandlingClass {
      * @param strFileName file name
      * @return String
      */
+    @SuppressWarnings("unused")
     public static String getFileContentIntoString(final String strFileName) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
         LOGGER.debug(strFeedback);

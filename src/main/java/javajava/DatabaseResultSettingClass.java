@@ -165,6 +165,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
      * @param resultSet result-set
      * @return list of strings
      */
+    @SuppressWarnings("unused")
     protected static List<String> getResultSetListOfStrings(final ResultSet resultSet) {
         final List<String> listStrings = new ArrayList<>();
         try {
@@ -218,7 +219,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
      * @param strWhich output type from result-set
      * @param strQueryToUse query to use
      * @param queryProperties properties (with features to apply)
-     * @param strKind which type of output would be needed
+     * @param strKind
      * @return List of Properties
      */
     protected static List<Properties> getResultSetStandardized(final Statement objStatement, final String strWhich, final String strQueryToUse, final Properties queryProperties, final String strKind) {

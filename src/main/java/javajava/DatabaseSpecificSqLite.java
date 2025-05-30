@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 /**
  * SQLite methods
  */
+@SuppressWarnings("unused")
 public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
 
     /**
