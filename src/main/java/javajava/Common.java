@@ -137,11 +137,12 @@ public final class Common {
      * @return True if given String is actually Numeric
      */
     private static Boolean isStringActuallyNumeric(final String inputString) {
-        if (inputString == null) {
-            return false; 
+        Boolean bolReturn = false;
+        if (inputString != null) {
+            final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+            bolReturn = pattern.matcher(inputString).matches();
         }
-        final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-        return pattern.matcher(inputString).matches();
+        return bolReturn;
     }
 
     // Private constructor to prevent instantiation
