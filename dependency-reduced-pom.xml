@@ -4,7 +4,7 @@
   <groupId>io.github.danielgp-eu</groupId>
   <artifactId>javajava</artifactId>
   <name>JavaJava</name>
-  <version>0.9.5</version>
+  <version>0.9.6</version>
   <developers>
     <developer>
       <name>Daniel Popiniuc-Gheorghe</name>
@@ -19,8 +19,8 @@
   </developers>
   <licenses>
     <license>
-      <name>Eclipse Public License version 2.0</name>
-      <url>https://opensource.org/license/epl-2-0</url>
+      <name>Eclipse Public License version 1.0</name>
+      <url>https://opensource.org/license/epl-1-0</url>
     </license>
   </licenses>
   <build>

@@ -6,15 +6,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>0.9.5</version>
+    <version>0.9.6</version>
     <name>JavaJava</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <licenses>
         <license>
-            <name>Eclipse Public License version 2.0</name>
-            <url>https://opensource.org/license/epl-2-0</url>
+            <name>Eclipse Public License version 1.0</name>
+            <url>https://opensource.org/license/epl-1-0</url>
         </license>
     </licenses>
     <developers>
