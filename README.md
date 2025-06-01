@@ -1,4 +1,6 @@
 # javajava
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdanielgp-eu%2Fjavajava.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdanielgp-eu%2Fjavajava?ref=badge_shield)
+
 
 Various Java classes to be re-used
 
@@ -105,3 +107,7 @@ Various Java classes to be re-used
 ## Execution Remarks
 
 To avoid a pesky warning at execution time a VM Attribute having the value `--enable-native-access=ALL-UNNAMED` needs to be added
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdanielgp-eu%2Fjavajava.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdanielgp-eu%2Fjavajava?ref=badge_large)
