@@ -19,8 +19,8 @@
   </developers>
   <licenses>
     <license>
-      <name>Eclipse Public License version 1.0</name>
-      <url>https://opensource.org/license/epl-1-0</url>
+      <name>GNU General Public License version 2</name>
+      <url>https://opensource.org/license/gpl-2-0</url>
     </license>
   </licenses>
   <build>
