@@ -15,6 +15,8 @@
         <license>
             <name>GNU General Public License version 2</name>
             <url>https://opensource.org/license/gpl-2-0</url>
+            <distribution>repo</distribution>
+            <comments>See LICENSE-FOSS-EXCEPTION.txt for the Universal FOSS Exception.</comments>
         </license>
     </licenses>
     <developers>
@@ -27,6 +29,8 @@
                 <role>Chief Developer</role>
             </roles>
             <timezone>+2</timezone>
+            <organization>DanielGP-EU</organization>
+            <organizationUrl>https://github.com/danielgp-eu</organizationUrl>
         </developer>
     </developers>
     <build>
@@ -68,6 +72,33 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-license-files</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>LICENSE</include>
+                                        <include>LICENSE-FOSS-EXCEPTION.txt</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

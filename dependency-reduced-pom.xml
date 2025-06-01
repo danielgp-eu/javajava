@@ -9,6 +9,8 @@
     <developer>
       <name>Daniel Popiniuc-Gheorghe</name>
       <email>danielpopiniuc@gmail.com</email>
+      <organization>DanielGP-EU</organization>
+      <organizationUrl>https://github.com/danielgp-eu</organizationUrl>
       <roles>
         <role>Architect</role>
         <role>Project Manager</role>
@@ -21,6 +23,8 @@
     <license>
       <name>GNU General Public License version 2</name>
       <url>https://opensource.org/license/gpl-2-0</url>
+      <distribution>repo</distribution>
+      <comments>See LICENSE-FOSS-EXCEPTION.txt for the Universal FOSS Exception.</comments>
     </license>
   </licenses>
   <build>
@@ -56,6 +60,31 @@
             <goals>
               <goal>jar</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>copy-license-files</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/META-INF</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}</directory>
+                  <includes>
+                    <include>LICENSE</include>
+                    <include>LICENSE-FOSS-EXCEPTION.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>
