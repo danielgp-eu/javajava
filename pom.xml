@@ -6,17 +6,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>0.9.6</version>
+    <version>0.9.7</version>
     <name>JavaJava</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <licenses>
         <license>
-            <name>GNU General Public License version 2</name>
-            <url>https://opensource.org/license/gpl-2-0</url>
-            <distribution>repo</distribution>
-            <comments>See LICENSE-FOSS-EXCEPTION.txt for the Universal FOSS Exception.</comments>
+            <name>Eclipse Public License version 1.0</name>
+            <url>https://opensource.org/license/epl-1-0</url>
         </license>
     </licenses>
     <developers>
@@ -218,12 +216,6 @@
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core</artifactId>
             <version>6.8.1</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>9.3.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>

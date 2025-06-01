@@ -47,7 +47,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param jsonFile file with expected JSON content
      * @return JsonNode
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // NOPMD by Daniel Popiniuc on 02.06.2025, 00:13
     public static JsonNode getJsonFileNodes(final File jsonFile) {
         JsonNode jsonRootNode = null;
         final ObjectMapper objectMapper = new ObjectMapper();
