@@ -42,19 +42,23 @@ public final class FileHandlingClass {
      */
     public static Properties checkFileExistanceAndReadability(final String strFileName) {
         final Properties propertiesReturn = new Properties();
-        final File fileGiven = new File(strFileName);
-        if (fileGiven.exists()) {
-            if (fileGiven.isFile()) {
-                if (fileGiven.canRead()) {
-                    propertiesReturn.put("OK", strFileName);
+        if (strFileName == null) {
+            propertiesReturn.put("NULL_FILE_NAME", JavaJavaLocalization.getMessage("i18nFileDoesNotExist"));
+        } else {
+            final File fileGiven = new File(strFileName);
+            if (fileGiven.exists()) {
+                if (fileGiven.isFile()) {
+                    if (fileGiven.canRead()) {
+                        propertiesReturn.put("OK", strFileName);
+                    } else {
+                        propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalization.getMessage("i18nFileUnreadable"), strFileName));
+                    }
                 } else {
-                    propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalization.getMessage("i18nFileUnreadable"), strFileName));
+                    propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalization.getMessage("i18nFileNotAfile"), strFileName));
                 }
             } else {
-                propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalization.getMessage("i18nFileNotAfile"), strFileName));
+                propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalization.getMessage("i18nFileDoesNotExist"), strFileName));
             }
-        } else {
-            propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalization.getMessage("i18nFileDoesNotExist"), strFileName));
         }
         return propertiesReturn;
     }
