@@ -6,15 +6,21 @@
 Various Java classes to be re-used
 
 
-## References
+## Included References
+
+| Utility              | Name w. Project URL                                                         | Maven build                                                                    |
+|:---------------------|:----------------------------------------------------------------------------|:-------------------------------------------------------------------------------|
+| Database - SQLite    | [xerial/sqlite-jdbc](https://github.com/xerial/sqlite-jdbc)                 | https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc                      |
+| JSON                 | [FasterXML/jackson](https://github.com/FasterXML/jackson)                   | https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind |
+| Logging              | [Apache Log4j](https://logging.apache.org/log4j/3.x/)                       | https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core         |
+
+
+## Optional References
 
 | Utility              | Name w. Project URL                                                         | Maven build                                                                    |
 |:---------------------|:----------------------------------------------------------------------------|:-------------------------------------------------------------------------------|
 | Database - MySQL     | [mysql/mysql-connector-j](https://github.com/mysql/mysql-connector-j)       | https://mvnrepository.com/artifact/com.mysql/mysql-connector-j                 |
 | Database - Snowflake | [snowflakedb/snowflake-jdbc](https://github.com/snowflakedb/snowflake-jdbc) | https://mvnrepository.com/artifact/net.snowflake/snowflake-jdbc                |
-| Database - SQLite    | [xerial/sqlite-jdbc](https://github.com/xerial/sqlite-jdbc)                 | https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc                      |
-| JSON                 | [FasterXML/jackson](https://github.com/FasterXML/jackson)                   | https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind |
-| Logging              | [Apache Log4j](https://logging.apache.org/log4j/3.x/)                       | https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core         |
 
 
 ### Eclipse
