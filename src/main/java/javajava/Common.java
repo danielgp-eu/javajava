@@ -92,7 +92,7 @@ public final class Common {
      * @return String
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
-        final StringBuffer strJsonSubString = new StringBuffer();
+        final StringBuilder strJsonSubString = new StringBuilder(100);
         arrayAttrib.forEach((strKey, objValue) -> {
             if (!strJsonSubString.isEmpty()) {
                 strJsonSubString.append(',');
