@@ -73,6 +73,8 @@ public final class Common {
             needsQuotesAround = true;
         } else if (objValue.toString().startsWith("[") && objValue.toString().endsWith("]")) {
             needsQuotesAround = true;
+        } else if (objValue.toString().startsWith("{") && objValue.toString().endsWith("}")) {
+            needsQuotesAround = true;
         } else if (isStringActuallyNumeric(objValue.toString())) {
             needsQuotesAround = true;
         }
