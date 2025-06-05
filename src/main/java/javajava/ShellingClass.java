@@ -77,9 +77,13 @@ public final class ShellingClass {
             process.destroy();
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
             LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
             LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+        } catch(InterruptedException ei) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            Thread.currentThread().interrupt(); // NOPMD by Daniel Popiniuc on 06.06.2025, 00:39
         }
         TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"), "debug");
     }
@@ -104,9 +108,13 @@ public final class ShellingClass {
             process.destroy();
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
             LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
             LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+        } catch(InterruptedException ei) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            Thread.currentThread().interrupt(); // NOPMD by Daniel Popiniuc on 06.06.2025, 00:39
         }
         TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"), "debug");
         return strReturn;
