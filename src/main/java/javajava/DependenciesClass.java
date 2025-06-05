@@ -1,6 +1,5 @@
 package javajava;
 /* Input/Output classes */
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 /* Utility classes */
@@ -12,8 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 /* Logging classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
 /* for XML exception */
 import org.xml.sax.SAXException;
 /* W3C DOM classes */
@@ -26,10 +24,6 @@ import org.w3c.dom.NodeList;
  * Capturing details of dependencies from current Maven POM file
  */
 public final class DependenciesClass {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(DependenciesClass.class);
     /**
      * current class path
      */
@@ -57,7 +51,7 @@ public final class DependenciesClass {
             }
         }
         final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         return Common.getMapIntoJsonString(arrayAttributes);
     }
 
@@ -72,7 +66,7 @@ public final class DependenciesClass {
             strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
         }
         final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         return strDependencyFile;
     }
 
@@ -91,16 +85,16 @@ public final class DependenciesClass {
                 doc.getDocumentElement().normalize();
             } else {
                 try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
-                    LOGGER.debug(xmlContent);
+                    LogLevelChecker.logConditional(xmlContent.toString(), Level.DEBUG);
                     doc = docBuilder.parse(xmlContent);
                 } catch (IOException e) {
                     final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
-                    LOGGER.error(strFeedback);
+                    LogLevelChecker.logConditional(strFeedback, Level.ERROR);
                 }
             }
         } catch (IOException | ParserConfigurationException | SAXException ex) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return doc;
     }

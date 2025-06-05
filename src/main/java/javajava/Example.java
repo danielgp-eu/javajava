@@ -17,6 +17,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.logging.log4j.Level;
 /* Logging classes */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,10 +50,8 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     private static void logApplicationStart() {
         final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec")
-            + new String(new char[80]).replace("\0", "-");
-        LOGGER.debug(strFeedback);
-        LOGGER.error(strFeedback);
-        LOGGER.info(strFeedback);
+            + String.valueOf("-").repeat(80);
+        LogLevelChecker.logConditional(strFeedback, Level.INFO);
     }
 
     /**
@@ -62,8 +61,8 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     public static void main(final String[] args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        String strFeedback = new String(new char[80]).replace("\0", "=");
-        LOGGER.debug(strFeedback);
+        String strFeedback = String.valueOf("=").repeat(80);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         JavaJavaLocalization.setLocaleByString(JavaJavaLocalization.getUserLocale());
         final Options options = definedArguments();
         final CommandLineParser parser = new DefaultParser();
@@ -73,13 +72,13 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             performAction(cmd);
         } catch (AlreadySelectedException | MissingArgumentException | MissingOptionException | UnrecognizedOptionException ex) {
             strFeedback = ex.getLocalizedMessage(); 
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
             System.exit(1);
         } catch (ParseException e) {
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppParamParsOptList"), options);
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp(JavaJavaLocalization.getMessage("i18nMndtParamsAre"), options);
             System.exit(1);
@@ -125,14 +124,14 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 break;
             case "LogEnvironmentDetails":
                 final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
-                LOGGER.info(strFeedback);
+                LogLevelChecker.logConditional(strFeedback, Level.INFO);
                 break;
             case "TEST":
                 break;
             default:
                 final String strMsg = String.format(JavaJavaLocalization.getMessage("i18nUnknParamFinal"), prmActionValue, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                LOGGER.info(strMsg);
+                LogLevelChecker.logConditional(strMsg, Level.INFO);
                 break;
         }
     }

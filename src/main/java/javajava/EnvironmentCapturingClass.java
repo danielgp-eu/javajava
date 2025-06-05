@@ -4,8 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 /* Logging classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
 /* OSHI Hardware/Software classes */
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -13,6 +12,7 @@ import oshi.hardware.Display;
 import oshi.hardware.GlobalMemory;
 import oshi.hardware.GraphicsCard;
 import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.NetworkIF;
 import oshi.hardware.PhysicalMemory;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
@@ -24,17 +24,17 @@ import oshi.util.FormatUtil;
  */
 public final class EnvironmentCapturingClass {
     /**
-     * pointer for all logs
+     * Hardware info
      */
-    private static final Logger LOGGER = LogManager.getLogger(EnvironmentCapturingClass.class);
+    private final static SystemInfo systemInfo = new SystemInfo();
     /**
      * Hardware info
      */
-    private final static HardwareAbstractionLayer hardware = new SystemInfo().getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    private final static HardwareAbstractionLayer hardware = systemInfo.getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * OS info
      */
-    private final static OperatingSystem operatingSystem = new SystemInfo().getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    private final static OperatingSystem operatingSystem = systemInfo.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * standard String
      */
@@ -83,20 +83,20 @@ public final class EnvironmentCapturingClass {
      */
     public static String getCurrentEnvironmentDetails() {
         String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
-        LOGGER.info(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.INFO);
         final StringBuilder strJsonString = new StringBuilder(100);
-        strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor()));
+        strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor(), getDetailsAboutNetworkInterfaces()));
         strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), getDetailsAboutSoftwarePlatformJava(), getDetailsAboutSoftwareUser()));
         strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
         strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
         strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
-        LOGGER.info(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.INFO);
         return String.format("{%s}", strJsonString);
     }
 
@@ -209,7 +209,7 @@ public final class EnvironmentCapturingClass {
             "Code", versionInfo.getCodeName(),
             "Family", operatingSystem.getFamily(),
             "Manufacturer", operatingSystem.getManufacturer(),
-            "Name", System.getProperty("os.name"),
+            strName, System.getProperty("os.name"),
             "Platform", SystemInfo.getCurrentPlatform().toString(),
             "Version", versionInfo.getVersion()
         ));
@@ -247,6 +247,37 @@ public final class EnvironmentCapturingClass {
     }
 
     /**
+     * Sensors Information
+     * 
+     * @return String
+     */
+    private static String getDetailsAboutNetworkInterfaces() {
+        final List<NetworkIF> networkIFs = hardware.getNetworkIFs(); // NOPMD by Daniel Popiniuc on 04.06.2025, 23:31
+        final StringBuilder strJsonString = new StringBuilder();
+        int intCounter = 0;
+        strJsonString.append('[');
+        for (final NetworkIF net : networkIFs) {
+            net.updateAttributes(); // Refresh interface stats
+            if (intCounter > 0) {
+                strJsonString.append(',');
+            }
+            strJsonString.append(Common.getMapIntoJsonString(Map.of(
+                strName, net.getName(),
+                "Display Name", net.getDisplayName(),
+                "MAC Address", net.getMacaddr(),
+                "IPv4", String.join(", ", net.getIPv4addr()),
+                "IPv6", String.join(", ", net.getIPv6addr()),
+                "Status", net.getIfOperStatus(),
+                "Speed", FormatUtil.formatBytes(net.getSpeed()),
+                "NDIS Physical Medium Type", getNdisPhysicalMediumType(net.getNdisPhysicalMediumType())
+            )));
+            intCounter++;
+        }
+        strJsonString.append(']');
+        return strJsonString.toString();
+    }
+
+    /**
      * JAVA info
      * 
      * @return String
@@ -276,6 +307,34 @@ public final class EnvironmentCapturingClass {
             "Home", System.getProperty("user.home").replace("\\", "\\\\"),
             "Name", System.getProperty("user.name"),
             "Timezone", System.getProperty("user.timezone")
+        ));
+    }
+
+    /**
+     * Sensors Information
+     * @param intPhysMedType number for NDIS Physical Medium Type
+     * @return String
+     */
+    private static String getNdisPhysicalMediumType(final int intPhysMedType) {
+        return Common.getMapIntoJsonString(Map.of(
+            "Numeric", intPhysMedType,
+            strName, switch (intPhysMedType) {
+                case 0 -> "Unspecified (e.g., satellite feed)";
+                case 1 -> "Wireless LAN (802.11)";
+                case 2 -> "Cable Modem (DOCSIS)";
+                case 3 -> "Phone Line (HomePNA)";
+                case 4 -> "Power Line (data over electrical wiring)";
+                case 5 -> "DSL (ADSL, G.Lite)";
+                case 6 -> "Fibre Channel (high-speed storage interconnect)";
+                case 7 -> "IEEE 1394 (FireWire)";
+                case 8 -> "Wireless WAN (CDMA, GPRS)";
+                case 9 -> "Native 802.11 (modern Wi-Fi interface)";
+                case 10 -> "Bluetooth (short-range wireless)";
+                case 11 -> "InfiniBand (high-speed interconnect)";
+                case 12 -> "Ultra Wideband (UWB)";
+                case 13 -> "Ethernet (802.3)";
+                default -> "Unknown";
+            }
         ));
     }
 

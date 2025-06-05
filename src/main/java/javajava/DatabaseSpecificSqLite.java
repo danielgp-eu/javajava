@@ -3,6 +3,8 @@ package javajava;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.apache.logging.log4j.Level;
 /* SQLite function class */
 import org.sqlite.Function;
 /* Util classes */
@@ -24,12 +26,12 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
     public static Connection getSqLiteConnection(final String strSqLiteFile) {
         final String strConnection = "jdbc:sqlite:" + strSqLiteFile.replace("\\", "/");
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttemptLight"), Common.strDbSqLite, strSqLiteFile, strConnection);
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(strConnection);
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSqLite, strSqLiteFile);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
             Function.create(connection, "REGEXP_LIKE", new Function() {
                 @Override
                 protected void xFunc() throws SQLException {
@@ -42,7 +44,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
             });
         } catch(SQLException e) {
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSqLite, e.getLocalizedMessage());
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return connection;
     }

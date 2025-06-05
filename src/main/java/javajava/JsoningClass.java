@@ -7,19 +7,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 /* Utility classes */
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 /* Logging classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
 
 /**
  * JSON handling
  */
 public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
-    /**
-     * pointer for all logs
-     */
-    protected static final Logger LOGGER = LogManager.getLogger(JsoningClass.class);
 
     /**
      * Load all JSON nodes from String
@@ -33,10 +32,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         try {
             jsonRootNode = objectMapper.readTree(strJson);
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), strJson);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         } catch (IOException ex) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONloadErrorInputStream"), strJson, Arrays.toString(ex.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return jsonRootNode;
     }
@@ -54,10 +53,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         try {
             jsonRootNode = objectMapper.readTree(jsonFile);
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         } catch (IOException ex) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONloadErrorFile"), jsonFile.toString(), Arrays.toString(ex.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return jsonRootNode;
     }
@@ -71,14 +70,14 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      */
     protected static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
         String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         } else {
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFound"), givenJsonNode);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         }
         return jsonNode;
     }
@@ -103,7 +102,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
                 listProperties.add(properties);
             });
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Properties", strJsonNodeName, listProperties);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         }
         return listProperties;
     }
@@ -122,7 +121,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         if(!jsonNode.isEmpty()) {
             jsonNode.forEach(jsonSingleNode-> listStrings.add(jsonSingleNode.asText()));
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Strings", strJsonNodeName, listStrings);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         }
         return listStrings;
     }
@@ -142,7 +141,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
             properties.put(entry.getKey(), entry.getValue());
         }
         final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "Properties", strJsonNodeName, properties);
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         return properties;
     }
 

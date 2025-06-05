@@ -6,17 +6,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 /* Logging classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
 
 /**
  * Time methods
  */
 public final class TimingClass {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(TimingClass.class);
 
     /**
      * Convert Nanoseconds to a more digest-able string
@@ -151,22 +146,14 @@ public final class TimingClass {
      */
     public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
-        switch (strWhere) {
-            case "debug":
-                LOGGER.debug(strFeedback);
-                break;
-            case "error":
-                LOGGER.error(strFeedback);
-                break;
-            case "info":
-                LOGGER.info(strFeedback);
-                break;
-            default:
-                strFeedback = String.format(Common.strUnknFtrs, strWhere, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                throw new UnsupportedOperationException(strFeedback);
-        }
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+        final Level relevantLevel = switch (strWhere) {
+            case "debug" -> Level.DEBUG;
+            case "error" -> Level.ERROR;
+            case "info" -> Level.INFO;
+            default -> Level.OFF;
+        };
+        LogLevelChecker.logConditional(strFeedback, relevantLevel);
     }
 
     /**

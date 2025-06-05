@@ -7,17 +7,12 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 /* Logging classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
 
 /**
  * Shell execution methods
  */
 public final class ShellingClass {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(ShellingClass.class);
     /**
      * holding the Use account currently logged on
      */
@@ -37,7 +32,7 @@ public final class ShellingClass {
             builder.command(strCommand, strParameters);
         }
         final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
-        LOGGER.debug(strFeedback);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
     }
@@ -61,7 +56,7 @@ public final class ShellingClass {
             strReturn = processOutput.toString();
         } catch (IOException ex) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return strReturn;
     }
@@ -81,10 +76,10 @@ public final class ShellingClass {
             final int exitCode = process.waitFor();
             process.destroy();
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         } catch (IOException | InterruptedException e) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"), "debug");
     }
@@ -108,10 +103,10 @@ public final class ShellingClass {
             final int exitCode = process.waitFor();
             process.destroy();
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-            LOGGER.debug(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         } catch (IOException | InterruptedException e) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-            LOGGER.error(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"), "debug");
         return strReturn;
@@ -135,7 +130,7 @@ public final class ShellingClass {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
-            LOGGER.warn(strFeedback);
+            LogLevelChecker.logConditional(strFeedback, Level.WARN);
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         LOGGED_ACCOUNT = strUser;
