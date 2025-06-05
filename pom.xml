@@ -157,6 +157,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
+            <!-- <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.1.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nvdApiKey>803c813e-bcb2-438f-b8cc-ff2195dc7fa7</nvdApiKey>
+                    <failBuildOnCVSS>7.0</failBuildOnCVSS>
+                    <formats>HTML, JSON</formats>
+                    <outputDirectory>${project.build.directory}/dependency-check-report</outputDirectory>
+                    <suppressionFile>${project.basedir}/dependency-check-suppression.xml</suppressionFile>
+                </configuration>
+            </plugin> -->
         </plugins>
     </build>
     <dependencies>
