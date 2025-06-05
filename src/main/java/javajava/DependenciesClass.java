@@ -87,7 +87,7 @@ public final class DependenciesClass {
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
             if (classPath.contains(";")) {
-                doc = docBuilder.parse(new File(strDependencyFile));
+                doc = SecureXmlParser.parseXmlSafely(strDependencyFile);
                 doc.getDocumentElement().normalize();
             } else {
                 try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
