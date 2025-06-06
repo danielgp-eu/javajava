@@ -125,7 +125,7 @@ public final class FileHandlingClass {
                     if (isItOk2) {
                         strFileJson = ePreety.getValue().toString();
                     } else {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound"), propsFile.getProperty("Minified"), propsFile.getProperty("PrettyPrint"));
+                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound"), propsFile.getProperty("Minified", ""), propsFile.getProperty("PrettyPrint", ""));
                         throw new IllegalArgumentException(strFeedback);
                     }
                 }

@@ -44,10 +44,9 @@ public final class DependenciesClass {
             final Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 final Element tElement = (Element)node;
-                arrayAttributes.put(tElement.getElementsByTagName("groupId").item(0).getTextContent()
-                    + "/"
-                    + tElement.getElementsByTagName("artifactId").item(0).getTextContent()
-                    , tElement.getElementsByTagName("version").item(0).getTextContent());
+                arrayAttributes.put(getTagValueOrEmpty(tElement, "groupId")
+                    + "/" + getTagValueOrEmpty(tElement, "artifactId")
+                    , getTagValueOrEmpty(tElement, "version"));
             }
         }
         final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
@@ -97,6 +96,21 @@ public final class DependenciesClass {
             LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return doc;
+    }
+
+    /**
+     * Getting tag value or empty if not found
+     * @param tElement Element
+     * @return String
+     */
+    private static String getTagValueOrEmpty(final Element tElement, final String tagName) {
+        final NodeList nameList = tElement.getElementsByTagName(tagName);
+        String strReturn = "";
+        if (nameList.getLength() > 0) {
+            final Node nameNode = nameList.item(0); // Assuming one name per item
+            strReturn = nameNode.getTextContent();
+        }
+        return strReturn;
     }
 
     // Private constructor to prevent instantiation
