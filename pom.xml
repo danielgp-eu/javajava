@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>0.9.8</version>
+    <version>0.9.9</version>
     <name>JavaJava</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -157,26 +157,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
-            <!-- <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>12.1.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <nvdApiKey>803c813e-bcb2-438f-b8cc-ff2195dc7fa7</nvdApiKey>
-                    <failBuildOnCVSS>7.0</failBuildOnCVSS>
-                    <formats>HTML, JSON</formats>
-                    <outputDirectory>${project.build.directory}/dependency-check-report</outputDirectory>
-                    <suppressionFile>${project.basedir}/dependency-check-suppression.xml</suppressionFile>
-                </configuration>
-            </plugin> -->
         </plugins>
     </build>
     <dependencies>
