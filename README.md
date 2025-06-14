@@ -48,9 +48,11 @@ Various Java classes to be re-used
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
 * [Java Best Practices That Every Java Developer Should Know in 2024](https://medium.com/@learnwithakshay/java-best-practices-that-every-java-developer-should-know-in-2024-ea84bc0b0fec)
+* [Java Maven OWASP Dependency-Check Example](https://www.javacodegeeks.com/java-maven-owasp-dependency-check-example.html)
 * [Java Naming Conventions - Best Practices](https://www.javaguides.net/2018/08/java-standard-naming-conventions.html)
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
 * [Secure Coding Guidelines for Java SE](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
+* [Switch as an expression in Java with Lambda-like syntax](https://www.javacodegeeks.com/2020/05/switch-as-an-expression-in-java-with-lambda-like-syntax.html)
 * [Top 10 Java Programming Best Practices](https://www.geeksforgeeks.org/java-best-practices/)
 
 
