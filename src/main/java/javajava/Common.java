@@ -57,14 +57,14 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        LogLevelChecker.logConditional("Original query is: " + strOriginalQ, Level.DEBUG);
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ), Level.DEBUG);
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             final String newParameter = ":" + currentPrmtName.replaceAll("(\\{|\\})", "").replace(" ", "_");
             strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
         }
-        LogLevelChecker.logConditional("Final query is: " + strFinalQ, Level.DEBUG);
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ), Level.DEBUG);
         return strFinalQ;
     }
 
@@ -74,13 +74,13 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        LogLevelChecker.logConditional("Original query is: " + strOriginalQ, Level.DEBUG);
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ), Level.DEBUG);
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, String.valueOf(63));
         }
-        LogLevelChecker.logConditional("Final query is: " + strFinalQ, Level.DEBUG);
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ), Level.DEBUG);
         return strFinalQ;
     }
 

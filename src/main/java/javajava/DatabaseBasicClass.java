@@ -179,7 +179,8 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
                         preparedStatement.setString(index, strValueToUse);
                     }
                 }
-                LogLevelChecker.logConditional("Final query is: " + preparedStatement.getParameterMetaData().toString(), Level.DEBUG);
+                final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", preparedStatement.getParameterMetaData().toString()); 
+                LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
                 preparedStatement.addBatch();
                 if (crtRow % 100 == 0) { // execute every 100 rows
                     preparedStatement.executeBatch();
@@ -212,7 +213,7 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
         }
         final int foundParameters = mapParameterOrder.size();
         if (foundParameters != intParameters) {
-            final String strFeedback = String.format("Seems we have a problem as %d parameters are expected but only %d were given %s for query \"%s\"", intParameters, foundParameters, mapParameterOrder.toString(), strOriginalQ);
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing", intParameters, foundParameters, mapParameterOrder.toString(), strOriginalQ);
             LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return mapParameterOrder;
