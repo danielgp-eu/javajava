@@ -180,6 +180,7 @@ public final class FileHandlingClass {
             for (final Path entry : stream) {
                 if (Files.isDirectory(entry)) {
                     arraySubFolders.add(entry.toString());
+                    LogLevelChecker.logConditional(entry.toString(), Level.INFO);
                 }
             }
         } catch (IOException ex) {

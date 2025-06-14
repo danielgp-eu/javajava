@@ -145,7 +145,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
                         String crtValue = resultSet.getString(colIndex);
                         if (resultSet.wasNull()) {
-                            crtValue = "NULL";
+                            crtValue = Common.strNull;
                         }
                         currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
                     }
