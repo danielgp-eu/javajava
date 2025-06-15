@@ -3,7 +3,6 @@ package javajava;
 import java.time.LocalDateTime;
 /* Util classes */
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 /* Command Line classes */
 import org.apache.commons.cli.AlreadySelectedException;
@@ -17,19 +16,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
-import org.apache.logging.log4j.Level;
 /* Logging classes */
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Level;
 
 /**
  * Example class
  */
 public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(Example.class);
 
     /**
      * defining Arguments
@@ -119,8 +112,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 DatabaseSpecificSnowflake.performSnowflakePreDefinedAction("AvailableWarehouses", properties);
                 break;
             case "getSubFoldersFromFolder":
-                final List<String> listSubFolders = FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
-                listSubFolders.forEach(LOGGER::info);
+                FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
                 break;
             case "LogEnvironmentDetails":
                 final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();

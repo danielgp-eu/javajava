@@ -1,11 +1,14 @@
 package javajava;
 /* Utility classes */
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 /* Regular Expressions classes */
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+/* Logging class */
+import org.apache.logging.log4j.Level;
 
 /**
  * Class with common features
@@ -28,6 +31,14 @@ public final class Common {
      */
     public static final String strDbSqLite = "SQLite";
     /**
+     * NULL string
+     */
+    public static final String strNull = "NULL";
+    /**
+     * Regular Expression for Prompt Parameters within SQL Query
+     */
+    public static final String strPrmptPrmtrRgEx = "\\{[A-Za-z\\s_]{2,50}\\}";
+    /**
      * standard SQL statement unable
      */
     public static final String strStmntUnableX = JavaJavaLocalization.getMessage("i18nSQLstatementUnableToGetX");
@@ -39,6 +50,55 @@ public final class Common {
      * standard Unknown
      */
     public static final String strUnknown = JavaJavaLocalization.getMessage("i18nUnknown");
+
+    /**
+     * Convert Prompt Parameters into Named Parameters
+     * @param strOriginalQ query with prompt parameter
+     * @return query with named parameters
+     */
+    public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ), Level.DEBUG);
+        final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
+        String strFinalQ = strOriginalQ;
+        for (final String currentPrmtName : listMatches) {
+            final String newParameter = ":" + currentPrmtName.replaceAll("(\\{|\\})", "").replace(" ", "_");
+            strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
+        }
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ), Level.DEBUG);
+        return strFinalQ;
+    }
+
+    /**
+     * Convert Prompt Parameters into Named Parameters
+     * @param strOriginalQ query with prompt parameter
+     * @return query with named parameters
+     */
+    public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ), Level.DEBUG);
+        final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
+        String strFinalQ = strOriginalQ;
+        for (final String currentPrmtName : listMatches) {
+            strFinalQ = strFinalQ.replace(currentPrmtName, String.valueOf(63));
+        }
+        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ), Level.DEBUG);
+        return strFinalQ;
+    }
+
+    /**
+     * Extracts all occurrences of a given regex pattern from a text.
+     * @param text The input string to search within.
+     * @param regex The regular expression pattern.
+     * @return A List of strings, where each string is a full match found.
+     */
+    public static int countParametersWithinQuery(final String text) {
+        final Pattern pattern = Pattern.compile(strPrmptPrmtrRgEx);
+        final Matcher matcher = pattern.matcher(text);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+        return count;
+    }
 
     /**
      * Counts number of parameters with in a string
@@ -54,6 +114,22 @@ public final class Common {
             count++;
         }
         return count;
+    }
+
+    /**
+     * Extracts all occurrences of a given regex pattern from a text.
+     * @param text The input string to search within.
+     * @param regex The regular expression pattern.
+     * @return A List of strings, where each string is a full match found.
+     */
+    public static List<String> extractMatches(final String text, final String regex) {
+        final List<String> matches = new ArrayList<>();
+        final Pattern pattern = Pattern.compile(regex);
+        final Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            matches.add(matcher.group()); // group() or group(0) returns the entire matched sequence
+        }
+        return matches;
     }
 
     /**
@@ -121,10 +197,11 @@ public final class Common {
      * @return string
      */
     @SuppressWarnings("unused")
-    public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final String strReplacement1, final String strReplacement2) {
+    public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final Object... strReplacement) {
         return switch (intRsParams) {
-            case 1 -> String.format(strUnformatted, strReplacement1);
-            case 2 -> String.format(strUnformatted, strReplacement1, strReplacement2);
+            case 1 -> String.format(strUnformatted, strReplacement[0].toString());
+            case 2 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString());
+            case 3 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString(), strReplacement[2].toString());
             default -> {
                 final String strFeedback = String.format(strUnknFtrs, intRsParams, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(strUnknown)));

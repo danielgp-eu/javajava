@@ -14,24 +14,25 @@ public final class LogLevelChecker {
     private static final Logger logger = LogManager.getLogger(LogLevelChecker.class);
 
     /**
-     * Conditional logger
+     * Conditional logger ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF
      * @param strFeedback
      * @param strLevel
      */
     public static void logConditional(final String strFeedback, final Level strLevel) {
-        if (strLevel.isInRange(Level.FATAL, Level.ALL)) {
-            logger.fatal(strFeedback);
-            if (strLevel == Level.ERROR) {
+        final Level crtLevel = logger.getLevel(); // NOPMD by Daniel Popiniuc on 14.06.2025, 16:51
+        if (crtLevel.isInRange(Level.FATAL, Level.ALL)) {
+            if (strLevel == Level.FATAL) {
+                logger.fatal(strFeedback);
+            } else if (strLevel == Level.ERROR) {
                 logger.error(strFeedback);
-            }
-            if (strLevel.isLessSpecificThan(Level.ERROR)) {
+            } else if (strLevel == Level.WARN) {
                 logger.warn(strFeedback);
-            }
-            if (strLevel.isLessSpecificThan(Level.WARN)) {
+            } else if (strLevel == Level.INFO) {
                 logger.info(strFeedback);
-            }
-            if (strLevel == Level.INFO) {
+            } else if (strLevel == Level.DEBUG) {
                 logger.debug(strFeedback);
+            } else if (strLevel == Level.TRACE) {
+                logger.trace(strFeedback);
             }
         }
     }
