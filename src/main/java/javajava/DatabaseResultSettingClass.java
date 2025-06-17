@@ -217,11 +217,12 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
     }
 
     /**
+     * ResultSet capturing standardized
      * @param objStatement statement
      * @param strWhich output type from result-set
      * @param strQueryToUse query to use
      * @param queryProperties properties (with features to apply)
-     * @param strKind
+     * @param strKind type of result
      * @return List of Properties
      */
     protected static List<Properties> getResultSetStandardized(final Statement objStatement, final String strWhich, final String strQueryToUse, final Properties queryProperties, final String strKind) {

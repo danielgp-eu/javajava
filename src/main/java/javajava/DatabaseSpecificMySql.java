@@ -50,6 +50,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      * Initiate a MySQL connection with Instance properties and DB specified
      * 
      * @param propInstance Properties for Instance
+     * @param strDatabase Database to connect to
      * @return Connection
      */
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {

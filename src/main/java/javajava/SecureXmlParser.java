@@ -21,6 +21,11 @@ import org.xml.sax.SAXException;
  */
 public final class SecureXmlParser {
 
+    /**
+     * Get Feature by Name
+     * @param strFeatureName
+     * @return String
+     */
     private static String getFeatureByName(final String strFeatureName) {
         return switch (strFeatureName) {
             // **1. Disable DTDs completely (Strongest protection)**
@@ -45,11 +50,11 @@ public final class SecureXmlParser {
 
     /**
      * Parsing XML safely
-     * @param strDependencyFile
-     * @return
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
+     * @param strDependencyFile name of Dependency file
+     * @return Document
+     * @throws ParserConfigurationException Error Exception possible 
+     * @throws SAXException Error Exception possible
+     * @throws IOException Error Exception possible
      */
     public static Document parseXmlSafely(final String strDependencyFile)
             throws ParserConfigurationException, SAXException, IOException {

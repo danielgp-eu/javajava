@@ -14,9 +14,9 @@ public final class LogLevelChecker {
     private static final Logger logger = LogManager.getLogger(LogLevelChecker.class);
 
     /**
-     * Conditional logger ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < OFF
-     * @param strFeedback
-     * @param strLevel
+     * Conditional logger ALL,TRACE,DEBUG,INFO,WARN,ERROR,FATAL,OFF
+     * @param strFeedback Feedback to Log
+     * @param strLevel Level targeted
      */
     public static void logConditional(final String strFeedback, final Level strLevel) {
         final Level crtLevel = logger.getLevel(); // NOPMD by Daniel Popiniuc on 14.06.2025, 16:51
