@@ -37,7 +37,7 @@ public final class Common {
     /**
      * Regular Expression for Prompt Parameters within SQL Query
      */
-    public static final String strPrmptPrmtrRgEx = "\\{[A-Za-z\\s_]{2,50}\\}";
+    public static final String strPrmptPrmtrRgEx = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
     /**
      * standard SQL statement unable
      */
@@ -74,20 +74,21 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ), Level.DEBUG);
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
-            strFinalQ = strFinalQ.replace(currentPrmtName, String.valueOf(63));
+            strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
         }
-        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ), Level.DEBUG);
+        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs"), strFinalQ);
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         return strFinalQ;
     }
 
     /**
      * Extracts all occurrences of a given regex pattern from a text.
      * @param text The input string to search within.
-     * @param regex The regular expression pattern.
      * @return A List of strings, where each string is a full match found.
      */
     public static int countParametersWithinQuery(final String text) {
@@ -192,9 +193,8 @@ public final class Common {
      * handle NameUnformatted
      * @param intRsParams number for parameters
      * @param strUnformatted original string
-     * @param strReplacement1 1st replacement
-     * @param strReplacement2 2nd replacement
-     * @return string
+     * @param strReplacement replacements (1 to multiple)
+     * @return String
      */
     @SuppressWarnings("unused")
     public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final Object... strReplacement) {

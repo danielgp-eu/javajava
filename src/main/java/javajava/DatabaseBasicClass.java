@@ -7,10 +7,10 @@ import java.sql.Statement;
 import java.sql.Types;
 /* Time classes */
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 /* Utility classes */
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 /* Logging classes */
 import org.apache.logging.log4j.Level;
@@ -146,74 +146,104 @@ public class DatabaseBasicClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 17:
 
     /**
      * Values to be added for bulk operations
-     * @param objConnection
-     * @param objValues
-     * @param strQuery
+     * @param objConnection Connection for destination Database
+     * @param strQueryPurpose Purpose for query execution
+     * @param objValues Values to use for executions
+     * @param strQuery Original Query with Prompt Parameters
+     * @param arrayCleanable Clean-able fields as array of Strings
+     * @param arrayNullable Null-able fields
      */
-    public static void executeValuesIntoDatabaseUsingPreparedStatement(final Connection objConnection, final List<Properties> objValues, final String strQuery, final String[] arrayCleanable, final String... arrayNullable) {
+    public static void executeValuesIntoDatabaseUsingPreparedStatement(final Connection objConnection, final String strQueryPurpose, final List<Properties> objValues, final String strQuery, final String[] arrayCleanable, final String... arrayNullable) {
         final int intRows = objValues.size();
+        final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
+        final int intParameters = mapParameterOrder.size();
         final String strFinalQ = Common.convertPromptParametersIntoParameters(strQuery);
-        final Properties mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
         try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ);) {
+            // cycle through each row
             for (int crtRow = 1; crtRow <= intRows; crtRow++) {
                 final Properties currentProps = objValues.get(crtRow - 1);
-                for (final Map.Entry<Object, Object> entry : currentProps.entrySet()) {
-                    final String strKey =  entry.getKey().toString();
-                    final int index = Integer.parseInt(mapParameterOrder.getProperty(strKey));
-                    final String strOriginalValue = entry.getValue().toString();
+                // cycle through every single Parameter to set its value to PreparedStatement
+                for (int intParameter = 0; intParameter < intParameters; intParameter++) {
+                    final int index = intParameter + 1;
+                    final String strKey = mapParameterOrder.get(intParameter);
+                    final String strOriginalValue = currentProps.getProperty(strKey);
                     String strValueToUse = strOriginalValue;
-                    if (strOriginalValue.matches(Common.strNull)) {
-                        preparedStatement.setNull(index, Types.VARCHAR);
-                    } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                        strValueToUse = strOriginalValue.replaceAll("([\"'])", "");
-                        if (strValueToUse.isEmpty()) {
+                    try {
+                        if (Common.strNull.equalsIgnoreCase(strOriginalValue)) {
                             preparedStatement.setNull(index, Types.VARCHAR);
+                        } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
+                            strValueToUse = strOriginalValue.replaceAll("([\"'])", "");
+                            if (strValueToUse.isEmpty()) {
+                                preparedStatement.setNull(index, Types.VARCHAR);
+                            } else {
+                                preparedStatement.setString(index, strValueToUse);
+                            }
+                        } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
+                            preparedStatement.setNull(index, Types.VARCHAR);
+                        } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
+                            preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
                         } else {
                             preparedStatement.setString(index, strValueToUse);
                         }
-                    } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
-                        preparedStatement.setNull(index, Types.VARCHAR);
-                    } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
-                        preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
-                    } else {
-                        preparedStatement.setString(index, strValueToUse);
+                    } catch (SQLException e) {
+                        final String strFeedback = e.getLocalizedMessage() + " on Parameter " +  strKey + " and Query " + strQuery;
+                        LogLevelChecker.logConditional(strFeedback, Level.ERROR);
                     }
                 }
-                final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", preparedStatement.getParameterMetaData().toString()); 
-                LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
                 preparedStatement.addBatch();
-                if (crtRow % 100 == 0) { // execute every 100 rows
-                    preparedStatement.executeBatch();
+                boolean needsExecution = false;
+                if (crtRow % 200 == 0) { // execute every 200 rows
+                    needsExecution = true;
                 } else if (crtRow == intRows) { // left-over rows
-                    preparedStatement.executeBatch();
+                    needsExecution = true;
+                }
+                if (needsExecution) {
+                    preparedStatement.executeLargeBatch();
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                    LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
                 }
             }
         } catch (SQLException e) {
-            LogLevelChecker.logConditional(e.getLocalizedMessage(), Level.ERROR);
+            final String strFeedback = e.getLocalizedMessage() + " with Values " + objValues.get(0).toString() + " for Query " + strQuery;
+            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            throw (IllegalStateException)new IllegalStateException().initCause(e);
         }
     }
 
     /**
      * get order of Prompt Parameters within Query 
      * @param strOriginalQ query to consider expected to have Prompt Parameters
-     * @param objValues list with Values as List<Properties>
-     * @return Properties with order as value
+     * @param objValues list with Values as List of Properties
+     * @return List of Strings with order as value
      */
-    public static Properties getPromptParametersOrderWithinQuery(final String strOriginalQ, final List<Properties> objValues) {
+    public static List<String> getPromptParametersOrderWithinQuery(final String strOriginalQ, final List<Properties> objValues) {
+        final List<String> valFields = new ArrayList<>();
+        objValues.get(0).forEach((strKey, strValue) -> {
+            valFields.add(strKey.toString());
+        });
+        String strFeedback = String.format("Value Parameters are %s", valFields.toString());
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         final List<String> listMatches = Common.extractMatches(strOriginalQ, Common.strPrmptPrmtrRgEx);
+        strFeedback = String.format("Query Parameters are %s", listMatches.toString());
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
-        final Properties mapParameterOrder = new Properties();
-        for(int intParameter = 0; intParameter < intParameters; intParameter++) {
-            final String crtParameter =  listMatches.get(intParameter);
-            for (final Map.Entry<Object, Object> entry : objValues.get(0).entrySet()) {
-                if (crtParameter.equals(entry.getKey())) {
-                    mapParameterOrder.put(crtParameter, intParameter);
-                }
+        for (int intParameter = 0; intParameter < intParameters; intParameter++) {
+            final String crtParameter = listMatches.get(intParameter).replaceAll("(\\{|\\})", "");
+            final int intPosition = valFields.indexOf(crtParameter);
+            if (intPosition != -1) {
+                mapParameterOrder.add(crtParameter);
             }
         }
+        strFeedback = String.format("Mapping for Parameters is %s", mapParameterOrder.toString());
+        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
         final int foundParameters = mapParameterOrder.size();
         if (foundParameters != intParameters) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing", intParameters, foundParameters, mapParameterOrder.toString(), strOriginalQ);
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing")
+                , intParameters
+                , foundParameters
+                , mapParameterOrder.toString() + " vs. " + objValues.get(0).toString()
+                , strOriginalQ);
             LogLevelChecker.logConditional(strFeedback, Level.ERROR);
         }
         return mapParameterOrder;
