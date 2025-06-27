@@ -9,11 +9,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /* Logging class */
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Class with common features
  */
 public final class Common {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(Common.class);
+    /**
+     * pointer for all logs
+     */
+    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
     /**
      * standard Application class feedback
      */
@@ -31,6 +41,10 @@ public final class Common {
      */
     public static final String strDbSqLite = "SQLite";
     /**
+     * standard String
+     */
+    public final static String strName = "Name";
+    /**
      * NULL string
      */
     public static final String strNull = "NULL";
@@ -38,6 +52,10 @@ public final class Common {
      * Regular Expression for Prompt Parameters within SQL Query
      */
     public static final String strPrmptPrmtrRgEx = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
+    /**
+     * standard String
+     */
+    public final static String strRoles = "Roles";
     /**
      * standard SQL statement unable
      */
@@ -57,14 +75,20 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ), Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+            LOGGER.debug(strFeedback);
+        }
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             final String newParameter = ":" + currentPrmtName.replaceAll("(\\{|\\})", "").replace(" ", "_");
             strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
         }
-        LogLevelChecker.logConditional(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ), Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+            LOGGER.debug(strFeedback);
+        }
         return strFinalQ;
     }
 
@@ -74,15 +98,19 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
+            LOGGER.debug(strFeedback);
+        }
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
         }
-        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs"), strFinalQ);
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs"), strFinalQ);
+            LOGGER.debug(strFeedback);
+        }
         return strFinalQ;
     }
 
@@ -131,6 +159,39 @@ public final class Common {
             matches.add(matcher.group()); // group() or group(0) returns the entire matched sequence
         }
         return matches;
+    }
+
+    /**
+     * JAVA info
+     * 
+     * @return String
+     */
+    public static String getDetailsAboutSoftwareUser() {
+        return getMapIntoJsonString(Map.of(
+            "Country", System.getProperty("user.country"),
+            "Country.Format", System.getProperty("user.country.format"),
+            "Language", System.getProperty("user.language"),
+            "Language.Format", System.getProperty("user.language.format"),
+            "Home", System.getProperty("user.home").replace("\\", "\\\\"),
+            "Name", System.getProperty("user.name"),
+            "Timezone", System.getProperty("user.timezone")
+        ));
+    }
+
+    /**
+     * JAVA info
+     * 
+     * @return String
+     */
+    public static String getDetailsAboutSoftwarePlatformJava() {
+        return getMapIntoJsonString(Map.of(
+            "Date", System.getProperty("java.version.date"),
+            "Release", System.getProperty("java.vendor.version"),
+            "Runtime", System.getProperty("java.runtime.name"),
+            "Version", System.getProperty("java.version"),
+            "Vendor", System.getProperty("java.vendor"),
+            "VM", System.getProperty("java.vm.name")
+        ));
     }
 
     /**

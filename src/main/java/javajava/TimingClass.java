@@ -7,11 +7,21 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 /* Logging classes */
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Time methods
  */
 public final class TimingClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(TimingClass.class);
+    /**
+     * pointer for all logs
+     */
+    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
 
     /**
      * Convert Nanoseconds to a more digest-able string
@@ -142,18 +152,10 @@ public final class TimingClass {
      * 
      * @param startTimeStamp timestamp value seen at start
      * @param strPartial prefix for feedback
-     * @param strWhere hwo to reflect log output
      */
-    public static void logDuration(final LocalDateTime startTimeStamp, final String strPartial, final String strWhere) {
+    public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
-        final Level relevantLevel = switch (strWhere) {
-            case "debug" -> Level.DEBUG;
-            case "error" -> Level.ERROR;
-            case "info" -> Level.INFO;
-            default -> Level.OFF;
-        };
-        LogLevelChecker.logConditional(strFeedback, relevantLevel);
+        return String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }
 
     /**

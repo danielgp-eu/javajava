@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 /* Logging classes */
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /* OSHI Hardware/Software classes */
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -24,6 +26,14 @@ import oshi.util.FormatUtil;
  */
 public final class EnvironmentCapturingClass {
     /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(EnvironmentCapturingClass.class);
+    /**
+     * pointer for all logs
+     */
+    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
+    /**
      * Hardware info
      */
     private final static SystemInfo systemInfo = new SystemInfo();
@@ -35,10 +45,6 @@ public final class EnvironmentCapturingClass {
      * OS info
      */
     private final static OperatingSystem operatingSystem = systemInfo.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
-    /**
-     * standard String
-     */
-    private final static String strName = "Name";
 
     /**
      * Display details
@@ -82,21 +88,31 @@ public final class EnvironmentCapturingClass {
      * @return String
      */
     public static String getCurrentEnvironmentDetails() {
-        String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
-        LogLevelChecker.logConditional(strFeedback, Level.INFO);
+        if (LogLevel.isLessSpecificThan(Level.WARN)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
+            LOGGER.info(strFeedback);
+        }
         final StringBuilder strJsonString = new StringBuilder(100);
         strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor(), getDetailsAboutNetworkInterfaces()));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
-        strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), getDetailsAboutSoftwarePlatformJava(), getDetailsAboutSoftwareUser()));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
+            LOGGER.debug(strFeedback);
+        }
+        strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), Common.getDetailsAboutSoftwarePlatformJava(), Common.getDetailsAboutSoftwareUser()));
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
+            LOGGER.debug(strFeedback);
+        }
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
+            LOGGER.debug(strFeedback);
+        }
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
-        LogLevelChecker.logConditional(strFeedback, Level.INFO);
+        if (LogLevel.isLessSpecificThan(Level.WARN)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
+            LOGGER.info(strFeedback);
+        }
         return String.format("{%s}", strJsonString);
     }
 
@@ -120,7 +136,7 @@ public final class EnvironmentCapturingClass {
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
                 "Mount", fileStore.getMount().replace("\\", "\\\\"),
-                strName, fileStore.getName(),
+                Common.strName, fileStore.getName(),
                 "Options", fileStore.getOptions(),
                 "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
                 "Type", fileStore.getType(),
@@ -147,7 +163,7 @@ public final class EnvironmentCapturingClass {
             "Identifier", procIdentif.getIdentifier(),
             "Local Processors", processor.getLogicalProcessorCount(),
             "Model", procIdentif.getModel(),
-            strName, procIdentif.getName(),
+            Common.strName, procIdentif.getName(),
             "Physical", processor.getPhysicalProcessorCount()
         ));
     }
@@ -167,7 +183,7 @@ public final class EnvironmentCapturingClass {
             }
             strJsonString.append(Common.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
-                strName, graphicCard.getName(),
+                Common.strName, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
                 "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
                 "Driver Version", graphicCard.getVersionInfo()
@@ -209,7 +225,7 @@ public final class EnvironmentCapturingClass {
             "Code", versionInfo.getCodeName(),
             "Family", operatingSystem.getFamily(),
             "Manufacturer", operatingSystem.getManufacturer(),
-            strName, System.getProperty("os.name"),
+            Common.strName, System.getProperty("os.name"),
             "Platform", SystemInfo.getCurrentPlatform().toString(),
             "Version", versionInfo.getVersion()
         ));
@@ -262,7 +278,7 @@ public final class EnvironmentCapturingClass {
                 strJsonString.append(',');
             }
             strJsonString.append(Common.getMapIntoJsonString(Map.of(
-                strName, net.getName(),
+                Common.strName, net.getName(),
                 "Display Name", net.getDisplayName(),
                 "MAC Address", net.getMacaddr(),
                 "IPv4", String.join(", ", net.getIPv4addr()),
@@ -278,39 +294,6 @@ public final class EnvironmentCapturingClass {
     }
 
     /**
-     * JAVA info
-     * 
-     * @return String
-     */
-    private static String getDetailsAboutSoftwarePlatformJava() {
-        return Common.getMapIntoJsonString(Map.of(
-            "Date", System.getProperty("java.version.date"),
-            "Release", System.getProperty("java.vendor.version"),
-            "Runtime", System.getProperty("java.runtime.name"),
-            "Version", System.getProperty("java.version"),
-            "Vendor", System.getProperty("java.vendor"),
-            "VM", System.getProperty("java.vm.name")
-        ));
-    }
-
-    /**
-     * JAVA info
-     * 
-     * @return String
-     */
-    private static String getDetailsAboutSoftwareUser() {
-        return Common.getMapIntoJsonString(Map.of(
-            "Country", System.getProperty("user.country"),
-            "Country.Format", System.getProperty("user.country.format"),
-            "Language", System.getProperty("user.language"),
-            "Language.Format", System.getProperty("user.language.format"),
-            "Home", System.getProperty("user.home").replace("\\", "\\\\"),
-            "Name", System.getProperty("user.name"),
-            "Timezone", System.getProperty("user.timezone")
-        ));
-    }
-
-    /**
      * Sensors Information
      * @param intPhysMedType number for NDIS Physical Medium Type
      * @return String
@@ -318,7 +301,7 @@ public final class EnvironmentCapturingClass {
     private static String getNdisPhysicalMediumType(final int intPhysMedType) {
         return Common.getMapIntoJsonString(Map.of(
             "Numeric", intPhysMedType,
-            strName, switch (intPhysMedType) {
+            Common.strName, switch (intPhysMedType) {
                 case 0 -> "Unspecified (e.g., satellite feed)";
                 case 1 -> "Wireless LAN (802.11)";
                 case 2 -> "Cable Modem (DOCSIS)";

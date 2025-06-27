@@ -8,11 +8,21 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 /* Logging classes */
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Shell execution methods
  */
 public final class ShellingClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(ShellingClass.class);
+    /**
+     * pointer for all logs
+     */
+    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
     /**
      * holding the Use account currently logged on
      */
@@ -31,8 +41,10 @@ public final class ShellingClass {
         } else {
             builder.command(strCommand, strParameters);
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
+            LOGGER.debug(strFeedback);
+        }
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
     }
@@ -55,8 +67,10 @@ public final class ShellingClass {
             }
             strReturn = processOutput.toString();
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
         }
         return strReturn;
     }
@@ -75,17 +89,26 @@ public final class ShellingClass {
             final Process process = builder.start();
             final int exitCode = process.waitFor();
             process.destroy();
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+            if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+                LOGGER.debug(strFeedback);
+            }
         } catch (IOException e) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
         } catch(InterruptedException ei) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
             Thread.currentThread().interrupt(); // NOPMD by Daniel Popiniuc on 06.06.2025, 00:39
         }
-        TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"), "debug");
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"));
+            LOGGER.debug(strFeedback);
+        }
     }
 
     /**
@@ -106,17 +129,26 @@ public final class ShellingClass {
             strReturn = captureProcessOutput(process, strOutLineSep);
             final int exitCode = process.waitFor();
             process.destroy();
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+            if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+                LOGGER.debug(strFeedback);
+            }
         } catch (IOException e) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
         } catch(InterruptedException ei) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
             Thread.currentThread().interrupt(); // NOPMD by Daniel Popiniuc on 06.06.2025, 00:39
         }
-        TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"), "debug");
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"));
+            LOGGER.debug(strFeedback);
+        }
         return strReturn;
     }
 
@@ -137,8 +169,10 @@ public final class ShellingClass {
     private static void loadCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
-            LogLevelChecker.logConditional(strFeedback, Level.WARN);
+            if (LogLevel.isLessSpecificThan(Level.ERROR)) {
+                final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
+                LOGGER.warn(strFeedback);
+            }
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         LOGGED_ACCOUNT = strUser;

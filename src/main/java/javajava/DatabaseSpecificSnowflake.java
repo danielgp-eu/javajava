@@ -9,17 +9,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-
+/* Logging class */
 import org.apache.logging.log4j.Level;
 
 /**
  * Snowflake methods
  */
 public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
-    /**
-     * standard String
-     */
-    private final static String strRoles = "Roles";
 
     /**
      * Snowflake Bootstrap
@@ -43,15 +39,21 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
         Connection connection = null;
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbSnowflake, strDatabase, strConnection, propConnection);
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbSnowflake, strDatabase, strConnection, propConnection);
+            LOGGER.debug(strFeedback);
+        }
         try {
             connection = DriverManager.getConnection(strConnection, propConnection);
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSnowflake, strDatabase);
-            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+            if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSnowflake, strDatabase);
+                LOGGER.debug(strFeedback);
+            }
         } catch(SQLException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSnowflake, e.getLocalizedMessage());
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSnowflake, e.getLocalizedMessage());
+                LOGGER.error(strFeedback);
+            }
         }
         return connection;
     }
@@ -66,7 +68,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
      */
     protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final Properties queryProperties = new Properties();
-        if (strRoles.equalsIgnoreCase(strWhich)) {
+        if (Common.strRoles.equalsIgnoreCase(strWhich)) {
             queryProperties.put("expectedExactNumberOfColumns", "1");
         }
         final String strQueryToUse = getSnowflakePreDefinedMetadataQuery(strWhich);
@@ -230,7 +232,9 @@ FROM
             default -> {
                 final String strFeedback = String.format(Common.strUnknFtrs, strWhich, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+                if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                    LOGGER.error(strFeedback);
+                }
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -273,15 +277,21 @@ FROM
      */
     private static void loadSnowflakeDriver() {
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingAttempt"), Common.strDbSnowflake, strDriverName);
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingAttempt"), Common.strDbSnowflake, strDriverName);
+            LOGGER.debug(strFeedback);
+        }
         try {
             Class.forName(strDriverName);
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingSuccess"), Common.strDbSnowflake, strDriverName);
-            LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+            if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingSuccess"), Common.strDbSnowflake, strDriverName);
+                LOGGER.debug(strFeedback);
+            }
         } catch (ClassNotFoundException ex) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.strDbSnowflake, strDriverName);
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.strDbSnowflake, strDriverName);
+                LOGGER.error(strFeedback);
+            }
         }
     }
 
@@ -296,8 +306,10 @@ FROM
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e){
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
         }
     }
 

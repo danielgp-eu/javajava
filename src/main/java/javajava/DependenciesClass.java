@@ -12,6 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 /* Logging classes */
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /* for XML exception */
 import org.xml.sax.SAXException;
 /* W3C DOM classes */
@@ -24,6 +26,14 @@ import org.w3c.dom.NodeList;
  * Capturing details of dependencies from current Maven POM file
  */
 public final class DependenciesClass {
+    /**
+     * pointer for all logs
+     */
+    private static final Logger LOGGER = LogManager.getLogger(DependenciesClass.class);
+    /**
+     * pointer for all logs
+     */
+    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
     /**
      * current class path
      */
@@ -49,8 +59,10 @@ public final class DependenciesClass {
                     , getTagValueOrEmpty(tElement, "version"));
             }
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
+            LOGGER.debug(strFeedback);
+        }
         return Common.getMapIntoJsonString(arrayAttributes);
     }
 
@@ -64,8 +76,10 @@ public final class DependenciesClass {
         if (!classPath.contains(";")) {
             strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
-        LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+        if (LogLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
+            LOGGER.debug(strFeedback);
+        }
         return strDependencyFile;
     }
 
@@ -84,16 +98,23 @@ public final class DependenciesClass {
                 doc.getDocumentElement().normalize();
             } else {
                 try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
-                    LogLevelChecker.logConditional(xmlContent.toString(), Level.DEBUG);
+                    if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                        final String strFeedback = xmlContent.toString();
+                        LOGGER.debug(strFeedback);
+                    }
                     doc = docBuilder.parse(xmlContent);
                 } catch (IOException e) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
-                    LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+                    if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
+                        LOGGER.error(strFeedback);
+                    }
                 }
             }
         } catch (IOException | ParserConfigurationException | SAXException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
         }
         return doc;
     }
