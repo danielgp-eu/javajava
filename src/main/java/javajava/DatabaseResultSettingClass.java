@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-/* Logging classes */
-import org.apache.logging.log4j.Level;
 
 /**
  * Basic features for Databases 
@@ -30,43 +28,31 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         final int intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
             final String key = (String) obj;
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
-                LOGGER.debug(strFeedback);
-            }
+            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
+            Common.levelProvider.logDebug(strFeedback);
             switch (key) {
                 case "expectedExactNumberOfColumns":
                     final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
-                    if ((intColumnsIs != intColumnsShould) && LogLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
-                        LOGGER.error(strFeedback);
-                    }
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
+                    Common.levelProvider.logError(strFeedback);
                     break;
                 case "expectedExactNumberOfRows":
                     final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
-                    if ((intResultSetRows != intExpectedRows) && LogLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
-                        LOGGER.error(strFeedback);
-                    }
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
+                    Common.levelProvider.logError(strFeedback);
                     break;
                 case "exposeNumberOfColumns":
-                    if (LogLevel.isLessSpecificThan(Level.WARN)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
-                        LOGGER.info(strFeedback);
-                    }
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
+                    Common.levelProvider.logInfo(strFeedback);
                     break;
                 case "exposeNumberOfRows":
-                    if (LogLevel.isLessSpecificThan(Level.WARN)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
-                        LOGGER.info(strFeedback);
-                    }
+                    strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
+                    Common.levelProvider.logInfo(strFeedback);
                     break;
                 default:
-                    final String strFeedback = String.format(Common.strUnknFtrs, key, StackWalker.getInstance()
+                    strFeedback = String.format(Common.strUnknFtrs, key, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                    if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                        LOGGER.error(strFeedback);
-                    }
+                    Common.levelProvider.logError(strFeedback);
                     throw new UnsupportedOperationException(strFeedback);
             }
         }
@@ -84,27 +70,19 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
-                LOGGER.debug(strFeedback);
-            }
+            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
+            Common.levelProvider.logDebug(strFeedback);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                    LOGGER.debug(strFeedback);
-                }
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                Common.levelProvider.logDebug(strFeedback);
                 digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
-                    LOGGER.error(strFeedback);
-                }
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
+                Common.levelProvider.logError(strFeedback);
             }
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
+            Common.levelProvider.logDebug(strFeedback);
         }
         return resultSet;
     }
@@ -130,15 +108,11 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 colProperties.put("Nullable", metaData.isNullable(columnNumber));
                 listResultSet.add(colProperties);
             }
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
-                LOGGER.debug(strFeedback);
-            }
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
+            Common.levelProvider.logDebug(strFeedback);
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return listResultSet;
     }
@@ -153,10 +127,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         final List<Properties> listResultSet = new ArrayList<>();
         try {
             if (resultSet == null) {
-                if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLresultSetNull");
-                    LOGGER.debug(strFeedback);
-                }
+                final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLresultSetNull");
+                Common.levelProvider.logDebug(strFeedback);
             } else {
                 final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
                 final int columnCount = resultSetMetaData.getColumnCount();
@@ -171,16 +143,12 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     }
                     listResultSet.add(currentRow);
                 }
-                if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
-                    LOGGER.debug(strFeedback);
-                }
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
+                Common.levelProvider.logDebug(strFeedback);
             }
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(Common.strStmntUnableX, "structures", e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return listResultSet;
     }
@@ -199,10 +167,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                 listStrings.add(resultSet.getString(1));
             }
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.strStmntUnableX, "list of strings", e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(Common.strStmntUnableX, "list of strings", e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return listStrings;
     }
@@ -219,10 +185,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.strStmntUnableX, "columns", e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(Common.strStmntUnableX, "columns", e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return intColumns;
     }
@@ -238,10 +202,8 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
         try {
             intResultSetRows = resultSet.getFetchSize() + 1;
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.strStmntUnableX, "rows", e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(Common.strStmntUnableX, "rows", e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return intResultSetRows;
     }
@@ -266,18 +228,14 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     listReturn = getResultSetColumnValues(rsStandard);
                     break;
                 default:
-                    if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(Common.strUnknFtrs, strKind, StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                        LOGGER.error(strFeedback);
-                    }
+                    final String strFeedback = String.format(Common.strUnknFtrs, strKind, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
+                    Common.levelProvider.logError(strFeedback);
                     break;
             }
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return listReturn;
     }

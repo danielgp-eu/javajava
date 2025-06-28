@@ -3,10 +3,6 @@ package javajava;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
-/* Logging classes */
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 /* OSHI Hardware/Software classes */
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -25,14 +21,6 @@ import oshi.util.FormatUtil;
  * Capturing current environment details
  */
 public final class EnvironmentCapturingClass {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(EnvironmentCapturingClass.class);
-    /**
-     * pointer for all logs
-     */
-    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
     /**
      * Hardware info
      */
@@ -88,31 +76,21 @@ public final class EnvironmentCapturingClass {
      * @return String
      */
     public static String getCurrentEnvironmentDetails() {
-        if (LogLevel.isLessSpecificThan(Level.WARN)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
-            LOGGER.info(strFeedback);
-        }
+        String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
+        Common.levelProvider.logInfo(strFeedback);
         final StringBuilder strJsonString = new StringBuilder(100);
         strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor(), getDetailsAboutNetworkInterfaces()));
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
-            LOGGER.debug(strFeedback);
-        }
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
+        Common.levelProvider.logDebug(strFeedback);
         strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), Common.getDetailsAboutSoftwarePlatformJava(), Common.getDetailsAboutSoftwareUser()));
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
-            LOGGER.debug(strFeedback);
-        }
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
+        Common.levelProvider.logDebug(strFeedback);
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
-            LOGGER.debug(strFeedback);
-        }
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
+        Common.levelProvider.logDebug(strFeedback);
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
-        if (LogLevel.isLessSpecificThan(Level.WARN)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
-            LOGGER.info(strFeedback);
-        }
+        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
+        Common.levelProvider.logInfo(strFeedback);
         return String.format("{%s}", strJsonString);
     }
 
@@ -239,7 +217,10 @@ public final class EnvironmentCapturingClass {
     private static String getDetailsAboutRandomAccessMemory() {
         final GlobalMemory globalMemory = hardware.getMemory();
         final StringBuilder strJsonString = new StringBuilder();
-        strJsonString.append(String.format("{\"Total\":{\"Total\":\"%s\",\"Available\":\"%s\",\"Page Size\":\"%s\"}", FormatUtil.formatBytes(globalMemory.getTotal()), FormatUtil.formatBytes(globalMemory.getAvailable()), FormatUtil.formatBytes(globalMemory.getPageSize())));
+        strJsonString.append(String.format("{\"Total\":{\"Total\":\"%s\",\"Available\":\"%s\",\"Page Size\":\"%s\"}"
+            , FormatUtil.formatBytes(globalMemory.getTotal())
+            , FormatUtil.formatBytes(globalMemory.getAvailable())
+            , FormatUtil.formatBytes(globalMemory.getPageSize())));
         final List<PhysicalMemory> physicalMemories = globalMemory.getPhysicalMemory();
         strJsonString.append(",\"Banks\":[");
         int intCounter = 0;

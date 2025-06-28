@@ -9,10 +9,6 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-/* Logging classes */
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 /* DOM class */
 import org.w3c.dom.Document;
 /* XML Exception class */
@@ -22,14 +18,6 @@ import org.xml.sax.SAXException;
  * Secured XML parser
  */
 public final class SecureXmlParser {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(SecureXmlParser.class);
-    /**
-     * pointer for all logs
-     */
-    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
 
     /**
      * Get Feature by Name
@@ -78,11 +66,9 @@ public final class SecureXmlParser {
             try {
                 docBuilderFactory.setFeature(getFeatureByName(strFeature), bolSettingType);
             } catch (ParserConfigurationException e) {
-                if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                    // Handle the exception if the feature is not supported by the parser
-                    final String strFeedback = String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage());
-                    LOGGER.error(strFeedback);
-                }
+                // Handle the exception if the feature is not supported by the parser
+                final String strFeedback = String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage());
+                Common.levelProvider.logError(strFeedback);
                 // Fallback to other protective measures if this isn't supported
             }
         });

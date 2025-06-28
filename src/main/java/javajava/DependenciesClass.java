@@ -10,10 +10,6 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-/* Logging classes */
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 /* for XML exception */
 import org.xml.sax.SAXException;
 /* W3C DOM classes */
@@ -26,14 +22,6 @@ import org.w3c.dom.NodeList;
  * Capturing details of dependencies from current Maven POM file
  */
 public final class DependenciesClass {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(DependenciesClass.class);
-    /**
-     * pointer for all logs
-     */
-    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
     /**
      * current class path
      */
@@ -59,10 +47,8 @@ public final class DependenciesClass {
                     , getTagValueOrEmpty(tElement, "version"));
             }
         }
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
-            LOGGER.debug(strFeedback);
-        }
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
+        Common.levelProvider.logDebug(strFeedback);
         return Common.getMapIntoJsonString(arrayAttributes);
     }
 
@@ -76,10 +62,8 @@ public final class DependenciesClass {
         if (!classPath.contains(";")) {
             strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
         }
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
-            LOGGER.debug(strFeedback);
-        }
+        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
+        Common.levelProvider.logDebug(strFeedback);
         return strDependencyFile;
     }
 
@@ -98,23 +82,17 @@ public final class DependenciesClass {
                 doc.getDocumentElement().normalize();
             } else {
                 try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
-                    if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                        final String strFeedback = xmlContent.toString();
-                        LOGGER.debug(strFeedback);
-                    }
+                    final String strFeedback = xmlContent.toString();
+                    Common.levelProvider.logDebug(strFeedback);
                     doc = docBuilder.parse(xmlContent);
                 } catch (IOException e) {
-                    if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
-                        LOGGER.error(strFeedback);
-                    }
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
+                    Common.levelProvider.logError(strFeedback);
                 }
             }
         } catch (IOException | ParserConfigurationException | SAXException ex) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
+            Common.levelProvider.logError(strFeedback);
         }
         return doc;
     }

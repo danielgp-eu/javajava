@@ -12,23 +12,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-/* Logging classes */
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Database methods
  */
 public class DatabaseBasicClass {
-    /**
-     * pointer for all logs
-     */
-    protected static final Logger LOGGER = LogManager.getLogger(DatabaseBasicClass.class);
-    /**
-     * pointer for all logs
-     */
-    protected static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
 
     /**
      * Connection closing
@@ -38,21 +26,15 @@ public class DatabaseBasicClass {
      */
     @SuppressWarnings("unused")
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
-            LOGGER.debug(strFeedback);
-        }
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
+        Common.levelProvider.logDebug(strFeedback);
         try {
             givenConnection.close();
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
+            Common.levelProvider.logDebug(strFeedback);
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
     }
 
@@ -64,21 +46,15 @@ public class DatabaseBasicClass {
      */
     @SuppressWarnings("unused")
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
-            LOGGER.debug(strFeedback);
-        }
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
+        Common.levelProvider.logDebug(strFeedback);
         try {
             givenStatement.close();
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
+            Common.levelProvider.logDebug(strFeedback);
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
     }
 
@@ -90,22 +66,16 @@ public class DatabaseBasicClass {
      * @return Statement
      */
     public static Statement createSqlStatement(final String strDatabaseType, final Connection connection) {
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
-            LOGGER.debug(strFeedback);
-        }
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
+        Common.levelProvider.logDebug(strFeedback);
         Statement objStatement = null;
         try {
             objStatement = connection.createStatement();
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
+            Common.levelProvider.logDebug(strFeedback);
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
-                LOGGER.error(strFeedback);
-            }
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
+            Common.levelProvider.logError(strFeedback);
         }
         return objStatement;
     }
@@ -152,34 +122,24 @@ public class DatabaseBasicClass {
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
-                LOGGER.debug(strFeedback);
-            }
+            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
+            Common.levelProvider.logDebug(strFeedback);
             try {
-                if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryToUse);
-                    LOGGER.debug(strFeedback);
-                }
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryToUse);
+                Common.levelProvider.logDebug(strFeedback);
                 if (strQueryToUse.startsWith("INSERT INTO")) {
                     objStatement.executeLargeUpdate(strQueryToUse);
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                    LOGGER.debug(strFeedback);
-                }
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                Common.levelProvider.logDebug(strFeedback);
             } catch (SQLException e) {
-                if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
-                    LOGGER.error(strFeedback);
-                }
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+                Common.levelProvider.logError(strFeedback);
             }
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
+            Common.levelProvider.logDebug(strFeedback);
         }
     }
 
@@ -225,11 +185,9 @@ public class DatabaseBasicClass {
                             preparedStatement.setString(index, strValueToUse);
                         }
                     } catch (SQLException e) {
-                        if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                            // TODO: localize below String
-                            final String strFeedback = e.getLocalizedMessage() + " on Parameter " +  strKey + " and Query " + strQuery;
-                            LOGGER.error(strFeedback);
-                        }
+                        // TODO: localize below String
+                        final String strFeedback = e.getLocalizedMessage() + " on Parameter " +  strKey + " and Query " + strQuery;
+                        Common.levelProvider.logError(strFeedback);
                     }
                 }
                 preparedStatement.addBatch();
@@ -241,17 +199,13 @@ public class DatabaseBasicClass {
                 }
                 if (needsExecution) {
                     preparedStatement.executeLargeBatch();
-                    if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                        LOGGER.debug(strFeedback);
-                    }
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                    Common.levelProvider.logDebug(strFeedback);
                 }
             }
         } catch (SQLException e) {
-            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = e.getLocalizedMessage() + " with Values " + objValues.get(0).toString() + " for Query " + strQuery;
-                LOGGER.error(strFeedback);
-            }
+            final String strFeedback = e.getLocalizedMessage() + " with Values " + objValues.get(0).toString() + " for Query " + strQuery;
+            Common.levelProvider.logError(strFeedback);
             throw (IllegalStateException)new IllegalStateException().initCause(e);
         }
     }
@@ -267,17 +221,13 @@ public class DatabaseBasicClass {
         objValues.get(0).forEach((strKey, strValue) -> {
             valFields.add(strKey.toString());
         });
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            // TODO: localize below String
-            final String strFeedback = String.format("Value Parameters are %s", valFields.toString());
-            LOGGER.debug(strFeedback);
-        }
+        // TODO: localize below String
+        String strFeedback = String.format("Value Parameters are %s", valFields.toString());
+        Common.levelProvider.logDebug(strFeedback);
         final List<String> listMatches = Common.extractMatches(strOriginalQ, Common.strPrmptPrmtrRgEx);
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            // TODO: localize below String
-            final String strFeedback = String.format("Query Parameters are %s", listMatches.toString());
-            LOGGER.debug(strFeedback);
-        }
+        // TODO: localize below String
+        strFeedback = String.format("Query Parameters are %s", listMatches.toString());
+        Common.levelProvider.logDebug(strFeedback);
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
         for (int intParameter = 0; intParameter < intParameters; intParameter++) {
@@ -287,19 +237,17 @@ public class DatabaseBasicClass {
                 mapParameterOrder.add(crtParameter);
             }
         }
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            // TODO: localize below String
-            final String strFeedback = String.format("Mapping for Parameters is %s", mapParameterOrder.toString());
-            LOGGER.debug(strFeedback);
-        }
+        // TODO: localize below String
+        strFeedback = String.format("Mapping for Parameters is %s", mapParameterOrder.toString());
+        Common.levelProvider.logDebug(strFeedback);
         final int foundParameters = mapParameterOrder.size();
-        if ((foundParameters != intParameters) && LogLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing")
+        if (foundParameters != intParameters) {
+            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing")
                 , intParameters
                 , foundParameters
                 , mapParameterOrder.toString() + " vs. " + objValues.get(0).toString()
                 , strOriginalQ);
-            LOGGER.error(strFeedback);
+            Common.levelProvider.logError(strFeedback);
         }
         return mapParameterOrder;
     }

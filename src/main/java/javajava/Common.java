@@ -7,10 +7,6 @@ import java.util.Map;
 /* Regular Expressions classes */
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-/* Logging class */
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Class with common features
@@ -19,11 +15,7 @@ public final class Common {
     /**
      * pointer for all logs
      */
-    private static final Logger LOGGER = LogManager.getLogger(Common.class);
-    /**
-     * pointer for all logs
-     */
-    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
+    public final static LoggerLevelProvider levelProvider = new LoggerLevelProvider("io.github.danielgp-eu.javajava");
     /**
      * standard Application class feedback
      */
@@ -75,20 +67,16 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
-            LOGGER.debug(strFeedback);
-        }
+        String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+        levelProvider.logDebug(strFeedback);
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             final String newParameter = ":" + currentPrmtName.replaceAll("(\\{|\\})", "").replace(" ", "_");
             strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
         }
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ);
-            LOGGER.debug(strFeedback);
-        }
+        strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+        levelProvider.logDebug(strFeedback);
         return strFinalQ;
     }
 
@@ -98,19 +86,15 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
-            LOGGER.debug(strFeedback);
-        }
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
+        levelProvider.logDebug(strFeedback);
         final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
         }
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs"), strFinalQ);
-            LOGGER.debug(strFeedback);
-        }
+        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs"), strFinalQ);
+        levelProvider.logDebug(strFeedback);
         return strFinalQ;
     }
 

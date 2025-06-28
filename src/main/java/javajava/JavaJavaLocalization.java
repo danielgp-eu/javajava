@@ -8,23 +8,11 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
-/* Logging classes */
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Internationalization
  */
 public final class JavaJavaLocalization {
-    /**
-     * pointer for all logs
-     */
-    private static final Logger LOGGER = LogManager.getLogger(JavaJavaLocalization.class);
-    /**
-     * pointer for all logs
-     */
-    private static final Level LogLevel = LOGGER.getLevel(); // NOPMD by E303778 on 25.06.2025, 11:17
     /**
      * localization
      */
@@ -124,23 +112,17 @@ public final class JavaJavaLocalization {
      * @param strLocale localization to use
      */
     public static void setLocaleByString(final String strLocale) {
-        if (LogLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format("Request to set localization to %s received", strLocale);
-            LOGGER.debug(strFeedback);
-        }
+        String strFeedback = String.format("Request to set localization to %s received", strLocale);
+        Common.levelProvider.logDebug(strFeedback);
         final Locale lclRequested = Locale.forLanguageTag(strLocale);
         if (isSupported(lclRequested)) {
             Locale.setDefault(lclRequested);
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format("Localization %s is supported and has just been set!", strLocale);
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = String.format("Localization %s is supported and has just been set!", strLocale);
+            Common.levelProvider.logDebug(strFeedback);
         } else {
             Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
-            if (LogLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format("Localization %s is NOT supported and default one (which is %s) has been set!", strLocale, DEFAULT_LOCALE);
-                LOGGER.debug(strFeedback);
-            }
+            strFeedback = String.format("Localization %s is NOT supported and default one (which is %s) has been set!", strLocale, DEFAULT_LOCALE);
+            Common.levelProvider.logDebug(strFeedback);
         }
     }
 
