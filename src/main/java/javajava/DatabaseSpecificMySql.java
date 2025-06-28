@@ -30,11 +30,15 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
         final String strEnv = "MYSQL";
         final String strEnvMySql = System.getenv(strEnv);
         if (strEnvMySql == null) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
+                LOGGER.error(strFeedback);
+            }
         } else {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableFound"), strEnv);
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableFound"), strEnv);
+                LOGGER.error(strFeedback);
+            }
             final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
             final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
             properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
@@ -55,24 +59,31 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
         Connection connection = null;
-        String strFeedback;
         if (propInstance.isEmpty()) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionPropertiesEmpty"), Common.strDbMySQL);
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionPropertiesEmpty"), Common.strDbMySQL);
+                LOGGER.error(strFeedback);
+            }
         } else {
             final String strServer = propInstance.get("ServerName").toString();
             final String strPort = propInstance.get("Port").toString();
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
-                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbMySQL, strDatabase, strConnection, propConnection);
-                LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+                if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbMySQL, strDatabase, strConnection, propConnection);
+                    LOGGER.debug(strFeedback);
+                }
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccess"), Common.strDbMySQL, strServer, strPort, strDatabase);
-                LogLevelChecker.logConditional(strFeedback, Level.DEBUG);
+                if (LogLevel.isLessSpecificThan(Level.INFO)) {
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccess"), Common.strDbMySQL, strServer, strPort, strDatabase);
+                    LOGGER.debug(strFeedback);
+                }
             } catch(SQLException e) {
-                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailed"), Common.strDbMySQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
-                LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+                if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailed"), Common.strDbMySQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
+                    LOGGER.error(strFeedback);
+               }
             }
         }
         return connection;
@@ -181,7 +192,9 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
             default -> {
                 final String strFeedback = String.format(Common.strUnknFtrs, strWhich, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+                if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                     LOGGER.error(strFeedback);
+                }
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -219,8 +232,10 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
             Statement objStatement = createSqlStatement(Common.strDbMySQL, objConnection)) {
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
-            final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));
-            LogLevelChecker.logConditional(strFeedback, Level.ERROR);
+            if (LogLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));
+                LOGGER.error(strFeedback);
+            }
         }
     }
 
