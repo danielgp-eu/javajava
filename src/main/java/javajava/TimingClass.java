@@ -143,7 +143,10 @@ public final class TimingClass {
      */
     public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        return String.format(JavaJavaLocalization.getMessage("i18nWithDrtn"), strPartial, objDuration.toString(), convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+        return String.format(JavaJavaLocalization.getMessage("i18nWithDrtn")
+            , strPartial, objDuration.toString()
+            , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
+            , convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }
 
     /**
