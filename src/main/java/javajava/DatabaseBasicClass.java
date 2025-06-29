@@ -185,8 +185,7 @@ public class DatabaseBasicClass {
                             preparedStatement.setString(index, strValueToUse);
                         }
                     } catch (SQLException e) {
-                        // TODO: localize below String
-                        final String strFeedback = e.getLocalizedMessage() + " on Parameter " +  strKey + " and Query " + strQuery;
+                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterBindingError"), e.getLocalizedMessage(), strKey, strQuery);
                         Common.levelProvider.logError(strFeedback);
                     }
                 }
@@ -221,12 +220,10 @@ public class DatabaseBasicClass {
         objValues.get(0).forEach((strKey, strValue) -> {
             valFields.add(strKey.toString());
         });
-        // TODO: localize below String
-        String strFeedback = String.format("Value Parameters are %s", valFields.toString());
+        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValuesAre"), valFields.toString());
         Common.levelProvider.logDebug(strFeedback);
         final List<String> listMatches = Common.extractMatches(strOriginalQ, Common.strPrmptPrmtrRgEx);
-        // TODO: localize below String
-        strFeedback = String.format("Query Parameters are %s", listMatches.toString());
+        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterForQueryAre"), listMatches.toString());
         Common.levelProvider.logDebug(strFeedback);
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
@@ -237,8 +234,7 @@ public class DatabaseBasicClass {
                 mapParameterOrder.add(crtParameter);
             }
         }
-        // TODO: localize below String
-        strFeedback = String.format("Mapping for Parameters is %s", mapParameterOrder.toString());
+        strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder.toString());
         Common.levelProvider.logDebug(strFeedback);
         final int foundParameters = mapParameterOrder.size();
         if (foundParameters != intParameters) {

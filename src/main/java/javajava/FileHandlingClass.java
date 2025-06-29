@@ -149,8 +149,7 @@ public final class FileHandlingClass {
             // with forEach loop get all the path of files present in directory  
             for (final Path file : stream) {
                 if (file.getFileName().toString().endsWith(strExtension)) {
-                    final String strFile  = file.getParent().toString()
-                            + File.separator + file.getFileName();
+                    final String strFile = file.getParent().toString() + File.separator + file.getFileName();
                     arrayFiles.add(strFile);
                     strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFound"), strExtension, strFile);
                     Common.levelProvider.logDebug(strFeedback);
