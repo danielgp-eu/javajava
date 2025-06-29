@@ -45,7 +45,7 @@ public final class EnvironmentCapturingClass {
         final String[] arrayDetails = crtDisplay.toString().replaceAll("[^a-zA-Z0-9\\s]", "").split("\n");
         for (final String crtLine : arrayDetails) {
             final String strSlimLine = crtLine.trim();
-            if (crtLine.endsWith(" in") && crtLine.contains(" cm ")) {
+            if (strSlimLine.endsWith(" in") && strSlimLine.contains(" cm ")) {
                 final int intCmPos = strSlimLine.indexOf(" cm ");
                 arrayAttributes.put("Physical Dimensions [in]", strSlimLine.substring(0, intCmPos));
                 final int intInPos = strSlimLine.indexOf(" in");
@@ -54,16 +54,16 @@ public final class EnvironmentCapturingClass {
             if (strSlimLine.startsWith("Monitor Name")) {
                 arrayAttributes.put("Monitor Name", strSlimLine.replace("Monitor Name ", ""));
             }
-            if (crtLine.trim().startsWith("Preferred Timing Clock")) {
+            if (strSlimLine.startsWith("Preferred Timing Clock")) {
                 final int intClockLen = "Preferred Timing Clock".length();
                 final int intPixelPos = strSlimLine.indexOf("Active Pixels");
                 arrayAttributes.put("Preferred Timing Clock", strSlimLine.substring(intClockLen, intPixelPos).trim());
                 arrayAttributes.put("Active Pixels", strSlimLine.substring(intPixelPos).replace("Active Pixels ", "").trim());
             }
-            if (crtLine.trim().startsWith("Range Limits")) {
+            if (strSlimLine.startsWith("Range Limits")) {
                 arrayAttributes.put("Range Limits", strSlimLine.replace("Range Limits ", ""));
             }
-            if (crtLine.trim().startsWith("Serial Number")) {
+            if (strSlimLine.startsWith("Serial Number")) {
                 arrayAttributes.put("Serial Number", strSlimLine.replace("Serial Number ", ""));
             }
         }
