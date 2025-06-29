@@ -62,16 +62,36 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
+        <RollingFile name="warnLog" fileName="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}warning.log"
+            filePattern="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}info-${FILE_PATTERN_SUFFIX}.log">
+            <LevelRangeFilter minLevel="WARN" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <SizeBasedTriggeringPolicy size="10MB" />
+            </Policies>
+            <!-- Max 10 files will be created everyday -->
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
+                    <!-- Delete all files older than 10 days -->
+                    <IfLastModified age="10d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="io.github.danielgp-eu.javajava" additivity="false" level="debug">
             <AppenderRef ref="debugLog" />
             <AppenderRef ref="errorLog" />
+            <AppenderRef ref="warnLog" />
             <AppenderRef ref="infoLog" />
         </Logger>
         <Root additivity="false" level="debug">
             <AppenderRef ref="debugLog" />
             <AppenderRef ref="errorLog" />
+            <AppenderRef ref="warnLog" />
             <AppenderRef ref="infoLog"/>
         </Root>
     </Loggers>
