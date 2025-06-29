@@ -112,18 +112,19 @@ public final class JavaJavaLocalization {
      * @param strLocale localization to use
      */
     public static void setLocaleByString(final String strLocale) {
-        String strFeedback = String.format("Request to set localization to %s received", strLocale);
-        Common.levelProvider.logDebug(strFeedback);
+        String strFeedback = String.valueOf("~").repeat(60);
+        final String strFeedback1 = strFeedback;
         final Locale lclRequested = Locale.forLanguageTag(strLocale);
         if (isSupported(lclRequested)) {
             Locale.setDefault(lclRequested);
-            strFeedback = String.format("Localization %s is supported and has just been set!", strLocale);
-            Common.levelProvider.logDebug(strFeedback);
+            strFeedback = String.format("Requested localization to %s is supported and has been successfully set!", strLocale);
         } else {
             Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
-            strFeedback = String.format("Localization %s is NOT supported and default one (which is %s) has been set!", strLocale, DEFAULT_LOCALE);
-            Common.levelProvider.logDebug(strFeedback);
+            strFeedback = String.format("Requested localization %s is NOT supported, hence efault one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
         }
+        Common.levelProvider = new LoggerLevelProvider("io.github.danielgp-eu.javajava");
+        Common.levelProvider.logDebug(strFeedback1);
+        Common.levelProvider.logDebug(strFeedback);
     }
 
     /**

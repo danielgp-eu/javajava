@@ -41,6 +41,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     private static void logApplicationStart() {
         final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec") + String.valueOf("-").repeat(80);
+        Common.levelProvider.logDebug(strFeedback);
         Common.levelProvider.logInfo(strFeedback);
     }
 
@@ -51,8 +52,6 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     public static void main(final String... args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        String strFeedback = String.valueOf("=").repeat(80);
-        Common.levelProvider.logDebug(strFeedback);
         JavaJavaLocalization.setLocaleByString(JavaJavaLocalization.getUserLocale());
         final Options options = definedArguments();
         final CommandLineParser parser = new DefaultParser();
@@ -61,11 +60,11 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             logApplicationStart();
             performAction(cmd);
         } catch (AlreadySelectedException | MissingArgumentException | MissingOptionException | UnrecognizedOptionException ex) {
-            strFeedback = ex.getLocalizedMessage(); 
+            final String strFeedback = ex.getLocalizedMessage();
             Common.levelProvider.logError(strFeedback);
             throw (IllegalStateException)new IllegalStateException().initCause(ex);
         } catch (ParseException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppParamParsOptList"), options);
+            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppParamParsOptList"), options);
             Common.levelProvider.logError(strFeedback);
             strFeedback = String.format(JavaJavaLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
             Common.levelProvider.logError(strFeedback);
@@ -73,7 +72,7 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             formatter.printHelp(JavaJavaLocalization.getMessage("i18nMndtParamsAre"), options);
             throw (IllegalStateException)new IllegalStateException().initCause(e);
         }
-        strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]));
+        final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]));
         Common.levelProvider.logInfo(strFeedback);
     }
 

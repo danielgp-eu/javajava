@@ -15,7 +15,7 @@ public final class Common {
     /**
      * pointer for all logs
      */
-    public final static LoggerLevelProvider levelProvider = new LoggerLevelProvider("io.github.danielgp-eu.javajava");
+    public static LoggerLevelProvider levelProvider;
     /**
      * standard Application class feedback
      */
