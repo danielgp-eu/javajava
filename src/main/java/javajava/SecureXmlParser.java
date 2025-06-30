@@ -9,6 +9,8 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+/* Logging */
+import org.apache.logging.log4j.Level;
 /* DOM class */
 import org.w3c.dom.Document;
 /* XML Exception class */
@@ -66,9 +68,11 @@ public final class SecureXmlParser {
             try {
                 docBuilderFactory.setFeature(getFeatureByName(strFeature), bolSettingType);
             } catch (ParserConfigurationException e) {
-                // Handle the exception if the feature is not supported by the parser
-                final String strFeedback = String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage());
-                Common.levelProvider.logError(strFeedback);
+                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                    // Handle the exception if the feature is not supported by the parser
+                    final String strFeedback = String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage());
+                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                }
                 // Fallback to other protective measures if this isn't supported
             }
         });

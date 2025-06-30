@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 /* Time classes */
 import java.time.LocalDateTime;
 import java.util.Arrays;
+/* Logging */
+import org.apache.logging.log4j.Level;
 
 /**
  * Shell execution methods
@@ -29,8 +31,10 @@ public final class ShellingClass {
         } else {
             builder.command(strCommand, strParameters);
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
     }
@@ -53,8 +57,10 @@ public final class ShellingClass {
             }
             strReturn = processOutput.toString();
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
         }
         return strReturn;
     }
@@ -73,18 +79,26 @@ public final class ShellingClass {
             final Process process = builder.start();
             final int exitCode = process.waitFor();
             process.destroy();
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-            Common.levelProvider.logDebug(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            }
         } catch (IOException e) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
         } catch(InterruptedException ei) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
         }
-        final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"));
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"));
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
     }
 
     /**
@@ -105,18 +119,26 @@ public final class ShellingClass {
             strReturn = captureProcessOutput(process, strOutLineSep);
             final int exitCode = process.waitFor();
             process.destroy();
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-            Common.levelProvider.logDebug(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            }
         } catch (IOException e) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
         } catch(InterruptedException ei) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
         }
-        final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"));
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"));
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         return strReturn;
     }
 
@@ -138,7 +160,9 @@ public final class ShellingClass {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
-            Common.levelProvider.logWarn(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.ERROR)) {
+            	LoggerLevelProvider.LOGGER.warn(strFeedback);
+            }
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         LOGGED_ACCOUNT = strUser;

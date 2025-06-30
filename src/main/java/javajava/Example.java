@@ -16,11 +16,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
+/* Logging */
+import org.apache.logging.log4j.Level;
 
 /**
  * Example class
  */
-public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
+public final class Example {
 
     /**
      * defining Arguments
@@ -41,8 +43,12 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
      */
     private static void logApplicationStart() {
         final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec") + String.valueOf("-").repeat(80);
-        Common.levelProvider.logDebug(strFeedback);
-        Common.levelProvider.logInfo(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+            LoggerLevelProvider.LOGGER.info(strFeedback);
+        }
     }
 
     /**
@@ -60,20 +66,26 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
             logApplicationStart();
             performAction(cmd);
         } catch (AlreadySelectedException | MissingArgumentException | MissingOptionException | UnrecognizedOptionException ex) {
-            final String strFeedback = ex.getLocalizedMessage();
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = ex.getLocalizedMessage();
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
             throw (IllegalStateException)new IllegalStateException().initCause(ex);
         } catch (ParseException e) {
-            String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppParamParsOptList"), options);
-            Common.levelProvider.logError(strFeedback);
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppParamParsOptList"), options);
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+                strFeedback = String.format(JavaJavaLocalization.getMessage("i18nParamParsErr"), Arrays.toString(e.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
             final HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp(JavaJavaLocalization.getMessage("i18nMndtParamsAre"), options);
             throw (IllegalStateException)new IllegalStateException().initCause(e);
         }
         final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]));
-        Common.levelProvider.logInfo(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+            LoggerLevelProvider.LOGGER.info(strFeedback);
+        }
     }
 
     /**
@@ -113,14 +125,14 @@ public final class Example { // NOPMD by Daniel Popiniuc on 24.04.2025, 23:43
                 break;
             case "LogEnvironmentDetails":
                 final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
-                Common.levelProvider.logInfo(strFeedback);
+                    LoggerLevelProvider.LOGGER.info(strFeedback);
                 break;
             case "TEST":
                 break;
             default:
                 final String strMsg = String.format(JavaJavaLocalization.getMessage("i18nUnknParamFinal"), prmActionValue, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
-                Common.levelProvider.logInfo(strMsg);
+                .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
+                LoggerLevelProvider.LOGGER.error(strMsg);
                 break;
         }
     }

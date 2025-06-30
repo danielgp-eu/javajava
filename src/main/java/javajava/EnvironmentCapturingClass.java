@@ -3,6 +3,8 @@ package javajava;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
+/* Logging */
+import org.apache.logging.log4j.Level;
 /* OSHI Hardware/Software classes */
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
@@ -76,21 +78,31 @@ public final class EnvironmentCapturingClass {
      * @return String
      */
     public static String getCurrentEnvironmentDetails() {
-        String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
-        Common.levelProvider.logInfo(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationCapturing");
+            LoggerLevelProvider.LOGGER.info(strFeedback);
+        }
         final StringBuilder strJsonString = new StringBuilder(100);
         strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", getDetailsAboutCentralPowerUnit(), getDetailsAboutRandomAccessMemory(), getDetailsAboutAvailableStoragePartitions(), getDetailsAboutGraphicCards(), getDetailsAboutMonitor(), getDetailsAboutNetworkInterfaces()));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationHardwareCaptured");
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", getDetailsAboutOperatingSystem(), Common.getDetailsAboutSoftwarePlatformJava(), Common.getDetailsAboutSoftwareUser()));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
-        strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
-        Common.levelProvider.logInfo(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+            final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationEnvironmentCaptured");
+            LoggerLevelProvider.LOGGER.info(strFeedback);
+        }
         return String.format("{%s}", strJsonString);
     }
 

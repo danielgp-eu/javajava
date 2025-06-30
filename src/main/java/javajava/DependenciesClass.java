@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+/* Logger classes */
+import org.apache.logging.log4j.Level;
 /* for XML exception */
 import org.xml.sax.SAXException;
 /* W3C DOM classes */
@@ -47,8 +49,10 @@ public final class DependenciesClass {
                     , getTagValueOrEmpty(tElement, "version"));
             }
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyDetailsSuccess"), strDependencyFile);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         return Common.getMapIntoJsonString(arrayAttributes);
     }
 
@@ -62,8 +66,10 @@ public final class DependenciesClass {
         if (!classPath.contains(";")) {
             strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
         }
-        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileDependencyIdentified"), strDependencyFile);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         return strDependencyFile;
     }
 
@@ -82,17 +88,23 @@ public final class DependenciesClass {
                 doc.getDocumentElement().normalize();
             } else {
                 try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
-                    final String strFeedback = xmlContent.toString();
-                    Common.levelProvider.logDebug(strFeedback);
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                        final String strFeedback = xmlContent.toString();
+                        LoggerLevelProvider.LOGGER.debug(strFeedback);
+                    }
                     doc = docBuilder.parse(xmlContent);
                 } catch (IOException e) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
-                    Common.levelProvider.logError(strFeedback);
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
+                        LoggerLevelProvider.LOGGER.error(strFeedback);
+                    }
                 }
             }
         } catch (IOException | ParserConfigurationException | SAXException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
         }
         return doc;
     }

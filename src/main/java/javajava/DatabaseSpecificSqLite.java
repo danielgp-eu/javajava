@@ -3,11 +3,13 @@ package javajava;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-/* SQLite function class */
-import org.sqlite.Function;
 /* Util classes */
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+/* Logger classes */
+import org.apache.logging.log4j.Level;
+/* SQLite function class */
+import org.sqlite.Function;
 
 /**
  * SQLite methods
@@ -23,13 +25,17 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
      */
     public static Connection getSqLiteConnection(final String strSqLiteFile) {
         final String strConnection = "jdbc:sqlite:" + strSqLiteFile.replace("\\", "/");
-        String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttemptLight"), Common.strDbSqLite, strSqLiteFile, strConnection);
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttemptLight"), Common.strDbSqLite, strSqLiteFile, strConnection);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(strConnection);
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSqLite, strSqLiteFile);
-            Common.levelProvider.logDebug(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSqLite, strSqLiteFile);
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            }
             Function.create(connection, "REGEXP_LIKE", new Function() {
                 @Override
                 protected void xFunc() throws SQLException {
@@ -41,8 +47,10 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
                 }
             });
         } catch(SQLException e) {
-            strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSqLite, e.getLocalizedMessage());
-            Common.levelProvider.logError(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSqLite, e.getLocalizedMessage());
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
         }
         return connection;
     }

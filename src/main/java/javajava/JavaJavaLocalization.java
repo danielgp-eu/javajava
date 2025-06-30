@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+/* Logging */
+import org.apache.logging.log4j.Level;
 
 /**
  * Internationalization
@@ -122,9 +124,10 @@ public final class JavaJavaLocalization {
             Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
             strFeedback = String.format("Requested localization %s is NOT supported, hence efault one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
         }
-        Common.levelProvider = new LoggerLevelProvider("io.github.danielgp-eu.javajava");
-        Common.levelProvider.logDebug(strFeedback1);
-        Common.levelProvider.logDebug(strFeedback);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            LoggerLevelProvider.LOGGER.debug(strFeedback1);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
     }
 
     /**
