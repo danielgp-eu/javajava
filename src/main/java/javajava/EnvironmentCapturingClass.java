@@ -81,7 +81,7 @@ public final class EnvironmentCapturingClass {
             }
             if (strSlimLine.startsWith(STR_PRFRD_TM_CLCK)) {
                 final int intClockLen = STR_PRFRD_TM_CLCK.length();
-                final int intPixelPos = strSlimLine.indexOf("Active Pixels");
+                final int intPixelPos = strSlimLine.indexOf(STR_ACTV_PXLS);
                 arrayAttributes.put(STR_PRFRD_TM_CLCK, strSlimLine.substring(intClockLen, intPixelPos).trim());
                 arrayAttributes.put(STR_ACTV_PXLS, strSlimLine.substring(intPixelPos).replace(STR_ACTV_PXLS + " ", "").trim());
             }
@@ -270,7 +270,7 @@ public final class EnvironmentCapturingClass {
                 "Manufacturer", physicalMemory.getManufacturer(),
                 "Type", physicalMemory.getMemoryType(),
                 "Part Number", physicalMemory.getPartNumber().trim(),
-                "Serial Number", physicalMemory.getSerialNumber()
+                STR_SRL_NUM, physicalMemory.getSerialNumber()
             )));
             intCounter++;
         }
