@@ -62,12 +62,8 @@ public final class DatabaseQueryBindingClass {
                     }
                 }
                 preparedStatement.addBatch();
-                boolean needsExecution = false;
                 if ((crtRow % 200 == 0)
                     || (crtRow == intRows)) { // each 200 rows OR final one
-                    needsExecution = true;
-                }
-                if (needsExecution) {
                     preparedStatement.executeLargeBatch();
                     setSqlExecutionSuccessInfo(strQueryPurpose);
                 }
