@@ -15,7 +15,7 @@ public final class LoggerLevelProvider {
     /**
      * Current Log level
      */
-    public static Level currentLevel = LOGGER.getLevel(); // NOPMD by Daniel Popiniuc on 01.07.2025, 22:26
+    public static final Level currentLevel = LOGGER.getLevel(); // NOPMD by Daniel Popiniuc on 01.07.2025, 22:26
 
     private LoggerLevelProvider() {
         throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
