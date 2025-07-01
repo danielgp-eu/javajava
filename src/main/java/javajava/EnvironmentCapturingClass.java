@@ -278,40 +278,12 @@ public final class EnvironmentCapturingClass {
                 "IPv6", String.join(", ", net.getIPv6addr()),
                 "Status", net.getIfOperStatus(),
                 "Speed", FormatUtil.formatBytes(net.getSpeed()),
-                "NDIS Physical Medium Type", getNdisPhysicalMediumType(net.getNdisPhysicalMediumType())
+                "NDIS Physical Medium Type", Common.getNetworkPhysicalMediumType(net.getNdisPhysicalMediumType())
             )));
             intCounter++;
         }
         strJsonString.append(']');
         return strJsonString.toString();
-    }
-
-    /**
-     * Sensors Information
-     * @param intPhysMedType number for NDIS Physical Medium Type
-     * @return String
-     */
-    private static String getNdisPhysicalMediumType(final int intPhysMedType) {
-        return Common.getMapIntoJsonString(Map.of(
-            "Numeric", intPhysMedType,
-            Common.strName, switch (intPhysMedType) {
-                case 0 -> "Unspecified (e.g., satellite feed)";
-                case 1 -> "Wireless LAN (802.11)";
-                case 2 -> "Cable Modem (DOCSIS)";
-                case 3 -> "Phone Line (HomePNA)";
-                case 4 -> "Power Line (data over electrical wiring)";
-                case 5 -> "DSL (ADSL, G.Lite)";
-                case 6 -> "Fibre Channel (high-speed storage interconnect)";
-                case 7 -> "IEEE 1394 (FireWire)";
-                case 8 -> "Wireless WAN (CDMA, GPRS)";
-                case 9 -> "Native 802.11 (modern Wi-Fi interface)";
-                case 10 -> "Bluetooth (short-range wireless)";
-                case 11 -> "InfiniBand (high-speed interconnect)";
-                case 12 -> "Ultra Wideband (UWB)";
-                case 13 -> "Ethernet (802.3)";
-                default -> "Unknown";
-            }
-        ));
     }
 
     /**
