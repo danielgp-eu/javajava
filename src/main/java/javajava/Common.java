@@ -15,10 +15,6 @@ import org.apache.logging.log4j.Level;
  */
 public final class Common {
     /**
-     * pointer for all logs
-     */
-    public static LoggerLevelProvider levelProvider;
-    /**
      * standard Application class feedback
      */
     public static final String strAppClsWrng = JavaJavaLocalization.getMessage("i18nAppClassWarning");
