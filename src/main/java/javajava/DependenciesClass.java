@@ -27,7 +27,7 @@ public final class DependenciesClass {
     /**
      * current class path
      */
-    /* default */ final static String classPath = System.getProperty("java.class.path");
+    /* default */ final static String STR_CLASS_PATH = System.getProperty("java.class.path");
 
     /**
      * Gets a complete list of dependencies as JSON string
@@ -63,7 +63,7 @@ public final class DependenciesClass {
     private static String getDependencyFile() {
         FileHandlingClass.loadProjectFolder();
         String strDependencyFile = FileHandlingClass.APP_FOLDER + "/pom.xml";
-        if (!classPath.contains(";")) {
+        if (!STR_CLASS_PATH.contains(";")) {
             strDependencyFile = "META-INF/maven/com.compliance.central/compliance-snowflake/pom.xml";
         }
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
@@ -83,7 +83,7 @@ public final class DependenciesClass {
         try {
             final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             final DocumentBuilder docBuilder = dbf.newDocumentBuilder();
-            if (classPath.contains(";")) {
+            if (STR_CLASS_PATH.contains(";")) {
                 doc = SecureXmlParser.parseXmlSafely(strDependencyFile);
                 doc.getDocumentElement().normalize();
             } else {
