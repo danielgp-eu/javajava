@@ -25,6 +25,14 @@ public final class FileHandlingClass {
      * Project Folder
      */
     public static String APP_FOLDER; // NOPMD by Daniel Popiniuc on 20.04.2025, 23:29
+    /**
+     * String constant
+     */
+    private static String STR_MINIFIED = "Minified";
+    /**
+     * String constant
+     */
+    private static String STR_PRTY_PRNT = "PrettyPrint";
 
     /**
      * Checking if a file exists and is readable
@@ -71,29 +79,44 @@ public final class FileHandlingClass {
      */
     public static String getJsonConfigurationFile(final String strFilePattern) {
         final Properties propsFile = new Properties();
-        propsFile.put("Minified", String.format(strFilePattern, ".min"));
-        propsFile.put("PrettyPrint", String.format(strFilePattern, ""));
+        propsFile.put(STR_MINIFIED, String.format(strFilePattern, ".min"));
+        propsFile.put(STR_PRTY_PRNT, String.format(strFilePattern, ""));
         String strFileJson = null;
-        final Properties propsMinified = checkFileExistanceAndReadability(propsFile.getProperty("Minified"));
+        final Properties propsMinified = checkFileExistanceAndReadability(propsFile.getProperty(STR_MINIFIED));
         for(final Entry<Object, Object> eMinified : propsMinified.entrySet()) {
             final boolean isItOk = "OK".equals(eMinified.getKey());
             if (isItOk) {
                 strFileJson = eMinified.getValue().toString();
             } else {
-                final Properties propsPreety = checkFileExistanceAndReadability(propsFile.getProperty("PrettyPrint"));
+                final Properties propsPreety = checkFileExistanceAndReadability(propsFile.getProperty(STR_PRTY_PRNT));
                 for(final Entry<Object, Object> ePreety : propsPreety.entrySet()) {
                     final boolean isItOk2 = "OK".equals(ePreety.getKey());
-                    if (isItOk2) {
-                        strFileJson = ePreety.getValue().toString();
-                    } else {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound"), propsFile.getProperty("Minified", ""), propsFile.getProperty("PrettyPrint", ""));
-                        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                            LoggerLevelProvider.LOGGER.error(strFeedback);
-                        }
-                        throw new IllegalArgumentException(strFeedback);
-                    }
+                    getJsonFileName(isItOk2, ePreety, propsFile);
                 }
             }
+        }
+        return strFileJson;
+    }
+
+    /**
+     * Getting JSON file name
+     * @param isItOk2 file check result
+     * @param ePreety file name
+     * @param propsFile file Properties
+     * @return
+     */
+    private static String getJsonFileName(final boolean isItOk2, final Entry<Object, Object> ePreety, final Properties propsFile) {
+        String strFileJson;
+        if (isItOk2) {
+            strFileJson = ePreety.getValue().toString();
+        } else {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound")
+                , propsFile.getProperty(STR_MINIFIED, "")
+                , propsFile.getProperty(STR_PRTY_PRNT, ""));
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
+            throw new IllegalArgumentException(strFeedback);
         }
         return strFileJson;
     }
