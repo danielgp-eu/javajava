@@ -31,6 +31,7 @@ public final class DatabaseQueryBindingClass {
         final int intParameters = mapParameterOrder.size();
         final String strFinalQ = Common.convertPromptParametersIntoParameters(strQuery);
         try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ);) {
+            final Properties properties = new Properties();
             // cycle through each row
             for (int crtRow = 1; crtRow <= intRows; crtRow++) {
                 final Properties currentProps = objValues.get(crtRow - 1);
@@ -39,27 +40,11 @@ public final class DatabaseQueryBindingClass {
                     final int index = intParameter + 1;
                     final String strKey = mapParameterOrder.get(intParameter);
                     final String strOriginalValue = currentProps.getProperty(strKey);
-                    String strValueToUse = strOriginalValue;
-                    try {
-                        if (Common.STR_NULL.equalsIgnoreCase(strOriginalValue)) {
-                            preparedStatement.setNull(index, Types.VARCHAR);
-                        } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                            strValueToUse = strOriginalValue.replaceAll("([\"'])", "");
-                            if (strValueToUse.isEmpty()) {
-                                preparedStatement.setNull(index, Types.VARCHAR);
-                            } else {
-                                preparedStatement.setString(index, strValueToUse);
-                            }
-                        } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
-                            preparedStatement.setNull(index, Types.VARCHAR);
-                        } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
-                            preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
-                        } else {
-                            preparedStatement.setString(index, strValueToUse);
-                        }
-                    } catch (SQLException e) {
-                        setSqlParameterBindingError(e, strKey, strQuery);
-                    }
+                    properties.put("index", index);
+                    properties.put("strKey", strKey);
+                    properties.put("strOriginalValue", strOriginalValue);
+                    properties.put("strQuery", strQuery);
+                    bindSingleParameter(preparedStatement, properties, arrayCleanable, arrayNullable);
                 }
                 preparedStatement.addBatch();
                 if ((crtRow % 200 == 0)
@@ -72,6 +57,43 @@ public final class DatabaseQueryBindingClass {
             setSqlExceptionError(e, objValues, strQuery);
             throw (IllegalStateException)new IllegalStateException().initCause(e);
         }
+    }
+
+    /**
+     * bind Single Parameter
+     * @param preparedStatement original Prepared Statement
+     * @param properties properties with relevant components
+     * @param arrayCleanable clean-able list of fields
+     * @param arrayNullable NULL-able list of fields
+     * @return PreparedStatement
+     */
+    private static PreparedStatement bindSingleParameter(final PreparedStatement preparedStatement, final Properties properties, final String[] arrayCleanable, final String... arrayNullable) {
+        final int index = Integer.parseInt(properties.get("index").toString());
+        final String strKey = properties.get("strKey").toString();
+        final String strQuery = properties.get("strQuery").toString();
+        final String strOriginalValue = properties.get("strOriginalValue").toString();
+        final String strValueToUse = strOriginalValue;
+        try {
+            if (Common.STR_NULL.equalsIgnoreCase(strOriginalValue)) {
+                preparedStatement.setNull(index, Types.VARCHAR);
+            } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
+                final String strCleanedValue = strOriginalValue.replaceAll("([\"'])", "");
+                if (strCleanedValue.isEmpty()) {
+                    preparedStatement.setNull(index, Types.VARCHAR);
+                } else {
+                    preparedStatement.setString(index, strCleanedValue);
+                }
+            } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
+                preparedStatement.setNull(index, Types.VARCHAR);
+            } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
+                preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
+            } else {
+                preparedStatement.setString(index, strValueToUse);
+            }
+        } catch (SQLException e) {
+            setSqlParameterBindingError(e, strKey, strQuery);
+        }
+        return preparedStatement;
     }
 
     /**
