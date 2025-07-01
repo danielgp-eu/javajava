@@ -87,22 +87,34 @@ public final class DependenciesClass {
                 doc = SecureXmlParser.parseXmlSafely(strDependencyFile);
                 doc.getDocumentElement().normalize();
             } else {
-                try (InputStream xmlContent = FileContentClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                        final String strFeedback = xmlContent.toString();
-                        LoggerLevelProvider.LOGGER.debug(strFeedback);
-                    }
-                    doc = docBuilder.parse(xmlContent);
-                } catch (IOException e) {
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
-                        LoggerLevelProvider.LOGGER.error(strFeedback);
-                    }
-                }
+                doc = getDocumentWithDependenciesFromCompiledStructure(docBuilder, strDependencyFile);
             }
         } catch (IOException | ParserConfigurationException | SAXException ex) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(ex.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
+        }
+        return doc;
+    }
+
+    /**
+     * Getting Document with Dependencies From Compiled Structure
+     * @param docBuilder Document Builder
+     * @param strDependencyFile Dependency File
+     * @return content
+     */
+    private static Document getDocumentWithDependenciesFromCompiledStructure(final DocumentBuilder docBuilder, final String strDependencyFile) {
+        Document doc = null;
+        try (InputStream xmlContent = FileContentClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = xmlContent.toString();
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            }
+            doc = docBuilder.parse(xmlContent);
+        } catch (IOException | SAXException e) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strDependencyFile, Arrays.toString(e.getStackTrace()));
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
