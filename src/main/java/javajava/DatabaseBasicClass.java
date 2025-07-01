@@ -40,7 +40,7 @@ public class DatabaseBasicClass {
             }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            	final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -66,7 +66,7 @@ public class DatabaseBasicClass {
             }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            	final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -93,7 +93,7 @@ public class DatabaseBasicClass {
             }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            	final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -162,7 +162,7 @@ public class DatabaseBasicClass {
                 }
             } catch (SQLException e) {
                 if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                	final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                     LoggerLevelProvider.LOGGER.error(strFeedback);
                 }
             }

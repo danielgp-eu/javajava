@@ -161,7 +161,7 @@ public final class ShellingClass {
         if (strUser.startsWith("ERROR:")) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.ERROR)) {
-            	LoggerLevelProvider.LOGGER.warn(strFeedback);
+                LoggerLevelProvider.LOGGER.warn(strFeedback);
             }
             strUser = executeShellUtility("WHOAMI", "", "");
         }

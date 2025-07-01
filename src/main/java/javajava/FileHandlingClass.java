@@ -174,7 +174,7 @@ public final class FileHandlingClass {
             }
         } catch (IOException ex) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-            	final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -199,7 +199,7 @@ public final class FileHandlingClass {
                 if (Files.isDirectory(entry)) {
                     arraySubFolders.add(entry.toString());
                     if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                    	final String strFeedback = entry.toString();
+                        final String strFeedback = entry.toString();
                         LoggerLevelProvider.LOGGER.info(strFeedback);
                     }
                 }
