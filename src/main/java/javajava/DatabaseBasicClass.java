@@ -143,7 +143,7 @@ public class DatabaseBasicClass {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
             try {
