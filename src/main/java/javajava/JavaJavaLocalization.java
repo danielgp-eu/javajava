@@ -22,15 +22,15 @@ public final class JavaJavaLocalization {
     /**
      * locale file prefix
      */
-    private final static String DEFAULT_LOCALE = "en-US";
+    private static final String DEFAULT_LOCALE = "en-US";
     /**
      * locale folder
      */
-    private final static String MESSAGES_FOLDER = "Locale/JavaJavaBundle/";
+    private static final String MESSAGES_FOLDER = "Locale/JavaJavaBundle/";
     /**
      * locale file prefix
      */
-    private final static String MESSAGES_KEY = "JavaJavaTranslation";
+    private static final String MESSAGES_KEY = "JavaJavaTranslation";
 
     /**
      * getting Locale

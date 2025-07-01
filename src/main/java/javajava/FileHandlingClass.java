@@ -24,15 +24,15 @@ public final class FileHandlingClass {
     /**
      * Project Folder
      */
-    public static String APP_FOLDER; // NOPMD by Daniel Popiniuc on 20.04.2025, 23:29
+    public static String strAppFolder; // NOPMD by Daniel Popiniuc on 20.04.2025, 23:29
     /**
      * String constant
      */
-    private static String STR_MINIFIED = "Minified";
+    private static final String STR_MINIFIED = "Minified";
     /**
      * String constant
      */
-    private static String STR_PRTY_PRNT = "PrettyPrint";
+    private static final String STR_PRTY_PRNT = "PrettyPrint";
 
     /**
      * Checking if a file exists and is readable
@@ -193,10 +193,10 @@ public final class FileHandlingClass {
      * Getting current project folder
      */
     public static void loadProjectFolder() {
-        if (Objects.isNull(APP_FOLDER)) { 
+        if (Objects.isNull(strAppFolder)) { 
             final File directory = new File(""); // parameter is empty
             try {
-                APP_FOLDER = directory.getCanonicalPath();
+                strAppFolder = directory.getCanonicalPath();
             } catch (IOException ex) {
                 if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
                     final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));

@@ -26,39 +26,39 @@ public final class EnvironmentCapturingClass {
     /**
      * Hardware info
      */
-    private final static SystemInfo systemInfo = new SystemInfo();
+    private static final SystemInfo systemInfo = new SystemInfo();
     /**
      * Hardware info
      */
-    private final static HardwareAbstractionLayer hardware = systemInfo.getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    private static final HardwareAbstractionLayer hardware = systemInfo.getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * OS info
      */
-    private final static OperatingSystem operatingSystem = systemInfo.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    private static final OperatingSystem operatingSystem = systemInfo.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * string constant
      */
-    private final static String STR_ACTV_PXLS = "Active Pixels";
+    private static final String STR_ACTV_PXLS = "Active Pixels";
     /**
      * string constant
      */
-    private final static String STR_MONITOR_NAME = "Monitor Name";
+    private static final String STR_MONITOR_NAME = "Monitor Name";
     /**
      * string constant
      */
-    private final static String STR_PHYSC_DIM = "Physical Dimensions";
+    private static final String STR_PHYSC_DIM = "Physical Dimensions";
     /**
      * string constant
      */
-    private final static String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
+    private static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
     /**
      * string constant
      */
-    private final static String STR_RANGE_LMTS = "Range Limits";
+    private static final String STR_RANGE_LMTS = "Range Limits";
     /**
      * string constant
      */
-    private final static String STR_SRL_NUM = "Serial Number";
+    private static final String STR_SRL_NUM = "Serial Number";
     /**
      * Display details
      * 

@@ -11,7 +11,7 @@ public final class LoggerLevelProvider {
     /**
      * Logger
      */
-    public final static Logger LOGGER = LogManager.getLogger("io.github.danielgp-eu.javajava");
+    public static final Logger LOGGER = LogManager.getLogger("io.github.danielgp-eu.javajava");
     /**
      * Current Log level
      */
