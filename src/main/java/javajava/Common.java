@@ -29,7 +29,7 @@ public final class Common {
     /**
      * standard String
      */
-    public final static String STR_NAME = "Name";
+    public static final String STR_NAME = "Name";
     /**
      * NULL string
      */
@@ -41,7 +41,7 @@ public final class Common {
     /**
      * standard String
      */
-    public final static String STR_ROLES = "Roles";
+    public static final String STR_ROLES = "Roles";
     /**
      * Regular Expression for Prompt Parameters within SQL Query
      */
