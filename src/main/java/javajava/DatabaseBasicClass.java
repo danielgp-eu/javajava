@@ -145,19 +145,12 @@ public class DatabaseBasicClass {
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
             try {
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttempt"), strQueryToUse);
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
-                }
                 if (strQueryToUse.startsWith("INSERT INTO")) {
                     objStatement.executeLargeUpdate(strQueryToUse);
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
-                }
+                DatabaseBasicClass.setSqlExecutionSuccessInfo(strQueryPurpose);
             } catch (SQLException e) {
                 if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                     final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
@@ -214,6 +207,17 @@ public class DatabaseBasicClass {
             LoggerLevelProvider.LOGGER.error(strFeedback);
         }
         return mapParameterOrder;
+    }
+
+    /**
+     * Success confirmation to Info log
+     * @param strQueryPurpose
+     */
+    public static void setSqlExecutionSuccessInfo(final String strQueryPurpose) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
     }
 
     /**

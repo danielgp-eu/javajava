@@ -50,7 +50,7 @@ public final class DatabaseQueryBindingClass {
                 if ((crtRow % 200 == 0)
                     || (crtRow == intRows)) { // each 200 rows OR final one
                     preparedStatement.executeLargeBatch();
-                    setSqlExecutionSuccessInfo(strQueryPurpose);
+                    DatabaseBasicClass.setSqlExecutionSuccessInfo(strQueryPurpose);
                 }
             }
         } catch (SQLException e) {
@@ -106,17 +106,6 @@ public final class DatabaseQueryBindingClass {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
             final String strFeedback = exptObj.getLocalizedMessage() + " with Values " + objValues.get(0).toString() + " for Query " + strQuery;
             LoggerLevelProvider.LOGGER.error(strFeedback);
-        }
-    }
-
-    /**
-     * Success confirmation to Info log
-     * @param strQueryPurpose
-     */
-    private static void setSqlExecutionSuccessInfo(final String strQueryPurpose) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
     }
 
