@@ -279,15 +279,13 @@ public class DatabaseBasicClass {
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         final int foundParameters = mapParameterOrder.size();
-        if (foundParameters != intParameters) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing")
-                    , intParameters
-                    , foundParameters
-                    , mapParameterOrder.toString() + " vs. " + objValues.get(0).toString()
-                    , strOriginalQ);
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        if ((foundParameters != intParameters)  && LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing")
+                , intParameters
+                , foundParameters
+                , mapParameterOrder.toString() + " vs. " + objValues.get(0).toString()
+                , strOriginalQ);
+            LoggerLevelProvider.LOGGER.error(strFeedback);
         }
         return mapParameterOrder;
     }
