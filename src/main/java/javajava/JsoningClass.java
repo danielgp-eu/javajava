@@ -115,10 +115,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
                 }
                 listProperties.add(properties);
             });
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Properties", strJsonNodeName, listProperties);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
+            setNodeRetrievingToDebugLog("List of Properties", strJsonNodeName, listProperties);
         }
         return listProperties;
     }
@@ -136,10 +133,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         if(!jsonNode.isEmpty()) {
             jsonNode.forEach(jsonSingleNode-> listStrings.add(jsonSingleNode.asText()));
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "List of Strings", strJsonNodeName, listStrings);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
+            setNodeRetrievingToDebugLog("List of Strings", strJsonNodeName, listStrings);
         }
         return listStrings;
     }
@@ -155,12 +149,11 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     public static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         final Properties properties = new Properties();
-        for (final Map.Entry<String, JsonNode> entry : jsonNode.properties()) {
-            properties.put(entry.getKey(), entry.getValue());
-        }
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), "Properties", strJsonNodeName, properties);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        if(!jsonNode.isEmpty()) {
+            for (final Map.Entry<String, JsonNode> entry : jsonNode.properties()) {
+                properties.put(entry.getKey(), entry.getValue());
+            }
+            setNodeRetrievingToDebugLog("Properties", strJsonNodeName, properties);
         }
         return properties;
     }
@@ -174,6 +167,19 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      */
     public static String getJsonValue(final JsonNode givenJsonNode, final String strJsonNode) {
         return getJsonNodeFromTree(givenJsonNode, strJsonNode).asText();
+    }
+
+    /**
+     * Logging node retrieval activity to Debug Log
+     * @param strWhat meaning of search
+     * @param strJsonNodeName JSON node to look into
+     * @param objValues values found
+     */
+    private static void setNodeRetrievingToDebugLog(final String strWhat, final String strJsonNodeName, final Object objValues) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
     }
 
     /**
