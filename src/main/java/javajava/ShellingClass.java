@@ -89,10 +89,7 @@ public final class ShellingClass {
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         } catch(InterruptedException ei) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
         }
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
@@ -129,10 +126,7 @@ public final class ShellingClass {
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         } catch(InterruptedException ei) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
         }
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
@@ -166,6 +160,17 @@ public final class ShellingClass {
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         loggedAccount = strUser;
+    }
+
+    /**
+     * Execution Interrupted details captured to Error log
+     * @param strTraceDetails
+     */
+    private static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
+            LoggerLevelProvider.LOGGER.error(strFeedback);
+        }
     }
 
     /**

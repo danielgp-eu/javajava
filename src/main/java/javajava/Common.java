@@ -76,7 +76,7 @@ public final class Common {
         final List<String> listMatches = extractMatches(strOriginalQ, STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
-            final String newParameter = ":" + currentPrmtName.replaceAll("(\\{|\\})", "").replace(" ", "_");
+            final String newParameter = StringManipulationClass.getNamedParameterFromPromptOne(currentPrmtName);
             strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
         }
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {

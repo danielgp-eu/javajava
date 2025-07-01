@@ -194,7 +194,7 @@ public class DatabaseBasicClass {
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
         for (int intParameter = 0; intParameter < intParameters; intParameter++) {
-            final String crtParameter = listMatches.get(intParameter).replaceAll("(\\{|\\})", "");
+            final String crtParameter = StringManipulationClass.cleanStringFromCurlyBraces(listMatches.get(intParameter));
             final int intPosition = valFields.indexOf(crtParameter);
             if (intPosition != -1) {
                 mapParameterOrder.add(crtParameter);

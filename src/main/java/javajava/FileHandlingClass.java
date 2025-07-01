@@ -106,7 +106,7 @@ public final class FileHandlingClass {
      * @return
      */
     private static String getJsonFileName(final boolean isItOk2, final Entry<Object, Object> ePreety, final Properties propsFile) {
-        String strFileJson;
+        final String strFileJson;
         if (isItOk2) {
             strFileJson = ePreety.getValue().toString();
         } else {
