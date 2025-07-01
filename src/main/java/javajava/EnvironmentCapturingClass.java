@@ -35,7 +35,30 @@ public final class EnvironmentCapturingClass {
      * OS info
      */
     private final static OperatingSystem operatingSystem = systemInfo.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
-
+    /**
+     * string constant
+     */
+    private final static String STR_ACTV_PXLS = "Active Pixels";
+    /**
+     * string constant
+     */
+    private final static String STR_MONITOR_NAME = "Monitor Name";
+    /**
+     * string constant
+     */
+    private final static String STR_PHYSC_DIM = "Physical Dimensions";
+    /**
+     * string constant
+     */
+    private final static String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
+    /**
+     * string constant
+     */
+    private final static String STR_RANGE_LMTS = "Range Limits";
+    /**
+     * string constant
+     */
+    private final static String STR_SRL_NUM = "Serial Number";
     /**
      * Display details
      * 
@@ -49,24 +72,24 @@ public final class EnvironmentCapturingClass {
             final String strSlimLine = crtLine.trim();
             if (strSlimLine.endsWith(" in") && strSlimLine.contains(" cm ")) {
                 final int intCmPos = strSlimLine.indexOf(" cm ");
-                arrayAttributes.put("Physical Dimensions [in]", strSlimLine.substring(0, intCmPos));
+                arrayAttributes.put(STR_PHYSC_DIM + " [in]", strSlimLine.substring(0, intCmPos));
                 final int intInPos = strSlimLine.indexOf(" in");
-                arrayAttributes.put("Physical Dimensions [cm]", strSlimLine.substring(intCmPos + 4, intInPos));
+                arrayAttributes.put(STR_PHYSC_DIM + " [cm]", strSlimLine.substring(intCmPos + 4, intInPos));
             }
-            if (strSlimLine.startsWith("Monitor Name")) {
-                arrayAttributes.put("Monitor Name", strSlimLine.replace("Monitor Name ", ""));
+            if (strSlimLine.startsWith(STR_MONITOR_NAME)) {
+                arrayAttributes.put(STR_MONITOR_NAME, strSlimLine.replace(STR_MONITOR_NAME + " ", ""));
             }
-            if (strSlimLine.startsWith("Preferred Timing Clock")) {
-                final int intClockLen = "Preferred Timing Clock".length();
+            if (strSlimLine.startsWith(STR_PRFRD_TM_CLCK)) {
+                final int intClockLen = STR_PRFRD_TM_CLCK.length();
                 final int intPixelPos = strSlimLine.indexOf("Active Pixels");
-                arrayAttributes.put("Preferred Timing Clock", strSlimLine.substring(intClockLen, intPixelPos).trim());
-                arrayAttributes.put("Active Pixels", strSlimLine.substring(intPixelPos).replace("Active Pixels ", "").trim());
+                arrayAttributes.put(STR_PRFRD_TM_CLCK, strSlimLine.substring(intClockLen, intPixelPos).trim());
+                arrayAttributes.put(STR_ACTV_PXLS, strSlimLine.substring(intPixelPos).replace(STR_ACTV_PXLS + " ", "").trim());
             }
-            if (strSlimLine.startsWith("Range Limits")) {
-                arrayAttributes.put("Range Limits", strSlimLine.replace("Range Limits ", ""));
+            if (strSlimLine.startsWith(STR_RANGE_LMTS)) {
+                arrayAttributes.put(STR_RANGE_LMTS, strSlimLine.replace(STR_RANGE_LMTS + " ", ""));
             }
-            if (strSlimLine.startsWith("Serial Number")) {
-                arrayAttributes.put("Serial Number", strSlimLine.replace("Serial Number ", ""));
+            if (strSlimLine.startsWith(STR_SRL_NUM)) {
+                arrayAttributes.put(STR_SRL_NUM, strSlimLine.replace(STR_SRL_NUM + " ", ""));
             }
         }
         return Common.getMapIntoJsonString(arrayAttributes);
