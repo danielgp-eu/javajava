@@ -87,7 +87,7 @@ public final class DependenciesClass {
                 doc = SecureXmlParser.parseXmlSafely(strDependencyFile);
                 doc.getDocumentElement().normalize();
             } else {
-                try (InputStream xmlContent = FileHandlingClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
+                try (InputStream xmlContent = FileContentClass.getIncludedFileContentIntoInputStream(strDependencyFile)) {
                     if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
                         final String strFeedback = xmlContent.toString();
                         LoggerLevelProvider.LOGGER.debug(strFeedback);
