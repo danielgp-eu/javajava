@@ -195,18 +195,14 @@ public final class Common {
      * @return String with a pair of key and value
      */
     private static String getJsonKeyAndValue(final String strKey, final Object objValue) {
-        boolean needsQuotesAround = false;
         final List<String> unquotedValues = Arrays.asList("null", "true", "false");
-        if (
+        final boolean needsQuotesAround = 
             (objValue instanceof Integer)
             || (objValue instanceof Double)
             || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
             || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
             || isStringActuallyNumeric(objValue.toString())
-            || hasMatchingSubstring(objValue.toString(), unquotedValues)
-            ) {
-            needsQuotesAround = true;
-        }
+            || hasMatchingSubstring(objValue.toString(), unquotedValues);
         String strRaw = "\"%s\":\"%s\"";
         if (needsQuotesAround) {
             strRaw = "\"%s\":%s";
