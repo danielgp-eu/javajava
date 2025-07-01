@@ -126,7 +126,7 @@ public final class EnvironmentCapturingClass {
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
                 "Mount", fileStore.getMount().replace("\\", "\\\\"),
-                Common.strName, fileStore.getName(),
+                Common.STR_NAME, fileStore.getName(),
                 "Options", fileStore.getOptions(),
                 "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
                 "Type", fileStore.getType(),
@@ -153,7 +153,7 @@ public final class EnvironmentCapturingClass {
             "Identifier", procIdentif.getIdentifier(),
             "Local Processors", processor.getLogicalProcessorCount(),
             "Model", procIdentif.getModel(),
-            Common.strName, procIdentif.getName(),
+            Common.STR_NAME, procIdentif.getName(),
             "Physical", processor.getPhysicalProcessorCount()
         ));
     }
@@ -173,7 +173,7 @@ public final class EnvironmentCapturingClass {
             }
             strJsonString.append(Common.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
-                Common.strName, graphicCard.getName(),
+                Common.STR_NAME, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
                 "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
                 "Driver Version", graphicCard.getVersionInfo()
@@ -215,7 +215,7 @@ public final class EnvironmentCapturingClass {
             "Code", versionInfo.getCodeName(),
             "Family", operatingSystem.getFamily(),
             "Manufacturer", operatingSystem.getManufacturer(),
-            Common.strName, System.getProperty("os.name"),
+            Common.STR_NAME, System.getProperty("os.name"),
             "Platform", SystemInfo.getCurrentPlatform().toString(),
             "Version", versionInfo.getVersion()
         ));
@@ -271,7 +271,7 @@ public final class EnvironmentCapturingClass {
                 strJsonString.append(',');
             }
             strJsonString.append(Common.getMapIntoJsonString(Map.of(
-                Common.strName, net.getName(),
+                Common.STR_NAME, net.getName(),
                 "Display Name", net.getDisplayName(),
                 "MAC Address", net.getMacaddr(),
                 "IPv4", String.join(", ", net.getIPv4addr()),
@@ -290,6 +290,6 @@ public final class EnvironmentCapturingClass {
      * Constructor
      */
     private EnvironmentCapturingClass() {
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

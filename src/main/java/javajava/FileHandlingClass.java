@@ -231,6 +231,6 @@ public final class FileHandlingClass {
      * Constructor
      */
     private FileHandlingClass() {
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

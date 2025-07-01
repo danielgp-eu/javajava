@@ -26,14 +26,14 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
     public static Connection getSqLiteConnection(final String strSqLiteFile) {
         final String strConnection = "jdbc:sqlite:" + strSqLiteFile.replace("\\", "/");
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttemptLight"), Common.strDbSqLite, strSqLiteFile, strConnection);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttemptLight"), Common.STR_DB_SQLITE, strSqLiteFile, strConnection);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(strConnection);
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSqLite, strSqLiteFile);
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.STR_DB_SQLITE, strSqLiteFile);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
             Function.create(connection, "REGEXP_LIKE", new Function() {
@@ -48,7 +48,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
             });
         } catch(SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSqLite, e.getLocalizedMessage());
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.STR_DB_SQLITE, e.getLocalizedMessage());
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -60,7 +60,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
      */
     public DatabaseSpecificSqLite() {
         super();
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 
 }

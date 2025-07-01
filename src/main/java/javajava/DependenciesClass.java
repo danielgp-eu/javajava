@@ -126,6 +126,6 @@ public final class DependenciesClass {
 
     // Private constructor to prevent instantiation
     private DependenciesClass() {
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

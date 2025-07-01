@@ -1,14 +1,12 @@
 package javajava;
 /* SQL classes */
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 /* Time classes */
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 /* Utility classes */
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -114,18 +112,18 @@ public class DatabaseBasicClass {
         for (final Object obj : queryProperties.keySet()) {
             final String strKey = (String) obj;
             final String strOriginalValue = queryProperties.getProperty(strKey);
-            String strValueToUse = String.format("\"%s\"", strOriginalValue);
-            if (strOriginalValue.matches(Common.strNull)) {
+            String strValueToUse = String.format(Common.STR_QTD_STR_VL, strOriginalValue);
+            if (strOriginalValue.matches(Common.STR_NULL)) {
                 strValueToUse = strOriginalValue;
             } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                strValueToUse = String.format("\"%s\"", strOriginalValue.replaceAll("([\"'])", ""));
+                strValueToUse = String.format(Common.STR_QTD_STR_VL, strOriginalValue.replaceAll("([\"'])", ""));
                 if (strOriginalValue.isEmpty()) {
-                    strValueToUse = Common.strNull;
+                    strValueToUse = Common.STR_NULL;
                 }
             } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
-                strValueToUse = Common.strNull;
+                strValueToUse = Common.STR_NULL;
             } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
-                strValueToUse = String.format("\"%s\"", strOriginalValue.replace("\"", "\"\""));
+                strValueToUse = String.format(Common.STR_QTD_STR_VL, strOriginalValue.replace("\"", "\"\""));
             }
             strQueryToReturn = strQueryToReturn.replace(String.format("{%s}", strKey), strValueToUse);
         }
@@ -174,78 +172,6 @@ public class DatabaseBasicClass {
     }
 
     /**
-     * Values to be added for bulk operations
-     * @param objConnection Connection for destination Database
-     * @param strQueryPurpose Purpose for query execution
-     * @param objValues Values to use for executions
-     * @param strQuery Original Query with Prompt Parameters
-     * @param arrayCleanable Clean-able fields as array of Strings
-     * @param arrayNullable Null-able fields
-     */
-    public static void executeValuesIntoDatabaseUsingPreparedStatement(final Connection objConnection, final String strQueryPurpose, final List<Properties> objValues, final String strQuery, final String[] arrayCleanable, final String... arrayNullable) {
-        final int intRows = objValues.size();
-        final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
-        final int intParameters = mapParameterOrder.size();
-        final String strFinalQ = Common.convertPromptParametersIntoParameters(strQuery);
-        try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ);) {
-            // cycle through each row
-            for (int crtRow = 1; crtRow <= intRows; crtRow++) {
-                final Properties currentProps = objValues.get(crtRow - 1);
-                // cycle through every single Parameter to set its value to PreparedStatement
-                for (int intParameter = 0; intParameter < intParameters; intParameter++) {
-                    final int index = intParameter + 1;
-                    final String strKey = mapParameterOrder.get(intParameter);
-                    final String strOriginalValue = currentProps.getProperty(strKey);
-                    String strValueToUse = strOriginalValue;
-                    try {
-                        if (Common.strNull.equalsIgnoreCase(strOriginalValue)) {
-                            preparedStatement.setNull(index, Types.VARCHAR);
-                        } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                            strValueToUse = strOriginalValue.replaceAll("([\"'])", "");
-                            if (strValueToUse.isEmpty()) {
-                                preparedStatement.setNull(index, Types.VARCHAR);
-                            } else {
-                                preparedStatement.setString(index, strValueToUse);
-                            }
-                        } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
-                            preparedStatement.setNull(index, Types.VARCHAR);
-                        } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
-                            preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
-                        } else {
-                            preparedStatement.setString(index, strValueToUse);
-                        }
-                    } catch (SQLException e) {
-                        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterBindingError"), e.getLocalizedMessage(), strKey, strQuery);
-                            LoggerLevelProvider.LOGGER.error(strFeedback);
-                        }
-                    }
-                }
-                preparedStatement.addBatch();
-                boolean needsExecution = false;
-                if (crtRow % 200 == 0) { // execute every 200 rows
-                    needsExecution = true;
-                } else if (crtRow == intRows) { // left-over rows
-                    needsExecution = true;
-                }
-                if (needsExecution) {
-                    preparedStatement.executeLargeBatch();
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                        LoggerLevelProvider.LOGGER.debug(strFeedback);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            final String strFeedback = e.getLocalizedMessage() + " with Values " + objValues.get(0).toString() + " for Query " + strQuery;
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
-            throw (IllegalStateException)new IllegalStateException().initCause(e);
-        }
-    }
-
-    /**
      * get order of Prompt Parameters within Query 
      * @param strOriginalQ query to consider expected to have Prompt Parameters
      * @param objValues list with Values as List of Properties
@@ -260,7 +186,7 @@ public class DatabaseBasicClass {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValuesAre"), valFields.toString());
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
-        final List<String> listMatches = Common.extractMatches(strOriginalQ, Common.strPrmptPrmtrRgEx);
+        final List<String> listMatches = Common.extractMatches(strOriginalQ, Common.STR_PRMTR_RGX);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterForQueryAre"), listMatches.toString());
             LoggerLevelProvider.LOGGER.debug(strFeedback);
@@ -294,6 +220,6 @@ public class DatabaseBasicClass {
      * Constructor
      */
     public DatabaseBasicClass() {
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

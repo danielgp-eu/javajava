@@ -40,18 +40,18 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.strDbSnowflake, strDatabase, strConnection, propConnection);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.STR_DB_SNOWFLAKE, strDatabase, strConnection, propConnection);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         try {
             connection = DriverManager.getConnection(strConnection, propConnection);
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.strDbSnowflake, strDatabase);
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccessLight"), Common.STR_DB_SNOWFLAKE, strDatabase);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
         } catch(SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.strDbSnowflake, e.getLocalizedMessage());
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailedLight"), Common.STR_DB_SNOWFLAKE, e.getLocalizedMessage());
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -68,7 +68,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
      */
     protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final Properties queryProperties = new Properties();
-        if (Common.strRoles.equalsIgnoreCase(strWhich)) {
+        if (Common.STR_ROLES.equalsIgnoreCase(strWhich)) {
             queryProperties.put("expectedExactNumberOfColumns", "1");
         }
         final String strQueryToUse = getSnowflakePreDefinedMetadataQuery(strWhich);
@@ -230,8 +230,8 @@ FROM
     "INFORMATION_SCHEMA"."VIEWS";""";
             case "Warehouses" -> "SHOW WAREHOUSES;";
             default -> {
-                final String strFeedback = String.format(Common.strUnknFtrs, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.strUnknown)));
+                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
                 if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                     LoggerLevelProvider.LOGGER.error(strFeedback);
                 }
@@ -278,18 +278,18 @@ FROM
     private static void loadSnowflakeDriver() {
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingAttempt"), Common.strDbSnowflake, strDriverName);
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingAttempt"), Common.STR_DB_SNOWFLAKE, strDriverName);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         try {
             Class.forName(strDriverName);
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingSuccess"), Common.strDbSnowflake, strDriverName);
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingSuccess"), Common.STR_DB_SNOWFLAKE, strDriverName);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
         } catch (ClassNotFoundException ex) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.strDbSnowflake, strDriverName);
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLdriverLoadingNotFound"), Common.STR_DB_SNOWFLAKE, strDriverName);
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
@@ -318,6 +318,6 @@ FROM
      */
     protected DatabaseSpecificSnowflake() {
         super();
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

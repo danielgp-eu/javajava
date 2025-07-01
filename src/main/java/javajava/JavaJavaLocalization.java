@@ -134,6 +134,6 @@ public final class JavaJavaLocalization {
      * constructor
      */
     private JavaJavaLocalization() {
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

@@ -15,49 +15,53 @@ import org.apache.logging.log4j.Level;
  */
 public final class Common {
     /**
-     * standard Application class feedback
-     */
-    public static final String strAppClsWrng = JavaJavaLocalization.getMessage("i18nAppClassWarning");
-    /**
      * Database MySQL
      */
-    public static final String strDbMySQL = "MySQL";
+    public static final String STR_DB_MYSQL = "MySQL";
     /**
      * Database Snowflake
      */
-    public static final String strDbSnowflake = "Snowflake";
+    public static final String STR_DB_SNOWFLAKE = "Snowflake";
     /**
      * Database SQLite
      */
-    public static final String strDbSqLite = "SQLite";
+    public static final String STR_DB_SQLITE = "SQLite";
     /**
      * standard String
      */
-    public final static String strName = "Name";
+    public final static String STR_NAME = "Name";
     /**
      * NULL string
      */
-    public static final String strNull = "NULL";
+    public static final String STR_NULL = "NULL";
     /**
      * Regular Expression for Prompt Parameters within SQL Query
      */
-    public static final String strPrmptPrmtrRgEx = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
+    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
     /**
      * standard String
      */
-    public final static String strRoles = "Roles";
+    public final static String STR_ROLES = "Roles";
+    /**
+     * Regular Expression for Prompt Parameters within SQL Query
+     */
+    public static final String STR_QTD_STR_VL = "\"%s\"";
+    /**
+     * standard Application class feedback
+     */
+    public static final String STR_I18N_AP_CL_WN = JavaJavaLocalization.getMessage("i18nAppClassWarning");
     /**
      * standard SQL statement unable
      */
-    public static final String strStmntUnableX = JavaJavaLocalization.getMessage("i18nSQLstatementUnableToGetX");
+    public static final String STR_I18N_STM_UNB = JavaJavaLocalization.getMessage("i18nSQLstatementUnableToGetX");
     /**
      * standard Unknown feature
      */
-    public static final String strUnknFtrs = JavaJavaLocalization.getMessage("i18nUnknFtrs");
+    public static final String STR_I18N_UNKN_FTS = JavaJavaLocalization.getMessage("i18nUnknFtrs");
     /**
      * standard Unknown
      */
-    public static final String strUnknown = JavaJavaLocalization.getMessage("i18nUnknown");
+    public static final String STR_I18N_UNKN = JavaJavaLocalization.getMessage("i18nUnknown");
 
     /**
      * Convert Prompt Parameters into Named Parameters
@@ -69,7 +73,7 @@ public final class Common {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
-        final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
+        final List<String> listMatches = extractMatches(strOriginalQ, STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             final String newParameter = ":" + currentPrmtName.replaceAll("(\\{|\\})", "").replace(" ", "_");
@@ -92,7 +96,7 @@ public final class Common {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
-        final List<String> listMatches = extractMatches(strOriginalQ, strPrmptPrmtrRgEx);
+        final List<String> listMatches = extractMatches(strOriginalQ, STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
@@ -110,7 +114,7 @@ public final class Common {
      * @return A List of strings, where each string is a full match found.
      */
     public static int countParametersWithinQuery(final String text) {
-        final Pattern pattern = Pattern.compile(strPrmptPrmtrRgEx);
+        final Pattern pattern = Pattern.compile(STR_PRMTR_RGX);
         final Matcher matcher = pattern.matcher(text);
         int count = 0;
         while (matcher.find()) {
@@ -193,17 +197,14 @@ public final class Common {
     private static String getJsonKeyAndValue(final String strKey, final Object objValue) {
         boolean needsQuotesAround = false;
         final List<String> unquotedValues = Arrays.asList("null", "true", "false");
-        if (objValue instanceof Integer) {
-            needsQuotesAround = true;
-        } else if (objValue instanceof Double) {
-            needsQuotesAround = true;
-        } else if (hasMatchingSubstring(objValue.toString(), unquotedValues)) {
-            needsQuotesAround = true;
-        } else if (objValue.toString().startsWith("[") && objValue.toString().endsWith("]")) {
-            needsQuotesAround = true;
-        } else if (objValue.toString().startsWith("{") && objValue.toString().endsWith("}")) {
-            needsQuotesAround = true;
-        } else if (isStringActuallyNumeric(objValue.toString())) {
+        if (
+            (objValue instanceof Integer)
+            || (objValue instanceof Double)
+            || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
+            || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
+            || isStringActuallyNumeric(objValue.toString())
+            || hasMatchingSubstring(objValue.toString(), unquotedValues)
+            ) {
             needsQuotesAround = true;
         }
         String strRaw = "\"%s\":\"%s\"";
@@ -248,7 +249,7 @@ public final class Common {
     public static String getNetworkPhysicalMediumType(final int intPhysMedType) {
         return getMapIntoJsonString(Map.of(
             "Numeric", intPhysMedType,
-            strName, switch (intPhysMedType) {
+            STR_NAME, switch (intPhysMedType) {
                 case 0 -> "Unspecified (e.g., satellite feed)";
                 case 1 -> "Wireless LAN (802.11)";
                 case 2 -> "Cable Modem (DOCSIS)";
@@ -282,8 +283,8 @@ public final class Common {
             case 2 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString());
             case 3 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString(), strReplacement[2].toString());
             default -> {
-                final String strFeedback = String.format(strUnknFtrs, intRsParams, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(strUnknown)));
+                final String strFeedback = String.format(STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(STR_I18N_UNKN)));
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -306,6 +307,6 @@ public final class Common {
 
     // Private constructor to prevent instantiation
     private Common() {
-        throw new UnsupportedOperationException(strAppClsWrng);
+        throw new UnsupportedOperationException(STR_I18N_AP_CL_WN);
     }
 }

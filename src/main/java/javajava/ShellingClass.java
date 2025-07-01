@@ -172,6 +172,6 @@ public final class ShellingClass {
      * Constructor
      */
     private ShellingClass() {
-        throw new UnsupportedOperationException(Common.strAppClsWrng);
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }
