@@ -16,7 +16,7 @@ public final class ShellingClass {
     /**
      * holding the Use account currently logged on
      */
-    public static String LOGGED_ACCOUNT = null; // NOPMD by Daniel Popiniuc on 17.04.2025, 16:26
+    public static String loggedAccount = null; // NOPMD by Daniel Popiniuc on 17.04.2025, 16:26
 
     /**
      * Building Process for shell execution
@@ -147,10 +147,10 @@ public final class ShellingClass {
      * @return String
      */
     public static String getCurrentUserAccount() {
-        if (LOGGED_ACCOUNT == null) {
+        if (loggedAccount == null) {
             loadCurrentUserAccount();
         }
-        return LOGGED_ACCOUNT;
+        return loggedAccount;
     }
 
     /**
@@ -165,7 +165,7 @@ public final class ShellingClass {
             }
             strUser = executeShellUtility("WHOAMI", "", "");
         }
-        LOGGED_ACCOUNT = strUser;
+        loggedAccount = strUser;
     }
 
     /**
