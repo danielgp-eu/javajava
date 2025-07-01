@@ -130,7 +130,7 @@ public final class Common {
      */
     @SuppressWarnings("unused")
     public static int countParametersWithinString(final String inputString) {
-        final Pattern pattern = Pattern.compile("%(|[1-9]\\$)(|,[0-9]{1,3}|\\+|\\(|,)(|\\.[1-9]|[0-9]{1,2})[abcdefghnostx]");
+        final Pattern pattern = Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
         final Matcher matcher = pattern.matcher(inputString);
         int count = 0;
         while (matcher.find()) {
