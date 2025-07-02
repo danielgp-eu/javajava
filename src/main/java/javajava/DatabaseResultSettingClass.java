@@ -106,7 +106,7 @@ public final class DatabaseResultSettingClass {
      * @param resultSet result-set
      * @return List of Properties
      */
-    private static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
+    public static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
         final List<Properties> listResultSet = new ArrayList<>();
         try {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
