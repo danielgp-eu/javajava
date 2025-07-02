@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Level;
 /**
  * Snowflake methods
  */
-public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
+public final class DatabaseSpecificSnowflake {
 
     /**
      * Snowflake Bootstrap
@@ -34,7 +34,7 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
      * @param strDatabase database to connect to
      * @return Connection
      */
-    protected static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
+    public static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
         loadSnowflakeDriver();
         Connection connection = null;
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
@@ -66,13 +66,17 @@ public class DatabaseSpecificSnowflake extends DatabaseResultSettingClass {
      * @param strKind kind of output
      * @return List of Properties
      */
-    protected static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+    public static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final Properties queryProperties = new Properties();
         if (Common.STR_ROLES.equalsIgnoreCase(strWhich)) {
             queryProperties.put("expectedExactNumberOfColumns", "1");
         }
         final String strQueryToUse = getSnowflakePreDefinedMetadataQuery(strWhich);
-        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
+        final Properties rsProperties = new Properties();
+        rsProperties.put("strWhich", strWhich);
+        rsProperties.put("strQueryToUse", strQueryToUse);
+        rsProperties.put("strKind", strKind);
+        return DatabaseResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
     }
 
     /**
@@ -247,7 +251,7 @@ FROM
      * @return Properties
      */
     @SuppressWarnings("unused")
-    protected static Properties getSnowflakeProperties(final Properties propInstance) {
+    public static Properties getSnowflakeProperties(final Properties propInstance) {
         final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
         return getSnowflakeProperties(strDatabase, propInstance);
     }
@@ -302,7 +306,7 @@ FROM
      */
     public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-            Statement objStatement = DatabaseBasicClass.createSqlStatement("Snowflake", objConnection)) {
+            Statement objStatement = DatabaseConnectivity.createSqlStatement("Snowflake", objConnection)) {
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
@@ -316,8 +320,7 @@ FROM
     /**
      * constructor
      */
-    protected DatabaseSpecificSnowflake() {
-        super();
+    private DatabaseSpecificSnowflake() {
         throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

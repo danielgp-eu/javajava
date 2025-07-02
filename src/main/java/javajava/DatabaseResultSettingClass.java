@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-/* Time classes */
-import java.time.LocalDateTime;
 /* Utility classes */
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +14,7 @@ import org.apache.logging.log4j.Level;
 /**
  * Basic features for Databases 
  */
-public class DatabaseResultSettingClass {
+public final class DatabaseResultSettingClass {
 
     /**
      * extends functionality for Executions
@@ -25,7 +23,7 @@ public class DatabaseResultSettingClass {
      * @param resultSet result-set
      * @param objProperties properties (with features to apply)
      */
-    private static void digestCustomQueryProperties(final String strPurpose, final ResultSet resultSet, final Properties objProperties) {
+    public static void digestCustomQueryProperties(final String strPurpose, final ResultSet resultSet, final Properties objProperties) {
         final int intResultSetRows = getResultSetNumberOfRows(resultSet);
         final int intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
@@ -69,49 +67,12 @@ public class DatabaseResultSettingClass {
     }
 
     /**
-     * Execute a custom query with result-set expected
-     * @param objStatement statement
-     * @param strQueryPurpose query purpose
-     * @param strQueryToUse query to use
-     * @param objProperties properties (with features to apply)
-     * @return ResultSet
-     */
-    public static ResultSet executeCustomQuery(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse, final Properties objProperties) {
-        ResultSet resultSet = null;
-        if (strQueryToUse != null) {
-            final LocalDateTime startTimeStamp = LocalDateTime.now();
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
-            try {
-                resultSet = objStatement.executeQuery(strQueryToUse);
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
-                }
-                digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
-            } catch (SQLException e) {
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
-                }
-            }
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
-        }
-        return resultSet;
-    }
-
-    /**
      * get structure from ResultSet
      * 
      * @param resultSet result-set
      * @return List of Properties
      */
-    protected static List<Properties> getResultSetColumnStructure(final ResultSet resultSet) {
+    public static List<Properties> getResultSetColumnStructure(final ResultSet resultSet) {
         final List<Properties> listResultSet = new ArrayList<>();
         try {
             final ResultSetMetaData metaData = resultSet.getMetaData();
@@ -201,7 +162,7 @@ public class DatabaseResultSettingClass {
      * @return list of strings
      */
     @SuppressWarnings("unused")
-    protected static List<String> getResultSetListOfStrings(final ResultSet resultSet) {
+    public static List<String> getResultSetListOfStrings(final ResultSet resultSet) {
         final List<String> listStrings = new ArrayList<>();
         try {
             while (resultSet.next()) {
@@ -258,15 +219,16 @@ public class DatabaseResultSettingClass {
     /**
      * ResultSet capturing standardized
      * @param objStatement statement
-     * @param strWhich output type from result-set
-     * @param strQueryToUse query to use
+     * @param rsProperties result set Properties
      * @param queryProperties properties (with features to apply)
-     * @param strKind type of result
      * @return List of Properties
      */
-    protected static List<Properties> getResultSetStandardized(final Statement objStatement, final String strWhich, final String strQueryToUse, final Properties queryProperties, final String strKind) {
+    public static List<Properties> getResultSetStandardized(final Statement objStatement, final Properties rsProperties, final Properties queryProperties) {
         List<Properties> listReturn = null;
-        try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties)) {
+        final String strWhich = rsProperties.get("strWhich").toString();
+        final String strQueryToUse = rsProperties.get("strQueryToUse").toString();
+        final String strKind = rsProperties.get("strKind").toString();
+        try (ResultSet rsStandard = DatabaseBasicClass.executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties)) {
             switch (strKind) {
                 case "Structure":
                     listReturn = getResultSetColumnStructure(rsStandard);
@@ -294,7 +256,7 @@ public class DatabaseResultSettingClass {
     /**
      * Constructor
      */
-    public DatabaseResultSettingClass() {
+    private DatabaseResultSettingClass() {
         throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 

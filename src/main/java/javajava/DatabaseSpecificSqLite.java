@@ -15,7 +15,7 @@ import org.sqlite.Function;
  * SQLite methods
  */
 @SuppressWarnings("unused")
-public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
+public final class DatabaseSpecificSqLite {
 
     /**
      * Initiates a SQLite connection
@@ -58,8 +58,7 @@ public class DatabaseSpecificSqLite extends DatabaseResultSettingClass {
     /**
      * constructor
      */
-    public DatabaseSpecificSqLite() {
-        super();
+    private DatabaseSpecificSqLite() {
         throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 

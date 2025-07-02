@@ -74,7 +74,9 @@ public final class DatabaseQueryBindingClass {
         final String strOriginalValue = properties.get("strOriginalValue").toString();
         final String strValueToUse = strOriginalValue;
         try {
-            if (Common.STR_NULL.equalsIgnoreCase(strOriginalValue)) {
+            if (Common.STR_NULL.equalsIgnoreCase(strOriginalValue) 
+                || (Arrays.asList(arrayNullable).contains(strKey)
+                    && strOriginalValue.isEmpty())) {
                 preparedStatement.setNull(index, Types.VARCHAR);
             } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
                 final String strCleanedValue = strOriginalValue.replaceAll("([\"'])", "");
@@ -83,8 +85,6 @@ public final class DatabaseQueryBindingClass {
                 } else {
                     preparedStatement.setString(index, strCleanedValue);
                 }
-            } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
-                preparedStatement.setNull(index, Types.VARCHAR);
             } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
                 preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
             } else {

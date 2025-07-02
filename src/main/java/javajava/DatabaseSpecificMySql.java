@@ -19,13 +19,13 @@ import org.apache.logging.log4j.Level;
 /**
  * MySQL methods
  */
-public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
+public final class DatabaseSpecificMySql {
 
     /**
      * Getting Connection Properties For MySQL from Environment variable
      * @return Properties
      */
-    protected static Properties getConnectionPropertiesForMySQL() {
+    public static Properties getConnectionPropertiesForMySQL() {
         final Properties properties = new Properties();
         final String strEnv = "MYSQL";
         final String strEnvMySql = System.getenv(strEnv);
@@ -99,8 +99,12 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     public static  List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final String strQueryToUse = getMySqlPreDefinedMetadataQuery(strWhich);
+        final Properties rsProperties = new Properties();
+        rsProperties.put("strWhich", strWhich);
+        rsProperties.put("strQueryToUse", strQueryToUse);
+        rsProperties.put("strKind", strKind);
         final Properties queryProperties = new Properties();
-        return getResultSetStandardized(objStatement, strWhich, strQueryToUse, queryProperties, strKind);
+        return DatabaseResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
     }
 
     /**
@@ -109,7 +113,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      * @param strWhich Which kind of query is needed
      * @return Query as String
      */
-    protected static String getMySqlPreDefinedMetadataQuery(final String strWhich) {
+    public static String getMySqlPreDefinedMetadataQuery(final String strWhich) {
         return switch (strWhich) {
             case "Columns" -> """
                     SELECT
@@ -229,7 +233,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = DatabaseBasicClass.createSqlStatement(Common.STR_DB_MYSQL, objConnection)) {
+            Statement objStatement = DatabaseConnectivity.createSqlStatement(Common.STR_DB_MYSQL, objConnection)) {
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
@@ -242,8 +246,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
     /**
      * constructor
      */
-    protected DatabaseSpecificMySql() {
-        super();
+    private DatabaseSpecificMySql() {
         throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }
