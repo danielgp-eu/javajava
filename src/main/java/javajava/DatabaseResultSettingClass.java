@@ -145,32 +145,25 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
      * @param resultSet result-set
      * @return List of Properties
      */
-    public static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
+    private static List<Properties> getResultSetColumnValues(final ResultSet resultSet) {
         final List<Properties> listResultSet = new ArrayList<>();
         try {
-            if (resultSet == null) {
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLresultSetNull");
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
-                }
-            } else {
-                final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-                final int columnCount = resultSetMetaData.getColumnCount();
-                while (resultSet.next()) {
-                    final Properties currentRow = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
-                    for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
-                        String crtValue = resultSet.getString(colIndex);
-                        if (resultSet.wasNull()) {
-                            crtValue = Common.STR_NULL;
-                        }
-                        currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
+            final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+            final int columnCount = resultSetMetaData.getColumnCount();
+            while (resultSet.next()) {
+                final Properties currentRow = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
+                for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
+                    String crtValue = resultSet.getString(colIndex);
+                    if (resultSet.wasNull()) {
+                        crtValue = Common.STR_NULL;
                     }
-                    listResultSet.add(currentRow);
+                    currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
                 }
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
-                }
+                listResultSet.add(currentRow);
+            }
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
@@ -179,6 +172,26 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
             }
         }
         return listResultSet;
+    }
+
+    /**
+     * get column values from ResultSet
+     * 
+     * @param resultSet result-set
+     * @return List of Properties
+     */
+    public static List<Properties> getResultSetColumnValuesWithNullCheck(final ResultSet resultSet) {
+        List<Properties> listResultSet = new ArrayList<>();
+        if (resultSet == null) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLresultSetNull");
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            }
+        } else {
+            listResultSet = getResultSetColumnValues(resultSet);
+        }
+        return listResultSet;
+        
     }
 
     /**
@@ -259,7 +272,7 @@ public class DatabaseResultSettingClass extends DatabaseBasicClass {
                     listReturn = getResultSetColumnStructure(rsStandard);
                     break;
                 case "Values":
-                    listReturn = getResultSetColumnValues(rsStandard);
+                    listReturn = getResultSetColumnValuesWithNullCheck(rsStandard);
                     break;
                 default:
                     if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
