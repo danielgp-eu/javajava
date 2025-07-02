@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Level;
 /**
  * Basic features for Databases 
  */
-public class DatabaseResultSettingClass extends DatabaseBasicClass {
+public class DatabaseResultSettingClass {
 
     /**
      * extends functionality for Executions

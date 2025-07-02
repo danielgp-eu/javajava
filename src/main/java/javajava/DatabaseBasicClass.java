@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Level;
 /**
  * Database methods
  */
-public class DatabaseBasicClass {
+public final class DatabaseBasicClass {
 
     /**
      * Connection closing
@@ -150,7 +150,7 @@ public class DatabaseBasicClass {
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                DatabaseBasicClass.setSqlExecutionSuccessInfo(strQueryPurpose);
+                setSqlExecutionSuccessInfo(strQueryPurpose);
             } catch (SQLException e) {
                 if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                     final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
@@ -223,7 +223,7 @@ public class DatabaseBasicClass {
     /**
      * Constructor
      */
-    public DatabaseBasicClass() {
+    private DatabaseBasicClass() {
         throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

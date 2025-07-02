@@ -229,7 +229,7 @@ public class DatabaseSpecificMySql extends DatabaseResultSettingClass {
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = createSqlStatement(Common.STR_DB_MYSQL, objConnection)) {
+            Statement objStatement = DatabaseBasicClass.createSqlStatement(Common.STR_DB_MYSQL, objConnection)) {
             getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {

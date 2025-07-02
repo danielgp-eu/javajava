@@ -302,7 +302,7 @@ FROM
      */
     public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-            Statement objStatement = createSqlStatement("Snowflake", objConnection)) {
+            Statement objStatement = DatabaseBasicClass.createSqlStatement("Snowflake", objConnection)) {
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
