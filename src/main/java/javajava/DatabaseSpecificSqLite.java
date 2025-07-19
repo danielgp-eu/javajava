@@ -14,7 +14,6 @@ import org.sqlite.Function;
 /**
  * SQLite methods
  */
-@SuppressWarnings("unused")
 public final class DatabaseSpecificSqLite {
 
     /**

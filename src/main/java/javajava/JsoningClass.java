@@ -50,7 +50,6 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param jsonFile file with expected JSON content
      * @return JsonNode
      */
-    @SuppressWarnings("unused") // NOPMD by Daniel Popiniuc on 02.06.2025, 00:13
     public static JsonNode getJsonFileNodes(final File jsonFile) {
         JsonNode jsonRootNode = null;
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -103,7 +102,6 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName name to search
      * @return List of Properties
      */
-    @SuppressWarnings("unused")
     public static List<Properties> getJsonNodeNameListOfProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final List<Properties> listProperties = new ArrayList<>();
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
@@ -127,7 +125,6 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName name to search
      * @return List of String
      */
-    @SuppressWarnings("unused")
     public static List<String> getJsonNodeNameListOfStrings(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final List<String> listStrings = new ArrayList<>();
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
@@ -145,7 +142,6 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName name to search
      * @return Properties
      */
-    @SuppressWarnings("unused")
     public static Properties getJsonNodeNameProperties(final JsonNode givenJsonNode, final String strJsonNodeName) {
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         final Properties properties = new Properties();

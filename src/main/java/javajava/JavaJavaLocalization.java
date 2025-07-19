@@ -114,7 +114,7 @@ public final class JavaJavaLocalization {
      * @param strLocale localization to use
      */
     public static void setLocaleByString(final String strLocale) {
-        String strFeedback = String.valueOf("~").repeat(60);
+        String strFeedback = "~".repeat(60);
         final String strFeedback1 = strFeedback;
         final Locale lclRequested = Locale.forLanguageTag(strLocale);
         if (isSupported(lclRequested)) {

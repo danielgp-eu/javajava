@@ -22,15 +22,14 @@ public final class DatabaseQueryBindingClass {
      * @param strQueryPurpose Purpose for query execution
      * @param objValues Values to use for executions
      * @param strQuery Original Query with Prompt Parameters
-     * @param arrayCleanable Clean-able fields as array of Strings
-     * @param arrayNullable Null-able fields
+     * @param specialFields Clean-able and Null-able fields
      */
-    public static void executeValuesIntoDatabaseUsingPreparedStatement(final Connection objConnection, final String strQueryPurpose, final List<Properties> objValues, final String strQuery, final String[] arrayCleanable, final String... arrayNullable) {
+    public static void executeValuesIntoDatabaseUsingPreparedStatement(final Connection objConnection, final String strQueryPurpose, final List<Properties> objValues, final String strQuery, final Properties specialFields) {
         final int intRows = objValues.size();
         final List<String> mapParameterOrder = DatabaseBasicClass.getPromptParametersOrderWithinQuery(strQuery, objValues);
         final int intParameters = mapParameterOrder.size();
         final String strFinalQ = Common.convertPromptParametersIntoParameters(strQuery);
-        try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ);) {
+        try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ)) {
             final Properties properties = new Properties();
             // cycle through each row
             for (int crtRow = 1; crtRow <= intRows; crtRow++) {
@@ -44,7 +43,9 @@ public final class DatabaseQueryBindingClass {
                     properties.put("strKey", strKey);
                     properties.put("strOriginalValue", strOriginalValue);
                     properties.put("strQuery", strQuery);
-                    bindSingleParameter(preparedStatement, properties, arrayCleanable, arrayNullable);
+                    properties.put("strArrayCleanable", specialFields.get("Cleanable").toString());
+                    properties.put("strArrayNullable", specialFields.get("Nullable").toString());
+                    bindSingleParameter(preparedStatement, properties);
                 }
                 preparedStatement.addBatch();
                 if ((crtRow % 200 == 0)
@@ -63,16 +64,15 @@ public final class DatabaseQueryBindingClass {
      * bind Single Parameter
      * @param preparedStatement original Prepared Statement
      * @param properties properties with relevant components
-     * @param arrayCleanable clean-able list of fields
-     * @param arrayNullable NULL-able list of fields
      * @return PreparedStatement
      */
-    private static PreparedStatement bindSingleParameter(final PreparedStatement preparedStatement, final Properties properties, final String[] arrayCleanable, final String... arrayNullable) {
+    private static PreparedStatement bindSingleParameter(final PreparedStatement preparedStatement, final Properties properties) {
         final int index = Integer.parseInt(properties.get("index").toString());
         final String strKey = properties.get("strKey").toString();
         final String strQuery = properties.get("strQuery").toString();
         final String strOriginalValue = properties.get("strOriginalValue").toString();
-        final String strValueToUse = strOriginalValue;
+        final String[] arrayCleanable = properties.get("strArrayCleanable").toString().split("|");
+        final String[] arrayNullable = properties.get("strArrayNullable").toString().split("|");
         try {
             if (Common.STR_NULL.equalsIgnoreCase(strOriginalValue) 
                 || (Arrays.asList(arrayNullable).contains(strKey)
@@ -88,7 +88,7 @@ public final class DatabaseQueryBindingClass {
             } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
                 preparedStatement.setString(index, strOriginalValue.replace("\"", "\"\""));
             } else {
-                preparedStatement.setString(index, strValueToUse);
+                preparedStatement.setString(index, strOriginalValue);
             }
         } catch (SQLException e) {
             setSqlParameterBindingError(e, strKey, strQuery);
@@ -98,20 +98,22 @@ public final class DatabaseQueryBindingClass {
 
     /**
      * Error logging the SQL Exception
-     * @param e exception object
+     * @param exptObj exception object
      * @param objValues values provided
      * @param strQuery relevant query
      */
     private static void setSqlExceptionError(final SQLException exptObj, final List<Properties> objValues, final String strQuery) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = exptObj.getLocalizedMessage() + " with Values " + objValues.get(0).toString() + " for Query " + strQuery;
+            final String strFeedback = exptObj.getLocalizedMessage() + " with Values " + objValues.getFirst().toString() + " for Query " + strQuery;
             LoggerLevelProvider.LOGGER.error(strFeedback);
         }
     }
 
     /**
      * Success confirmation to Info log
-     * @param strQueryPurpose
+     * @param exptObj SQLException
+     * @param strParameterName parameter name
+     * @param strQuery query
      */
     private static void setSqlParameterBindingError(final SQLException exptObj, final String strParameterName, final String strQuery) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {

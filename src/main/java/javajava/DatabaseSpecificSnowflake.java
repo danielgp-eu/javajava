@@ -250,7 +250,6 @@ FROM
      * @param propInstance instance properties
      * @return Properties
      */
-    @SuppressWarnings("unused")
     public static Properties getSnowflakeProperties(final Properties propInstance) {
         final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
         return getSnowflakeProperties(strDatabase, propInstance);

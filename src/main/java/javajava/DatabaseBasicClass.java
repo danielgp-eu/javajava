@@ -26,7 +26,6 @@ public final class DatabaseBasicClass {
      * @param arrayNullable array with NULL-able fields
      * @return final query
      */
-    @SuppressWarnings("unused")
     public static String distributePropertiesToQuery(final Properties queryProperties, final String strRawQuery, final String[] arrayCleanable, final String... arrayNullable) {
         String strQueryToReturn = strRawQuery;
         for (final Object obj : queryProperties.keySet()) {
@@ -129,29 +128,27 @@ public final class DatabaseBasicClass {
      */
     public static List<String> getPromptParametersOrderWithinQuery(final String strOriginalQ, final List<Properties> objValues) {
         final List<String> valFields = new ArrayList<>();
-        objValues.get(0).forEach((strKey, strValue) -> {
-            valFields.add(strKey.toString());
-        });
+        objValues.getFirst().forEach((strKey, strValue) -> valFields.add(strKey.toString()));
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValuesAre"), valFields.toString());
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValuesAre"), valFields);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         final List<String> listMatches = Common.extractMatches(strOriginalQ, Common.STR_PRMTR_RGX);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterForQueryAre"), listMatches.toString());
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterForQueryAre"), listMatches);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
-        for (int intParameter = 0; intParameter < intParameters; intParameter++) {
-            final String crtParameter = StringManipulationClass.cleanStringFromCurlyBraces(listMatches.get(intParameter));
+        for (final String listMatch : listMatches) {
+            final String crtParameter = StringManipulationClass.cleanStringFromCurlyBraces(listMatch);
             final int intPosition = valFields.indexOf(crtParameter);
             if (intPosition != -1) {
                 mapParameterOrder.add(crtParameter);
             }
         }
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder.toString());
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         final int foundParameters = mapParameterOrder.size();
@@ -159,7 +156,7 @@ public final class DatabaseBasicClass {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterValueMissing")
                 , intParameters
                 , foundParameters
-                , mapParameterOrder.toString() + " vs. " + objValues.get(0).toString()
+                , mapParameterOrder + " vs. " + objValues.getFirst().toString()
                 , strOriginalQ);
             LoggerLevelProvider.LOGGER.error(strFeedback);
         }
@@ -168,7 +165,7 @@ public final class DatabaseBasicClass {
 
     /**
      * Success confirmation to Info log
-     * @param strQueryPurpose
+     * @param strQueryPurpose Query purpose
      */
     public static void setSqlExecutionSuccessInfo(final String strQueryPurpose) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {

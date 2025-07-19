@@ -23,7 +23,7 @@ public final class SecureXmlParser {
 
     /**
      * Get Feature by Name
-     * @param strFeatureName
+     * @param strFeatureName Name of feature
      * @return String
      */
     private static String getFeatureByName(final String strFeatureName) {
@@ -61,10 +61,7 @@ public final class SecureXmlParser {
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         final List<String> listFeatures = Arrays.asList("disallow-doctype-decl", "external-general-entities", "external-parameter-entities", "secure-processing");
         listFeatures.forEach(strFeature -> {
-            boolean bolSettingType = true;
-            if (strFeature.startsWith("external-")) {
-                bolSettingType = false;
-            }
+            final boolean bolSettingType = !strFeature.startsWith("external-");
             try {
                 docBuilderFactory.setFeature(getFeatureByName(strFeature), bolSettingType);
             } catch (ParserConfigurationException e) {

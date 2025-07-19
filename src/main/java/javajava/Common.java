@@ -128,7 +128,6 @@ public final class Common {
      * @param inputString string to evaluate
      * @return number of parameters within given string
      */
-    @SuppressWarnings("unused")
     public static int countParametersWithinString(final String inputString) {
         final Pattern pattern = Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
         final Matcher matcher = pattern.matcher(inputString);
@@ -272,7 +271,6 @@ public final class Common {
      * @param strReplacement replacements (1 to multiple)
      * @return String
      */
-    @SuppressWarnings("unused")
     public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final Object... strReplacement) {
         return switch (intRsParams) {
             case 1 -> String.format(strUnformatted, strReplacement[0].toString());

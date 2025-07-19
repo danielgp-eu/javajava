@@ -71,7 +71,6 @@ public final class ShellingClass {
      * @param strCommand command to execute
      * @param strParameters command parameters
      */
-    @SuppressWarnings("unused")
     public static void executeShellUtility(final String strCommand, final String strParameters) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
@@ -164,7 +163,7 @@ public final class ShellingClass {
 
     /**
      * Execution Interrupted details captured to Error log
-     * @param strTraceDetails
+     * @param strTraceDetails details
      */
     private static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {

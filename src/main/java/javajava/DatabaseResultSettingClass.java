@@ -161,7 +161,6 @@ public final class DatabaseResultSettingClass {
      * @param resultSet result-set
      * @return list of strings
      */
-    @SuppressWarnings("unused")
     public static List<String> getResultSetListOfStrings(final ResultSet resultSet) {
         final List<String> listStrings = new ArrayList<>();
         try {

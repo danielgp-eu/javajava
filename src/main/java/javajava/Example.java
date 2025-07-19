@@ -42,7 +42,7 @@ public final class Example {
      * log Application Start
      */
     private static void logApplicationStart() {
-        final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec") + String.valueOf("-").repeat(80);
+        final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec") + "-".repeat(80);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }

@@ -7,8 +7,8 @@ public final class StringManipulationClass {
 
     /**
      * Clean String From CurlyBraces
-     * @param strOriginal
-     * @return
+     * @param strOriginal Original string
+     * @return String
      */
     public static String cleanStringFromCurlyBraces(final String strOriginal) {
         final StringBuilder strBuilder = new StringBuilder();
@@ -22,8 +22,8 @@ public final class StringManipulationClass {
 
     /**
      * get Named Parameter From Prompt One
-     * @param strOriginal
-     * @return
+     * @param strOriginal Original string
+     * @return String
      */
     public static String getNamedParameterFromPromptOne(final String strOriginal) {
         return ":" + cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");

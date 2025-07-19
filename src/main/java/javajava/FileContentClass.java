@@ -24,7 +24,6 @@ public final class FileContentClass {
      * @param strFileName file name
      * @return String
      */
-    @SuppressWarnings("unused")
     public static String getFileContentIntoString(final String strFileName) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);

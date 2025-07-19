@@ -103,7 +103,7 @@ public final class FileHandlingClass {
      * @param isItOk2 file check result
      * @param ePreety file name
      * @param propsFile file Properties
-     * @return
+     * @return String
      */
     private static String getJsonFileName(final boolean isItOk2, final Entry<Object, Object> ePreety, final Properties propsFile) {
         final String strFileJson;

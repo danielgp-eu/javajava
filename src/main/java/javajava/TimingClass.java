@@ -50,7 +50,6 @@ public final class TimingClass {
      * @param strDtTmPattern Date and time pattern to use
      * @return String
      */
-    @SuppressWarnings("unused")
     public static String getCurrentTimestamp(final String strDtTmPattern) {
         final LocalDateTime nowI = LocalDateTime.now();
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern);
@@ -64,7 +63,6 @@ public final class TimingClass {
      * @param strZoneName time zone name
      * @return String
      */
-    @SuppressWarnings("unused")
     public static String getCurrentTimestamp(final String strDtTmPattern, final String strZoneName) {
         final ZonedDateTime nowI = ZonedDateTime.now(ZoneId.of(strZoneName));
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern);

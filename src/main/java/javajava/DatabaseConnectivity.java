@@ -17,7 +17,6 @@ public final class DatabaseConnectivity {
      * @param strDatabaseType type of database (mainly for meaningful feedback)
      * @param givenConnection connection object
      */
-    @SuppressWarnings("unused")
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
@@ -43,7 +42,6 @@ public final class DatabaseConnectivity {
      * @param strDatabaseType type of database (mainly for meaningful feedback)
      * @param givenStatement statement
      */
-    @SuppressWarnings("unused")
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
