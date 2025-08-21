@@ -88,7 +88,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
             }
         } else {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFound"), givenJsonNode);
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
         }

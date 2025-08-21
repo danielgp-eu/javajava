@@ -20,8 +20,8 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
                 <SizeBasedTriggeringPolicy size="10MB" />
             </Policies>
-            <!-- Max 10 files will be created everyday -->
-            <DefaultRolloverStrategy max="10">
+            <!-- Max 50 files will be created every-hour -->
+            <DefaultRolloverStrategy max="50">
                 <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
                     <!-- Delete all files older than 10 days -->
                     <IfLastModified age="10d" />
@@ -36,8 +36,8 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
                 <SizeBasedTriggeringPolicy size="10MB" />
             </Policies>
-            <!-- Max 10 files will be created everyday -->
-            <DefaultRolloverStrategy max="10">
+            <!-- Max 50 files will be created every-hour -->
+            <DefaultRolloverStrategy max="50">
                 <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
                     <!-- Delete all files older than 10 days -->
                     <IfLastModified age="10d" />
@@ -54,8 +54,8 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
                 <SizeBasedTriggeringPolicy size="10MB" />
             </Policies>
-            <!-- Max 10 files will be created everyday -->
-            <DefaultRolloverStrategy max="10">
+            <!-- Max 50 files will be created every-hour -->
+            <DefaultRolloverStrategy max="50">
                 <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
                     <!-- Delete all files older than 10 days -->
                     <IfLastModified age="10d" />
@@ -72,8 +72,8 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
                 <SizeBasedTriggeringPolicy size="10MB" />
             </Policies>
-            <!-- Max 10 files will be created everyday -->
-            <DefaultRolloverStrategy max="10">
+            <!-- Max 50 files will be created every-hour -->
+            <DefaultRolloverStrategy max="50">
                 <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
                     <!-- Delete all files older than 10 days -->
                     <IfLastModified age="10d" />
@@ -92,7 +92,7 @@
             <AppenderRef ref="debugLog" />
             <AppenderRef ref="errorLog" />
             <AppenderRef ref="warnLog" />
-            <AppenderRef ref="infoLog"/>
+            <AppenderRef ref="infoLog" />
         </Root>
     </Loggers>
 </Configuration>
