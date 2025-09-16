@@ -4,7 +4,7 @@
   <groupId>io.github.danielgp-eu</groupId>
   <artifactId>javajava</artifactId>
   <name>JavaJava</name>
-  <version>0.9.9</version>
+  <version>0.10.0</version>
   <developers>
     <developer>
       <name>Daniel Popiniuc-Gheorghe</name>
@@ -31,7 +31,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.14.0</version>
         <configuration>
-          <release>21</release>
+          <release>25</release>
           <failOnError>true</failOnError>
         </configuration>
       </plugin>
@@ -51,7 +51,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.11.2</version>
+        <version>3.11.3</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -63,7 +63,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.6.0</version>
+        <version>3.6.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -122,7 +122,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>3.2.7</version>
+        <version>3.2.8</version>
         <executions>
           <execution>
             <id>sign-artifacts</id>
@@ -138,6 +138,39 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>0.8.13</version>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <configuration>
+                  <formats>
+                    <format>XML</format>
+                  </formats>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

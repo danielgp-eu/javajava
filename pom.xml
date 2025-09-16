@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>0.9.10</version>
+    <version>0.10.0</version>
     <name>JavaJava</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -39,7 +39,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.14.0</version>
                 <configuration>
-                    <release>21</release>
+                    <release>25</release>
                     <failOnError>true</failOnError>
                 </configuration>
             </plugin>
