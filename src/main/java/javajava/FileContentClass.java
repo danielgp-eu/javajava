@@ -70,7 +70,7 @@ public final class FileContentClass {
      * @param strFileName target file name to be written to
      * @param intColToEval number of column to evaluate (build values list from it)
      * @param intColToGrpBy number of column to group list of values by
-     * @return Map with String and List<String>
+     * @return Map with String and List or String
      */
     public static Map<String, List<String>> getListOfValuesFromColumnsGroupedByAnotherColumnValuesFromCsvFile(
             final String strFileName,
@@ -139,7 +139,7 @@ public final class FileContentClass {
      * storing into a CSV file a LinkedHashMap
      * @param strFileName target file name to be written to
      * @param strPrefixValue prefix column value
-     * @param listStrings List<String>
+     * @param listStrings List of String
      */
     public static void storeIntoCsvFileList(final String strFileName, final String strPrefixValue, final List<String> listStrings) {
         try {

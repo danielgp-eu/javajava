@@ -138,6 +138,7 @@ public final class TimingClass {
      * 
      * @param startTimeStamp timestamp value seen at start
      * @param strPartial prefix for feedback
+     * @return String
      */
     public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
