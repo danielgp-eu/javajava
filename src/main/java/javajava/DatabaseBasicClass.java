@@ -1,17 +1,15 @@
 package javajava;
-/* SQL classes */
+
+import org.apache.logging.log4j.Level;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-/* Time classes */
 import java.time.LocalDateTime;
-/* Utility classes */
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Database methods

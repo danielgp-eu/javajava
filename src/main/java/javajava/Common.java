@@ -1,14 +1,13 @@
 package javajava;
-/* Utility classes */
-import java.util.Arrays;
+
+import org.apache.logging.log4j.Level;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-/* Regular Expressions classes */
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Class with common features
@@ -69,7 +68,7 @@ public final class Common {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.TRACE)) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
@@ -79,7 +78,7 @@ public final class Common {
             final String newParameter = StringManipulationClass.getNamedParameterFromPromptOne(currentPrmtName);
             strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
         }
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.TRACE)) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLqueryFinalIs", strFinalQ);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }

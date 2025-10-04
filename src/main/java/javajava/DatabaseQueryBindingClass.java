@@ -1,15 +1,14 @@
 package javajava;
-/* SQL classes */
+
+import org.apache.logging.log4j.Level;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
-/* Utility classes */
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Database Query Binding 

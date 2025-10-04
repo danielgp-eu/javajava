@@ -1,19 +1,13 @@
 package javajava;
-/* Jackson classes for fast JSON handling */
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-/* I/O classes */
+import org.apache.logging.log4j.Level;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-/* Utility classes */
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-/* Logging */
-import org.apache.logging.log4j.Level;
+import java.util.*;
 
 /**
  * JSON handling

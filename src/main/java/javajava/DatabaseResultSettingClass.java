@@ -1,15 +1,14 @@
 package javajava;
-/* SQL classes */
+
+import org.apache.logging.log4j.Level;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-/* Utility classes */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Basic features for Databases 
@@ -87,10 +86,6 @@ public final class DatabaseResultSettingClass {
                 colProperties.put("Nullable", metaData.isNullable(columnNumber));
                 listResultSet.add(colProperties);
             }
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetStructure"), listResultSet);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
@@ -121,10 +116,6 @@ public final class DatabaseResultSettingClass {
                     currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
                 }
                 listResultSet.add(currentRow);
-            }
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLresultSetListOfValues"), listResultSet);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {

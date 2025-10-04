@@ -1,23 +1,16 @@
 package javajava;
-/* Java utility classes */
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.List;
-import java.util.Map;
-/* Logging */
+
 import org.apache.logging.log4j.Level;
-/* OSHI Hardware/Software classes */
 import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.Display;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.GraphicsCard;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.NetworkIF;
-import oshi.hardware.PhysicalMemory;
+import oshi.hardware.*;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Capturing current environment details

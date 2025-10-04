@@ -1,20 +1,17 @@
 package javajava;
-/* I/O classes */
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-/* XML classes */
+
+import org.apache.logging.log4j.Level;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-/* Logging */
-import org.apache.logging.log4j.Level;
-/* DOM class */
-import org.w3c.dom.Document;
-/* XML Exception class */
-import org.xml.sax.SAXException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Secured XML parser

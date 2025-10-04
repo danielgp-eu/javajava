@@ -1,21 +1,15 @@
 package javajava;
-/* Java IO classes */
+
+import org.apache.logging.log4j.Level;
+
 import java.io.File;
 import java.io.IOException;
-/* Java NIO classes */
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-/* Java util classes */
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Properties;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * File operation class

@@ -1,15 +1,13 @@
 package javajava;
-/* ICU classes */
+
 import com.ibm.icu.text.PluralRules;
-/* Text classes */
+import org.apache.logging.log4j.Level;
+
 import java.text.MessageFormat;
-/* Utility classes */
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Internationalization

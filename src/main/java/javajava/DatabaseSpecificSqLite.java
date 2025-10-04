@@ -1,15 +1,13 @@
 package javajava;
-/* SQL classes */
+
+import org.apache.logging.log4j.Level;
+import org.sqlite.Function;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-/* Util classes */
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-/* Logger classes */
-import org.apache.logging.log4j.Level;
-/* SQLite function class */
-import org.sqlite.Function;
+import java.util.regex.Pattern;
 
 /**
  * SQLite methods

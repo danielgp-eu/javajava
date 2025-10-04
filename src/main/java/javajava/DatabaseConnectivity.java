@@ -1,10 +1,10 @@
 package javajava;
-/* SQL classes */
+
+import org.apache.logging.log4j.Level;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Database connectivity

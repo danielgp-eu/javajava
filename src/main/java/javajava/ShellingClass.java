@@ -1,13 +1,12 @@
 package javajava;
-/* I/O classes */
+
+import org.apache.logging.log4j.Level;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-/* Time classes */
 import java.time.LocalDateTime;
 import java.util.Arrays;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * Shell execution methods
@@ -45,9 +44,8 @@ public final class ShellingClass {
      * @param process process in scope
      * @param strOutLineSep line separator for the output
      * @return String
-     * @throws IOException capturing any error on reading the input stream
      */
-    private static String captureProcessOutput(final Process process, final String strOutLineSep) throws IOException {
+    private static String captureProcessOutput(final Process process, final String strOutLineSep) {
         String strReturn = null;
         final StringBuilder processOutput = new StringBuilder();
         try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {

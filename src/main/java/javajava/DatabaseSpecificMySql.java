@@ -1,20 +1,18 @@
 package javajava;
 /* Jackson classes for fast JSON handling */
+
 import com.fasterxml.jackson.databind.JsonNode;
-/* I/O classes */
+import org.apache.logging.log4j.Level;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-/* SQL classes */
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-/* Utility classes */
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-/* Logging */
-import org.apache.logging.log4j.Level;
 
 /**
  * MySQL methods
@@ -97,7 +95,7 @@ public final class DatabaseSpecificMySql {
      * @param strKind which type of output would be needed
      * @return List with Properties
      */
-    public static  List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+    public static List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
         final String strQueryToUse = getMySqlPreDefinedMetadataQuery(strWhich);
         final Properties rsProperties = new Properties();
         rsProperties.put("strWhich", strWhich);
@@ -116,25 +114,25 @@ public final class DatabaseSpecificMySql {
     public static String getMySqlPreDefinedMetadataQuery(final String strWhich) {
         return switch (strWhich) {
             case "Columns" -> """
-                    SELECT
-                          `TABLE_CATALOG`
-                        , `TABLE_SCHEMA`
-                        , `TABLE_NAME`
-                        , `COLUMN_NAME`
-                        , `ORDINAL_POSITION`
-                        , `COLUMN_DEFAULT`
-                        , `IS_NULLABLE`
-                        , `DATA_TYPE`
-                        , `CHARACTER_SET_NAME`
-                        , `COLLATION_NAME`
-                        , `COLUMN_TYPE`
-                        , `COLUMN_KEY`
-                        , `EXTRA`
-                        , `COLUMN_COMMENT`
-                        , `GENERATION_EXPRESSION`
-                        , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
-                    FROM
-                        `information_schema`.`SCHEMATA`;""";
+SELECT
+      `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `COLUMN_NAME`
+    , `ORDINAL_POSITION`
+    , `COLUMN_DEFAULT`
+    , `IS_NULLABLE`
+    , `DATA_TYPE`
+    , `CHARACTER_SET_NAME`
+    , `COLLATION_NAME`
+    , `COLUMN_TYPE`
+    , `COLUMN_KEY`
+    , `EXTRA`
+    , `COLUMN_COMMENT`
+    , `GENERATION_EXPRESSION`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`SCHEMATA`;""";
             case "Databases" -> """
                     SELECT
                           `CATALOG_NAME`
@@ -146,53 +144,64 @@ public final class DatabaseSpecificMySql {
                     FROM
                         `information_schema`.`SCHEMATA`;""";
             case "TablesAndViews" -> """
-                    SELECT
-                          `TABLE_CATALOG`
-                        , `TABLE_SCHEMA`
-                        , `TABLE_NAME`
-                        , `TABLE_TYPE`
-                        , `ENGINE`
-                        , `VERSION`
-                        , `ROW_FORMAT`
-                        , `TABLE_ROWS`
-                        , `AVG_ROW_LENGTH`
-                        , `DATA_LENGTH`
-                        , `MAX_DATA_LENGTH`
-                        , `INDEX_LENGTH`
-                        , `DATA_FREE`
-                        , `AUTO_INCREMENT`
-                        , `CREATE_TIME`
-                        , `UPDATE_TIME`
-                        , `CHECK_TIME`
-                        , `TABLE_COLLATION`
-                        , `CHECKSUM`
-                        , `CREATE_OPTIONS`
-                        , `TABLE_COMMENT`
-                        , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
-                    FROM
-                        `information_schema`.`TABLES`;""";
+SELECT
+      `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `TABLE_TYPE`
+    , `ENGINE`
+    , `VERSION`
+    , `ROW_FORMAT`
+    , `TABLE_ROWS`
+    , `AVG_ROW_LENGTH`
+    , `DATA_LENGTH`
+    , `MAX_DATA_LENGTH`
+    , `INDEX_LENGTH`
+    , `DATA_FREE`
+    , `AUTO_INCREMENT`
+    , `CREATE_TIME`
+    , `UPDATE_TIME`
+    , `CHECK_TIME`
+    , `TABLE_COLLATION`
+    , `CHECKSUM`
+    , `CREATE_OPTIONS`
+    , `TABLE_COMMENT`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`TABLES`;""";
+            case "Schemas" -> """
+SELECT
+      "CATALOG_NAME"
+    , "SCHEMA_NAME"
+    , "DEFAULT_CHARACTER_SET_NAME"
+    , "DEFAULT_COLLATION_NAME"
+    , "SQL_PATH"
+    , "DEFAULT_ENCRYPTION"
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    "INFORMATION_SCHEMA"."SCHEMATA";""";
             case "Views" -> """
-                    SELECT
-                          `TABLE_CATALOG`
-                        , `TABLE_SCHEMA`
-                        , `TABLE_NAME`
-                        , `VIEW_DEFINITION`
-                        , `CHECK_OPTION`
-                        , `DEFINER`
-                        , `SECURITY_TYPE`
-                        , `CHARACTER_SET_CLIENT`
-                        , `COLLATION_CONNECTION`
-                        , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
-                    FROM
-                        `information_schema`.`VIEWS`;""";
-            case "Views_Light" -> """
-                    SELECT
-                          "TABLE_CATALOG"
-                        , "TABLE_SCHEMA"
-                        , "TABLE_NAME"
-                        , "VIEW_DEFINITION"
-                    FROM
-                        "INFORMATION_SCHEMA"."VIEWS";""";
+SELECT
+      `TABLE_CATALOG`
+    , `TABLE_SCHEMA`
+    , `TABLE_NAME`
+    , `VIEW_DEFINITION`
+    , `CHECK_OPTION`
+    , `DEFINER`
+    , `SECURITY_TYPE`
+    , `CHARACTER_SET_CLIENT`
+    , `COLLATION_CONNECTION`
+    , UTC_TIMESTAMP()           AS `EXTRACTION_TIMESTAMP_UTC`
+FROM
+    `information_schema`.`VIEWS`;""";
+            case "ViewsLight" -> """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "VIEW_DEFINITION"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS";""";
             default -> {
                 final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
@@ -226,7 +235,7 @@ public final class DatabaseSpecificMySql {
     }
 
     /**
-     * Execute SQLite pre-defined actions
+     * Execute MySQL pre-defined actions
      * 
      * @param strWhich Which kind of query is needed
      * @param givenProperties Connection Properties
@@ -234,7 +243,8 @@ public final class DatabaseSpecificMySql {
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
             Statement objStatement = DatabaseConnectivity.createSqlStatement(Common.STR_DB_MYSQL, objConnection)) {
-            getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
+            final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
+            LoggerLevelProvider.LOGGER.info(listProps);
         } catch(SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));
