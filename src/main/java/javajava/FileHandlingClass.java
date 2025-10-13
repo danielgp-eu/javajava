@@ -4,10 +4,7 @@ import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -208,13 +205,11 @@ public final class FileHandlingClass {
      */
     public static void moveFileToNewLocation(final String strFileName, final String strDestFolder) {
         try {
-            final File strSourceFile = new File(strFileName); 
-            final File strDestFile = new File(strDestFolder);
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
                 final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder);
                 LoggerLevelProvider.LOGGER.info(strFeedback);
             }
-            org.apache.commons.io.FileUtils.moveFileToDirectory(strSourceFile, strDestFile, true);
+            Files.move(Path.of(strFileName), Path.of(strDestFolder), StandardCopyOption.REPLACE_EXISTING);
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
                 final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder);
                 LoggerLevelProvider.LOGGER.info(strFeedback);
