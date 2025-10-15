@@ -1,11 +1,10 @@
 package javajava;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -23,17 +22,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     public static JsonNode getJsonFileNodes(final InputStream strJson) {
         JsonNode jsonRootNode = null;
         final ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            jsonRootNode = objectMapper.readTree(strJson);
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), strJson);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
-        } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONloadErrorInputStream"), strJson, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        jsonRootNode = objectMapper.readTree(strJson);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), strJson);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         return jsonRootNode;
     }
@@ -47,17 +39,10 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
     public static JsonNode getJsonFileNodes(final File jsonFile) {
         JsonNode jsonRootNode = null;
         final ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            jsonRootNode = objectMapper.readTree(jsonFile);
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
-        } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONloadErrorFile"), jsonFile.toString(), Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        jsonRootNode = objectMapper.readTree(jsonFile);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         return jsonRootNode;
     }

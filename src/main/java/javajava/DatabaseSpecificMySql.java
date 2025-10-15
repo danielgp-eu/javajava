@@ -1,7 +1,7 @@
 package javajava;
 /* Jackson classes for fast JSON handling */
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import org.apache.logging.log4j.Level;
 
 import java.io.ByteArrayInputStream;
