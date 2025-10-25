@@ -152,10 +152,10 @@
             <artifactId>icu4j</artifactId>
             <version>77.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core -->
+        <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core-java25 -->
         <dependency>
             <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core</artifactId>
+            <artifactId>oshi-core-java25</artifactId>
             <version>6.9.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
