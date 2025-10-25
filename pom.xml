@@ -201,7 +201,7 @@
             <artifactId>jackson-databind</artifactId>
             <version>3.0.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
+        <!-- https://mvnrepository.com/artifact/tools.jackson.dataformat/jackson-dataformat-xml -->
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
