@@ -120,7 +120,7 @@ public final class JavaJavaLocalization {
             strFeedback = String.format("Requested localization to %s is supported and has been successfully set!", strLocale);
         } else {
             Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
-            strFeedback = String.format("Requested localization %s is NOT supported, hence efault one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
+            strFeedback = String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
         }
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             LoggerLevelProvider.LOGGER.debug(strFeedback1);
