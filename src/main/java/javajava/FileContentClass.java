@@ -46,6 +46,16 @@ public final class FileContentClass {
     }
 
     /**
+     * Build message for file operation error
+     * @param strFileName
+     * @param strStagTrace
+     * @return
+     */
+    private static String getFileErrorMessage(final String strFileName, final String strStagTrace) {
+        return String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
+    }
+
+    /**
      * Get file content into InputStream
      * 
      * @param strFileName file name
@@ -93,16 +103,6 @@ public final class FileContentClass {
             }
         }
         return grouped;
-    }
-
-    /**
-     * Build message for file operation error 
-     * @param strFileName
-     * @param strStagTrace
-     * @return
-     */
-    private static String getFileErrorMessage(final String strFileName, final String strStagTrace) {
-        return String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
     }
 
     /**
