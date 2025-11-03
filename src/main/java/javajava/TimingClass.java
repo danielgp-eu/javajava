@@ -1,6 +1,7 @@
 package javajava;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -42,6 +43,23 @@ public final class TimingClass {
                 + getDurationWithCustomRules(duration, "Second", arrayStrings[2])
                 + getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3])
             ).trim();
+    }
+
+    /**
+     * converts a Date from one format to another
+     *
+     * @param inDate input Date
+     * @param inTimeFormat input Time Format
+     * @param outTimeFormat output Time Format
+     * @return String
+     */
+    public static String convertTimeFormat(final String inDate, final String inTimeFormat, final String outTimeFormat) {
+        // Define input and output formatters
+        final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat);
+        final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat);
+        // Parse and format
+        final LocalDate date = LocalDate.parse(inDate, inputFormatter);
+        return date.format(outputFormatter);
     }
 
     /**

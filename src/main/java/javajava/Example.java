@@ -16,6 +16,7 @@ import java.util.Properties;
     name = "top",
     subcommands = {
         GetInformationFromDatabase.class,
+        GetInformationFromTextWithSellingPointReceiptsIntoCsvFile.class,
         GetSpecificInformationFromSnowflake.class,
         GetSubFoldersFromFolder.class,
         LogEnvironmentDetails.class
@@ -59,12 +60,32 @@ public final class Example implements Runnable {
     public void run() {
         // intentionally left commented
     }
+}
+
+/**
+ * Gets information from Text for Selling Point Sale Into CSV file
+ */
+@CommandLine.Command(name = "GetInformationFromTextWithSellingPointReceiptsIntoCsvFile", description = "Gets information from text into CSV file")
+class GetInformationFromTextWithSellingPointReceiptsIntoCsvFile implements Runnable {
 
     /**
-     * Private constructor to prevent instantiation
+     * String for FileName
      */
-    public Example() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+    @CommandLine.Option(
+            names = {"-flIn", "--inFileName"},
+            description = "File Name to be analyzed",
+            arity = "1",
+            required = true)
+    private String strFileNameIn;
+
+    @Override
+    public void run() {
+        final String strFileNameOut = strFileNameIn + ".csv";
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format("I will process %s file and write results into %s as a CSV file", strFileNameIn, strFileNameOut);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
+        FileContentClass.getFileContentAsSellingPointReceiptIntoCsvFile(strFileNameIn, strFileNameOut);
     }
 }
 
@@ -175,13 +196,6 @@ class GetInformationFromDatabase implements Runnable {
         }
         performAction(strDbType, strInfoType);
     }
-
-    /**
-     * Private constructor to prevent instantiation
-     */
-    public GetInformationFromDatabase() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
-    }
 }
 
 /**
@@ -242,13 +256,6 @@ class GetSpecificInformationFromSnowflake implements Runnable {
         performAction(strInfoType);
     }
 
-    /**
-     * Private constructor to prevent instantiation
-     */
-    public GetSpecificInformationFromSnowflake() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
-    }
-
 }
 
 /**
@@ -280,12 +287,5 @@ class LogEnvironmentDetails implements Runnable {
     public void run() {
         final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
         LoggerLevelProvider.LOGGER.info(strFeedback);
-    }
-
-    /**
-     * Private constructor to prevent instantiation
-     */
-    public LogEnvironmentDetails() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
     }
 }

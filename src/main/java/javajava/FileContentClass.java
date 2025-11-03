@@ -2,6 +2,7 @@ package javajava;
 
 import org.apache.logging.log4j.Level;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +45,88 @@ public final class FileContentClass {
             }
         }
         return strReturn;
+    }
+
+    public static void getFileContentAsSellingPointReceiptIntoCsvFile(final String inFileName, final String outFileName) {
+        final List<String> lstOutput = new ArrayList<>(); // content will be here
+        lstOutput.add("CIF;Value;Z;Receipt;ID;Date;Hour;SerialNumber;TD"); // adding the CSV Header to the list
+        String strOutLine = null;
+        try (BufferedReader reader = Files.newBufferedReader(Path.of(inFileName))) {
+            String line;
+            Integer intLineNo = 0;
+            Integer intLineFeedbackLimit = 999999999;
+            Boolean bolIsReceipt = false;
+            while ((line = reader.readLine()) != null) {
+                intLineNo++;
+                LoggerLevelProvider.LOGGER.debug(intLineNo);
+                if (line.endsWith("MASTER  TASTE     S.R.L.-D") || line.endsWith("MASTER  TASTE     S.R.L.")) {
+                    strOutLine = "";
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug("Line start");
+                    }
+                }
+                if (line.startsWith("             CIF:")) {
+                    strOutLine = line.substring(18); // CIF
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                }
+                if (line.startsWith("TOTAL LEI")) {
+                    strOutLine = strOutLine + ";" + line.replaceAll("TOTAL LEI", "").trim(); // Value
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                }
+                /*if (line.startsWith("                  #")) {
+                    strOutLine = strOutLine +  ";" + line.substring(18); // Index
+                }*/
+                if (line.startsWith("Z:")) {
+                    strOutLine = strOutLine + ";" + line.substring(2, 6); // Z
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                    strOutLine = strOutLine + ";" + line.substring(10, 14); // Receipt
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                }
+                if (line.startsWith("ID BF:")) {
+                    strOutLine = strOutLine + ";" + line.substring(6).replace("`", "").trim(); // ID
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                    bolIsReceipt = true;
+                }
+                if (line.startsWith("      DATA:")) {
+                    strOutLine = strOutLine + ";" + TimingClass.convertTimeFormat(line.substring(12, 22)
+                            , "dd-MM-yyyy", "yyyy-MM-dd"); // Date
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                    strOutLine = strOutLine + ";" + line.substring(28); // Hour
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                }
+                if (line.startsWith("S/N:")) {
+                    strOutLine = strOutLine + ";" + line.substring(4, 16); // SerialNumber
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                    strOutLine = strOutLine + ";" + line.substring(34); // TD
+                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                    }
+                    if (bolIsReceipt) {
+                        lstOutput.add(strOutLine); // end of Receipt so current CSV line can be safely added to the List
+                        bolIsReceipt = false;
+                    }
+                }
+            }
+            writeListToTextFile(lstOutput, outFileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
