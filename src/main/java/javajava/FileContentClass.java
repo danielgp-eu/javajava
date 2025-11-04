@@ -54,33 +54,28 @@ public final class FileContentClass {
         try (BufferedReader reader = Files.newBufferedReader(Path.of(inFileName))) {
             String line;
             Integer intLineNo = 0;
-            Integer intLineFeedbackLimit = 999999999;
             Integer intReceiptLineNo = 0;
             Boolean bolIsReceipt = false;
             String strCardValue = "";
             String strModernPaymentValue = "";
             String strCashValue = "";
             String strRestValue = "";
+            String strTrimmedLine = "";
             while ((line = reader.readLine()) != null) {
                 intLineNo++;
                 intReceiptLineNo++;
-                LoggerLevelProvider.LOGGER.debug(intLineNo);
-                if (line.trim().replaceAll("  ", " ") .startsWith("MASTER TASTE S.R.L")) {
-                    strOutLine = line.trim(); // Company
+                strTrimmedLine = line.trim();
+                if (strTrimmedLine.replaceAll("  ", " ").startsWith("MASTER TASTE")) {
+                    strOutLine = strTrimmedLine; // Company
                     intReceiptLineNo = 1;
                     bolIsReceipt = false;
                 }
-                if (intReceiptLineNo == 2) {
-                    strOutLine = strOutLine + ";" + line.trim(); // Address
+                LoggerLevelProvider.LOGGER.debug(intLineNo + " receipt line " + intReceiptLineNo + " w. content " + line);
+                if (List.of(2, 3, 4).contains(intReceiptLineNo) ) {
+                    strOutLine = strOutLine + ";" + strTrimmedLine; // 2 = Address, 3 = City, 4 = County
                 }
-                if (intReceiptLineNo == 3) {
-                    strOutLine = strOutLine + ";" + line.trim(); // City
-                }
-                if (intReceiptLineNo == 4) {
-                    strOutLine = strOutLine + ";" + line.trim(); // County
-                }
-                if (line.startsWith("             CIF:")) {
-                    strOutLine = strOutLine + ";" + line.substring(18); // CIF
+                if (strTrimmedLine.startsWith("CIF:")) {
+                    strOutLine = strOutLine + ";" + line.replaceAll("CIF:", "").trim(); // CIF
                 }
                 if (line.startsWith("TOTAL LEI")) {
                     strOutLine = strOutLine + ";" + line.replaceAll("TOTAL LEI", "").trim(); // Value
@@ -116,7 +111,7 @@ public final class FileContentClass {
                     strOutLine = strOutLine + ";" + line.substring(6).replace("`", "").trim(); // ID
                     bolIsReceipt = true;
                 }
-                if (line.startsWith("      DATA:")) {
+                if (strTrimmedLine.startsWith("DATA:")) {
                     strOutLine = strOutLine + ";" + TimingClass.convertTimeFormat(line.substring(12, 22)
                             , "dd-MM-yyyy", "yyyy-MM-dd"); // Date
                     strOutLine = strOutLine + ";" + line.substring(28); // Hour
