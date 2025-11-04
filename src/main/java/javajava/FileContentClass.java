@@ -49,70 +49,80 @@ public final class FileContentClass {
 
     public static void getFileContentAsSellingPointReceiptIntoCsvFile(final String inFileName, final String outFileName) {
         final List<String> lstOutput = new ArrayList<>(); // content will be here
-        lstOutput.add("CIF;Value;Z;Receipt;ID;Date;Hour;SerialNumber;TD"); // adding the CSV Header to the list
+        lstOutput.add("Company;Address;City;County;CIF;Value;ValueCard;ValueModernPayment;ValueCash;ValueRest;ReceiptVAT;Z;Receipt;ID;Date;Hour;SerialNumber;TD"); // adding the CSV Header to the list
         String strOutLine = null;
         try (BufferedReader reader = Files.newBufferedReader(Path.of(inFileName))) {
             String line;
             Integer intLineNo = 0;
             Integer intLineFeedbackLimit = 999999999;
+            Integer intReceiptLineNo = 0;
             Boolean bolIsReceipt = false;
+            String strCardValue = "";
+            String strModernPaymentValue = "";
+            String strCashValue = "";
+            String strRestValue = "";
             while ((line = reader.readLine()) != null) {
                 intLineNo++;
+                intReceiptLineNo++;
                 LoggerLevelProvider.LOGGER.debug(intLineNo);
-                if (line.endsWith("MASTER  TASTE     S.R.L.-D") || line.endsWith("MASTER  TASTE     S.R.L.")) {
-                    strOutLine = "";
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug("Line start");
-                    }
+                if (line.trim().replaceAll("  ", " ") .startsWith("MASTER TASTE S.R.L")) {
+                    strOutLine = line.trim(); // Company
+                    intReceiptLineNo = 1;
+                    bolIsReceipt = false;
+                }
+                if (intReceiptLineNo == 2) {
+                    strOutLine = strOutLine + ";" + line.trim(); // Address
+                }
+                if (intReceiptLineNo == 3) {
+                    strOutLine = strOutLine + ";" + line.trim(); // City
+                }
+                if (intReceiptLineNo == 4) {
+                    strOutLine = strOutLine + ";" + line.trim(); // County
                 }
                 if (line.startsWith("             CIF:")) {
-                    strOutLine = line.substring(18); // CIF
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
+                    strOutLine = strOutLine + ";" + line.substring(18); // CIF
                 }
                 if (line.startsWith("TOTAL LEI")) {
                     strOutLine = strOutLine + ";" + line.replaceAll("TOTAL LEI", "").trim(); // Value
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                 }
-                /*if (line.startsWith("                  #")) {
-                    strOutLine = strOutLine +  ";" + line.substring(18); // Index
-                }*/
+                if (line.startsWith("CARD")) {
+                    strCardValue = line.replaceAll("CARD", "").trim(); // ValueCard
+                }
+                if (line.startsWith("PLATA MODERNA")) {
+                    strModernPaymentValue = line.replaceAll("PLATA MODERNA", "").trim(); // ValueCard
+                }
+                if (line.startsWith("NUMERAR LEI")) {
+                    strCashValue = line.replaceAll("NUMERAR LEI", "").trim(); // ValueCash
+                }
+                if (line.startsWith("REST")) {
+                    strRestValue = line.replaceAll("REST", "").trim(); // ValueCard
+                }
+                if (line.startsWith("TOTAL TVA BON")) {
+                    strOutLine = strOutLine + ";" + strCardValue; // ValueCard
+                    strOutLine = strOutLine + ";" + strModernPaymentValue; // ValueModernPayment
+                    strOutLine = strOutLine + ";" + strCashValue; // ValueCash
+                    strOutLine = strOutLine + ";" + strRestValue; // ValueRest
+                    strOutLine = strOutLine + ";" + line.replaceAll("TOTAL TVA BON", "").trim(); // ReceiptVAT
+                    strCardValue = "";
+                    strModernPaymentValue = "";
+                    strCashValue = "";
+                    strRestValue = "";
+                }
                 if (line.startsWith("Z:")) {
                     strOutLine = strOutLine + ";" + line.substring(2, 6); // Z
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                     strOutLine = strOutLine + ";" + line.substring(10, 14); // Receipt
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                 }
                 if (line.startsWith("ID BF:")) {
                     strOutLine = strOutLine + ";" + line.substring(6).replace("`", "").trim(); // ID
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                     bolIsReceipt = true;
                 }
                 if (line.startsWith("      DATA:")) {
                     strOutLine = strOutLine + ";" + TimingClass.convertTimeFormat(line.substring(12, 22)
                             , "dd-MM-yyyy", "yyyy-MM-dd"); // Date
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                     strOutLine = strOutLine + ";" + line.substring(28); // Hour
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                 }
                 if (line.startsWith("S/N:")) {
                     strOutLine = strOutLine + ";" + line.substring(4, 16); // SerialNumber
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO) && (intLineNo > intLineFeedbackLimit)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
                     strOutLine = strOutLine + ";" + line.substring(34); // TD
                     if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
                         LoggerLevelProvider.LOGGER.debug(strOutLine);
