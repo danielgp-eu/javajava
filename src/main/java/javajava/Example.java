@@ -85,7 +85,7 @@ class GetInformationFromTextWithSellingPointReceiptsIntoCsvFile implements Runna
             final String strFeedback = String.format("I will process %s file and write results into %s as a CSV file", strFileNameIn, strFileNameOut);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
-        FileContentClass.getFileContentAsSellingPointReceiptIntoCsvFile(strFileNameIn, strFileNameOut);
+        FileContentClass.getFileContentAsSellingPointReceiptIntoCsvFile(strFileNameIn, "MASTER TASTE", strFileNameOut);
     }
 }
 

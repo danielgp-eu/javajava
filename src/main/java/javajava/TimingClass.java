@@ -1,11 +1,10 @@
 package javajava;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.time.temporal.WeekFields;
+import java.util.Locale;
 
 /**
  * Time methods
@@ -149,6 +148,29 @@ public final class TimingClass {
                 throw new UnsupportedOperationException(strFeedback);
         }
         return strReturn;
+    }
+
+    /**
+     * Converts a string with ISO 8601 date as input into String w. year, wk string + 2 digits week #
+     * @param strDateIso8601 date as yyyy-MM-dd (aka ISO 8601 format type)
+     * @return String as year, wk string + 2 digits week #
+     */
+    public static String getIsoYearWeek(String strDateIso8601) {
+        LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
+        return inLocalDate.get(WeekFields.ISO.weekBasedYear()) + "wk"
+                + String.format("%02d", inLocalDate.get(WeekFields.ISO.weekOfWeekBasedYear()));
+    }
+
+    /**
+     * Converts a string with ISO 8601 date as input into String as yyyy-MM (MonthName)
+     * @param strDateIso8601 date as yyyy-MM-dd (aka ISO 8601 format type)
+     * @return String as yyyy-MM (MonthName)
+     */
+    public static String getYearMonthWithFullName(String strDateIso8601) {
+        LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
+        return strDateIso8601.substring(0, 7)
+                + " (" + inLocalDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+                + ")";
     }
 
     /**

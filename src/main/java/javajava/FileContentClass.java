@@ -2,11 +2,8 @@ package javajava;
 
 import org.apache.logging.log4j.Level;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,30 +44,38 @@ public final class FileContentClass {
         return strReturn;
     }
 
-    public static void getFileContentAsSellingPointReceiptIntoCsvFile(final String inFileName, final String outFileName) {
+    public static void getFileContentAsSellingPointReceiptIntoCsvFile(final String inFileName, final String strCompanyName, final String outFileName) {
         final List<String> lstOutput = new ArrayList<>(); // content will be here
-        lstOutput.add("Company;Address;City;County;CIF;Value;ValueCard;ValueModernPayment;ValueCash;ValueRest;ReceiptVAT;Z;Receipt;ID;Date;Hour;SerialNumber;TD"); // adding the CSV Header to the list
+        final String[] arrayColumns = new String[] {"Company", "Address", "City", "County", "CIF",
+                "PaidValue", "ValueCard", "ValueModernPayment", "ValueCash", "ValueRest", "ReceiptValue", "ReceiptVAT",
+                "Z", "ReceiptNo", "ReceiptID",
+                "ReceiptTimestamp", "Timestamp", "Year", "YearMonth", "ISO_YearWeek", "Date", "Hour",
+                "SerialNumber", "ReceiptTD"};
+        lstOutput.add(String.join(";", arrayColumns)); // adding the CSV Header to the list
         String strOutLine = null;
         try (BufferedReader reader = Files.newBufferedReader(Path.of(inFileName))) {
             String line;
-            Integer intLineNo = 0;
-            Integer intReceiptLineNo = 0;
-            Boolean bolIsReceipt = false;
+            int intLineNo = 0;
+            int intReceiptLineNo = 0;
+            boolean bolIsReceipt = false;
+            String strTotalValue = "";
             String strCardValue = "";
             String strModernPaymentValue = "";
             String strCashValue = "";
             String strRestValue = "";
             String strTrimmedLine = "";
+            String strDate = "";
+            BigDecimal decimalReceiptValue;
             while ((line = reader.readLine()) != null) {
                 intLineNo++;
                 intReceiptLineNo++;
                 strTrimmedLine = line.trim();
-                if (strTrimmedLine.replaceAll("  ", " ").startsWith("MASTER TASTE")) {
+                if (strTrimmedLine.replaceAll("  ", " ").startsWith(strCompanyName)) {
                     strOutLine = strTrimmedLine; // Company
                     intReceiptLineNo = 1;
                     bolIsReceipt = false;
                 }
-                LoggerLevelProvider.LOGGER.debug(intLineNo + " receipt line " + intReceiptLineNo + " w. content " + line);
+                //LoggerLevelProvider.LOGGER.debug(intLineNo + " receipt line " + intReceiptLineNo + " w. content " + line);
                 if (List.of(2, 3, 4).contains(intReceiptLineNo) ) {
                     strOutLine = strOutLine + ";" + strTrimmedLine; // 2 = Address, 3 = City, 4 = County
                 }
@@ -78,7 +83,8 @@ public final class FileContentClass {
                     strOutLine = strOutLine + ";" + line.replaceAll("CIF:", "").trim(); // CIF
                 }
                 if (line.startsWith("TOTAL LEI")) {
-                    strOutLine = strOutLine + ";" + line.replaceAll("TOTAL LEI", "").trim(); // Value
+                    strTotalValue = line.replaceAll("TOTAL LEI", "").trim();
+                    strOutLine = strOutLine + ";" + strTotalValue; // Value
                 }
                 if (line.startsWith("CARD")) {
                     strCardValue = line.replaceAll("CARD", "").trim(); // ValueCard
@@ -97,6 +103,8 @@ public final class FileContentClass {
                     strOutLine = strOutLine + ";" + strModernPaymentValue; // ValueModernPayment
                     strOutLine = strOutLine + ";" + strCashValue; // ValueCash
                     strOutLine = strOutLine + ";" + strRestValue; // ValueRest
+                    decimalReceiptValue = (new BigDecimal(strTotalValue)).subtract(new BigDecimal(strRestValue));
+                    strOutLine = strOutLine + ";" + decimalReceiptValue; // ReceiptValue
                     strOutLine = strOutLine + ";" + line.replaceAll("TOTAL TVA BON", "").trim(); // ReceiptVAT
                     strCardValue = "";
                     strModernPaymentValue = "";
@@ -112,8 +120,14 @@ public final class FileContentClass {
                     bolIsReceipt = true;
                 }
                 if (strTrimmedLine.startsWith("DATA:")) {
-                    strOutLine = strOutLine + ";" + TimingClass.convertTimeFormat(line.substring(12, 22)
-                            , "dd-MM-yyyy", "yyyy-MM-dd"); // Date
+                    strOutLine = strOutLine + ";" + line.trim(); // ReceiptTimestamp
+                    strDate = TimingClass.convertTimeFormat(line.substring(12, 22)
+                            , "dd-MM-yyyy", "yyyy-MM-dd");
+                    strOutLine = strOutLine + ";" + strDate + " " + line.substring(28); // Timestamp
+                    strOutLine = strOutLine + ";" + strDate.substring(0, 4); // Year
+                    strOutLine = strOutLine + ";" + TimingClass.getYearMonthWithFullName(strDate); // YearMonth
+                    strOutLine = strOutLine + ";" + TimingClass.getIsoYearWeek(strDate); // YearWeek
+                    strOutLine = strOutLine + ";" + strDate; // Date
                     strOutLine = strOutLine + ";" + line.substring(28); // Hour
                 }
                 if (line.startsWith("S/N:")) {
