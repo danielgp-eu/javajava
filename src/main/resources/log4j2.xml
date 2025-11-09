@@ -12,9 +12,9 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
         <!-- File Appenders on need basis -->
-        <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}debug.log"
-            filePattern="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}debug-${FILE_PATTERN_SUFFIX}.log">
-            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
+        <RollingFile name="restLog" fileName="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}rest.log"
+            filePattern="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}rest-${FILE_PATTERN_SUFFIX}.log">
+            <LevelRangeFilter minLevel="WARN" maxLevel="ALL" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
@@ -30,44 +30,8 @@
         </RollingFile>
         <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}error.log"
             filePattern="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}error-${FILE_PATTERN_SUFFIX}.log">
-            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <LevelRangeFilter minLevel="FATAL" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-                <SizeBasedTriggeringPolicy size="10MB" />
-            </Policies>
-            <!-- Max 50 files will be created every-hour -->
-            <DefaultRolloverStrategy max="50">
-                <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
-                    <!-- Delete all files older than 10 days -->
-                    <IfLastModified age="10d" />
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingFile>
-        <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}info.log"
-            filePattern="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}info-${FILE_PATTERN_SUFFIX}.log">
-            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout>
-                <Pattern>${LOG_PATTERN}</Pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
-                <SizeBasedTriggeringPolicy size="10MB" />
-            </Policies>
-            <!-- Max 50 files will be created every-hour -->
-            <DefaultRolloverStrategy max="50">
-                <Delete basePath="${APP_LOG_ROOT}" maxDepth="10">
-                    <!-- Delete all files older than 10 days -->
-                    <IfLastModified age="10d" />
-                </Delete>
-            </DefaultRolloverStrategy>
-        </RollingFile>
-        <RollingFile name="warnLog" fileName="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}warning.log"
-            filePattern="${APP_LOG_ROOT}/${FILE_NAME_PREFIX}info-${FILE_PATTERN_SUFFIX}.log">
-            <LevelRangeFilter minLevel="WARN" maxLevel="WARN" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout>
-                <Pattern>${LOG_PATTERN}</Pattern>
-            </PatternLayout>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true" />
                 <SizeBasedTriggeringPolicy size="10MB" />
@@ -82,17 +46,9 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="io.github.danielgp-eu.javajava" additivity="false" level="debug">
-            <AppenderRef ref="debugLog" />
-            <AppenderRef ref="errorLog" />
-            <AppenderRef ref="warnLog" />
-            <AppenderRef ref="infoLog" />
-        </Logger>
         <Root additivity="false" level="debug">
-            <AppenderRef ref="debugLog" />
+            <AppenderRef ref="restLog" />
             <AppenderRef ref="errorLog" />
-            <AppenderRef ref="warnLog" />
-            <AppenderRef ref="infoLog" />
         </Root>
     </Loggers>
 </Configuration>
