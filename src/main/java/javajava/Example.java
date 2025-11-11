@@ -19,7 +19,8 @@ import java.util.Properties;
         GetInformationFromTextWithSellingPointReceiptsIntoCsvFile.class,
         GetSpecificInformationFromSnowflake.class,
         GetSubFoldersFromFolder.class,
-        LogEnvironmentDetails.class
+        LogEnvironmentDetails.class,
+        PairBankRecordsWithSellingReceipts.class
     }
 )
 public final class Example implements Runnable {
@@ -47,8 +48,8 @@ public final class Example implements Runnable {
         JavaJavaLocalization.setLocaleByString(JavaJavaLocalization.getUserLocale());
         logApplicationStart();
         final int exitCode = new CommandLine(new Example()).execute(args);
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-            LoggerLevelProvider.LOGGER.info(exitCode);
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN) && (exitCode != 0)) {
+            LoggerLevelProvider.LOGGER.info(String.format("Exiting with code %s", exitCode));
         }
         final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]));
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
@@ -123,7 +124,7 @@ class GetInformationFromDatabase implements Runnable {
         description = "Type of Database",
         arity = "1",
         required = true,
-        completionCandidates = GetInformationFromDatabase.DatabaseTypes.class)
+        completionCandidates = DatabaseTypes.class)
     private String strDbType;
 
     /**
@@ -134,7 +135,7 @@ class GetInformationFromDatabase implements Runnable {
         description = "Type of Information",
         arity = "1..*",
         required = true,
-        completionCandidates = GetInformationFromDatabase.InfoTypes.class)
+        completionCandidates = InfoTypes.class)
     private String strInfoType;
 
     /**
@@ -142,7 +143,7 @@ class GetInformationFromDatabase implements Runnable {
      */
     /* default */ static class DatabaseTypes implements Iterable<String> {
         @Override
-        public java.util.Iterator<String> iterator() {
+        public Iterator<String> iterator() {
             return lstDbTypes.iterator();
         }
     }
@@ -152,7 +153,7 @@ class GetInformationFromDatabase implements Runnable {
      */
     /* default */ static class InfoTypes implements Iterable<String> {
         @Override
-        public java.util.Iterator<String> iterator() {
+        public Iterator<String> iterator() {
             return lstInfoTypes.iterator();
         }
     }
