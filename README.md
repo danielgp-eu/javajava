@@ -1,6 +1,4 @@
 # javajava
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fdanielgp-eu%2Fjavajava.svg?type=shield&issueType=security)](https://app.fossa.com/projects/git%2Bgithub.com%2Fdanielgp-eu%2Fjavajava?ref=badge_shield&issueType=security)
-
 
 Various Java classes to be re-used
 
