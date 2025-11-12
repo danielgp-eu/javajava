@@ -377,13 +377,9 @@ ORDER BY
                     listCashRegister = DatabaseResultSettingClass.getResultSetStandardized(objStatement, propsCashRegisterKey, qryProperties);
                     intCashRegisterCounter = 0;
                 }
-                dtBank = LocalDateTime.of(
-                        Integer.parseInt(strCheie3memory.substring(strCheie3memory.indexOf("_") + 2,strCheie3memory.indexOf("_") + 6)),
-                        Integer.parseInt(strCheie3memory.substring(strCheie3memory.indexOf("_") + 7,strCheie3memory.indexOf("_") + 9)),
-                        Integer.parseInt(strCheie3memory.substring(strCheie3memory.indexOf("_") + 10,strCheie3memory.indexOf("_") + 12)),
-                        Integer.parseInt(crtRowBank.get("OraComparatie").toString().substring(0, 2)),
-                        Integer.parseInt(crtRowBank.get("OraComparatie").toString().substring(2, 4)),
-                        Integer.parseInt(crtRowBank.get("OraComparatie").toString().substring(4, 6)));
+                final String strDateIso8601 = strCheie3memory.substring(strCheie3memory.indexOf("_") + 1,strCheie3memory.indexOf("_") + 12);
+                dtBank = TimingClass.getLocalDateTimeFromStrings(strDateIso8601,
+                        crtRowBank.get("OraComparatie").toString());;
                 if (!listCashRegister.isEmpty()) {
                     int intCashregisterRecs = listCashRegister.size();
                     LoggerLevelProvider.LOGGER.debug(String.format("Dimensiunea listei cu înregistrări de casă fiscală este %s", intCashregisterRecs));
@@ -395,13 +391,8 @@ ORDER BY
                         if (listRowFound.stream().noneMatch(n -> n == intCrtRow)) {
                             if (Integer.parseInt(crtRowBank.get("OraComparatieInt").toString()) >= Integer.parseInt(crtRowCashRegister.get("HourComparableInt").toString())) {
                                 listRowFound.add((i + 1));
-                                dtCashRegister = LocalDateTime.of(
-                                        Integer.parseInt(strCheie3memory.substring(strCheie3memory.indexOf("_") + 2,strCheie3memory.indexOf("_") + 6)),
-                                        Integer.parseInt(strCheie3memory.substring(strCheie3memory.indexOf("_") + 7,strCheie3memory.indexOf("_") + 9)),
-                                        Integer.parseInt(strCheie3memory.substring(strCheie3memory.indexOf("_") + 10,strCheie3memory.indexOf("_") + 12)),
-                                        Integer.parseInt(crtRowCashRegister.get("HourComparable").toString().substring(0, 2)),
-                                        Integer.parseInt(crtRowCashRegister.get("HourComparable").toString().substring(2, 4)),
-                                        Integer.parseInt(crtRowCashRegister.get("HourComparable").toString().substring(4, 6)));
+                                dtCashRegister = TimingClass.getLocalDateTimeFromStrings(strDateIso8601,
+                                        crtRowCashRegister.get("HourComparable").toString());
                                 final Duration objDuration = Duration.between(dtCashRegister, dtBank);
                                 strFeedback = String.join(";", crtRowBank.get("OriginalOrder").toString(),
                                         strCheie3memory + "==>" + crtRowBank.get("OraComparatie").toString(),
@@ -416,7 +407,7 @@ ORDER BY
                                         String.valueOf(intCashRegisterCounter),
                                         dtBank.toString().replace("T", " "),
                                         dtCashRegister.toString().replace("T", " "),
-                                        TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+                                        TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClockClassic"));
                                 LoggerLevelProvider.LOGGER.debug(strFeedback + " ----> " + j);
                                 listOutResult.add(strFeedback); // line in CSV
                                 listCashRegister.remove(j);
@@ -426,14 +417,17 @@ ORDER BY
                         }
                     }
                     intCashRegisterCounter = intCashRegisterCounter - intCashregisterRecs;
-                    /*for(int j = 0; j < intCashregisterRecs; j++) { // cycle through Cash Register records
+                    for(int j = 0; j < intCashregisterRecs; j++) { // cycle through Cash Register records
                         crtRowCashRegister = listCashRegister.get(j);
                         LoggerLevelProvider.LOGGER.debug("Cash Register row " + j + " => " + crtRowBank.get("OraComparatieInt").toString()
                                 + " vs. " + crtRowCashRegister.get("HourComparableInt").toString());
                         intCashRegisterCounter++;
-                        if (bolKeyBankNotPaired) {
+                        if (listRowFound.stream().noneMatch(n -> n == intCrtRow)) {
                             if (Integer.parseInt(crtRowBank.get("OraComparatieInt").toString()) < Integer.parseInt(crtRowCashRegister.get("HourComparableInt").toString())) {
-                                bolKeyBankNotPaired = false;
+                                listRowFound.add((i + 1));
+                                dtCashRegister = TimingClass.getLocalDateTimeFromStrings(strDateIso8601,
+                                        crtRowCashRegister.get("HourComparable").toString());
+                                final Duration objDuration = Duration.between(dtBank, dtCashRegister);
                                 strFeedback = String.join(";", crtRowBank.get("OriginalOrder").toString(),
                                         strCheie3memory + "==>" + crtRowBank.get("OraComparatie").toString(),
                                         strValue,
@@ -444,7 +438,10 @@ ORDER BY
                                         String.valueOf((i + 1)),
                                         TimingClass.getCurrentTimestamp("yyyy-MM-dd HH:mm:ss.SSS"),
                                         String.valueOf(intBankKeyCounter),
-                                        String.valueOf(intCashRegisterCounter));
+                                        String.valueOf(intCashRegisterCounter),
+                                        dtBank.toString().replace("T", " "),
+                                        dtCashRegister.toString().replace("T", " "),
+                                        TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClockClassic"));
                                 LoggerLevelProvider.LOGGER.debug(strFeedback + " ----> " + j);
                                 listOutResult.add(strFeedback); // line in CSV
                                 listCashRegister.remove(j);
@@ -453,7 +450,7 @@ ORDER BY
                             }
                         }
                     }
-                    intCashRegisterCounter = intCashRegisterCounter - intCashregisterRecs;*/
+                    intCashRegisterCounter = intCashRegisterCounter - intCashregisterRecs;
                 }
                 if (listRowFound.stream().noneMatch(n -> n == intCrtRow)) {
                     strFeedback = String.join(";", crtRowBank.get("OriginalOrder").toString(),

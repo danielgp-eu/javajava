@@ -20,12 +20,16 @@ public final class TimingClass {
      */
     public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
         final String[] arrayStrings;
-        final String strFinalOne;
+        String strFinalOne = null;
         switch (strRule) {
             case "HumanReadableTime":
                 final String strFinalRule = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
                 arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                 strFinalOne = "Nanosecond";
+                break;
+            case "TimeClockClassic":
+                arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber"};
+                strFinalOne = "Second";
                 break;
             case "TimeClock":
                 arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndThreeDigitNumber"};
@@ -40,7 +44,7 @@ public final class TimingClass {
                 + getDurationWithCustomRules(duration, "Hour", arrayStrings[1])
                 + getDurationWithCustomRules(duration, "Minute", arrayStrings[2])
                 + getDurationWithCustomRules(duration, "Second", arrayStrings[2])
-                + getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3])
+                + (strFinalOne.equalsIgnoreCase("Second") ? "" : getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]))
             ).trim();
     }
 
@@ -159,6 +163,22 @@ public final class TimingClass {
         LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
         return inLocalDate.get(WeekFields.ISO.weekBasedYear()) + "wk"
                 + String.format("%02d", inLocalDate.get(WeekFields.ISO.weekOfWeekBasedYear()));
+    }
+
+    /**
+     * build a LocalDateTime from Strings
+     * @param strDateIso8601 input Date
+     * @param strTimeWithoutSeparators input Time
+     * @return LocalDateTime
+     */
+    public static LocalDateTime getLocalDateTimeFromStrings(final String strDateIso8601, final String strTimeWithoutSeparators) {
+        return LocalDateTime.of(
+                Integer.parseInt(strDateIso8601.substring(1, 5)),
+                Integer.parseInt(strDateIso8601.substring(6, 8)),
+                Integer.parseInt(strDateIso8601.substring(9)),
+                Integer.parseInt(strTimeWithoutSeparators.substring(0, 2)),
+                Integer.parseInt(strTimeWithoutSeparators.substring(2, 4)),
+                Integer.parseInt(strTimeWithoutSeparators.substring(4, 6)));
     }
 
     /**
