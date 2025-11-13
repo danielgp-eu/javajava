@@ -63,8 +63,8 @@ public final class FileContentClass {
             String strModernPaymentValue = "";
             String strCashValue = "";
             String strRestValue = "";
-            String strTrimmedLine = "";
-            String strDate = "";
+            String strTrimmedLine;
+            String strDate;
             BigDecimal decimalReceiptValue;
             while ((line = reader.readLine()) != null) {
                 intLineNo++;
@@ -75,7 +75,6 @@ public final class FileContentClass {
                     intReceiptLineNo = 1;
                     bolIsReceipt = false;
                 }
-                //LoggerLevelProvider.LOGGER.debug(intLineNo + " receipt line " + intReceiptLineNo + " w. content " + line);
                 if (List.of(2, 3, 4).contains(intReceiptLineNo) ) {
                     strOutLine = strOutLine + ";" + strTrimmedLine; // 2 = Address, 3 = City, 4 = County
                 }
@@ -144,15 +143,16 @@ public final class FileContentClass {
             }
             writeListToTextFile(lstOutput, outFileName);
         } catch (IOException e) {
-            e.printStackTrace();
+            final String strFeedback = e.getLocalizedMessage();
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
     }
 
     /**
      * Build message for file operation error
-     * @param strFileName
-     * @param strStagTrace
-     * @return
+     * @param strFileName file name
+     * @param strStagTrace stag trace
+     * @return message for file operation error
      */
     private static String getFileErrorMessage(final String strFileName, final String strStagTrace) {
         return String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
