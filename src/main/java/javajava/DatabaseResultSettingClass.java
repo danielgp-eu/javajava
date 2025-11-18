@@ -15,7 +15,10 @@ import java.util.Properties;
  */
 public final class DatabaseResultSettingClass {
 
-    private static int intRows = 0;
+    /**
+     * Rows counter
+     */
+    private static int intRows;
 
     /**
      * extends functionality for Executions

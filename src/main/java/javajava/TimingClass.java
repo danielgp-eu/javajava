@@ -12,6 +12,11 @@ import java.util.Locale;
 public final class TimingClass {
 
     /**
+     * String for Second
+     */
+    final private static String STRSECOND = "Second";
+
+    /**
      * Convert Nanoseconds to a more digest-able string
      * 
      * @param duration actual duration in nano-seconds
@@ -29,7 +34,7 @@ public final class TimingClass {
                 break;
             case "TimeClockClassic":
                 arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber"};
-                strFinalOne = "Second";
+                strFinalOne = STRSECOND;
                 break;
             case "TimeClock":
                 arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndThreeDigitNumber"};
@@ -43,8 +48,8 @@ public final class TimingClass {
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
                 + getDurationWithCustomRules(duration, "Hour", arrayStrings[1])
                 + getDurationWithCustomRules(duration, "Minute", arrayStrings[2])
-                + getDurationWithCustomRules(duration, "Second", arrayStrings[2])
-                + (strFinalOne.equalsIgnoreCase("Second") ? "" : getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]))
+                + getDurationWithCustomRules(duration, STRSECOND, arrayStrings[2])
+                + (STRSECOND.equalsIgnoreCase(strFinalOne) ? "" : getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]))
             ).trim();
     }
 
@@ -155,12 +160,13 @@ public final class TimingClass {
     }
 
     /**
-     * Converts a string with ISO 8601 date as input into String w. year, wk string + 2 digits week #
+     * Converts a string with ISO 8601 date as input into String w. year
+     * and week string + 2 digits week #
      * @param strDateIso8601 date as yyyy-MM-dd (aka ISO 8601 format type)
      * @return String as year, wk string + 2 digits week #
      */
-    public static String getIsoYearWeek(String strDateIso8601) {
-        LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
+    public static String getIsoYearWeek(final String strDateIso8601) {
+        final LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
         return inLocalDate.get(WeekFields.ISO.weekBasedYear()) + "wk"
                 + String.format("%02d", inLocalDate.get(WeekFields.ISO.weekOfWeekBasedYear()));
     }
@@ -168,17 +174,17 @@ public final class TimingClass {
     /**
      * build a LocalDateTime from Strings
      * @param strDateIso8601 input Date
-     * @param strTimeWithoutSeparators input Time
+     * @param strTimeWoSeps input Time
      * @return LocalDateTime
      */
-    public static LocalDateTime getLocalDateTimeFromStrings(final String strDateIso8601, final String strTimeWithoutSeparators) {
+    public static LocalDateTime getLocalDateTimeFromStrings(final String strDateIso8601, final String strTimeWoSeps) {
         return LocalDateTime.of(
                 Integer.parseInt(strDateIso8601.substring(1, 5)),
                 Integer.parseInt(strDateIso8601.substring(6, 8)),
                 Integer.parseInt(strDateIso8601.substring(9)),
-                Integer.parseInt(strTimeWithoutSeparators.substring(0, 2)),
-                Integer.parseInt(strTimeWithoutSeparators.substring(2, 4)),
-                Integer.parseInt(strTimeWithoutSeparators.substring(4, 6)));
+                Integer.parseInt(strTimeWoSeps.substring(0, 2)),
+                Integer.parseInt(strTimeWoSeps.substring(2, 4)),
+                Integer.parseInt(strTimeWoSeps.substring(4, 6)));
     }
 
     /**
@@ -186,8 +192,8 @@ public final class TimingClass {
      * @param strDateIso8601 date as yyyy-MM-dd (aka ISO 8601 format type)
      * @return String as yyyy-MM (MonthName)
      */
-    public static String getYearMonthWithFullName(String strDateIso8601) {
-        LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
+    public static String getYearMonthWithFullName(final String strDateIso8601) {
+        final LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
         return strDateIso8601.substring(0, 7)
                 + " (" + inLocalDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH)
                 + ")";

@@ -4,10 +4,6 @@ package javajava;
 import org.apache.logging.log4j.Level;
 import picocli.CommandLine;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -51,7 +47,7 @@ public final class Example implements Runnable {
         logApplicationStart();
         final int exitCode = new CommandLine(new Example()).execute(args);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN) && (exitCode != 0)) {
-            String strFeedbackExit = String.format("Exiting with code %s", exitCode);
+            final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
             LoggerLevelProvider.LOGGER.info(strFeedbackExit);
         }
         final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]));
@@ -89,7 +85,7 @@ class GetInformationFromTextWithSellingPointReceiptsIntoCsvFile implements Runna
             final String strFeedback = String.format("I will process %s file and write results into %s as a CSV file", strFileNameIn, strFileNameOut);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
-        FileContentSellingClass.getFileContentAsSellingPointReceiptIntoCsvFile(strFileNameIn, "MASTER TASTE", strFileNameOut);
+        FileContentSellingClass.consolidateSellingPointReceiptIntoCsvFile(strFileNameIn, "MASTER TASTE", strFileNameOut);
     }
 }
 
@@ -211,7 +207,7 @@ class GetSpecificInformationFromSnowflake implements Runnable {
     /**
      * Known Information Types
      */
-	/* default */ static final List<String> lstInfoTypes = Arrays.asList(
+	/* default */ static final List<String> LST_INFO_TYPES = Arrays.asList(
             "CurrentUserAssignedRoles",
             "Warehouses"
     );
@@ -251,10 +247,10 @@ class GetSpecificInformationFromSnowflake implements Runnable {
 
     @Override
     public void run() {
-        if (!lstInfoTypes.contains(strInfoType)) {
+        if (!LST_INFO_TYPES.contains(strInfoType)) {
             throw new CommandLine.ParameterException(
                     new CommandLine(this),
-                    "Invalid value for --informationType: " + strInfoType + ". Valid values are: " + lstInfoTypes
+                    "Invalid value for --informationType: " + strInfoType + ". Valid values are: " + LST_INFO_TYPES
             );
         }
         performAction(strInfoType);
@@ -300,7 +296,10 @@ class LogEnvironmentDetails implements Runnable {
 @CommandLine.Command(name = "PairBankRecordsWithSellingReceipts", description = "Pair bank records with selling receipts and store result-set into CSV file")
 class PairBankRecordsWithSellingReceipts implements Runnable {
 
-    final static List<String> listOutResult = new ArrayList<>();
+    /**
+     * List for Output result
+     */
+    /* default */ final static List<String> listOutResult = new ArrayList<>();
     /**
      * String for FileName
      */

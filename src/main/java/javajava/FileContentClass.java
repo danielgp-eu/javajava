@@ -171,23 +171,24 @@ public final class FileContentClass {
      * @param propertiesList list of Properties
      * @param strFileName target File
      */
-    public static void writePropertiesListToCSV(final List<Properties> propertiesList, final String strFileName, final String strColumnSeparator) {
+    public static void writePropertiesListToCSV(final List<Properties> propertiesList, final String strFileName, final String strClmnSeparator) {
         // Collect all unique keys
         final Set<String> allKeys = new LinkedHashSet<>();
-        for (Properties properties : propertiesList) {
+        for (final Properties properties : propertiesList) {
             allKeys.addAll(properties.stringPropertyNames());
         }
         try (BufferedWriter bwr = Files.newBufferedWriter(Paths.get(strFileName), StandardCharsets.UTF_8)) {
             // Write the header
-            bwr.write(String.join(strColumnSeparator, allKeys));
+            bwr.write(String.join(strClmnSeparator, allKeys));
             bwr.newLine();
+            final List<String> row = new ArrayList<>();
             // Write each row
             for (final Properties properties : propertiesList) {
-                final List<String> row = new ArrayList<>();
-                for (String key : allKeys) {
+                row.clear();
+                for (final String key : allKeys) {
                     row.add(properties.getProperty(key, "")); // Supply default value "" if key is absent
                 }
-                bwr.write(String.join(strColumnSeparator, row));
+                bwr.write(String.join(strClmnSeparator, row));
                 bwr.newLine();
             }
         } catch (IOException ex) {

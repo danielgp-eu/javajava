@@ -1,12 +1,15 @@
 package javajava;
 
+import org.apache.logging.log4j.Level;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * JSON handling
@@ -20,7 +23,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final InputStream strJson) {
-        JsonNode jsonRootNode;
+        final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(strJson);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
@@ -37,7 +40,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final File jsonFile) {
-        JsonNode jsonRootNode;
+        final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(jsonFile);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {

@@ -17,26 +17,37 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * File content management for Selling
+ */
 public class FileContentSellingClass {
 
-    final static List<String> listOutResult = new ArrayList<>();
+    /**
+     * List for output result
+     */
+    /* default */ final static List<String> LIST_OUT_RESULT = new ArrayList<>();
 
-    private static void buildRecordString(final String strDateIso8601, final LocalDateTime dtBank,
-                                          final Properties crtRowBank, final int intBankKeyCounter, final int inBankOverallRow,
-                                          final Properties crtRowCashRegister, final int intCashRegisterCounter, final int inCashRegisterRow,
+    private static void buildRecordString(final String strDateIso8601,
+                                          final LocalDateTime dtBank,
+                                          final Properties crtRowBank,
+                                          final int intBankKeyCounter,
+                                          final int inBankOverallRow,
+                                          final Properties crtRowCashReg,
+                                          final int intCashRegCntr,
+                                          final int inCashRegRow,
                                           final String strScenario) {
         LocalDateTime dtCashRegister = null;
-        String strTimestampCashRegister = "";
-        String crtRowCashRegisterCheie3BF = "";
-        String crtRowCashRegisterHourComparable = "";
-        String crtRowCashRegisterSerialNumber = "";
+        String strTimestampCr = "";
+        String crtRowCrCheie3BF = "";
+        String crtRowCrHourC = "";
+        String crtRowCrSrlN = "";
         if (!strScenario.contains("FĂRĂ")) {
             dtCashRegister = TimingClass.getLocalDateTimeFromStrings(strDateIso8601,
-                    crtRowCashRegister.get("HourComparable").toString());
-            strTimestampCashRegister = dtCashRegister.toString().replace("T", " ");
-            crtRowCashRegisterCheie3BF = crtRowCashRegister.get("Cheie3BF").toString();
-            crtRowCashRegisterHourComparable = crtRowCashRegister.get("HourComparable").toString();
-            crtRowCashRegisterSerialNumber = crtRowCashRegister.get("SerialNumber").toString();
+                    crtRowCashReg.get("HourComparable").toString());
+            strTimestampCr = dtCashRegister.toString().replace("T", " ");
+            crtRowCrCheie3BF = crtRowCashReg.get("Cheie3BF").toString();
+            crtRowCrHourC = crtRowCashReg.get("HourComparable").toString();
+            crtRowCrSrlN = crtRowCashReg.get("SerialNumber").toString();
         }
         final String strDuration = switch(strScenario) {
             case "Înregistrare Bancă DUPĂ înregistrare Casă Fiscală" -> TimingClass.convertNanosecondsIntoSomething(
@@ -45,23 +56,24 @@ public class FileContentSellingClass {
                     Duration.between(dtBank, dtCashRegister), "TimeClockClassic");
             default -> "";
         };
+        final String strCheie3 = crtRowBank.get("Cheie3").toString();
         final String strFeedback = String.join(";", crtRowBank.get("OriginalOrder").toString(),
-                crtRowBank.get("Cheie3").toString() + "==>" + crtRowBank.get("OraComparatie").toString(),
-                crtRowBank.get("Cheie3").toString().substring(crtRowBank.get("Cheie3").toString().length() - 7),
-                crtRowCashRegisterCheie3BF,
-                crtRowCashRegisterHourComparable,
-                crtRowCashRegisterSerialNumber,
+                strCheie3 + "==>" + crtRowBank.get("OraComparatie").toString(),
+                strCheie3.substring(strCheie3.length() - 7),
+                crtRowCrCheie3BF,
+                crtRowCrHourC,
+                crtRowCrSrlN,
                 strScenario,
-                String.valueOf((inBankOverallRow + 1)),
+                String.valueOf(inBankOverallRow + 1),
                 TimingClass.getCurrentTimestamp("yyyy-MM-dd HH:mm:ss.SSS"),
                 String.valueOf(intBankKeyCounter),
-                String.valueOf(intCashRegisterCounter),
+                String.valueOf(intCashRegCntr),
                 dtBank.toString().replace("T", " "),
-                strTimestampCashRegister,
+                strTimestampCr,
                 strDuration);
-        final String strFeedbackForLog = strFeedback + " ----> " + inCashRegisterRow;
+        final String strFeedbackForLog = strFeedback + " ----> " + inCashRegRow;
         LoggerLevelProvider.LOGGER.debug(strFeedbackForLog);
-        listOutResult.add(strFeedback); // new line in CSV
+        LIST_OUT_RESULT.add(strFeedback); // new line in CSV
     }
 
     /**
@@ -71,52 +83,54 @@ public class FileContentSellingClass {
      * @param strCompanyName company name identifier
      * @param outFileName output file name
      */
-    public static void getFileContentAsSellingPointReceiptIntoCsvFile(final String inFileName, final String strCompanyName, final String outFileName) {
+    public static void consolidateSellingPointReceiptIntoCsvFile(final String inFileName,
+                                                                 final String strCompanyName,
+                                                                 final String outFileName) {
         final List<String> lstOutput = new ArrayList<>(); // content will be here
-        final String[] arrayColumns = new String[] {"Company", "Address", "City", "County", "CIF",
+        final String[] arrayColumns;
+        arrayColumns = new String[] {"Company", "Address", "City", "County", "CIF",
                 "PaidValue", "ValueCard", "ValueModernPayment", "ValueCash", "ValueRest", "ReceiptValue", "ReceiptVAT",
                 "Z", "ReceiptNo", "ReceiptID",
                 "ReceiptTimestamp", "Timestamp", "Year", "YearMonth", "ISO_YearWeek", "Date", "Hour",
                 "SerialNumber", "ReceiptTD"};
         lstOutput.add(String.join(";", arrayColumns)); // adding the CSV Header to the list
-        String strOutLine = null;
+        final StringBuilder strBuilder = new StringBuilder(50);
         try (BufferedReader reader = Files.newBufferedReader(Path.of(inFileName))) {
             String line;
-            int intLineNo = 0;
             int intReceiptLineNo = 0;
             boolean bolIsReceipt = false;
             String strTotalValue = "";
             String strCardValue = "";
-            String strModernPaymentValue = "";
+            String strMdrnPmntVl = "";
             String strCashValue = "";
             String strRestValue = "";
             String strTrimmedLine;
             String strDate;
-            BigDecimal decimalReceiptValue;
+            BigDecimal decRcptVal;
             while ((line = reader.readLine()) != null) {
-                intLineNo++;
                 intReceiptLineNo++;
                 strTrimmedLine = line.trim();
                 if (strTrimmedLine.replaceAll("  ", " ").startsWith(strCompanyName)) {
-                    strOutLine = strTrimmedLine; // Company
+                    strBuilder.setLength(0);
+                    strBuilder.append(strTrimmedLine); // Company
                     intReceiptLineNo = 1;
                     bolIsReceipt = false;
                 }
                 if (List.of(2, 3, 4).contains(intReceiptLineNo) ) {
-                    strOutLine = strOutLine + ";" + strTrimmedLine; // 2 = Address, 3 = City, 4 = County
+                    strBuilder.append(';').append(strTrimmedLine); // 2 = Address, 3 = City, 4 = County
                 }
                 if (strTrimmedLine.startsWith("CIF:")) {
-                    strOutLine = strOutLine + ";" + line.replaceAll("CIF:", "").trim(); // CIF
+                    strBuilder.append(';').append(line.replaceAll("CIF:", "").trim()); // CIF
                 }
                 if (line.startsWith("TOTAL LEI")) {
                     strTotalValue = line.replaceAll("TOTAL LEI", "").trim();
-                    strOutLine = strOutLine + ";" + strTotalValue; // Value
+                    strBuilder.append(';').append(strTotalValue); // Value
                 }
                 if (line.startsWith("CARD")) {
                     strCardValue = line.replaceAll("CARD", "").trim(); // ValueCard
                 }
                 if (line.startsWith("PLATA MODERNA")) {
-                    strModernPaymentValue = line.replaceAll("PLATA MODERNA", "").trim(); // ValueCard
+                    strMdrnPmntVl = line.replaceAll("PLATA MODERNA", "").trim(); // ValueCard
                 }
                 if (line.startsWith("NUMERAR LEI")) {
                     strCashValue = line.replaceAll("NUMERAR LEI", "").trim(); // ValueCash
@@ -125,45 +139,64 @@ public class FileContentSellingClass {
                     strRestValue = line.replaceAll("REST", "").trim(); // ValueCard
                 }
                 if (line.startsWith("TOTAL TVA BON")) {
-                    strOutLine = strOutLine + ";" + strCardValue; // ValueCard
-                    strOutLine = strOutLine + ";" + strModernPaymentValue; // ValueModernPayment
-                    strOutLine = strOutLine + ";" + strCashValue; // ValueCash
-                    strOutLine = strOutLine + ";" + strRestValue; // ValueRest
-                    decimalReceiptValue = (new BigDecimal(strTotalValue)).subtract(new BigDecimal(strRestValue));
-                    strOutLine = strOutLine + ";" + decimalReceiptValue; // ReceiptValue
-                    strOutLine = strOutLine + ";" + line.replaceAll("TOTAL TVA BON", "").trim(); // ReceiptVAT
+                    strBuilder.append(';')
+                            .append(strCardValue) // ValueCard
+                            .append(';')
+                            .append(strMdrnPmntVl) // ValueModernPayment
+                            .append(';')
+                            .append(strCashValue) // ValueCash
+                            .append(';')
+                            .append(strRestValue); // ValueRest
+                    decRcptVal = new BigDecimal(strTotalValue).subtract(new BigDecimal(strRestValue));
+                    strBuilder.append(';')
+                            .append(decRcptVal) // ReceiptValue
+                            .append(';')
+                            .append(line.replaceAll("TOTAL TVA BON", "").trim()); // ReceiptVAT
                     strCardValue = "";
-                    strModernPaymentValue = "";
+                    strMdrnPmntVl = "";
                     strCashValue = "";
                     strRestValue = "";
                 }
                 if (line.startsWith("Z:")) {
-                    strOutLine = strOutLine + ";" + line.substring(2, 6); // Z
-                    strOutLine = strOutLine + ";" + line.substring(10, 14); // Receipt
+                    strBuilder.append(';')
+                            .append(line.substring(2, 6)) // Z
+                            .append(';')
+                            .append(line.substring(10, 14)); // Receipt
                 }
                 if (line.startsWith("ID BF:")) {
-                    strOutLine = strOutLine + ";" + line.substring(6).replace("`", "").trim(); // ID
+                    strBuilder.append(';').append(line.substring(6).replace("`", "").trim()); // ID
                     bolIsReceipt = true;
                 }
                 if (strTrimmedLine.startsWith("DATA:")) {
-                    strOutLine = strOutLine + ";" + line.trim(); // ReceiptTimestamp
+                    strBuilder.append(';').append(line.trim()); // ReceiptTimestamp
                     strDate = TimingClass.convertTimeFormat(line.substring(12, 22)
                             , "dd-MM-yyyy", "yyyy-MM-dd");
-                    strOutLine = strOutLine + ";" + strDate + " " + line.substring(28); // Timestamp
-                    strOutLine = strOutLine + ";" + strDate.substring(0, 4); // Year
-                    strOutLine = strOutLine + ";" + TimingClass.getYearMonthWithFullName(strDate); // YearMonth
-                    strOutLine = strOutLine + ";" + TimingClass.getIsoYearWeek(strDate); // YearWeek
-                    strOutLine = strOutLine + ";" + strDate; // Date
-                    strOutLine = strOutLine + ";" + line.substring(28); // Hour
+                    strBuilder.append(';')
+                            .append(strDate)
+                            .append(' ')
+                            .append(line.substring(28)) // Timestamp
+                            .append(';')
+                            .append(strDate.substring(0, 4)) // Year
+                            .append(';')
+                            .append(TimingClass.getYearMonthWithFullName(strDate)) // YearMonth
+                            .append(';')
+                            .append(TimingClass.getIsoYearWeek(strDate)) // YearWeek
+                            .append(';')
+                            .append(strDate) // Date
+                            .append(';')
+                            .append(line.substring(28)); // Hour
                 }
                 if (line.startsWith("S/N:")) {
-                    strOutLine = strOutLine + ";" + line.substring(4, 16); // SerialNumber
-                    strOutLine = strOutLine + ";" + line.substring(34); // TD
+                    strBuilder.append(';')
+                            .append(line.substring(4, 16)) // SerialNumber
+                            .append(';')
+                            .append(line.substring(34)); // TD
                     if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
+                        final String strFeedback = strBuilder.toString();
+                        LoggerLevelProvider.LOGGER.debug(strFeedback);
                     }
                     if (bolIsReceipt) {
-                        lstOutput.add(strOutLine); // end of Receipt so current CSV line can be safely added to the List
+                        lstOutput.add(strBuilder.toString()); // end of Receipt so current CSV line can be safely added to the List
                         bolIsReceipt = false;
                     }
                 }
@@ -175,8 +208,13 @@ public class FileContentSellingClass {
         }
     }
 
+    /**
+     * Pair Bank records with Cash Register ones
+     *
+     * @param strFileNameOut name of the output file
+     */
     public static void pairMySqlBankAndCashRegisterRecords(final String strFileNameOut) {
-        Properties propMySql = DatabaseSpecificMySql.getConnectionPropertiesForMySQL();
+        final Properties propMySql = DatabaseSpecificMySql.getConnectionPropertiesForMySQL();
         final Properties qryProperties = new Properties();
         final Properties propsBank = new Properties();
         propsBank.put("strWhich", "Purpose is to get all Bank records");
@@ -196,23 +234,22 @@ ORDER BY
     , OraComparatie
 LIMIT 31;""");
         final List<Integer> listRowFound = new ArrayList<>();
-        listOutResult.add(String.join(";", "OrdineBT", "Cheie4BT", "Valoare", "Cheie3BF", "OraBF", "SerialNumber"
+        LIST_OUT_RESULT.add(String.join(";", "OrdineBT", "Cheie4BT", "Valoare", "Cheie3BF", "OraBF", "SerialNumber"
                 , "Scenariu", "Nr", "TS", "ContorCheieBT", "ContorCheieBF", "TimestampBT", "TimestampBF", "DifTimp")); // header of CSV
         try (Connection objConnection = DatabaseSpecificMySql.getMySqlConnection(propMySql, "mt");
              Statement objStatement = DatabaseConnectivity.createSqlStatement("MySQL", objConnection)) {
             final List<Properties> listBank = DatabaseResultSettingClass.getResultSetStandardized(objStatement, propsBank, qryProperties);
-            int intBankRecs = listBank.size();
+            final int intBankRecs = listBank.size();
             int intBankKeyCounter = 0;
-            int intCashRegisterCounter = 0;
+            int intCrCounter = 0;
             final String strFeedback = String.format("Dimensiunea listei cu înregistrări de bancă este %s", intBankRecs);
             LoggerLevelProvider.LOGGER.debug(strFeedback);
             String strCheie3memory = "<empty>";
-            String strValue = String.valueOf(0);
-            LocalDateTime dtBank = null;
-            List<Properties> listCashRegister = null;
+            LocalDateTime dtBank;
+            List<Properties> listCr = null;
             Properties crtRowBank;
-            Properties crtRowCashRegister;
-            final String strQueryCashRegisterTemplate = """
+            Properties crtRowCr;
+            final String strQueryT = """
 SELECT
       Cheie3BF
     , HourComparable
@@ -232,74 +269,72 @@ ORDER BY
                 LoggerLevelProvider.LOGGER.debug(strFeedbackRow);
                 if (!strCheie3memory.equalsIgnoreCase(crtRowBank.get("Cheie3").toString())) {
                     strCheie3memory = crtRowBank.get("Cheie3").toString();
-                    strValue = strCheie3memory.substring(strCheie3memory.length() - 7);
                     intBankKeyCounter = 1;
-                    final Properties propsCashRegisterKey = new Properties();
-                    propsCashRegisterKey.put("strWhich", "Purpose is to get relevant Cash Register records");
-                    propsCashRegisterKey.put("strKind", "Values");
-                    final String strQueryCashRegister = strQueryCashRegisterTemplate.replace("{Cheie3}", strCheie3memory);
-                    propsCashRegisterKey.put("strQueryToUse", strQueryCashRegister);
-                    listCashRegister = DatabaseResultSettingClass.getResultSetStandardized(objStatement, propsCashRegisterKey, qryProperties);
-                    intCashRegisterCounter = 0;
+                    final Properties propsCrKey = new Properties();
+                    propsCrKey.put("strWhich", "Purpose is to get relevant Cash Register records");
+                    propsCrKey.put("strKind", "Values");
+                    final String strQueryCr = strQueryT.replace("{Cheie3}", strCheie3memory);
+                    propsCrKey.put("strQueryToUse", strQueryCr);
+                    listCr = DatabaseResultSettingClass.getResultSetStandardized(objStatement, propsCrKey, qryProperties);
+                    intCrCounter = 0;
                 }
-                final String strDateIso8601 = strCheie3memory.substring(strCheie3memory.indexOf("_") + 1,strCheie3memory.indexOf("_") + 12);
+                final int intCheieFirstPos = strCheie3memory.indexOf('_');
+                final String strDateIso8601 = strCheie3memory.substring(intCheieFirstPos + 1, intCheieFirstPos + 12);
                 dtBank = TimingClass.getLocalDateTimeFromStrings(strDateIso8601,
                         crtRowBank.get("OraComparatie").toString());
-                if (!listCashRegister.isEmpty()) {
-                    int intCashregisterRecs = listCashRegister.size();
-                    final String strFeedbackCashReg = String.format("Dimensiunea listei cu înregistrări de casă fiscală este %s", intCashregisterRecs);
-                    LoggerLevelProvider.LOGGER.debug(strFeedbackCashReg);
-                    for(int j = 0; j < intCashregisterRecs; j++) { // cycle through Cash Register records
-                        crtRowCashRegister = listCashRegister.get(j);
+                if (!listCr.isEmpty()) {
+                    int intCrSize = listCr.size();
+                    final String strFeedbackCr = String.format("Dimensiunea listei cu înregistrări de casă fiscală este %s", intCrSize);
+                    LoggerLevelProvider.LOGGER.debug(strFeedbackCr);
+                    for(int j = 0; j < intCrSize; j++) { // cycle through Cash Register records
+                        crtRowCr = listCr.get(j);
                         final String strFeedbackR = String.format("Cash Register row %s => %s vs. %s", j,
                                 crtRowBank.get("OraComparatieInt").toString(),
-                                crtRowCashRegister.get("HourComparableInt").toString());
+                                crtRowCr.get("HourComparableInt").toString());
                         LoggerLevelProvider.LOGGER.debug(strFeedbackR);
-                        intCashRegisterCounter++;
-                        if (listRowFound.stream().noneMatch(n -> n == intCrtRow)) {
-                            if (Integer.parseInt(crtRowBank.get("OraComparatieInt").toString()) >= Integer.parseInt(crtRowCashRegister.get("HourComparableInt").toString())) {
-                                listRowFound.add((i + 1));
-                                buildRecordString(strDateIso8601, dtBank,
-                                        crtRowBank, intBankKeyCounter, i,
-                                        crtRowCashRegister, intCashRegisterCounter, j,
-                                        "Înregistrare Bancă DUPĂ înregistrare Casă Fiscală");
-                                listCashRegister.remove(j);
-                                intCashRegisterCounter++;
-                                intCashregisterRecs--;
-                            }
+                        intCrCounter++;
+                        if (listRowFound.stream().noneMatch(n -> n == intCrtRow)
+                            && (Integer.parseInt(crtRowBank.get("OraComparatieInt").toString()) >= Integer.parseInt(crtRowCr.get("HourComparableInt").toString()))) {
+                            listRowFound.add(i + 1);
+                            buildRecordString(strDateIso8601, dtBank,
+                                    crtRowBank, intBankKeyCounter, i,
+                                    crtRowCr, intCrCounter, j,
+                                    "Înregistrare Bancă DUPĂ înregistrare Casă Fiscală");
+                            listCr.remove(j);
+                            intCrCounter++;
+                            intCrSize--;
                         }
                     }
-                    intCashRegisterCounter = intCashRegisterCounter - intCashregisterRecs;
-                    for(int j = 0; j < intCashregisterRecs; j++) { // cycle through Cash Register records
-                        crtRowCashRegister = listCashRegister.get(j);
+                    intCrCounter = intCrCounter - intCrSize;
+                    for(int j = 0; j < intCrSize; j++) { // cycle through Cash Register records
+                        crtRowCr = listCr.get(j);
                         final String strFeedbackR = String.format("Cash Register row %s => %s vs. %s", j,
                                 crtRowBank.get("OraComparatieInt").toString(),
-                                crtRowCashRegister.get("HourComparableInt").toString());
+                                crtRowCr.get("HourComparableInt").toString());
                         LoggerLevelProvider.LOGGER.debug(strFeedbackR);
-                        intCashRegisterCounter++;
-                        if (listRowFound.stream().noneMatch(n -> n == intCrtRow)) {
-                            if (Integer.parseInt(crtRowBank.get("OraComparatieInt").toString()) < Integer.parseInt(crtRowCashRegister.get("HourComparableInt").toString())) {
-                                listRowFound.add((i + 1));
-                                buildRecordString(strDateIso8601, dtBank,
-                                        crtRowBank, intBankKeyCounter, i,
-                                        crtRowCashRegister, intCashRegisterCounter, j,
-                                        "Înregistrare Bancă ÎNAINTE DE înregistrare Casă Fiscală");
-                                listCashRegister.remove(j);
-                                intCashRegisterCounter++;
-                                intCashregisterRecs--;
-                            }
+                        intCrCounter++;
+                        if (listRowFound.stream().noneMatch(n -> n == intCrtRow)
+                            && (Integer.parseInt(crtRowBank.get("OraComparatieInt").toString()) < Integer.parseInt(crtRowCr.get("HourComparableInt").toString()))) {
+                            listRowFound.add(i + 1);
+                            buildRecordString(strDateIso8601, dtBank,
+                                    crtRowBank, intBankKeyCounter, i,
+                                    crtRowCr, intCrCounter, j,
+                                    "Înregistrare Bancă ÎNAINTE DE înregistrare Casă Fiscală");
+                            listCr.remove(j);
+                            intCrCounter++;
+                            intCrSize--;
                         }
                     }
-                    intCashRegisterCounter = intCashRegisterCounter - intCashregisterRecs;
+                    intCrCounter = intCrCounter - intCrSize;
                 }
                 if (listRowFound.stream().noneMatch(n -> n == intCrtRow)) {
                     buildRecordString(strDateIso8601, dtBank,
                             crtRowBank, intBankKeyCounter, i,
-                            null, intCashRegisterCounter, 0,
+                            null, intCrCounter, 0,
                             "Înregistrare Bancă FĂRĂ înregistrare Casă Fiscală");
                 }
             }
-            FileContentClass.writeListToTextFile(listOutResult, strFileNameOut);
+            FileContentClass.writeListToTextFile(LIST_OUT_RESULT, strFileNameOut);
         } catch(SQLException e){
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
                 final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLerror"), Arrays.toString(e.getStackTrace()), StackWalker.getInstance()
