@@ -108,7 +108,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final List<String> listStrings = new ArrayList<>();
         final JsonNode jsonNode = getJsonNodeFromTree(givenJsonNode, strJsonNodeName);
         if(!jsonNode.isEmpty()) {
-            jsonNode.forEach(jsonSingleNode-> listStrings.add(jsonSingleNode.asText()));
+            jsonNode.forEach(jsonSingleNode-> listStrings.add(jsonSingleNode.asString()));
             setNodeRetrievingToDebugLog("List of Strings", strJsonNodeName, listStrings);
         }
         return listStrings;
@@ -141,7 +141,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return String
      */
     public static String getJsonValue(final JsonNode givenJsonNode, final String strJsonNode) {
-        return getJsonNodeFromTree(givenJsonNode, strJsonNode).asText();
+        return getJsonNodeFromTree(givenJsonNode, strJsonNode).asString();
     }
 
     /**
