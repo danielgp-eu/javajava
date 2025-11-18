@@ -81,11 +81,11 @@ public final class DatabaseSpecificSnowflake {
     /**
      * returns standard Metadata query specific to Snowflake
      * 
-     * @param strWhich which action
+     * @param strWhichQuery which action
      * @return String
      */
-    public static String getSnowflakePreDefinedMetadataQuery(final String strWhich) {
-        return switch (strWhich) {
+    public static String getSnowflakePreDefinedMetadataQuery(final String strWhichQuery) {
+        return switch (strWhichQuery) {
             case "Columns" -> """
 SELECT
       "TABLE_CATALOG"
@@ -233,7 +233,7 @@ FROM
     "INFORMATION_SCHEMA"."VIEWS";""";
             case "Warehouses" -> "SHOW WAREHOUSES;";
             default -> {
-                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhichQuery, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
                 if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                     LoggerLevelProvider.LOGGER.error(strFeedback);
