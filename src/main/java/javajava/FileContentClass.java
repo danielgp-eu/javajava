@@ -2,17 +2,16 @@ package javajava;
 
 import org.apache.logging.log4j.Level;
 
-import java.io.*;
-import java.math.BigDecimal;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,110 +41,6 @@ public final class FileContentClass {
             }
         }
         return strReturn;
-    }
-
-    public static void getFileContentAsSellingPointReceiptIntoCsvFile(final String inFileName, final String strCompanyName, final String outFileName) {
-        final List<String> lstOutput = new ArrayList<>(); // content will be here
-        final String[] arrayColumns = new String[] {"Company", "Address", "City", "County", "CIF",
-                "PaidValue", "ValueCard", "ValueModernPayment", "ValueCash", "ValueRest", "ReceiptValue", "ReceiptVAT",
-                "Z", "ReceiptNo", "ReceiptID",
-                "ReceiptTimestamp", "Timestamp", "Year", "YearMonth", "ISO_YearWeek", "Date", "Hour",
-                "SerialNumber", "ReceiptTD"};
-        lstOutput.add(String.join(";", arrayColumns)); // adding the CSV Header to the list
-        String strOutLine = null;
-        try (BufferedReader reader = Files.newBufferedReader(Path.of(inFileName))) {
-            String line;
-            int intLineNo = 0;
-            int intReceiptLineNo = 0;
-            boolean bolIsReceipt = false;
-            String strTotalValue = "";
-            String strCardValue = "";
-            String strModernPaymentValue = "";
-            String strCashValue = "";
-            String strRestValue = "";
-            String strTrimmedLine;
-            String strDate;
-            BigDecimal decimalReceiptValue;
-            while ((line = reader.readLine()) != null) {
-                intLineNo++;
-                intReceiptLineNo++;
-                strTrimmedLine = line.trim();
-                if (strTrimmedLine.replaceAll("  ", " ").startsWith(strCompanyName)) {
-                    strOutLine = strTrimmedLine; // Company
-                    intReceiptLineNo = 1;
-                    bolIsReceipt = false;
-                }
-                if (List.of(2, 3, 4).contains(intReceiptLineNo) ) {
-                    strOutLine = strOutLine + ";" + strTrimmedLine; // 2 = Address, 3 = City, 4 = County
-                }
-                if (strTrimmedLine.startsWith("CIF:")) {
-                    strOutLine = strOutLine + ";" + line.replaceAll("CIF:", "").trim(); // CIF
-                }
-                if (line.startsWith("TOTAL LEI")) {
-                    strTotalValue = line.replaceAll("TOTAL LEI", "").trim();
-                    strOutLine = strOutLine + ";" + strTotalValue; // Value
-                }
-                if (line.startsWith("CARD")) {
-                    strCardValue = line.replaceAll("CARD", "").trim(); // ValueCard
-                }
-                if (line.startsWith("PLATA MODERNA")) {
-                    strModernPaymentValue = line.replaceAll("PLATA MODERNA", "").trim(); // ValueCard
-                }
-                if (line.startsWith("NUMERAR LEI")) {
-                    strCashValue = line.replaceAll("NUMERAR LEI", "").trim(); // ValueCash
-                }
-                if (line.startsWith("REST")) {
-                    strRestValue = line.replaceAll("REST", "").trim(); // ValueCard
-                }
-                if (line.startsWith("TOTAL TVA BON")) {
-                    strOutLine = strOutLine + ";" + strCardValue; // ValueCard
-                    strOutLine = strOutLine + ";" + strModernPaymentValue; // ValueModernPayment
-                    strOutLine = strOutLine + ";" + strCashValue; // ValueCash
-                    strOutLine = strOutLine + ";" + strRestValue; // ValueRest
-                    decimalReceiptValue = (new BigDecimal(strTotalValue)).subtract(new BigDecimal(strRestValue));
-                    strOutLine = strOutLine + ";" + decimalReceiptValue; // ReceiptValue
-                    strOutLine = strOutLine + ";" + line.replaceAll("TOTAL TVA BON", "").trim(); // ReceiptVAT
-                    strCardValue = "";
-                    strModernPaymentValue = "";
-                    strCashValue = "";
-                    strRestValue = "";
-                }
-                if (line.startsWith("Z:")) {
-                    strOutLine = strOutLine + ";" + line.substring(2, 6); // Z
-                    strOutLine = strOutLine + ";" + line.substring(10, 14); // Receipt
-                }
-                if (line.startsWith("ID BF:")) {
-                    strOutLine = strOutLine + ";" + line.substring(6).replace("`", "").trim(); // ID
-                    bolIsReceipt = true;
-                }
-                if (strTrimmedLine.startsWith("DATA:")) {
-                    strOutLine = strOutLine + ";" + line.trim(); // ReceiptTimestamp
-                    strDate = TimingClass.convertTimeFormat(line.substring(12, 22)
-                            , "dd-MM-yyyy", "yyyy-MM-dd");
-                    strOutLine = strOutLine + ";" + strDate + " " + line.substring(28); // Timestamp
-                    strOutLine = strOutLine + ";" + strDate.substring(0, 4); // Year
-                    strOutLine = strOutLine + ";" + TimingClass.getYearMonthWithFullName(strDate); // YearMonth
-                    strOutLine = strOutLine + ";" + TimingClass.getIsoYearWeek(strDate); // YearWeek
-                    strOutLine = strOutLine + ";" + strDate; // Date
-                    strOutLine = strOutLine + ";" + line.substring(28); // Hour
-                }
-                if (line.startsWith("S/N:")) {
-                    strOutLine = strOutLine + ";" + line.substring(4, 16); // SerialNumber
-                    strOutLine = strOutLine + ";" + line.substring(34); // TD
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                        LoggerLevelProvider.LOGGER.debug(strOutLine);
-                    }
-                    if (bolIsReceipt) {
-                        lstOutput.add(strOutLine); // end of Receipt so current CSV line can be safely added to the List
-                        bolIsReceipt = false;
-                    }
-                }
-            }
-            writeListToTextFile(lstOutput, outFileName);
-        } catch (IOException e) {
-            final String strFeedback = e.getLocalizedMessage();
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
-        }
     }
 
     /**
@@ -214,7 +109,7 @@ public final class FileContentClass {
      * @param strPrefixValue prefix column value
      * @param listHsMp LinkedHashMap
      */
-    public static void storeIntoCsvFileLinkedHashMap(final String strFileName, final String strPrefixValue, final Map<String, Long> listHsMp) {
+    public static void writeLinkedHashMapToCsvFile(final String strFileName, final String strPrefixValue, final String strHeader, final Map<String, Long> listHsMp) {
         try {
             final List<String> strLines;
             final File strFile = new File(strFileName);
@@ -224,39 +119,9 @@ public final class FileContentClass {
                         .toList();
             } else {
                 strLines = Stream.concat(
-                        Stream.of("DataType,Word,Occurrences"), // header
+                        Stream.of(strHeader), // header
                         listHsMp.entrySet().stream()
                                 .map(e -> strPrefixValue + "," + e.getKey() + "," + e.getValue())
-                ).toList();
-            }
-            Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
-        }
-    }
-
-    /**
-     * storing into a CSV file a LinkedHashMap
-     * @param strFileName target file name to be written to
-     * @param strPrefixValue prefix column value
-     * @param listStrings List of String
-     */
-    public static void storeIntoCsvFileList(final String strFileName, final String strPrefixValue, final List<String> listStrings) {
-        try {
-            final List<String> strLines;
-            final File strFile = new File(strFileName);
-            if (strFile.exists()) {
-                strLines = listStrings.stream()
-                        .map(value -> strPrefixValue + "," + value)
-                        .toList();
-            } else {
-                strLines = Stream.concat(
-                        Stream.of("DataType,Column"), // header
-                        listStrings.stream()
-                                .map(value -> strPrefixValue + "," + value)
                 ).toList();
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -275,7 +140,7 @@ public final class FileContentClass {
      * @param strFileName file name to write to
      */
     public static void writeListToTextFile(final List<String> listStrings, final String strFileName) {
-    	FileHandlingClass.removeFileIfExists(strFileName);
+        FileHandlingClass.removeFileIfExists(strFileName);
         try (BufferedWriter bwr = Files.newBufferedWriter(Paths.get(strFileName), StandardCharsets.UTF_8)) {
             listStrings.forEach(strLine -> {
                 try {
@@ -294,7 +159,70 @@ public final class FileContentClass {
             }
         } catch (IOException ex) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(ex.getStackTrace()));
+                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
+        }
+    }
+
+    /**
+     * Write list of Properties to CSV File
+     *
+     * @param propertiesList list of Properties
+     * @param strFileName target File
+     */
+    public static void writePropertiesListToCSV(final List<Properties> propertiesList, final String strFileName, final String strColumnSeparator) {
+        // Collect all unique keys
+        final Set<String> allKeys = new LinkedHashSet<>();
+        for (Properties properties : propertiesList) {
+            allKeys.addAll(properties.stringPropertyNames());
+        }
+        try (BufferedWriter bwr = Files.newBufferedWriter(Paths.get(strFileName), StandardCharsets.UTF_8)) {
+            // Write the header
+            bwr.write(String.join(strColumnSeparator, allKeys));
+            bwr.newLine();
+            // Write each row
+            for (final Properties properties : propertiesList) {
+                final List<String> row = new ArrayList<>();
+                for (String key : allKeys) {
+                    row.add(properties.getProperty(key, "")); // Supply default value "" if key is absent
+                }
+                bwr.write(String.join(strColumnSeparator, row));
+                bwr.newLine();
+            }
+        } catch (IOException ex) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
+        }
+    }
+
+    /**
+     * storing into a CSV file a LinkedHashMap
+     * @param strFileName target file name to be written to
+     * @param strPrefixValue prefix column value
+     * @param listStrings List of String
+     */
+    public static void writeStringListToCsvFile(final String strFileName, final String strPrefixValue, final String strHeader, final List<String> listStrings) {
+        try {
+            final List<String> strLines;
+            final File strFile = new File(strFileName);
+            if (strFile.exists()) {
+                strLines = listStrings.stream()
+                        .map(value -> strPrefixValue + "," + value)
+                        .toList();
+            } else {
+                strLines = Stream.concat(
+                        Stream.of(strHeader), // header
+                        listStrings.stream()
+                                .map(value -> strPrefixValue + "," + value)
+                ).toList();
+            }
+            Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(e.getStackTrace()));
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
