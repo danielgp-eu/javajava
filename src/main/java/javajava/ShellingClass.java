@@ -49,10 +49,10 @@ public final class ShellingClass {
         String strReturn = null;
         final StringBuilder processOutput = new StringBuilder();
         try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String readLine;
-            while ((readLine = processOutReader.readLine()) != null) {
-                processOutput.append(readLine).append(strOutLineSep);
-            }
+            processOutReader.lines().forEach(strCrtLine -> {
+                processOutput.append(strCrtLine)
+                        .append(strOutLineSep);
+            });
             strReturn = processOutput.toString();
         } catch (IOException ex) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
