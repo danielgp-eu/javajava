@@ -20,7 +20,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final InputStream strJson) {
-        JsonNode jsonRootNode = null;
+        JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(strJson);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
@@ -37,7 +37,7 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final File jsonFile) {
-        JsonNode jsonRootNode = null;
+        JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(jsonFile);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
