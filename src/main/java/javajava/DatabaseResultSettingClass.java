@@ -15,6 +15,8 @@ import java.util.Properties;
  */
 public final class DatabaseResultSettingClass {
 
+    private static int intRows = 0;
+
     /**
      * extends functionality for Executions
      * 
@@ -123,6 +125,7 @@ public final class DatabaseResultSettingClass {
                 final String strFeedback = String.format("I have found %d records", intRow);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
+            intRows = intRow;
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
@@ -202,7 +205,11 @@ public final class DatabaseResultSettingClass {
     private static int getResultSetNumberOfRows(final ResultSet resultSet) {
         int intResultSetRows = -1;
         try {
-            intResultSetRows = resultSet.getFetchSize() + 1;
+            if (intRows == 0) {
+                intResultSetRows = resultSet.getFetchSize() + 1;
+            } else {
+                intResultSetRows = intRows;
+            }
         } catch (SQLException e) {
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "rows", e.getLocalizedMessage());
