@@ -107,6 +107,7 @@ public final class FileContentClass {
      * storing into a CSV file a LinkedHashMap
      * @param strFileName target file name to be written to
      * @param strPrefixValue prefix column value
+     * @param strHeader header values
      * @param listHsMp LinkedHashMap
      */
     public static void writeLinkedHashMapToCsvFile(final String strFileName, final String strPrefixValue, final String strHeader, final Map<String, Long> listHsMp) {
@@ -170,6 +171,7 @@ public final class FileContentClass {
      *
      * @param propertiesList list of Properties
      * @param strFileName target File
+     * @param strClmnSeparator column separator character
      */
     public static void writePropertiesListToCSV(final List<Properties> propertiesList, final String strFileName, final String strClmnSeparator) {
         // Collect all unique keys
@@ -203,6 +205,7 @@ public final class FileContentClass {
      * storing into a CSV file a LinkedHashMap
      * @param strFileName target file name to be written to
      * @param strPrefixValue prefix column value
+     * @param strHeader header values
      * @param listStrings List of String
      */
     public static void writeStringListToCsvFile(final String strFileName, final String strPrefixValue, final String strHeader, final List<String> listStrings) {

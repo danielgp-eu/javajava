@@ -19,6 +19,54 @@ public final class DatabaseResultSettingClass {
      * Rows counter
      */
     private static int intRows;
+    /**
+     * rows for result set
+     */
+    private static int intResultSetRows;
+    /**
+     * column counter
+     */
+    private static int intColumnsIs;
+
+    /**
+     * capture to Log resultset properties
+     * @param key current key within loop
+     * @param strPurpose query purpose for log text
+     * @param objProperties object properties
+     */
+    private static void captureToLogResultsetAttributes(final String key, final String strPurpose, final Properties objProperties) {
+        switch (key) {
+            case "expectedExactNumberOfColumns":
+                final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
+                if (intColumnsIs != intColumnsShould) {
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
+                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                }
+                break;
+            case "expectedExactNumberOfRows":
+                final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
+                if (intResultSetRows != intExpectedRows) {
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
+                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                }
+                break;
+            case "exposeNumberOfColumns":
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
+                LoggerLevelProvider.LOGGER.info(strFeedback);
+                break;
+            case "exposeNumberOfRows":
+                final String strFeedbackN = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
+                LoggerLevelProvider.LOGGER.info(strFeedbackN);
+                break;
+            default:
+                final String strFeedbackD = String.format(Common.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
+                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                    LoggerLevelProvider.LOGGER.error(strFeedbackD);
+                }
+                throw new UnsupportedOperationException(strFeedbackD);
+        }
+    }
 
     /**
      * extends functionality for Executions
@@ -28,45 +76,15 @@ public final class DatabaseResultSettingClass {
      * @param objProperties properties (with features to apply)
      */
     public static void digestCustomQueryProperties(final String strPurpose, final ResultSet resultSet, final Properties objProperties) {
-        final int intResultSetRows = getResultSetNumberOfRows(resultSet);
-        final int intColumnsIs = getResultSetNumberOfColumns(resultSet);
+        intResultSetRows = getResultSetNumberOfRows(resultSet);
+        intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
             final String key = (String) obj;
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
                 final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
-            switch (key) {
-                case "expectedExactNumberOfColumns":
-                    final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
-                    if (intColumnsIs != intColumnsShould) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
-                        LoggerLevelProvider.LOGGER.error(strFeedback);
-                    }
-                    break;
-                case "expectedExactNumberOfRows":
-                    final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
-                    if (intResultSetRows != intExpectedRows) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
-                        LoggerLevelProvider.LOGGER.error(strFeedback);
-                    }
-                    break;
-                case "exposeNumberOfColumns":
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
-                    LoggerLevelProvider.LOGGER.info(strFeedback);
-                    break;
-                case "exposeNumberOfRows":
-                    final String strFeedbackN = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
-                    LoggerLevelProvider.LOGGER.info(strFeedbackN);
-                    break;
-                default:
-                    final String strFeedbackD = String.format(Common.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                        LoggerLevelProvider.LOGGER.error(strFeedbackD);
-                    }
-                    throw new UnsupportedOperationException(strFeedbackD);
-            }
+            captureToLogResultsetAttributes(key, strPurpose, objProperties);
         }
     }
 

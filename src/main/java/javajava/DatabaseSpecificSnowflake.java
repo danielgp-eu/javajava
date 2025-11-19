@@ -6,15 +6,146 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Snowflake methods
  */
 public final class DatabaseSpecificSnowflake {
+    /**
+     * Map with predefined queries
+     */
+    private static final Map<String, String> STD_QUERY;
+
+    static {
+        // Initialize the concurrent map
+        final Map<String, String> tempMap = new ConcurrentHashMap<>();
+        tempMap.put("Columns", """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "ORDINAL_POSITION"
+    , "COLUMN_NAME"
+    , "DATA_TYPE"
+    , CASE
+        WHEN "DATA_TYPE" = 'TEXT'
+            AND ("CHARACTER_MAXIMUM_LENGTH" >= 16777215)    THEN
+            "DATA_TYPE"
+        WHEN "DATA_TYPE" = 'TEXT'                           THEN
+            'VARCHAR('
+                || TO_CHAR("CHARACTER_MAXIMUM_LENGTH")
+                || ')'
+        WHEN "DATA_TYPE" = 'FLOAT'                          THEN
+            "DATA_TYPE"
+        WHEN "DATA_TYPE" = 'NUMBER'                         THEN
+            'NUMBER('
+                || TO_CHAR("NUMERIC_PRECISION")
+                || ','
+                || TO_CHAR("NUMERIC_SCALE")
+                || ')'
+        WHEN "DATA_TYPE" IN ('ARRAY'
+            , 'BINARY'
+            , 'BOOLEAN'
+            , 'DATE'
+            , 'OBJECT'
+            , 'TIME'
+            , 'VARIANT')                                    THEN
+            "DATA_TYPE"
+        WHEN "DATA_TYPE" IN ('TIMESTAMP'
+            , 'TIMESTAMP_LTZ'
+            , 'TIMESTAMP_NTZ'
+            , 'TIMESTAMP_TZ')                               THEN
+            "DATA_TYPE"
+                || '('
+                ||  "DATETIME_PRECISION"
+                || ')'
+        ELSE
+            '???'
+        END                 AS "Data_Type_Full"
+    , "IS_NULLABLE"
+    , "COLUMN_DEFAULT"
+    , "COMMENT"
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."COLUMNS";""");
+        tempMap.put("Databases", """
+SELECT
+      "DATABASE_NAME"
+    , "DATABASE_OWNER"
+    , "COMMENT"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "RETENTION_TIME"
+    , "TYPE"
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."DATABASES";""");
+        tempMap.put("TablesAndViews", """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "TABLE_OWNER"
+    , "TABLE_TYPE"
+    , "IS_TRANSIENT"
+    , "CLUSTERING_KEY"
+    , "ROW_COUNT"
+    , "BYTES"
+    , "RETENTION_TIME"
+    , "SELF_REFERENCING_COLUMN_NAME"
+    , "REFERENCE_GENERATION"
+    , "USER_DEFINED_TYPE_CATALOG"
+    , "USER_DEFINED_TYPE_SCHEMA"
+    , "USER_DEFINED_TYPE_NAME"
+    , "IS_INSERTABLE_INTO"
+    , "IS_TYPED"
+    , "COMMIT_ACTION"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "LAST_DDL"
+    , "LAST_DDL_BY"
+    , "AUTO_CLUSTERING_ON"
+    , "COMMENT"
+    , "IS_TEMPORARY"
+    , "IS_ICEBERG"
+    , "IS_DYNAMIC"
+    , "IS_IMMUTABLE"
+    , `IS_HYBRID`
+    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
+    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
+FROM
+    "INFORMATION_SCHEMA"."TABLES";""");
+        tempMap.put("Views", """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "TABLE_OWNER"
+    , "VIEW_DEFINITION"
+    , "IS_SECURE"
+    , "CREATED"
+    , "LAST_ALTERED"
+    , "LAST_DDL"
+    , "LAST_DDL_BY"
+    , "COMMENT"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS";""");
+        tempMap.put("ViewsLight", """
+SELECT
+      "TABLE_CATALOG"
+    , "TABLE_SCHEMA"
+    , "TABLE_NAME"
+    , "VIEW_DEFINITION"
+FROM
+    "INFORMATION_SCHEMA"."VIEWS";""");
+        tempMap.put("Warehouses", "SHOW WAREHOUSES;");
+        // Make the map unmodifiable
+        STD_QUERY = Collections.unmodifiableMap(tempMap);
+    }
 
     /**
      * Snowflake Bootstrap
@@ -85,162 +216,16 @@ public final class DatabaseSpecificSnowflake {
      * @return String
      */
     public static String getSnowflakePreDefinedMetadataQuery(final String strWhichQuery) {
-        return switch (strWhichQuery) {
-            case "Columns" -> """
-SELECT
-      "TABLE_CATALOG"
-    , "TABLE_SCHEMA"
-    , "TABLE_NAME"
-    , "ORDINAL_POSITION"
-    , "COLUMN_NAME"
-    , "DATA_TYPE"
-    , CASE
-        WHEN "DATA_TYPE" = 'TEXT'
-            AND ("CHARACTER_MAXIMUM_LENGTH" >= 16777215)    THEN
-            "DATA_TYPE"
-        WHEN "DATA_TYPE" = 'TEXT'                           THEN
-            'VARCHAR('
-                || TO_CHAR("CHARACTER_MAXIMUM_LENGTH")
-                || ')'
-        WHEN "DATA_TYPE" = 'FLOAT'                          THEN
-            "DATA_TYPE"
-        WHEN "DATA_TYPE" = 'NUMBER'                         THEN
-            'NUMBER('
-                || TO_CHAR("NUMERIC_PRECISION")
-                || ','
-                || TO_CHAR("NUMERIC_SCALE")
-                || ')'
-        WHEN "DATA_TYPE" IN ('ARRAY'
-            , 'BINARY'
-            , 'BOOLEAN'
-            , 'DATE'
-            , 'OBJECT'
-            , 'TIME'
-            , 'VARIANT')                                    THEN
-            "DATA_TYPE"
-        WHEN "DATA_TYPE" IN ('TIMESTAMP'
-            , 'TIMESTAMP_LTZ'
-            , 'TIMESTAMP_NTZ'
-            , 'TIMESTAMP_TZ')                               THEN
-            "DATA_TYPE"
-                || '('
-                ||  "DATETIME_PRECISION"
-                || ')'
-        ELSE
-            '???'
-        END                 AS "Data_Type_Full"
-    , "IS_NULLABLE"
-    , "COLUMN_DEFAULT"
-    , "COMMENT"
-    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
-    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
-FROM
-    "INFORMATION_SCHEMA"."COLUMNS";""";
-            case "Databases" -> """
-SELECT
-      "DATABASE_NAME"
-    , "DATABASE_OWNER"
-    , "COMMENT"
-    , "CREATED"
-    , "LAST_ALTERED"
-    , "RETENTION_TIME"
-    , "TYPE"
-    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
-    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
-FROM
-    "INFORMATION_SCHEMA"."DATABASES";""";
-            case "Roles" -> """
-SELECT
-    TRIM(VALUE) AS "AssignedRoleName"
-FROM
-    TABLE(FLATTEN(input => PARSE_JSON(CURRENT_AVAILABLE_ROLES())));""";
-            case "Schemas" -> """
-SELECT
-      "CATALOG_NAME"
-    , "SCHEMA_NAME"
-    , "SCHEMA_OWNER"
-    , "IS_TRANSIENT"
-    , "IS_MANAGED_ACCESS"
-    , "RETENTION_TIME"
-    , "DEFAULT_CHARACTER_SET_CATALOG"
-    , "DEFAULT_CHARACTER_SET_SCHEMA"
-    , "DEFAULT_CHARACTER_SET_NAME"
-    , "SQL_PATH"
-    , "CREATED"
-    , "LAST_ALTERED"
-    , "COMMENT"
-    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
-    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
-FROM
-    "INFORMATION_SCHEMA"."SCHEMATA";""";
-            case "TablesAndViews" -> """
-SELECT
-      "TABLE_CATALOG"
-    , "TABLE_SCHEMA"
-    , "TABLE_NAME"
-    , "TABLE_OWNER"
-    , "TABLE_TYPE"
-    , "IS_TRANSIENT"
-    , "CLUSTERING_KEY"
-    , "ROW_COUNT"
-    , "BYTES"
-    , "RETENTION_TIME"
-    , "SELF_REFERENCING_COLUMN_NAME"
-    , "REFERENCE_GENERATION"
-    , "USER_DEFINED_TYPE_CATALOG"
-    , "USER_DEFINED_TYPE_SCHEMA"
-    , "USER_DEFINED_TYPE_NAME"
-    , "IS_INSERTABLE_INTO"
-    , "IS_TYPED"
-    , "COMMIT_ACTION"
-    , "CREATED"
-    , "LAST_ALTERED"
-    , "LAST_DDL"
-    , "LAST_DDL_BY"
-    , "AUTO_CLUSTERING_ON"
-    , "COMMENT"
-    , "IS_TEMPORARY"
-    , "IS_ICEBERG"
-    , "IS_DYNAMIC"
-    , "IS_IMMUTABLE"
-    , `IS_HYBRID`
-    , CURRENT_ACCOUNT()     AS "SNOWFLAKE_INSTANCE"
-    , SYSDATE()             AS "EXTRACTION_TIMESTAMP_UTC"
-FROM
-    "INFORMATION_SCHEMA"."TABLES";""";
-            case "Views" -> """
-SELECT
-      "TABLE_CATALOG"
-    , "TABLE_SCHEMA"
-    , "TABLE_NAME"
-    , "TABLE_OWNER"
-    , "VIEW_DEFINITION"
-    , "IS_SECURE"
-    , "CREATED"
-    , "LAST_ALTERED"
-    , "LAST_DDL"
-    , "LAST_DDL_BY"
-    , "COMMENT"
-FROM
-    "INFORMATION_SCHEMA"."VIEWS";""";
-            case "ViewsLight" -> """
-SELECT
-      "TABLE_CATALOG"
-    , "TABLE_SCHEMA"
-    , "TABLE_NAME"
-    , "VIEW_DEFINITION"
-FROM
-    "INFORMATION_SCHEMA"."VIEWS";""";
-            case "Warehouses" -> "SHOW WAREHOUSES;";
-            default -> {
-                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhichQuery, StackWalker.getInstance()
+        final String strQueryToUse = STD_QUERY.get(strWhichQuery);
+        if (strQueryToUse.isEmpty()) {
+            final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhichQuery, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
-                }
-                throw new UnsupportedOperationException(strFeedback);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                LoggerLevelProvider.LOGGER.error(strFeedback);
             }
-        };
+            throw new UnsupportedOperationException(strFeedback);
+        }
+        return strQueryToUse;
     }
 
     /**

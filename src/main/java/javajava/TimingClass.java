@@ -4,17 +4,40 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
+import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Time methods
  */
 public final class TimingClass {
-
+    /**
+     * Map with predefined network physical types
+     */
+    private static final Map<String, String> TIME_FORMATS;
     /**
      * String for Second
      */
     final private static String STRSECOND = "Second";
+    /**
+     * 
+     */
+    private static final String strTimeFrmSp = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+
+    static {
+        // Initialize the concurrent map
+        final Map<String, String> tempMap = new ConcurrentHashMap<>();
+        tempMap.put("DotAndNineDigitNumber", ".%09d");
+        tempMap.put("DotAndThreeDigitNumber", ".%03d");
+        tempMap.put("SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero", " %02d %s");
+        tempMap.put("SemicolumnAndTwoDigitNumber", ":%02d");
+        tempMap.put("TwoDigitNumber", "%02d");
+        tempMap.put("TwoDigitNumberOnlyIfGreaterThanZero", "%02d");
+        // Make the map unmodifiable
+        TIME_FORMATS = Collections.unmodifiableMap(tempMap);
+    }
 
     /**
      * Convert Nanoseconds to a more digest-able string
@@ -127,34 +150,21 @@ public final class TimingClass {
      */
     private static String getDurationWithCustomRules(final Duration duration, final String strWhich, final String strHow) {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
-        String strReturn = "";
-        switch (strHow) {
-            case "DotAndNineDigitNumber":
-                strReturn = String.format(".%09d", lngNumber);
-                break;
-            case "DotAndThreeDigitNumber":
-                strReturn = String.format(".%03d", lngNumber);
-                break;
-            case "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero":
-                if (lngNumber > 0) {
-                    strReturn = String.format(" %02d %s", lngNumber, JavaJavaLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
-                }
-                break;
-            case "SemicolumnAndTwoDigitNumber":
-                strReturn = String.format(":%02d", lngNumber);
-                break;
-            case "TwoDigitNumber":
-                strReturn = String.format("%02d", lngNumber);
-                break;
-            case "TwoDigitNumberOnlyIfGreaterThanZero":
-                if (lngNumber > 0) {
-                    strReturn = String.format("%02d", lngNumber);
-                }
-                break;
-            default:
-                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
+        final String strFormats = TIME_FORMATS.get(strHow);
+        if (strFormats.isEmpty()) {
+            final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                throw new UnsupportedOperationException(strFeedback);
+            throw new UnsupportedOperationException(strFeedback);
+        }
+        String strReturn;
+        if (strTimeFrmSp.equalsIgnoreCase(strHow)) {
+            strReturn = String.format(strFormats, lngNumber, JavaJavaLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
+        } else {
+            strReturn = String.format(strFormats, lngNumber);
+        }
+        if (strHow.endsWith("IfGreaterThanZero")
+            && (lngNumber <= 0)) {
+            strReturn = "";
         }
         return strReturn;
     }
