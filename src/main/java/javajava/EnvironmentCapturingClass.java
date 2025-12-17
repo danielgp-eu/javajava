@@ -2,7 +2,6 @@ package javajava;
 
 import org.apache.logging.log4j.Level;
 import oshi.SystemInfo;
-import oshi.hardware.*;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
