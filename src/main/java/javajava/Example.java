@@ -98,7 +98,7 @@ class GetInformationFromDatabase implements Runnable {
     /**
      * Known Database Types
      */
-	/* default */ static final List<String> lstDbTypes = Arrays.asList(
+	/* default */ static final List<String> LST_DB_TYPES = Arrays.asList(
         "MySQL",
         "Snowflake"
     );
@@ -106,7 +106,7 @@ class GetInformationFromDatabase implements Runnable {
     /**
      * Known Information Types
      */
-	/* default */ static final List<String> lstInfoTypes = Arrays.asList(
+	/* default */ static final List<String> LST_INFO_TYPES = Arrays.asList(
         "Columns",
         "Databases",
         "Schemas",
@@ -143,7 +143,7 @@ class GetInformationFromDatabase implements Runnable {
     /* default */ static class DatabaseTypes implements Iterable<String> {
         @Override
         public Iterator<String> iterator() {
-            return lstDbTypes.iterator();
+            return LST_DB_TYPES.iterator();
         }
     }
 
@@ -153,7 +153,7 @@ class GetInformationFromDatabase implements Runnable {
     /* default */ static class InfoTypes implements Iterable<String> {
         @Override
         public Iterator<String> iterator() {
-            return lstInfoTypes.iterator();
+            return LST_INFO_TYPES.iterator();
         }
     }
 
@@ -182,16 +182,16 @@ class GetInformationFromDatabase implements Runnable {
 
     @Override
     public void run() {
-        if (!lstDbTypes.contains(strDbType)) {
+        if (!LST_DB_TYPES.contains(strDbType)) {
             throw new CommandLine.ParameterException(
                     new CommandLine(this),
-                    "Invalid value for --databaseType: " + strDbType + ". Valid values are: " + lstDbTypes
+                    "Invalid value for --databaseType: " + strDbType + ". Valid values are: " + LST_DB_TYPES
             );
         }
-        if (!lstInfoTypes.contains(strInfoType)) {
+        if (!LST_INFO_TYPES.contains(strInfoType)) {
             throw new CommandLine.ParameterException(
                     new CommandLine(this),
-                    "Invalid value for --informationType: " + strInfoType + ". Valid values are: " + lstInfoTypes
+                    "Invalid value for --informationType: " + strInfoType + ". Valid values are: " + LST_INFO_TYPES
             );
         }
         performAction(strDbType, strInfoType);
@@ -299,7 +299,7 @@ class PairBankRecordsWithSellingReceipts implements Runnable {
     /**
      * List for Output result
      */
-    /* default */ final static List<String> listOutResult = new ArrayList<>();
+    /* default */ final static List<String> LST_OUT_RESULT = new ArrayList<>();
     /**
      * String for FileName
      */

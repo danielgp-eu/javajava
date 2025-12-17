@@ -20,11 +20,11 @@ public final class TimingClass {
     /**
      * String for Second
      */
-    final private static String STRSECOND = "Second";
+    final private static String STR_SECOND = "Second";
     /**
      * 
      */
-    private static final String strTimeFrmSp = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+    private static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
 
     static {
         // Initialize the concurrent map
@@ -57,7 +57,7 @@ public final class TimingClass {
                 break;
             case "TimeClockClassic":
                 arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber"};
-                strFinalOne = STRSECOND;
+                strFinalOne = STR_SECOND;
                 break;
             case "TimeClock":
                 arrayStrings = new String[]{"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndThreeDigitNumber"};
@@ -71,8 +71,8 @@ public final class TimingClass {
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
                 + getDurationWithCustomRules(duration, "Hour", arrayStrings[1])
                 + getDurationWithCustomRules(duration, "Minute", arrayStrings[2])
-                + getDurationWithCustomRules(duration, STRSECOND, arrayStrings[2])
-                + (STRSECOND.equalsIgnoreCase(strFinalOne) ? "" : getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]))
+                + getDurationWithCustomRules(duration, STR_SECOND, arrayStrings[2])
+                + (STR_SECOND.equalsIgnoreCase(strFinalOne) ? "" : getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]))
             ).trim();
     }
 
@@ -157,7 +157,7 @@ public final class TimingClass {
             throw new UnsupportedOperationException(strFeedback);
         }
         String strReturn;
-        if (strTimeFrmSp.equalsIgnoreCase(strHow)) {
+        if (STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
             strReturn = String.format(strFormats, lngNumber, JavaJavaLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
         } else {
             strReturn = String.format(strFormats, lngNumber);

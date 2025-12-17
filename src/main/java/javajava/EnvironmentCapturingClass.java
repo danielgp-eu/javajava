@@ -19,15 +19,15 @@ public final class EnvironmentCapturingClass {
     /**
      * Hardware info
      */
-    private static final SystemInfo systemInfo = new SystemInfo();
+    private static final SystemInfo SYSTEM_INFO = new SystemInfo();
     /**
      * Hardware info
      */
-    private static final HardwareAbstractionLayer hardware = systemInfo.getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    private static final HardwareAbstractionLayer hardware = SYSTEM_INFO.getHardware(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * OS info
      */
-    private static final OperatingSystem operatingSystem = systemInfo.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
+    private static final OperatingSystem operatingSystem = SYSTEM_INFO.getOperatingSystem(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:39
     /**
      * string constant
      */
