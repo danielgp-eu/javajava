@@ -156,7 +156,7 @@
         <dependency>
             <groupId>com.github.oshi</groupId>
             <artifactId>oshi-core-java25</artifactId>
-            <version>6.9.1</version>
+            <version>6.9.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
         <dependency>
