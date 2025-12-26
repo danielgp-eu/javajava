@@ -15,7 +15,7 @@ public final class ShellingClass {
     /**
      * holding the Use account currently logged on
      */
-    public static String loggedAccount = null; // NOPMD by Daniel Popiniuc on 17.04.2025, 16:26
+    public static String loggedAccount;
 
     /**
      * Building Process for shell execution
