@@ -99,8 +99,9 @@ public final class DatabaseResultSettingClass {
         try {
             final ResultSetMetaData metaData = resultSet.getMetaData();
             final int columnCount = metaData.getColumnCount();
+            final Properties colProperties = new Properties();
             for (int columnNumber = 1; columnNumber <= columnCount; columnNumber++) {
-                final Properties colProperties = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
+                colProperties.clear();
                 colProperties.put("Display Size", metaData.getColumnDisplaySize(columnNumber));
                 colProperties.put("Name", metaData.getColumnName(columnNumber));
                 colProperties.put("Precision", metaData.getPrecision(columnNumber));
@@ -130,8 +131,9 @@ public final class DatabaseResultSettingClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             final int columnCount = resultSetMetaData.getColumnCount();
             int intRow = 0;
+            final Properties currentRow = new Properties();
             while (resultSet.next()) {
-                final Properties currentRow = new Properties(); // NOPMD by Daniel Popiniuc on 17.04.2025, 17:12
+                currentRow.clear();
                 for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
                     String crtValue = resultSet.getString(colIndex);
                     if (resultSet.wasNull()) {
