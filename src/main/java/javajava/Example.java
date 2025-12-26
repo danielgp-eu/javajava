@@ -3,6 +3,7 @@ package javajava;
 
 import org.apache.logging.log4j.Level;
 import picocli.CommandLine;
+import selling.FileContentSellingClass;
 
 import java.time.LocalDateTime;
 import java.util.*;

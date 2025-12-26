@@ -1,6 +1,14 @@
-package javajava;
+package selling;
 
 import org.apache.logging.log4j.Level;
+
+import javajava.DatabaseConnectivity;
+import javajava.DatabaseResultSettingClass;
+import javajava.DatabaseSpecificMySql;
+import javajava.FileContentClass;
+import javajava.JavaJavaLocalization;
+import javajava.LoggerLevelProvider;
+import javajava.TimingClass;
 
 import java.io.BufferedReader;
 import java.io.IOException;
