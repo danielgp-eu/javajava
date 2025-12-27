@@ -177,39 +177,6 @@ public final class Common {
     }
 
     /**
-     * JAVA info
-     * 
-     * @return String
-     */
-    public static String getDetailsAboutSoftwareUser() {
-        return getMapIntoJsonString(Map.of(
-            "Country", System.getProperty("user.country"),
-            "Country.Format", System.getProperty("user.country.format"),
-            "Language", System.getProperty("user.language"),
-            "Language.Format", System.getProperty("user.language.format"),
-            "Home", System.getProperty("user.home").replace("\\", "\\\\"),
-            "Name", System.getProperty("user.name"),
-            "Timezone", System.getProperty("user.timezone")
-        ));
-    }
-
-    /**
-     * JAVA info
-     * 
-     * @return String
-     */
-    public static String getDetailsAboutSoftwarePlatformJava() {
-        return getMapIntoJsonString(Map.of(
-            "Date", System.getProperty("java.version.date"),
-            "Release", System.getProperty("java.vendor.version"),
-            "Runtime", System.getProperty("java.runtime.name"),
-            "Version", System.getProperty("java.version"),
-            "Vendor", System.getProperty("java.vendor"),
-            "VM", System.getProperty("java.vm.name")
-        ));
-    }
-
-    /**
      * Build a pair of Key and Value for JSON
      * @param strKey Key to be used
      * @param objValue Value to be used

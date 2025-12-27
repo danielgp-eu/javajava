@@ -2,6 +2,8 @@ package javajava;
 /* Time class */
 
 import org.apache.logging.log4j.Level;
+
+import environment.EnvironmentCapturingClass;
 import picocli.CommandLine;
 import selling.FileContentSellingClass;
 
