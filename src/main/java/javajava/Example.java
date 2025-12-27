@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * Example class
+ * Main Command Line
  */
 @CommandLine.Command(
     name = "top",
@@ -24,6 +24,9 @@ import java.util.*;
         PairBankRecordsWithSellingReceipts.class
     }
 )
+/**
+ * Example class
+ */
 public final class Example implements Runnable {
 
     /**
@@ -33,9 +36,6 @@ public final class Example implements Runnable {
         final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec") + "-".repeat(80);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             LoggerLevelProvider.LOGGER.debug(strFeedback);
-        }
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-            LoggerLevelProvider.LOGGER.info(strFeedback);
         }
     }
 

@@ -120,7 +120,7 @@ public class FileContentSellingClass {
             String line;
             int intReceiptLineNo = 0;
             boolean bolIsReceipt = false;
-            String strTotalValue = "";
+            String strTotalValue;
             BigDecimal decTotalValue = BigDecimal.ZERO;
             String strCardValue = "";
             String strMdrnPmntVl = "";
@@ -143,6 +143,7 @@ public class FileContentSellingClass {
                         intReceiptLineNo = 1;
                         bolIsReceipt = false;
                         decTotalValue = BigDecimal.ZERO;
+                        strTotalValue = "";
                     }
                     if (List.of(2, 3, 4).contains(intReceiptLineNo)) {
                         strBuilder.append(';').append(strTrimmedLine); // 2 = Address, 3 = City, 4 = County

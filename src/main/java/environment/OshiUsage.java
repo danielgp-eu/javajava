@@ -32,7 +32,7 @@ public class OshiUsage {
 
         /**
          * get Video card attributes
-         * @return List<GraphicsCard>
+         * @return List of GraphicsCard
          */
         public static List<GraphicsCard> getOshiGraphicsCards() {
             return oshi_harware.getGraphicsCards();
@@ -48,7 +48,7 @@ public class OshiUsage {
 
         /**
          * get Video card attributes
-         * @return List<GraphicsCard>
+         * @return List of Display
          */
         public static List<Display> getOshiMonitor() {
             return oshi_harware.getDisplays();
@@ -56,7 +56,7 @@ public class OshiUsage {
 
         /**
          * get Video card attributes
-         * @return List<NetworkIF>
+         * @return List of NetworkIF
          */
         public static List<NetworkIF> getOshiNetworkInterfaces() {
             return oshi_harware.getNetworkIFs();
