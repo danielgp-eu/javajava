@@ -152,7 +152,6 @@ final public class ProjectDependencyResolver {
 
     /**
      * Main method to execute the dependency resolution
-     * @param args
      */
     public static String getDependency() {
         final String pomFile = getCurrentProjectObjectModelFile();
