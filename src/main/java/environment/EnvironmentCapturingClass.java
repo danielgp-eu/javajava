@@ -1,10 +1,11 @@
 package environment;
 
 import javajava.Common;
-import javajava.DependenciesClass;
 import javajava.JavaJavaLocalization;
 import javajava.LoggerLevelProvider;
 import org.apache.logging.log4j.Level;
+
+import dependency.ProjectDependencyResolver;
 
 /**
  * Capturing current environment details
@@ -32,7 +33,7 @@ public final class EnvironmentCapturingClass extends OshiUsage {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationSoftwareCaptured");
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
-        strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", DependenciesClass.getCurrentDependencies()));
+        strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", ProjectDependencyResolver.getDependency()));
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nAppInformationApplicationCaptured");
             LoggerLevelProvider.LOGGER.debug(strFeedback);
