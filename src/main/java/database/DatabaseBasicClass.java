@@ -1,6 +1,12 @@
-package javajava;
+package database;
 
 import org.apache.logging.log4j.Level;
+
+import javajava.Common;
+import javajava.JavaJavaLocalization;
+import javajava.LoggerLevelProvider;
+import javajava.StringManipulationClass;
+import javajava.TimingClass;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

@@ -1,7 +1,11 @@
-package javajava;
+package database;
 
 import org.apache.logging.log4j.Level;
 import org.sqlite.Function;
+
+import javajava.Common;
+import javajava.JavaJavaLocalization;
+import javajava.LoggerLevelProvider;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

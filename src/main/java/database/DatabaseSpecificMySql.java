@@ -1,7 +1,12 @@
-package javajava;
-/* Jackson classes for fast JSON handling */
+package database;
 
 import org.apache.logging.log4j.Level;
+
+import javajava.Common;
+import javajava.JavaJavaLocalization;
+import javajava.LoggerLevelProvider;
+import javajava.JsoningClass;
+
 import tools.jackson.databind.JsonNode;
 
 import java.io.ByteArrayInputStream;

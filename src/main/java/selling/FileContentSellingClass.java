@@ -3,6 +3,10 @@ package selling;
 import javajava.*;
 import org.apache.logging.log4j.Level;
 
+import database.DatabaseConnectivity;
+import database.DatabaseResultSettingClass;
+import database.DatabaseSpecificMySql;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
