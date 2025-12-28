@@ -59,7 +59,9 @@ public class OshiUsage {
          * @return List of NetworkIF
          */
         public static List<NetworkIF> getOshiNetworkInterfaces() {
-            return oshi_harware.getNetworkIFs();
+            return oshi_harware.getNetworkIFs().stream()
+                    .filter(net -> net.getIfOperStatus() == NetworkIF.IfOperStatus.UP)
+                    .toList();
         }
 
         /**
