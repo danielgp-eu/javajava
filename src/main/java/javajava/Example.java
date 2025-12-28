@@ -1,5 +1,4 @@
 package javajava;
-/* Time class */
 
 import environment.EnvironmentCapturingClass;
 import org.apache.logging.log4j.Level;
