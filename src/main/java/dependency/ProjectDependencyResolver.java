@@ -1,5 +1,11 @@
 package dependency;
 
+import javajava.Common;
+import javajava.FileHandlingClass;
+import javajava.LoggerLevelProvider;
+import org.apache.logging.log4j.Level;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -15,14 +21,6 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
-
-import javajava.Common;
-import javajava.FileHandlingClass;
-import javajava.LoggerLevelProvider;
-
-import org.apache.logging.log4j.Level;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
