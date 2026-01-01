@@ -28,14 +28,16 @@ public class OshiUsage {
         /**
          * Hardware info
          */
-        private static final HardwareAbstractionLayer oshi_harware = SYSTEM_INFO.getHardware();
+        private static HardwareAbstractionLayer getOshiHardware() {
+            return SYSTEM_INFO.getHardware();
+        }
 
         /**
          * get Video card attributes
          * @return List of GraphicsCard
          */
         public static List<GraphicsCard> getOshiGraphicsCards() {
-            return oshi_harware.getGraphicsCards();
+            return getOshiHardware().getGraphicsCards();
         }
 
         /**
@@ -43,7 +45,7 @@ public class OshiUsage {
          * @return GlobalMemory
          */
         public static GlobalMemory getOshiMemory() {
-            return oshi_harware.getMemory();
+            return getOshiHardware().getMemory();
         }
 
         /**
@@ -51,15 +53,23 @@ public class OshiUsage {
          * @return List of Display
          */
         public static List<Display> getOshiMonitor() {
-            return oshi_harware.getDisplays();
+            return getOshiHardware().getDisplays();
         }
 
         /**
-         * get Video card attributes
+         * get Network attributes
+         * @return List of NetworkIF
+         */
+        private static List<NetworkIF> getOshiNetworkInterfacesRaw() {
+            return getOshiHardware().getNetworkIFs();
+        }
+
+        /**
+         * get Network attributes and filter to retain UP ones
          * @return List of NetworkIF
          */
         public static List<NetworkIF> getOshiNetworkInterfaces() {
-            return oshi_harware.getNetworkIFs().stream()
+            return getOshiNetworkInterfacesRaw().stream()
                     .filter(net -> net.getIfOperStatus() == NetworkIF.IfOperStatus.UP)
                     .toList();
         }
@@ -69,7 +79,7 @@ public class OshiUsage {
          * @return CentralProcessor
          */
         public static CentralProcessor getOshiProcessor() {
-            return oshi_harware.getProcessor();
+            return getOshiHardware().getProcessor();
         }
 
         /**
@@ -79,6 +89,7 @@ public class OshiUsage {
         public static CentralProcessor.ProcessorIdentifier getOshiProcessorIdentifier() {
             return getOshiProcessor().getProcessorIdentifier();
         }
+
     }
 
     /**
@@ -86,16 +97,18 @@ public class OshiUsage {
      */
     public static class OshiSoftware {
         /**
-         * OS info
+         * Software info
          */
-        private static final OperatingSystem oshi_os = SYSTEM_INFO.getOperatingSystem();
+        private static OperatingSystem getOshiSoftware() {
+            return SYSTEM_INFO.getOperatingSystem();
+        }
 
         /**
          * get OS Family
          * @return OperatingSystem Family
          */
         public static String getOshiFamily() {
-            return oshi_os.getFamily();
+            return getOshiSoftware().getFamily();
         }
 
         /**
@@ -103,7 +116,7 @@ public class OshiUsage {
          * @return FileSystem
          */
         public static FileSystem getOshiFileSystem() {
-            return oshi_os.getFileSystem();
+            return getOshiSoftware().getFileSystem();
         }
 
         /**
@@ -111,7 +124,7 @@ public class OshiUsage {
          * @return OperatingSystem Manufacturer
          */
         public static String getOshiManufacturer() {
-            return oshi_os.getManufacturer();
+            return getOshiSoftware().getManufacturer();
         }
 
         /**
@@ -119,7 +132,7 @@ public class OshiUsage {
          * @return OperatingSystem.OSVersionInfo
          */
         public static OperatingSystem.OSVersionInfo getOshiVersionInfo() {
-            return oshi_os.getVersionInfo();
+            return getOshiSoftware().getVersionInfo();
         }
 
     }
