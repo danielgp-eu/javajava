@@ -1,6 +1,10 @@
-package javajava;
+package file;
 
 import org.apache.logging.log4j.Level;
+
+import javajava.Common;
+import javajava.JavaJavaLocalization;
+import javajava.LoggerLevelProvider;
 
 import java.io.File;
 import java.io.IOException;

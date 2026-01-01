@@ -1,7 +1,6 @@
 package dependency;
 
 import javajava.Common;
-import javajava.FileHandlingClass;
 import javajava.LoggerLevelProvider;
 import org.apache.logging.log4j.Level;
 import org.apache.maven.model.Model;
@@ -21,6 +20,8 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
+
+import file.FileHandlingClass;
 
 import java.io.BufferedReader;
 import java.io.IOException;

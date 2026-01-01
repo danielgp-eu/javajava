@@ -1,6 +1,8 @@
 package javajava;
 
 import environment.EnvironmentCapturingClass;
+import file.FileHandlingClass;
+
 import org.apache.logging.log4j.Level;
 
 import database.DatabaseSpecificMySql;

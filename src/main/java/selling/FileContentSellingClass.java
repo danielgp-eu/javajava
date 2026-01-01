@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Level;
 import database.DatabaseConnectivity;
 import database.DatabaseResultSettingClass;
 import database.DatabaseSpecificMySql;
+import file.FileContentClass;
 
 import java.io.BufferedReader;
 import java.io.IOException;
