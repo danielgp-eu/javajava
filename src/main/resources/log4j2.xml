@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Configuration status="info">
     <Properties>
-        <Property name="APP_LOG_ROOT">C:/www/other/logs/DanielGP-EU</Property>
+        <Property name="APP_LOG_ROOT">C:/www/other/logs/LogJavaJava</Property>
         <Property name="FILE_NAME_PREFIX">app-danielgp-eu-</Property>
         <Property name="FILE_PATTERN_SUFFIX">%d{yyyy-MM-dd-HH}-%i</Property>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} [%-6p] %C{3}.%M(%F:%L) - %m%n</Property>
@@ -46,7 +46,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root additivity="false" level="debug">
+        <Root additivity="false" level="DEBUG">
             <AppenderRef ref="restLog" />
             <AppenderRef ref="errorLog" />
         </Root>

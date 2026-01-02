@@ -109,6 +109,13 @@ class CleanOlderFilesFromFolder implements Runnable {
             FileHandlingClass.removeFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
         }
     }
+
+    /**
+     * Constructor
+     */
+    protected CleanOlderFilesFromFolder() {
+        super();
+    }
 }
 
 /**
@@ -135,6 +142,13 @@ class GetInformationFromTextWithSellingPointReceiptsIntoCsvFile implements Runna
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         FileContentSellingClass.consolidateSellingPointReceiptIntoCsvFile(strFileNameIn, "MASTER TASTE", strFileNameOut);
+    }
+
+    /**
+     * Constructor
+     */
+    protected GetInformationFromTextWithSellingPointReceiptsIntoCsvFile() {
+        super();
     }
 }
 
@@ -245,6 +259,14 @@ class GetInformationFromDatabase implements Runnable {
         }
         performAction(strDbType, strInfoType);
     }
+
+    /**
+     * Constructor
+     */
+    protected GetInformationFromDatabase() {
+        super();
+    }
+
 }
 
 /**
@@ -305,6 +327,13 @@ class GetSpecificInformationFromSnowflake implements Runnable {
         performAction(strInfoType);
     }
 
+    /**
+     * Constructor
+     */
+    protected GetSpecificInformationFromSnowflake() {
+        super();
+    }
+
 }
 
 /**
@@ -322,8 +351,9 @@ class GetSubFoldersFromFolder implements Runnable {
      * Private constructor to prevent instantiation
      */
     public GetSubFoldersFromFolder() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        super();
     }
+
 }
 
 /**
@@ -337,6 +367,14 @@ class LogEnvironmentDetails implements Runnable {
         final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
         LoggerLevelProvider.LOGGER.info(strFeedback);
     }
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    public LogEnvironmentDetails() {
+        super();
+    }
+
 }
 
 /**
@@ -363,4 +401,12 @@ class PairBankRecordsWithSellingReceipts implements Runnable {
     public void run() {
         FileContentSellingClass.pairMySqlBankAndCashRegisterRecords(strFileNameOut);
     }
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    public PairBankRecordsWithSellingReceipts() {
+        super();
+    }
+
 }

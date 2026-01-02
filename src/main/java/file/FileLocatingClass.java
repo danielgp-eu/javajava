@@ -6,13 +6,14 @@ import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Level;
 
+import javajava.Common;
 import javajava.JavaJavaLocalization;
 import javajava.LoggerLevelProvider;
 
 /**
  * Locate files of folders class
  */
-public class FileLocatingClass {
+public final class FileLocatingClass {
     /**
      * String constant Minified
      */
@@ -100,4 +101,10 @@ public class FileLocatingClass {
         }
         return strFileJson;
     }
+
+    // Private constructor to prevent instantiation
+    private FileLocatingClass() {
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+    }
+
 }
