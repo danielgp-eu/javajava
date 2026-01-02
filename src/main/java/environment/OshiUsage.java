@@ -22,9 +22,24 @@ public class OshiUsage {
     public static final SystemInfoFFM SYSTEM_INFO = new SystemInfoFFM();
 
     /**
+     * Constructor empty
+     */
+    protected OshiUsage() {
+        // no init required
+    }
+
+    /**
      * initiating Hardware package
      */
     public static class OshiHardware {
+
+        /**
+         * Constructor empty
+         */
+        protected OshiHardware() {
+            // no init required
+        }
+
         /**
          * Hardware info
          */
@@ -96,6 +111,14 @@ public class OshiUsage {
      * initiating Software package
      */
     public static class OshiSoftware {
+
+        /**
+         * Constructor empty
+         */
+        protected OshiSoftware() {
+            // no init required
+        }
+
         /**
          * Software info
          */

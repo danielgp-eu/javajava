@@ -100,4 +100,11 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
         ));
     }
 
+    /**
+     * Constructor empty
+     */
+    protected EnvironmentSoftware() {
+        super();
+    }
+
 }

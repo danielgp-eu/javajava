@@ -201,4 +201,11 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
         return strJsonString.toString();
     }
 
+    /**
+     * Constructor empty
+     */
+    protected EnvironmentHardware() {
+        super();
+    }
+
 }

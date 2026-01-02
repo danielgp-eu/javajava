@@ -26,7 +26,7 @@ import java.util.Properties;
 /**
  * File content management for Selling
  */
-public class FileContentSellingClass {
+public final class FileContentSellingClass {
     /**
      * String for Cheie3
      */
@@ -372,4 +372,12 @@ ORDER BY
             }
         }
     }
+
+    /**
+     * Constructor
+     */
+    private FileContentSellingClass() {
+        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+    }
+
 }

@@ -9,54 +9,18 @@ import javajava.LoggerLevelProvider;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * File operation class
  */
 public final class FileHandlingClass {
     /**
-     * Project Folder
-     */
-    public static String strAppFolder; // NOPMD by Daniel Popiniuc on 20.04.2025, 23:29
-    /**
      * String constant
      */
-    private static final String STR_MINIFIED = "Minified";
-    /**
-     * String constant
-     */
-    private static final String STR_PRTY_PRNT = "PrettyPrint";
-
-    /**
-     * Checking if a file exists and is readable
-     * 
-     * @param strFileName file name
-     * @return Properties
-     */
-    public static Properties checkFileExistanceAndReadability(final String strFileName) {
-        final Properties propertiesReturn = new Properties();
-        if (strFileName == null) {
-            propertiesReturn.put("NULL_FILE_NAME", JavaJavaLocalization.getMessage("i18nFileDoesNotExist"));
-        } else {
-            final File fileGiven = new File(strFileName);
-            if (fileGiven.exists()) {
-                if (fileGiven.isFile()) {
-                    if (fileGiven.canRead()) {
-                        propertiesReturn.put("OK", strFileName);
-                    } else {
-                        propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalization.getMessage("i18nFileUnreadable"), strFileName));
-                    }
-                } else {
-                    propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalization.getMessage("i18nFileNotAfile"), strFileName));
-                }
-            } else {
-                propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalization.getMessage("i18nFileDoesNotExist"), strFileName));
-            }
-        }
-        return propertiesReturn;
-    }
+    private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
 
     /**
      * Getting current user
@@ -65,55 +29,6 @@ public final class FileHandlingClass {
      */
     public static File getCurrentUserFolder() {
         return new File(System.getProperty("user.home"));
-    }
-
-    /**
-     * read Main configuration file
-     * @param strFilePattern file pattern to use
-     * @return String
-     */
-    public static String getJsonConfigurationFile(final String strFilePattern) {
-        final Properties propsFile = new Properties();
-        propsFile.put(STR_MINIFIED, String.format(strFilePattern, ".min"));
-        propsFile.put(STR_PRTY_PRNT, String.format(strFilePattern, ""));
-        String strFileJson = null;
-        final Properties propsMinified = checkFileExistanceAndReadability(propsFile.getProperty(STR_MINIFIED));
-        for(final Entry<Object, Object> eMinified : propsMinified.entrySet()) {
-            final boolean isItOk = "OK".equals(eMinified.getKey());
-            if (isItOk) {
-                strFileJson = eMinified.getValue().toString();
-            } else {
-                final Properties propsPreety = checkFileExistanceAndReadability(propsFile.getProperty(STR_PRTY_PRNT));
-                for(final Entry<Object, Object> ePreety : propsPreety.entrySet()) {
-                    final boolean isItOk2 = "OK".equals(ePreety.getKey());
-                    getJsonFileName(isItOk2, ePreety, propsFile);
-                }
-            }
-        }
-        return strFileJson;
-    }
-
-    /**
-     * Getting JSON file name
-     * @param isItOk2 file check result
-     * @param ePreety file name
-     * @param propsFile file Properties
-     * @return String
-     */
-    private static String getJsonFileName(final boolean isItOk2, final Entry<Object, Object> ePreety, final Properties propsFile) {
-        final String strFileJson;
-        if (isItOk2) {
-            strFileJson = ePreety.getValue().toString();
-        } else {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound")
-                , propsFile.getProperty(STR_MINIFIED, "")
-                , propsFile.getProperty(STR_PRTY_PRNT, ""));
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
-            throw new IllegalArgumentException(strFeedback);
-        }
-        return strFileJson;
     }
 
     /**
@@ -186,25 +101,26 @@ public final class FileHandlingClass {
 
     /**
      * Getting current project folder
+     * @return application folder
      */
-    public static void loadProjectFolder() {
-        if (Objects.isNull(strAppFolder)) { 
-            final File directory = new File(""); // parameter is empty
-            try {
-                strAppFolder = directory.getCanonicalPath();
-            } catch (IOException ex) {
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
-                }
+    public static String getProjectFolder() {
+        String strAppFolder = null;
+        final File directory = new File(""); // parameter is empty
+        try {
+            strAppFolder = directory.getCanonicalPath();
+        } catch (IOException ex) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
+                LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }
+        return strAppFolder;
     }
 
     /**
      * Archives single file to new location
      * 
-     * @param strFileName file name in scope for archivation
+     * @param strFileName file name in scope for archival
      * @param strDestFolder destination folder
      */
     public static void moveFileToNewLocation(final String strFileName, final String strDestFolder) {
@@ -238,6 +154,38 @@ public final class FileHandlingClass {
         } catch (IOException e) {
             final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+                LoggerLevelProvider.LOGGER.error(strFeedback);
+            }
+        }
+    }
+    /**
+     * Get list of sub-folders from a given folder
+     * 
+     * @param strFolderName folder name to look into
+     * @param intOlderLimit older days limit
+     */
+    public static void removeFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
+        final long cutoff = new Date().getTime() - intOlderLimit * INT_1DAY_MILISECS;
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim(), strFolderName);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
+        final Path directory = Paths.get(strFolderName);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+            for (final Path entry : stream) {
+                if (Files.isDirectory(entry)) {
+                    removeFilesOlderThanGivenDays(entry.toString(), intOlderLimit);
+                } else if (Files.isRegularFile(entry) ) {
+                    final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
+                    final long modifTime = attr.lastModifiedTime().toMillis();
+                    if (modifTime <= cutoff) {
+                        Files.delete(entry);
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
                 LoggerLevelProvider.LOGGER.error(strFeedback);
             }
         }

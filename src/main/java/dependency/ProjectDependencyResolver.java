@@ -91,8 +91,7 @@ final public class ProjectDependencyResolver {
      * @return String
      */
     private static String getCurrentProjectObjectModelFile() {
-        FileHandlingClass.loadProjectFolder();
-        return FileHandlingClass.strAppFolder + "/pom.xml";
+        return FileHandlingClass.getProjectFolder() + "/pom.xml";
     }
 
     /**
@@ -153,6 +152,7 @@ final public class ProjectDependencyResolver {
 
     /**
      * Main method to execute the dependency resolution
+     * @return dependency details
      */
     public static String getDependency() {
         final String pomFile = getCurrentProjectObjectModelFile();

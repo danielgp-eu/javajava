@@ -19,6 +19,7 @@ import java.util.*;
 @CommandLine.Command(
     name = "top",
     subcommands = {
+        CleanOlderFilesFromFolder.class,
         GetInformationFromDatabase.class,
         GetInformationFromTextWithSellingPointReceiptsIntoCsvFile.class,
         GetSpecificInformationFromSnowflake.class,
@@ -31,6 +32,13 @@ import java.util.*;
  * Example class
  */
 public final class Example implements Runnable {
+
+    /**
+     * Constructor empty
+     */
+    protected Example() {
+        // no init required
+    }
 
     /**
      * log Application Start
@@ -49,7 +57,8 @@ public final class Example implements Runnable {
      */
     /* default */ static void main(final String... args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        JavaJavaLocalization.setLocaleByString(JavaJavaLocalization.getUserLocale());
+        final String userLocale = JavaJavaLocalization.getUserLocale();
+        JavaJavaLocalization.setLocaleByString(userLocale);
         logApplicationStart();
         final int exitCode = new CommandLine(new Example()).execute(args);
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN) && (exitCode != 0)) {
@@ -65,6 +74,40 @@ public final class Example implements Runnable {
     @Override
     public void run() {
         // intentionally left commented
+    }
+}
+
+
+/**
+ * clean files older than a given number of days
+ */
+@CommandLine.Command(name = "CleanOlderFilesFromFolder", description = "Clean files older than a given number of days")
+class CleanOlderFilesFromFolder implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldNm", "--folderName"},
+            description = "Folder Name to be inspected",
+            arity = "1..*",
+            required = true)
+    private String[] strFolderNames;
+    /**
+     * String for FileName
+     */
+    @CommandLine.Option(
+            names = {"-dLmt", "--daysOlderLimit"},
+            description = "Limit number of days to remove files from",
+            arity = "1",
+            required = true)
+    private int intDaysOlderLimit;
+
+    @Override
+    public void run() {
+        for (final String strFolder : strFolderNames) {
+            FileHandlingClass.removeFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
+        }
     }
 }
 
