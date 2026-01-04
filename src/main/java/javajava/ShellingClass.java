@@ -107,6 +107,10 @@ public final class ShellingClass {
      */
     private static String executeShell(final ProcessBuilder builder, final String strOutLineSep) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
         String strReturn = "";
         try {
             builder.redirectErrorStream(true);
