@@ -1,7 +1,13 @@
 package file;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.stream.Stream;
 import java.util.Map.Entry;
 
 import org.apache.logging.log4j.Level;
@@ -52,6 +58,54 @@ public final class FileLocatingClass {
         return propertiesReturn;
     }
 
+    /**
+     * A simple record to hold our results
+     */
+    /* default */ record FolderStats(long fileCount, long folderCount, long totalSize) {
+        /* default */ static FolderStats empty() { return new FolderStats(0, 0, 0); }
+        /* default */ FolderStats add(final FolderStats other) {
+            return new FolderStats(
+                this.fileCount + other.fileCount,
+                this.folderCount + other.folderCount,
+                this.totalSize + other.totalSize
+            );
+        }
+    }
+
+    /**
+     * get Folder statistics recursively
+     * @param strFolderName folder name
+     * @param pathProps path properties
+     * @return Properties
+     */
+    public static Properties getFolderStatisticsRecursive(final String strFolderName, final Properties pathProps) {
+        final Path directory = Paths.get(strFolderName);
+        // use DirectoryStream to list files which are present in specific
+        try (Stream<Path> stream = Files.walk(directory)) {
+            final FolderStats stats = stream
+                .map(path -> {
+                    if (Files.isDirectory(path)) {
+                        // Don't count the root directory itself as a sub-folder
+                        return path.equals(directory) ? FolderStats.empty() : new FolderStats(0, 1, 0);
+                    } else {
+                        try {
+                            return new FolderStats(1, 0, Files.size(path));
+                        } catch (IOException e) {
+                            return FolderStats.empty();
+                        }
+                    }
+                })
+                .reduce(FolderStats.empty(), FolderStats::add);
+            pathProps.put("TOTAL_OBJECTS", stats.folderCount() + stats.fileCount());
+            pathProps.put("DIRECTORIES", stats.folderCount());
+            pathProps.put("FILES", stats.fileCount());
+            pathProps.put("SIZE_BYTES", stats.totalSize());
+        } catch (IOException ex) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strFolderName);
+            Common.setInputOutputExecutionLoggedToError(strFeedback, Arrays.toString(ex.getStackTrace()));
+        }
+        return pathProps;
+    }
 
     /**
      * read Main configuration file

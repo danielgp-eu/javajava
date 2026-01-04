@@ -2,14 +2,21 @@ package javajava;
 
 import environment.EnvironmentCapturingClass;
 import file.FileHandlingClass;
+import file.FileLocatingClass;
 
 import org.apache.logging.log4j.Level;
+import org.apache.maven.shared.utils.StringUtils;
 
 import database.DatabaseSpecificMySql;
 import database.DatabaseSpecificSnowflake;
 import picocli.CommandLine;
 import selling.FileContentSellingClass;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -19,6 +26,7 @@ import java.util.*;
 @CommandLine.Command(
     name = "top",
     subcommands = {
+        ArchiveFolders.class,
         CleanOlderFilesFromFolder.class,
         GetInformationFromDatabase.class,
         GetInformationFromTextWithSellingPointReceiptsIntoCsvFile.class,
@@ -36,7 +44,7 @@ public final class Example implements Runnable {
     /**
      * Constructor empty
      */
-    protected Example() {
+    private Example() {
         // no init required
     }
 
@@ -77,6 +85,103 @@ public final class Example implements Runnable {
     }
 }
 
+/**
+ * clean files older than a given number of days
+ */
+@CommandLine.Command(name = "ArchiveFolders", description = "Archive sub-folders from a given folder")
+class ArchiveFolders implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-aExe", "--archivingExecutable"},
+            description = "Archiving executable (includes full path)",
+            arity = "1",
+            required = true)
+    private String strArchivingExec;
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldNm", "--folderName"},
+            description = "Folder Name to be inspected",
+            arity = Common.STR_ONE_OR_MANY,
+            required = true)
+    private String[] strFolderNames;
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldDst", "--folderDestination"},
+            description = "Destination Folder where archives will be created",
+            arity = "1",
+            required = true)
+    private String strDestFolder;
+
+    /**
+     * String for archive name prefix
+     */
+    @CommandLine.Option(
+            names = {"-ap", "--archivePrefix"},
+            description = "Prefix to apply to archive name")
+    private String strArchivePrefix;
+
+    /**
+     * String for archive name prefix
+     */
+    @CommandLine.Option(
+            names = {"-as", "--archiveSuffix"},
+            description = "Suffix to apply to archive name")
+    private String strArchiveSuffix;
+
+    /**
+     * String for archive name prefix
+     */
+    @CommandLine.Option(
+            names = {"-pwd", "--archivePassword"},
+            description = "Password for archive encryption")
+    private String strArchivePwd;
+
+    @Override
+    public void run() {
+        final Properties propFolder = new Properties();
+        for (final String strFolder : strFolderNames) {
+            propFolder.clear();
+            final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
+            final Path path = Paths.get(strFolder);
+            final String strArchiveName = strDestFolder + File.separator
+                + ShellingClass.buildArchivingName(strArchivePrefix, path.getFileName().toString(), strArchiveSuffix);
+            final String strArchiveDir = StringUtils.stripEnd(strFolder, File.separator);
+            ShellingClass.archiveFolderAs7zUltra(strArchivingExec, strArchiveDir, strArchiveName);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+                final File fileA = new File(strArchiveName);
+                if (fileA.exists() && fileA.isFile()) {
+                    final long fileArchSize = fileA.length();
+                    final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
+                    double percentage = 0;
+                    if (fileOrigSize != 0) {
+                        final double percentageExact = (double) fileArchSize / fileOrigSize * 100;
+                        percentage = new BigDecimal(Double.toString(percentageExact))
+	                        .setScale(2, RoundingMode.HALF_UP)
+	                        .doubleValue();
+                    }
+                    final String strFeedback = String.format("Statistics for %s folder are: %s which was compressed to an %s archive of a size of %s bytes (which is %s%% of the original)", strFolder, folderProps, strArchiveName, fileArchSize, percentage);
+                    LoggerLevelProvider.LOGGER.info(strFeedback);
+                }
+            }
+        }
+    }
+
+    /**
+     * Constructor
+     */
+    protected ArchiveFolders() {
+        super();
+    }
+}
 
 /**
  * clean files older than a given number of days
@@ -90,7 +195,7 @@ class CleanOlderFilesFromFolder implements Runnable {
     @CommandLine.Option(
             names = {"-fldNm", "--folderName"},
             description = "Folder Name to be inspected",
-            arity = "1..*",
+            arity = Common.STR_ONE_OR_MANY,
             required = true)
     private String[] strFolderNames;
     /**

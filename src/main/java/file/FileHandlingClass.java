@@ -59,10 +59,8 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName);
+            Common.setInputOutputExecutionLoggedToError(strFeedback, Arrays.toString(ex.getStackTrace()));
         }
         return arrayFiles;
     }
@@ -175,7 +173,7 @@ public final class FileHandlingClass {
             for (final Path entry : stream) {
                 if (Files.isDirectory(entry)) {
                     removeFilesOlderThanGivenDays(entry.toString(), intOlderLimit);
-                } else if (Files.isRegularFile(entry) ) {
+                } else if (Files.isRegularFile(entry)) {
                     final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
                     final long modifTime = attr.lastModifiedTime().toMillis();
                     if (modifTime <= cutoff) {
