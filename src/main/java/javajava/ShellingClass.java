@@ -87,9 +87,15 @@ public final class ShellingClass {
      */
     public static void archiveFolderAs7zUltra(final String strArchivingExec, 
             final String strFolder, 
-            final String strArchiveName) {
-        final String strArchiveDir = StringUtils.stripEnd(strFolder, File.separator);
-        final ProcessBuilder builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, "-ir!" + strArchiveDir, "-mx9", "-ms4g", "-ms4g", "-mmt=on");
+            final String strArchiveName, 
+            final String strArchivePwd) {
+        final String strArchiveDir = "-ir!" + StringUtils.stripEnd(strFolder, File.separator) + File.separator + "*";
+        final ProcessBuilder builder; 
+        if (strArchivePwd == null) {
+            builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchiveDir, "-mx9", "-ms4g", "-ms4g", "-mmt=on");
+        } else {
+            builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchiveDir, "-mx9", "-ms4g", "-ms4g", "-mmt=on", "-p" + strArchivePwd);
+        }
         executeShell(builder, " ");
     }
 

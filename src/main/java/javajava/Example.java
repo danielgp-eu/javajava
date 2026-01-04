@@ -152,10 +152,10 @@ class ArchiveFolders implements Runnable {
             propFolder.clear();
             final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
             final Path path = Paths.get(strFolder);
-            final String strArchiveName = strDestFolder + File.separator
+            final String strArchiveName = StringUtils.stripEnd(strDestFolder, File.separator) + File.separator
                 + ShellingClass.buildArchivingName(strArchivePrefix, path.getFileName().toString(), strArchiveSuffix);
             final String strArchiveDir = StringUtils.stripEnd(strFolder, File.separator);
-            ShellingClass.archiveFolderAs7zUltra(strArchivingExec, strArchiveDir, strArchiveName);
+            ShellingClass.archiveFolderAs7zUltra(strArchivingExec, strArchiveDir, strArchiveName, strArchivePwd);
             if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
                 final File fileA = new File(strArchiveName);
                 if (fileA.exists() && fileA.isFile()) {
@@ -168,7 +168,7 @@ class ArchiveFolders implements Runnable {
 	                        .setScale(2, RoundingMode.HALF_UP)
 	                        .doubleValue();
                     }
-                    final String strFeedback = String.format("Statistics for %s folder are: %s which was compressed to an %s archive of a size of %s bytes (which is %s%% of the original)", strFolder, folderProps, strArchiveName, fileArchSize, percentage);
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFolderStatisticsArchived"), strFolder, folderProps, strArchiveName, fileArchSize, percentage);
                     LoggerLevelProvider.LOGGER.info(strFeedback);
                 }
             }
