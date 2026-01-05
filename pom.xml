@@ -6,9 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.5</version>
     <name>JavaJava</name>
     <properties>
+      <goals-goal>single</goals-goal>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -62,14 +63,41 @@
                 <version>3.5.0</version>
                 <configuration>
                     <archive>
+                        <index>true</index>
                         <addMavenDescriptor>true</addMavenDescriptor>
                         <compress>true</compress>
                         <manifest>
+                            <addClasspath>true</addClasspath>
                             <addExtensions>true</addExtensions>
-                            <mainClass>danielgp.Example</mainClass>
+                            <mainClass>javajava.Example</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-assembly-plugin</artifactId>
+              <version>3.8.0</version>
+              <configuration>
+                <archive>
+                  <manifest>
+                    <mainClass>javajava.Example</mainClass>
+                  </manifest>
+                </archive>
+                <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>make-assembly</id>
+                  <phase>package</phase>
+                  <goals>
+                    <goal>single</goal>
+                  </goals>
+                </execution>
+              </executions>
             </plugin>
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
             <plugin>

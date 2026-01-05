@@ -2,14 +2,21 @@ package javajava;
 
 import environment.EnvironmentCapturingClass;
 import file.FileHandlingClass;
+import file.FileLocatingClass;
 
 import org.apache.logging.log4j.Level;
+import org.apache.maven.shared.utils.StringUtils;
 
 import database.DatabaseSpecificMySql;
 import database.DatabaseSpecificSnowflake;
 import picocli.CommandLine;
 import selling.FileContentSellingClass;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -19,6 +26,7 @@ import java.util.*;
 @CommandLine.Command(
     name = "top",
     subcommands = {
+        ArchiveFolders.class,
         CleanOlderFilesFromFolder.class,
         GetInformationFromDatabase.class,
         GetInformationFromTextWithSellingPointReceiptsIntoCsvFile.class,
@@ -36,7 +44,7 @@ public final class Example implements Runnable {
     /**
      * Constructor empty
      */
-    protected Example() {
+    private Example() {
         // no init required
     }
 
@@ -77,6 +85,103 @@ public final class Example implements Runnable {
     }
 }
 
+/**
+ * clean files older than a given number of days
+ */
+@CommandLine.Command(name = "ArchiveFolders", description = "Archive sub-folders from a given folder")
+class ArchiveFolders implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-aExe", "--archivingExecutable"},
+            description = "Archiving executable (includes full path)",
+            arity = "1",
+            required = true)
+    private String strArchivingExec;
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldNm", "--folderName"},
+            description = "Folder Name to be inspected",
+            arity = Common.STR_ONE_OR_MANY,
+            required = true)
+    private String[] strFolderNames;
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldDst", "--folderDestination"},
+            description = "Destination Folder where archives will be created",
+            arity = "1",
+            required = true)
+    private String strDestFolder;
+
+    /**
+     * String for archive name prefix
+     */
+    @CommandLine.Option(
+            names = {"-ap", "--archivePrefix"},
+            description = "Prefix to apply to archive name")
+    private String strArchivePrefix;
+
+    /**
+     * String for archive name prefix
+     */
+    @CommandLine.Option(
+            names = {"-as", "--archiveSuffix"},
+            description = "Suffix to apply to archive name")
+    private String strArchiveSuffix;
+
+    /**
+     * String for archive name prefix
+     */
+    @CommandLine.Option(
+            names = {"-pwd", "--archivePassword"},
+            description = "Password for archive encryption")
+    private String strArchivePwd;
+
+    @Override
+    public void run() {
+        final Properties propFolder = new Properties();
+        for (final String strFolder : strFolderNames) {
+            propFolder.clear();
+            final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
+            final Path path = Paths.get(strFolder);
+            final String strArchiveName = StringUtils.stripEnd(strDestFolder, File.separator) + File.separator
+                + ShellingClass.buildArchivingName(strArchivePrefix, path.getFileName().toString(), strArchiveSuffix);
+            final String strArchiveDir = StringUtils.stripEnd(strFolder, File.separator);
+            ShellingClass.archiveFolderAs7zUltra(strArchivingExec, strArchiveDir, strArchiveName, strArchivePwd);
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+                final File fileA = new File(strArchiveName);
+                if (fileA.exists() && fileA.isFile()) {
+                    final long fileArchSize = fileA.length();
+                    final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
+                    double percentage = 0;
+                    if (fileOrigSize != 0) {
+                        final double percentageExact = (double) fileArchSize / fileOrigSize * 100;
+                        percentage = new BigDecimal(Double.toString(percentageExact))
+	                        .setScale(2, RoundingMode.HALF_UP)
+	                        .doubleValue();
+                    }
+                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFolderStatisticsArchived"), strFolder, folderProps, strArchiveName, fileArchSize, percentage);
+                    LoggerLevelProvider.LOGGER.info(strFeedback);
+                }
+            }
+        }
+    }
+
+    /**
+     * Constructor
+     */
+    protected ArchiveFolders() {
+        super();
+    }
+}
 
 /**
  * clean files older than a given number of days
@@ -90,7 +195,7 @@ class CleanOlderFilesFromFolder implements Runnable {
     @CommandLine.Option(
             names = {"-fldNm", "--folderName"},
             description = "Folder Name to be inspected",
-            arity = "1..*",
+            arity = Common.STR_ONE_OR_MANY,
             required = true)
     private String[] strFolderNames;
     /**
@@ -108,6 +213,13 @@ class CleanOlderFilesFromFolder implements Runnable {
         for (final String strFolder : strFolderNames) {
             FileHandlingClass.removeFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
         }
+    }
+
+    /**
+     * Constructor
+     */
+    protected CleanOlderFilesFromFolder() {
+        super();
     }
 }
 
@@ -135,6 +247,13 @@ class GetInformationFromTextWithSellingPointReceiptsIntoCsvFile implements Runna
             LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         FileContentSellingClass.consolidateSellingPointReceiptIntoCsvFile(strFileNameIn, "MASTER TASTE", strFileNameOut);
+    }
+
+    /**
+     * Constructor
+     */
+    protected GetInformationFromTextWithSellingPointReceiptsIntoCsvFile() {
+        super();
     }
 }
 
@@ -245,6 +364,14 @@ class GetInformationFromDatabase implements Runnable {
         }
         performAction(strDbType, strInfoType);
     }
+
+    /**
+     * Constructor
+     */
+    protected GetInformationFromDatabase() {
+        super();
+    }
+
 }
 
 /**
@@ -305,6 +432,13 @@ class GetSpecificInformationFromSnowflake implements Runnable {
         performAction(strInfoType);
     }
 
+    /**
+     * Constructor
+     */
+    protected GetSpecificInformationFromSnowflake() {
+        super();
+    }
+
 }
 
 /**
@@ -322,8 +456,9 @@ class GetSubFoldersFromFolder implements Runnable {
      * Private constructor to prevent instantiation
      */
     public GetSubFoldersFromFolder() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        super();
     }
+
 }
 
 /**
@@ -337,6 +472,14 @@ class LogEnvironmentDetails implements Runnable {
         final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
         LoggerLevelProvider.LOGGER.info(strFeedback);
     }
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    public LogEnvironmentDetails() {
+        super();
+    }
+
 }
 
 /**
@@ -363,4 +506,12 @@ class PairBankRecordsWithSellingReceipts implements Runnable {
     public void run() {
         FileContentSellingClass.pairMySqlBankAndCashRegisterRecords(strFileNameOut);
     }
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    public PairBankRecordsWithSellingReceipts() {
+        super();
+    }
+
 }

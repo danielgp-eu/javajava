@@ -14,6 +14,10 @@ public final class Common {
     /**
      * Database MySQL
      */
+    public static final String STR_ONE_OR_MANY = "1..*";
+    /**
+     * Database MySQL
+     */
     public static final String STR_DB_MYSQL = "MySQL";
     /**
      * Database Snowflake
@@ -271,6 +275,28 @@ public final class Common {
             bolReturn = pattern.matcher(inputString).matches();
         }
         return bolReturn;
+    }
+
+    /**
+     * Execution Interrupted details captured to Error log
+     * @param strTraceDetails details
+     */
+    public static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
+            LoggerLevelProvider.LOGGER.error(strFeedback);
+        }
+    }
+
+    /**
+     * Execution Interrupted details captured to Error log
+     * @param strTraceDetails details
+     */
+    public static void setInputOutputExecutionLoggedToError(final String strError, final String strTraceDetails) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(strError, strTraceDetails);
+            LoggerLevelProvider.LOGGER.error(strFeedback);
+        }
     }
 
     // Private constructor to prevent instantiation

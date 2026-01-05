@@ -1,10 +1,12 @@
 package javajava;
 
 import org.apache.logging.log4j.Level;
+import org.apache.maven.shared.utils.StringUtils;
 
 import file.FileHandlingClass;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDateTime;
@@ -14,10 +16,6 @@ import java.util.Arrays;
  * Shell execution methods
  */
 public final class ShellingClass {
-    /**
-     * holding the Use account currently logged on
-     */
-    public static String loggedAccount;
 
     /**
      * Building Process for shell execution
@@ -51,16 +49,95 @@ public final class ShellingClass {
         String strReturn = null;
         final StringBuilder processOutput = new StringBuilder();
         try (BufferedReader processOutReader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            processOutReader.lines().forEach(strCrtLine -> {
-                processOutput.append(strCrtLine)
-                        .append(strOutLineSep);
-            });
+            processOutReader.lines().forEach(strCrtLine -> processOutput.append(strCrtLine)
+                    .append(strOutLineSep));
             strReturn = processOutput.toString();
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            Common.setInputOutputExecutionLoggedToError(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"),
+                    Arrays.toString(ex.getStackTrace()));
+        }
+        return strReturn;
+    }
+
+    /**
+     * build Archive name with optional Suffix and Prefix
+     * @param strPrefix archive prefix
+     * @param strName archive name
+     * @param strSuffix archive suffix
+     * @return String
+     */
+    public static String buildArchivingName(final String strPrefix, final String strName, final String strSuffix) {
+        final StringBuilder strArchiveName = new StringBuilder();
+        if (strPrefix != null) {
+            strArchiveName.append(strPrefix);
+        }
+        strArchiveName.append(strName);
+        if (strSuffix != null) {
+            strArchiveName.append(strSuffix);
+        }
+        strArchiveName.append(".7z");
+        return strArchiveName.toString();
+    }
+
+    /**
+     * Archive folder content as 7z using Ultra compression level
+     * @param strArchivingExec archiving executable
+     * @param strFolder folder to archive
+     * @param strArchiveName archive name
+     */
+    public static void archiveFolderAs7zUltra(final String strArchivingExec, 
+            final String strFolder, 
+            final String strArchiveName, 
+            final String strArchivePwd) {
+        final String strArchiveDir = "-ir!" + StringUtils.stripEnd(strFolder, File.separator) + File.separator + "*";
+        final ProcessBuilder builder; 
+        if (strArchivePwd == null) {
+            builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchiveDir, "-mx9", "-ms4g", "-ms4g", "-mmt=on");
+        } else {
+            builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchiveDir, "-mx9", "-ms4g", "-ms4g", "-mmt=on", "-p" + strArchivePwd);
+        }
+        executeShell(builder, " ");
+    }
+
+    /**
+     * Executes a shells command with output captured
+     * @param builder ProcessBuilder
+     * @param strOutLineSep line separator for the output
+     * @return String
+     */
+    private static String executeShell(final ProcessBuilder builder, final String strOutLineSep) {
+        final LocalDateTime startTimeStamp = LocalDateTime.now();
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), builder.command().toString());
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
+        String strReturn = "";
+        try {
+            builder.redirectErrorStream(true);
+            final Process process = builder.start();
+            if (!strOutLineSep.isBlank()) {
+                strReturn = captureProcessOutput(process, strOutLineSep);
             }
+            final int exitCode = process.waitFor();
+            process.destroy();
+            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
+                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            }
+        } catch (IOException e) {
+            Common.setInputOutputExecutionLoggedToError(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"),
+                    Arrays.toString(e.getStackTrace()));
+        } catch(InterruptedException ei) {
+            Common.setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
+            throw (IllegalStateException)new IllegalStateException().initCause(ei);
+        }
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            String strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
+            if (strOutLineSep.isBlank()) {
+                strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
+            }
+            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage(strCaptureMessage));
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
         }
         return strReturn;
     }
@@ -72,29 +149,8 @@ public final class ShellingClass {
      * @param strParameters command parameters
      */
     public static void executeShellUtility(final String strCommand, final String strParameters) {
-        final LocalDateTime startTimeStamp = LocalDateTime.now();
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
-        try {
-            final Process process = builder.start();
-            final int exitCode = process.waitFor();
-            process.destroy();
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
-        } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
-        } catch(InterruptedException ei) {
-            setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
-            throw (IllegalStateException)new IllegalStateException().initCause(ei);
-        }
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithoutCaptureCompleted"));
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
-        }
+        executeShell(builder, " ");
     }
 
     /**
@@ -106,33 +162,8 @@ public final class ShellingClass {
      * @return String
      */
     public static String executeShellUtility(final String strCommand, final String strParameters, final String strOutLineSep) {
-        final LocalDateTime startTimeStamp = LocalDateTime.now();
-        String strReturn = "";
         final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
-        try {
-            builder.redirectErrorStream(true);
-            final Process process = builder.start();
-            strReturn = captureProcessOutput(process, strOutLineSep);
-            final int exitCode = process.waitFor();
-            process.destroy();
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFinished"), exitCode);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
-            }
-        } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
-        } catch(InterruptedException ei) {
-            setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
-            throw (IllegalStateException)new IllegalStateException().initCause(ei);
-        }
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = TimingClass.logDuration(startTimeStamp, JavaJavaLocalization.getMessage("i18nProcessExecutionWithCaptureCompleted"));
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
-        }
-        return strReturn;
+        return executeShell(builder, strOutLineSep);
     }
 
     /**
@@ -140,16 +171,6 @@ public final class ShellingClass {
      * @return String
      */
     public static String getCurrentUserAccount() {
-        if (loggedAccount == null) {
-            loadCurrentUserAccount();
-        }
-        return loggedAccount;
-    }
-
-    /**
-     * load current logged account name
-     */
-    private static void loadCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
             final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
@@ -158,18 +179,7 @@ public final class ShellingClass {
             }
             strUser = executeShellUtility("WHOAMI", "", "");
         }
-        loggedAccount = strUser;
-    }
-
-    /**
-     * Execution Interrupted details captured to Error log
-     * @param strTraceDetails details
-     */
-    private static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
-            LoggerLevelProvider.LOGGER.error(strFeedback);
-        }
+        return strUser;
     }
 
     /**
