@@ -14,10 +14,6 @@ public final class Common {
     /**
      * Database MySQL
      */
-    public static final String STR_ONE_OR_MANY = "1..*";
-    /**
-     * Database MySQL
-     */
     public static final String STR_DB_MYSQL = "MySQL";
     /**
      * Database Snowflake

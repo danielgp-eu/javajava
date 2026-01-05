@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Level;
 import javajava.Common;
 import javajava.JavaJavaLocalization;
 import javajava.LoggerLevelProvider;
-import javajava.ShellingClass;
+import shell.ShellingClass;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

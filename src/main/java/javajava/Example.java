@@ -11,10 +11,9 @@ import database.DatabaseSpecificMySql;
 import database.DatabaseSpecificSnowflake;
 import picocli.CommandLine;
 import selling.FileContentSellingClass;
+import shell.ShellingClass;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -40,6 +39,10 @@ import java.util.*;
  * Example class
  */
 public final class Example implements Runnable {
+    /**
+     * Database MySQL
+     */
+    public static final String STR_ONE_OR_MANY = "1..*";
 
     /**
      * Constructor empty
@@ -107,7 +110,7 @@ class ArchiveFolders implements Runnable {
     @CommandLine.Option(
             names = {"-fldNm", "--folderName"},
             description = "Folder Name to be inspected",
-            arity = Common.STR_ONE_OR_MANY,
+            arity = Example.STR_ONE_OR_MANY,
             required = true)
     private String[] strFolderNames;
 
@@ -156,22 +159,7 @@ class ArchiveFolders implements Runnable {
                 + ShellingClass.buildArchivingName(strArchivePrefix, path.getFileName().toString(), strArchiveSuffix);
             final String strArchiveDir = StringUtils.stripEnd(strFolder, File.separator);
             ShellingClass.archiveFolderAs7zUltra(strArchivingExec, strArchiveDir, strArchiveName, strArchivePwd);
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final File fileA = new File(strArchiveName);
-                if (fileA.exists() && fileA.isFile()) {
-                    final long fileArchSize = fileA.length();
-                    final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
-                    double percentage = 0;
-                    if (fileOrigSize != 0) {
-                        final double percentageExact = (double) fileArchSize / fileOrigSize * 100;
-                        percentage = new BigDecimal(Double.toString(percentageExact))
-	                        .setScale(2, RoundingMode.HALF_UP)
-	                        .doubleValue();
-                    }
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFolderStatisticsArchived"), strFolder, folderProps, strArchiveName, fileArchSize, percentage);
-                    LoggerLevelProvider.LOGGER.info(strFeedback);
-                }
-            }
+            ShellingClass.exposeArchivedContent(strArchiveName, strFolder, folderProps);
         }
     }
 
@@ -195,7 +183,7 @@ class CleanOlderFilesFromFolder implements Runnable {
     @CommandLine.Option(
             names = {"-fldNm", "--folderName"},
             description = "Folder Name to be inspected",
-            arity = Common.STR_ONE_OR_MANY,
+            arity = Example.STR_ONE_OR_MANY,
             required = true)
     private String[] strFolderNames;
     /**
