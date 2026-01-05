@@ -67,14 +67,11 @@ public class ShellFeedbacks {
 
     /**
      * Log Process Builder command conditionally
-     * @param strCommand
+     * @param strCommand command to execute
      */
     protected static void exposeProcessBuilder(final String strCommand) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            boolean bolFeedbackNeeded = true;
-            if (strCommand.contains("7za") && strCommand.contains(", -p")) {
-                bolFeedbackNeeded = false;
-            }
+            boolean bolFeedbackNeeded = !strCommand.contains("7za") || !strCommand.contains(", -p");
             if (bolFeedbackNeeded) {
                 final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
