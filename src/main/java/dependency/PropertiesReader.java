@@ -4,17 +4,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Project Properties Reader
+ */
 public class PropertiesReader {
+    /**
+     * Project Properties
+     */
     private final Properties properties;
 
-    public PropertiesReader(String propertyFileName) throws IOException {
-        InputStream is = getClass().getClassLoader()
-            .getResourceAsStream(propertyFileName);
+    /**
+     * Reading
+     * @param propertyFileName
+     * @throws IOException
+     */
+    public PropertiesReader(final String propertyFileName) throws IOException {
+        final ClassLoader cLoader = Thread.currentThread().getContextClassLoader();
+        final InputStream iStream = cLoader.getResourceAsStream(propertyFileName);
         this.properties = new Properties();
-        this.properties.load(is);
+        this.properties.load(iStream);
     }
 
-    public String getProperty(String propertyName) {
+    /**
+     * Constructor
+     * @param propertyName
+     * @return
+     */
+    public String getProperty(final String propertyName) {
         return this.properties.getProperty(propertyName);
     }
 }

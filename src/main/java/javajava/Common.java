@@ -188,7 +188,7 @@ public final class Common {
 
     /**
      * Execution Interrupted details captured to Error log
-     * @param strTraceDetails details
+     * @param strError details
      */
     public static void setInputOutputExecutionLoggedToError(final String strError) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
