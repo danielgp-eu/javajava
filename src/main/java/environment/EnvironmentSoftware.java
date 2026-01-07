@@ -1,6 +1,7 @@
 package environment;
 
 import javajava.Common;
+import javajava.StringManipulationClass;
 import oshi.SystemInfo;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
@@ -30,7 +31,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
             if (strCounterDisk > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(Common.getMapIntoJsonString(Map.of(
+            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
                 "Description", fileStore.getDescription(),
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
@@ -55,7 +56,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      */
     public static String getDetailsAboutOperatingSystem() {
         final OperatingSystem.OSVersionInfo version = getOshiVersionInfo();
-        return Common.getMapIntoJsonString(Map.of(
+        return StringManipulationClass.getMapIntoJsonString(Map.of(
                 "Architecture", System.getProperty("os.arch"),
                 "Build", version.getBuildNumber(),
                 "Code", version.getCodeName(),
@@ -73,7 +74,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      * @return String
      */
     public static String getDetailsAboutSoftwareUser() {
-        return Common.getMapIntoJsonString(Map.of(
+        return StringManipulationClass.getMapIntoJsonString(Map.of(
             "Country", System.getProperty("user.country"),
             "Country.Format", System.getProperty("user.country.format"),
             "Language", System.getProperty("user.language"),
@@ -90,7 +91,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      * @return String
      */
     public static String getDetailsAboutSoftwarePlatformJava() {
-        return Common.getMapIntoJsonString(Map.of(
+        return StringManipulationClass.getMapIntoJsonString(Map.of(
             "Date", System.getProperty("java.version.date"),
             "Release", System.getProperty("java.vendor.version"),
             "Runtime", System.getProperty("java.runtime.name"),

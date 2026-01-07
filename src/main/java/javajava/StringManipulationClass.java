@@ -2,6 +2,7 @@ package javajava;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +23,45 @@ public final class StringManipulationClass {
             }
         }
         return strBuilder.toString();
+    }
+
+    /**
+     * Build a pair of Key and Value for JSON
+     * @param strKey Key to be used
+     * @param objValue Value to be used
+     * @return String with a pair of key and value
+     */
+    private static String getJsonKeyAndValue(final String strKey, final Object objValue) {
+        final List<String> unquotedValues = Arrays.asList("null", "true", "false");
+        final boolean needsQuotesAround = 
+            (objValue instanceof Integer)
+            || (objValue instanceof Double)
+            || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
+            || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
+            || isStringActuallyNumeric(objValue.toString())
+            || hasMatchingSubstring(objValue.toString(), unquotedValues);
+        String strRaw = "\"%s\":\"%s\"";
+        if (needsQuotesAround) {
+            strRaw = "\"%s\":%s";
+        }
+        return String.format(strRaw, strKey, objValue);
+    }
+
+    /**
+     * Cycle inside Map and build a JSON string out of it
+     *
+     * @param arrayAttrib array with attribute values
+     * @return String
+     */
+    public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
+        final StringBuilder strJsonSubString = new StringBuilder(100);
+        arrayAttrib.forEach((strKey, objValue) -> {
+            if (!strJsonSubString.isEmpty()) {
+                strJsonSubString.append(',');
+            }
+            strJsonSubString.append(getJsonKeyAndValue(strKey, objValue));
+        });
+        return String.format("{%s}", strJsonSubString);
     }
 
     /**
@@ -57,6 +97,31 @@ public final class StringManipulationClass {
                         (e1, e2) -> e1, // merge function (not used here)
                         LinkedHashMap::new // preserve sorted order
                 ));
+    }
+
+    /**
+     * Checks if given string is included in a given List of Strings
+     * @param str String to search into
+     * @param substrings Strings to search for
+     * @return boolean true if found, false otherwise
+     */
+    private static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
+        return substrings.stream().anyMatch(str::contains);
+    }
+
+    /**
+     * Check if String is actually Numeric
+     *
+     * @param inputString string to evaluate
+     * @return True if given String is actually Numeric
+     */
+    private static Boolean isStringActuallyNumeric(final String inputString) {
+        boolean bolReturn = false;
+        if (inputString != null) {
+            final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+            bolReturn = pattern.matcher(inputString).matches();
+        }
+        return bolReturn;
     }
 
     /**

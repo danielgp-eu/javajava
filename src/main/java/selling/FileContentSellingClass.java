@@ -231,8 +231,7 @@ public final class FileContentSellingClass {
             }
             FileContentClass.writeListToTextFile(lstOutput, outFileName);
         } catch (IOException e) {
-            final String strFeedback = e.getLocalizedMessage();
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+            Common.setInputOutputExecutionLoggedToError(String.format("IO error... %s", Arrays.toString(e.getStackTrace())));
         }
     }
 

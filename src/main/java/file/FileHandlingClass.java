@@ -59,8 +59,7 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName);
-            Common.setInputOutputExecutionLoggedToError(strFeedback, Arrays.toString(ex.getStackTrace()));
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return arrayFiles;
     }
@@ -89,10 +88,7 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return arraySubFolders;
     }
@@ -107,10 +103,7 @@ public final class FileHandlingClass {
         try {
             strAppFolder = directory.getCanonicalPath();
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace())));
         }
         return strAppFolder;
     }
@@ -133,10 +126,7 @@ public final class FileHandlingClass {
                 LoggerLevelProvider.LOGGER.info(strFeedback);
             }
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -150,10 +140,7 @@ public final class FileHandlingClass {
             final Path filePath = Paths.get(strFileName);
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace())));
         }
     }
     /**
@@ -182,10 +169,7 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
     }
 

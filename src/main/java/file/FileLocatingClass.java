@@ -101,8 +101,7 @@ public final class FileLocatingClass {
             pathProps.put("FILES", stats.fileCount());
             pathProps.put("SIZE_BYTES", stats.totalSize());
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strFolderName);
-            Common.setInputOutputExecutionLoggedToError(strFeedback, Arrays.toString(ex.getStackTrace()));
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return pathProps;
     }

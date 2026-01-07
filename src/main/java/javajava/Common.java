@@ -2,8 +2,8 @@ package javajava;
 
 import org.apache.logging.log4j.Level;
 
+import java.net.URL;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,31 +59,6 @@ public final class Common {
      * standard Unknown
      */
     public static final String STR_I18N_UNKN = JavaJavaLocalization.getMessage("i18nUnknown");
-    /**
-     * Map with predefined network physical types
-     */
-    private static final Map<Integer, String> MEDIUM_TYPES;
-
-    static {
-        // Initialize the concurrent map
-        final Map<Integer, String> tempMap = new ConcurrentHashMap<>();
-        tempMap.put(0, "Unspecified (e.g., satellite feed)");
-        tempMap.put(1, "Wireless LAN (802.11)");
-        tempMap.put(2, "Cable Modem (DOCSIS)");
-        tempMap.put(3, "Phone Line (HomePNA)");
-        tempMap.put(4, "Power Line (data over electrical wiring)");
-        tempMap.put(5, "DSL (ADSL, G.Lite)");
-        tempMap.put(6, "Fibre Channel (high-speed storage interconnect)");
-        tempMap.put(7, "IEEE 1394 (FireWire)");
-        tempMap.put(8, "Wireless WAN (CDMA, GPRS)");
-        tempMap.put(9, "Native 802.11 (modern Wi-Fi interface)");
-        tempMap.put(10, "Bluetooth (short-range wireless)");
-        tempMap.put(11, "InfiniBand (high-speed interconnect)");
-        tempMap.put(12, "Ultra Wideband (UWB)");
-        tempMap.put(13, "Ethernet (802.3)");
-        // Make the map unmodifiable
-        MEDIUM_TYPES = Collections.unmodifiableMap(tempMap);
-    }
 
     /**
      * Convert Prompt Parameters into Named Parameters
@@ -177,68 +152,6 @@ public final class Common {
     }
 
     /**
-     * Build a pair of Key and Value for JSON
-     * @param strKey Key to be used
-     * @param objValue Value to be used
-     * @return String with a pair of key and value
-     */
-    private static String getJsonKeyAndValue(final String strKey, final Object objValue) {
-        final List<String> unquotedValues = Arrays.asList("null", "true", "false");
-        final boolean needsQuotesAround = 
-            (objValue instanceof Integer)
-            || (objValue instanceof Double)
-            || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
-            || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
-            || isStringActuallyNumeric(objValue.toString())
-            || hasMatchingSubstring(objValue.toString(), unquotedValues);
-        String strRaw = "\"%s\":\"%s\"";
-        if (needsQuotesAround) {
-            strRaw = "\"%s\":%s";
-        }
-        return String.format(strRaw, strKey, objValue);
-    }
-
-    /**
-     * Cycle inside Map and build a JSON string out of it
-     *
-     * @param arrayAttrib array with attribute values
-     * @return String
-     */
-    public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
-        final StringBuilder strJsonSubString = new StringBuilder(100);
-        arrayAttrib.forEach((strKey, objValue) -> {
-            if (!strJsonSubString.isEmpty()) {
-                strJsonSubString.append(',');
-            }
-            strJsonSubString.append(getJsonKeyAndValue(strKey, objValue));
-        });
-        return String.format("{%s}", strJsonSubString);
-    }
-
-    /**
-     * Checks if given string is included in a given List of Strings
-     * @param str String to search into
-     * @param substrings Strings to search for
-     * @return boolean true if found, false otherwise
-     */
-    private static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
-        return substrings.stream().anyMatch(str::contains);
-    }
-
-    /**
-     * Sensors Information
-     * @param intPhysMedType number for NDIS Physical Medium Type
-     * @return String
-     */
-    public static String getNetworkPhysicalMediumType(final int intPhysMedType) {
-        return getMapIntoJsonString(
-                Map.of(
-                "Numeric", intPhysMedType,
-                    STR_NAME, MEDIUM_TYPES.getOrDefault(intPhysMedType, "Unknown"))
-        );
-    }
-
-    /**
      * handle NameUnformatted
      * @param intRsParams number for parameters
      * @param strUnformatted original string
@@ -259,44 +172,32 @@ public final class Common {
     }
 
     /**
-     * Check if String is actually Numeric
-     *
-     * @param inputString string to evaluate
-     * @return True if given String is actually Numeric
+     * detects if current execution is from JAR or not
+     * @return boolean
      */
-    private static Boolean isStringActuallyNumeric(final String inputString) {
-        boolean bolReturn = false;
-        if (inputString != null) {
-            final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
-            bolReturn = pattern.matcher(inputString).matches();
+    public static boolean isRunningFromJar() {
+        // Get the URL of the current class's bytecode
+        final URL classUrl = Common.class.getResource("Common.class");
+        if (classUrl == null) {
+            throw new IllegalStateException("Class resource not found");
         }
-        return bolReturn;
+        // Check if the protocol is "jar" (JAR execution) or "file" (IDE execution)
+        final String protocol = classUrl.getProtocol();
+        return "jar".equals(protocol);
     }
 
     /**
      * Execution Interrupted details captured to Error log
      * @param strTraceDetails details
      */
-    public static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
+    public static void setInputOutputExecutionLoggedToError(final String strError) {
         if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
-            LoggerLevelProvider.LOGGER.error(strFeedback);
-        }
-    }
-
-    /**
-     * Execution Interrupted details captured to Error log
-     * @param strTraceDetails details
-     */
-    public static void setInputOutputExecutionLoggedToError(final String strError, final String strTraceDetails) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(strError, strTraceDetails);
-            LoggerLevelProvider.LOGGER.error(strFeedback);
+            LoggerLevelProvider.LOGGER.error(strError);
         }
     }
 
     // Private constructor to prevent instantiation
     private Common() {
-        throw new UnsupportedOperationException(STR_I18N_AP_CL_WN);
+        // intentionally left blank
     }
 }

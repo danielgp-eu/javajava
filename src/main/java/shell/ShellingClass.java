@@ -74,9 +74,7 @@ public final class ShellingClass extends ShellFeedbacks {
             processOutReader.lines().forEach(strCrtLine -> processOutput.append(strCrtLine)
                     .append(strOutLineSep));
             strReturn = processOutput.toString();
-        } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"),
-                    Arrays.toString(ex.getStackTrace()));
+        } catch (IOException ex) {Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace())));
         }
         return strReturn;
     }
@@ -100,11 +98,10 @@ public final class ShellingClass extends ShellFeedbacks {
             final int exitCode = process.waitFor();
             process.destroy();
             exposeProcessExecutionCompletion(strOutLineSep, startTimeStamp, exitCode);
-        } catch (IOException e) {
-            Common.setInputOutputExecutionLoggedToError(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"),
-                    Arrays.toString(e.getStackTrace()));
+        } catch (IOException ex) {
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace())));
         } catch(InterruptedException ei) {
-            Common.setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
+            setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
         }
         return strReturn;
@@ -148,6 +145,17 @@ public final class ShellingClass extends ShellFeedbacks {
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         return strUser;
+    }
+
+    /**
+     * Execution Interrupted details captured to Error log
+     * @param strTraceDetails details
+     */
+    private static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
+            LoggerLevelProvider.LOGGER.error(strFeedback);
+        }
     }
 
     /**

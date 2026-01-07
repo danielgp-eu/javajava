@@ -6,10 +6,12 @@ import javajava.Common;
 import javajava.JavaJavaLocalization;
 import javajava.LoggerLevelProvider;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,10 +41,7 @@ public final class FileContentClass {
         try {
             strReturn = new String(Files.readAllBytes(Paths.get(strFileName)));
         } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace())));
         }
         return strReturn;
     }
@@ -78,6 +77,24 @@ public final class FileContentClass {
     }
 
     /**
+     * Get file content into InputStream
+     * 
+     * @param strFileName file name
+     * @return input stream
+     */
+    public static String getIncludedFileContentIntoString(final String strFileName) {
+        String strContent = null;
+        try (InputStream iStream = getIncludedFileContentIntoInputStream(strFileName);
+                InputStreamReader inputStreamReader = new InputStreamReader(iStream);
+                BufferedReader bReader = new BufferedReader(inputStreamReader)) {
+            strContent = bReader.readAllAsString();
+        } catch (IOException ex) {
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nError"), Arrays.toString(ex.getStackTrace())));
+        }
+        return strContent;
+    }
+
+    /**
      * Getting list of values from a column grouped by another column
      * @param strFileName target file name to be written to
      * @param intColToEval number of column to evaluate (build values list from it)
@@ -98,11 +115,8 @@ public final class FileContentClass {
                             cols -> cols[intColToGrpBy], // key = Category
                             Collectors.mapping(cols -> cols[intColToEval].replaceAll("\"", ""), Collectors.toList()) // values
                     ));
-        } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        } catch (IOException ex) {
+            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
         return grouped;
     }
@@ -130,11 +144,8 @@ public final class FileContentClass {
                 ).toList();
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        } catch (IOException ex) {
+            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -163,10 +174,7 @@ public final class FileContentClass {
                 LoggerLevelProvider.LOGGER.debug(strFeedback);
             }
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -198,10 +206,7 @@ public final class FileContentClass {
                 bwr.newLine();
             }
         } catch (IOException ex) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -228,11 +233,8 @@ public final class FileContentClass {
                 ).toList();
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        } catch (IOException ex) {
+            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 

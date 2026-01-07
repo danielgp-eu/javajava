@@ -1,7 +1,10 @@
 package dependency;
 
 import javajava.Common;
+import javajava.JavaJavaLocalization;
 import javajava.LoggerLevelProvider;
+import javajava.StringManipulationClass;
+
 import org.apache.logging.log4j.Level;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -24,6 +27,7 @@ import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import file.FileHandlingClass;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -67,8 +71,10 @@ final public class ProjectDependencyResolver {
 
     /**
      * Helper to recurse through transitive
-     * @param node
-     * @param depth
+     * @param arrayAttributes attributes
+     * @param strDirectNode direct node
+     * @param node dependency node
+     * @param depth integer
      */
     private static void displayTransitive(final Map<String, Object> arrayAttributes
             , final String strDirectNode
@@ -85,20 +91,37 @@ final public class ProjectDependencyResolver {
             displayTransitive(arrayAttributes, strCurrentNode, child, depth + 1);
         }
     }
-
     /**
      * establish current POM file
      * @return String
      */
     private static String getCurrentProjectObjectModelFile() {
-        return FileHandlingClass.getProjectFolder() + "/pom.xml";
+        String strPomFile = FileHandlingClass.getProjectFolder();
+        PropertiesReader reader;
+        try {
+            reader = new PropertiesReader("project.properties");
+            if (Common.isRunningFromJar()) {
+                strPomFile += String.format("/%s-%s.pom", 
+                        reader.getProperty("artifactId"),
+                        reader.getProperty("version"));
+            } else {
+                strPomFile += File.separator + "pom.xml";
+            }
+        } catch (IOException ex) {
+            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), "pom.xml", Arrays.toString(ex.getStackTrace())));
+        }
+        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoStreamSuccess"), strPomFile);
+            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        }
+        return strPomFile;
     }
 
     /**
      * capture Dependencies
      * 
-     * @param result
-     * @return
+     * @param root dependency node
+     * @return String
      */
     private static String getDependenciesIntoString(final DependencyNode root) {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
@@ -109,13 +132,13 @@ final public class ProjectDependencyResolver {
             // Transitive dependencies are children of the direct nodes
             displayTransitive(arrayAttributes, strDirectNode, directNode, 1);
         }
-        return Common.getMapIntoJsonString(arrayAttributes);
+        return StringManipulationClass.getMapIntoJsonString(arrayAttributes);
     }
 
     /**
      * combine GroupId and ArtifactId
-     * @param directNode
-     * @return
+     * @param directNode direct node
+     * @return String
      */
     private static String getGroupIdArtifactId(final DependencyNode directNode) {
         final Artifact node = getNodeArtifact(directNode);
@@ -124,8 +147,8 @@ final public class ProjectDependencyResolver {
 
     /**
      * combine Artifact
-     * @param directNode
-     * @return
+     * @param directNode direct node
+     * @return Artifact
      */
     private static Artifact getNodeArtifact(final DependencyNode directNode) {
         return directNode.getArtifact();
@@ -133,8 +156,8 @@ final public class ProjectDependencyResolver {
 
     /**
      * combine Version
-     * @param directNode
-     * @return
+     * @param directNode direct node
+     * @return String
      */
     private static String getNodeVersion(final DependencyNode directNode) {
         final Artifact node = getNodeArtifact(directNode);
@@ -143,8 +166,8 @@ final public class ProjectDependencyResolver {
 
     /**
      * combine Version
-     * @param result
-     * @return
+     * @param result of dependency
+     * @return DependencyNode
      */
     private static DependencyNode getRootNode(final DependencyResult result) {
         return result.getRoot();
@@ -163,16 +186,15 @@ final public class ProjectDependencyResolver {
         final MavenXpp3Reader reader = new MavenXpp3Reader();
         final Model model;
         String strFeedback = "";
-        try(BufferedReader breader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
-            model = reader.read(breader);
+        try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
+            model = reader.read(bReader);
             final CollectRequest collectRequest = createCollectRequest(model);
             final DependencyNode root = resolveDependencies(system, session, collectRequest);
             strFeedback = getDependenciesIntoString(root);
-        } catch (IOException | XmlPullParserException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                strFeedback = Arrays.toString(e.getStackTrace());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
-            }
+        } catch (IOException | XmlPullParserException ex) {
+            Common.setInputOutputExecutionLoggedToError(
+                    String.format(JavaJavaLocalization.getMessage("i18nErrorOnGettingDependencies"),
+                            Arrays.toString(ex.getStackTrace())));
         }
         system.shutdown();
         return strFeedback;
@@ -205,6 +227,6 @@ final public class ProjectDependencyResolver {
 
     // Private constructor to prevent instantiation
     private ProjectDependencyResolver() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        // intentionally left blank
     }
 }

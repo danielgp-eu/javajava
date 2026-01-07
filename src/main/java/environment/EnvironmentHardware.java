@@ -1,6 +1,7 @@
 package environment;
 
 import javajava.Common;
+import javajava.StringManipulationClass;
 import oshi.hardware.*;
 import oshi.util.FormatUtil;
 
@@ -70,7 +71,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
                 arrayAttributes.put(STR_SRL_NUM, strSlimLine.replace(STR_SRL_NUM + " ", ""));
             }
         }
-        return Common.getMapIntoJsonString(arrayAttributes);
+        return StringManipulationClass.getMapIntoJsonString(arrayAttributes);
     }
 
     /**
@@ -81,7 +82,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
     public static String getDetailsAboutCentralPowerUnit() {
         final CentralProcessor processor = getOshiProcessor();
         final CentralProcessor.ProcessorIdentifier procIdentif = getOshiProcessorIdentifier();
-        return Common.getMapIntoJsonString(Map.of(
+        return StringManipulationClass.getMapIntoJsonString(Map.of(
             "Feature Flags", processor.getFeatureFlags().toString().replace("[", "[\"").replace(", ", "\",\"").replace("]", "\"]"),
             "Family", procIdentif.getFamily(),
             "Identifier", procIdentif.getIdentifier(),
@@ -105,7 +106,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(Common.getMapIntoJsonString(Map.of(
+            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
                 Common.STR_NAME, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
@@ -151,7 +152,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(Common.getMapIntoJsonString(Map.of(
+            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
                 Common.STR_NAME, net.getName(),
                 "Display Name", net.getDisplayName(),
                 "MAC Address", net.getMacaddr(),
@@ -159,7 +160,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
                 "IPv6", String.join(", ", net.getIPv6addr()),
                 "Status", net.getIfOperStatus(),
                 "Speed", FormatUtil.formatBytes(net.getSpeed()),
-                "NDIS Physical Medium Type", Common.getNetworkPhysicalMediumType(net.getNdisPhysicalMediumType())
+                "NDIS Physical Medium Type", NetworkTypesClass.getNetworkPhysicalMediumType(net.getNdisPhysicalMediumType())
             )));
             intCounter++;
         }
@@ -186,7 +187,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(Common.getMapIntoJsonString(Map.of(
+            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
                 "Bank/Slot Label", physicalMemory.getBankLabel(),
                 "Capacity", FormatUtil.formatBytes(physicalMemory.getCapacity()),
                 "Clock Speed", FormatUtil.formatHertz(physicalMemory.getClockSpeed()),
