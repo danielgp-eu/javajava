@@ -41,8 +41,10 @@ Various Java classes to be re-used
 ### Java Coding
 
 * [Clean Coding in Java](https://www.baeldung.com/java-clean-code)
+* [Essential Java Mastery: Concurrency, Best Practices, and Advanced APIs](https://www.javacodegeeks.com/2025/08/essential-java-mastery-concurrency-best-practices-and-advanced-apis.html)
 * [Future of Java: What to Expect in 2026 and Beyond](https://www.javacodegeeks.com/2026/01/the-future-of-java-what-to-expect-in-2026-and-beyond.html)
 * [How to Run a Shell Command in Java](https://www.baeldung.com/run-shell-command-in-java)
+* [Java 8 Streams Filter With Multiple Conditions Examples](https://www.javacodegeeks.com/2021/07/java-8-streams-filter-with-multiple-conditions-examples.html)
 * [Java and Event‑Driven Architectures: Kafka, Pulsar, and the Modern Streaming Landscape](https://www.javacodegeeks.com/2026/01/java-and-event-driven-architectures-kafka-pulsar-and-the-modern-streaming-landscape.html)
 * [Java Configuring Multiple Appenders](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/#5-the-log4j2xml-file-location)
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
@@ -50,6 +52,8 @@ Various Java classes to be re-used
 * [Java Best Practices That Every Java Developer Should Know in 2024](https://medium.com/@learnwithakshay/java-best-practices-that-every-java-developer-should-know-in-2024-ea84bc0b0fec)
 * [Java Maven OWASP Dependency-Check Example](https://www.javacodegeeks.com/java-maven-owasp-dependency-check-example.html)
 * [Java Naming Conventions - Best Practices](https://www.javaguides.net/2018/08/java-standard-naming-conventions.html)
+* [Java Secret: Loading and unloading static fields](https://www.javacodegeeks.com/2011/10/java-secret-loading-and-unloading.html)
+* [Java Secret: Using an enum to build a State machine](https://www.javacodegeeks.com/2011/07/java-secret-using-enum-to-build-state.html)
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
 * [Secure Coding Guidelines for Java SE](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
 * [Switch as an expression in Java with Lambda-like syntax](https://www.javacodegeeks.com/2020/05/switch-as-an-expression-in-java-with-lambda-like-syntax.html)
@@ -71,6 +75,7 @@ Various Java classes to be re-used
 
 ### Java Log Management
 
+* [10 Tips for Proper Application Logging](https://www.javacodegeeks.com/2011/01/10-tips-proper-application-logging.html)
 * [Log4j Common Conversion Patterns Example](https://www.codejava.net/coding/common-conversion-patterns-for-log4js-patternlayout)
 * [Log4j2 – Useful Log Format Pattern Layouts](https://howtodoinjava.com/log4j2/useful-conversion-pattern-examples/)
 * [Log4j2 XML Configuration: Log4j2.xml Example](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/)
@@ -98,6 +103,12 @@ Various Java classes to be re-used
 * [JUnit 5](https://junit.org/junit5/)
 * [JUnit 5 Tutorial (with Examples)](https://howtodoinjava.com/junit-5-tutorial/)
 * [Mocking JDBC for Unit Testing](https://www.baeldung.com/mocking-jdbc-unit-testing)
+
+
+### Programing
+
+* [Laws of Software Design](https://www.javacodegeeks.com/2011/01/laws-of-software-design.html)
+* [Things Every Programmer Should Know](https://www.javacodegeeks.com/2010/12/things-every-programmer-should-know.html)
 
 
 ### Project Management
