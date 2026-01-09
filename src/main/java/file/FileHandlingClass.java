@@ -1,9 +1,7 @@
 package file;
 
-import javajava.CommonClass;
-import javajava.LoggerLevelProviderClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,10 +39,7 @@ public final class FileHandlingClass {
      * @return List of Strings
      */
     public static List<String> getSpecificFilesFromFolder(final String strFolderName, final String strExtension) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName));
         final List<String> arrayFiles = new ArrayList<>();
         final Path directory = Paths.get(strFolderName);
         // use DirectoryStream to list files which are present in specific
@@ -54,14 +49,11 @@ public final class FileHandlingClass {
                 if (file.getFileName().toString().endsWith(strExtension)) {
                     final String strFile = file.getParent().toString() + File.separator + file.getFileName();
                     arrayFiles.add(strFile);
-                    if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFound"), strExtension, strFile);
-                        LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-                    }
+                    LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFound"), strExtension, strFile));
                 }
             }
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return arrayFiles;
     }
@@ -73,24 +65,18 @@ public final class FileHandlingClass {
      * @return List of String
      */
     public static List<String> getSubFolderFromFolder(final String strFolderName) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersAttempt"), strFolderName);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersAttempt"), strFolderName));
         final List<String> arraySubFolders = new ArrayList<>();
         final Path directory = Paths.get(strFolderName);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
             for (final Path entry : stream) {
                 if (Files.isDirectory(entry)) {
                     arraySubFolders.add(entry.toString());
-                    if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
-                        final String strFeedback = entry.toString();
-                        LoggerLevelProviderClass.LOGGER.info(strFeedback);
-                    }
+                    LogExposure.exposeMessageToInfoLog(entry.toString());
                 }
             }
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return arraySubFolders;
     }
@@ -103,17 +89,11 @@ public final class FileHandlingClass {
      */
     public static void moveFileToNewLocation(final String strFileName, final String strDestFolder) {
         try {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder);
-                LoggerLevelProviderClass.LOGGER.info(strFeedback);
-            }
+            LogExposure.exposeMessageToInfoLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder));
             Files.move(Path.of(strFileName), Path.of(strDestFolder), StandardCopyOption.REPLACE_EXISTING);
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder);
-                LoggerLevelProviderClass.LOGGER.info(strFeedback);
-            }
+            LogExposure.exposeMessageToInfoLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder));
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -127,7 +107,7 @@ public final class FileHandlingClass {
             final Path filePath = Paths.get(strFileName);
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace())));
         }
     }
     /**
@@ -138,10 +118,7 @@ public final class FileHandlingClass {
      */
     public static void removeFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
         final long cutoff = new Date().getTime() - intOlderLimit * INT_1DAY_MILISECS;
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim(), strFolderName);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim(), strFolderName));
         final Path directory = Paths.get(strFolderName);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
             for (final Path entry : stream) {
@@ -156,7 +133,7 @@ public final class FileHandlingClass {
                 }
             }
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -164,6 +141,6 @@ public final class FileHandlingClass {
      * Constructor
      */
     private FileHandlingClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 }

@@ -2,11 +2,10 @@ package database;
 
 import javajava.CommonClass;
 import javajava.ListAndMapClass;
-import javajava.LoggerLevelProviderClass;
 import javajava.StringManipulationClass;
-import javajava.TimingClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
+import time.TimingClass;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +22,7 @@ import java.util.Properties;
 public final class DatabaseBasicClass {
 
     /**
-     * Fill values into a dynamic query 
+     * Fill values into a dynamic query
      * @param queryProperties properties for connection
      * @param strRawQuery raw query
      * @param arrayCleanable array with fields to clean
@@ -65,34 +64,22 @@ public final class DatabaseBasicClass {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse));
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-                    LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-                }
+                LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose));
                 DatabaseResultSettingClass.digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
-                    LoggerLevelProviderClass.LOGGER.error(strFeedback);
-                }
+                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage()));
             }
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose)));
         }
         return resultSet;
     }
 
     /**
      * Execute a custom query w/o any result-set
-     * 
+     *
      * @param objStatement statement
      * @param strQueryPurpose purpose of query
      * @param strQueryToUse query to use
@@ -100,10 +87,7 @@ public final class DatabaseBasicClass {
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose));
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
                     objStatement.executeLargeUpdate(strQueryToUse);
@@ -112,36 +96,24 @@ public final class DatabaseBasicClass {
                 }
                 setSqlExecutionSuccessInfo(strQueryPurpose);
             } catch (SQLException e) {
-                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
-                    LoggerLevelProviderClass.LOGGER.error(strFeedback);
-                }
+                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace())));
             }
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose)));
         }
     }
 
     /**
-     * get order of Prompt Parameters within Query 
+     * get order of Prompt Parameters within Query
      * @param strOriginalQ query to consider expected to have Prompt Parameters
      * @param objValues list with Values as List of Properties
      * @return List of Strings with order as value
      */
     public static List<String> getPromptParametersOrderWithinQuery(final String strOriginalQ, final List<Properties> objValues) {
         final List<String> valFields = new ArrayList<>();
-        objValues.getFirst().forEach((strKey, strValue) -> valFields.add(strKey.toString()));
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        objValues.getFirst().forEach((strKey, _) -> valFields.add(strKey.toString()));
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields));
         final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, CommonClass.STR_PRMTR_RGX);
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches));
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
         for (final String listMatch : listMatches) {
@@ -151,18 +123,15 @@ public final class DatabaseBasicClass {
                 mapParameterOrder.add(crtParameter);
             }
         }
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder));
         final int foundParameters = mapParameterOrder.size();
-        if ((foundParameters != intParameters)  && LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+        if (foundParameters != intParameters) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValueMissing")
                 , intParameters
                 , foundParameters
                 , mapParameterOrder + " vs. " + objValues.getFirst().toString()
                 , strOriginalQ);
-            LoggerLevelProviderClass.LOGGER.error(strFeedback);
+            LogExposure.exposeMessageToErrorLog(strFeedback);
         }
         return mapParameterOrder;
     }
@@ -172,16 +141,13 @@ public final class DatabaseBasicClass {
      * @param strQueryPurpose Query purpose
      */
     public static void setSqlExecutionSuccessInfo(final String strQueryPurpose) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToInfoLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose));
     }
 
     /**
      * Constructor
      */
     private DatabaseBasicClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 }

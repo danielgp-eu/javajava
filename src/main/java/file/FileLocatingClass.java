@@ -1,9 +1,7 @@
 package file;
 
-import javajava.CommonClass;
-import javajava.LoggerLevelProviderClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,7 +98,7 @@ public final class FileLocatingClass {
             pathProps.put("FILES", stats.fileCount());
             pathProps.put("SIZE_BYTES", stats.totalSize());
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return pathProps;
     }
@@ -146,17 +144,17 @@ public final class FileLocatingClass {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileConfigurationNotFound")
                 , propsFile.getProperty(STR_MINIFIED, "")
                 , propsFile.getProperty(STR_PRTY_PRNT, ""));
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(strFeedback);
             throw new IllegalArgumentException(strFeedback);
         }
         return strFileJson;
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Constructor
+     */
     private FileLocatingClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 
 }

@@ -48,12 +48,13 @@ public final class ListAndMapClass {
 
     /**
      * Get all words from a list of Strings with merged words glued by _
-     * @param valList List of String with words glues by _
+     * @param valList List of String with words glues by regexSep
+     * @param regexSep separators for words detection
      * @return LinkedHashMap of Strings with counted occurrences
      */
-    public static Map<String, Long> getWordCounts(final List<String> valList) {
+    public static Map<String, Long> getWordCounts(final List<String> valList, final String regexSep) {
         final Map<String, Long> wordCounts = valList.stream()
-                .flatMap(s -> Arrays.stream(s.split("_")))
+                .flatMap(s -> Arrays.stream(s.split(regexSep)))
                 .collect(Collectors.groupingBy(
                        word -> word,
                        Collectors.counting()
@@ -67,7 +68,7 @@ public final class ListAndMapClass {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (e1, e2) -> e1, // merge function (not used here)
+                        (e1, _) -> e1, // merge function (not used here)
                         LinkedHashMap::new // preserve sorted order
                 ));
     }

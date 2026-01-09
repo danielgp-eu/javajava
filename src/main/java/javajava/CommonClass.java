@@ -1,7 +1,7 @@
 package javajava;
 
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -23,26 +23,6 @@ public final class CommonClass {
      */
     public static final String STR_DB_SQLITE = "SQLite";
     /**
-     * standard String
-     */
-    public static final String STR_NAME = "Name";
-    /**
-     * NULL string
-     */
-    public static final String STR_NULL = "NULL";
-    /**
-     * Regular Expression for Prompt Parameters within SQL Query
-     */
-    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
-    /**
-     * standard String
-     */
-    public static final String STR_ROLES = "Roles";
-    /**
-     * Regular Expression for Prompt Parameters within SQL Query
-     */
-    public static final String STR_QTD_STR_VL = "\"%s\"";
-    /**
      * standard Application class feedback
      */
     public static final String STR_I18N_AP_CL_WN = JavaJavaLocalizationClass.getMessage("i18nAppClassWarning");
@@ -58,16 +38,30 @@ public final class CommonClass {
      * standard Unknown
      */
     public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
-
     /**
-     * Execution Interrupted details captured to Error log
-     * @param strError details
+     * standard String
      */
-    public static void setInputOutputExecutionLoggedToError(final String strError) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-            LoggerLevelProviderClass.LOGGER.error(strError);
-        }
-    }
+    public static final String STR_NAME = "Name";
+    /**
+     * NULL string
+     */
+    public static final String STR_NULL = "NULL";
+    /**
+     * One or Many
+     */
+    public static final String STR_ONE_OR_MANY = "1..*";
+    /**
+     * Regular Expression for Prompt Parameters within SQL Query
+     */
+    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
+    /**
+     * standard String
+     */
+    public static final String STR_ROLES = "Roles";
+    /**
+     * Regular Expression for Prompt Parameters within SQL Query
+     */
+    public static final String STR_QTD_STR_VL = "\"%s\"";
 
     /**
      * safely compute percentage
@@ -77,7 +71,9 @@ public final class CommonClass {
      */
     public static float getPercentageSafely(final long numerator, final long denominator) {
         float percentage = 0;
-        if (denominator != 0) {
+        if (denominator == 0) {
+            LogExposure.exposeMessageToErrorLog(String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return 0", numerator));
+        } else {
             final double percentageExact = (float) numerator / denominator * 100;
             percentage = (float) new BigDecimal(Double.toString(percentageExact))
                 .setScale(2, RoundingMode.HALF_UP)

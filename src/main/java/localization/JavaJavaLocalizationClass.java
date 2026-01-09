@@ -1,9 +1,7 @@
 package localization;
 
 import com.ibm.icu.text.PluralRules;
-import javajava.CommonClass;
-import javajava.LoggerLevelProviderClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -124,16 +122,14 @@ public final class JavaJavaLocalizationClass {
             Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
             strFeedback = String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
         }
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback1);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(strFeedback1);
+        LogExposure.exposeMessageToDebugLog(strFeedback);
     }
 
     /**
      * constructor
      */
     private JavaJavaLocalizationClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 }

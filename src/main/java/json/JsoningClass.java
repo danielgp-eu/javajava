@@ -1,9 +1,9 @@
 package json;
 
-import javajava.LoggerLevelProviderClass;
 import javajava.StringManipulationClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
+
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -30,10 +30,7 @@ public final class JsoningClass {
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(strJson);
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), strJson);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), strJson));
         return jsonRootNode;
     }
 
@@ -47,10 +44,7 @@ public final class JsoningClass {
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(jsonFile);
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), jsonFile.toString()));
         return jsonRootNode;
     }
 
@@ -84,21 +78,12 @@ public final class JsoningClass {
      * @return JsonNode
      */
     private static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName));
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode));
         } else {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName);
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName));
         }
         return jsonNode;
     }
@@ -180,10 +165,7 @@ public final class JsoningClass {
      * @param objValues values found
      */
     private static void setNodeRetrievingToDebugLog(final String strWhat, final String strJsonNodeName, final Object objValues) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues));
     }
 
     /**

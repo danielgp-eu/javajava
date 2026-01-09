@@ -1,9 +1,8 @@
 package project;
 
-import javajava.CommonClass;
-import javajava.LoggerLevelProviderClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -30,7 +29,7 @@ public final class ProjectClass {
         final StringBuilder strPomFile = new StringBuilder(getProjectFolder());
         final PropertiesReaderClass reader;
         try {
-            reader = new PropertiesReaderClass("project.properties");
+            reader = new PropertiesReaderClass("/project.properties");
             if (isRunningFromJar()) {
                 strPomFile.append(String.format("/%s-%s.pom",
                         reader.getProperty("artifactId"),
@@ -38,12 +37,9 @@ public final class ProjectClass {
             } else {
                 strPomFile.append(File.separator).append("pom.xml");
             }
+            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strPomFile));
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "pom.xml", Arrays.toString(ex.getStackTrace())));
-        }
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strPomFile);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "pom.xml", Arrays.toString(ex.getStackTrace())));
         }
         return strPomFile.toString();
     }
@@ -59,7 +55,7 @@ public final class ProjectClass {
         try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
             model = reader.read(bReader);
         } catch (IOException | XmlPullParserException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(
+            LogExposure.exposeMessageToErrorLog(
                     String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"),
                             Arrays.toString(ex.getStackTrace())));
         }
@@ -76,7 +72,7 @@ public final class ProjectClass {
         try {
             strAppFolder = directory.getCanonicalPath();
         } catch (IOException ex) {
-            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace())));
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace())));
         }
         return strAppFolder;
     }
@@ -99,4 +95,5 @@ public final class ProjectClass {
     private ProjectClass () {
         // intentionally left blank
     }
+
 }

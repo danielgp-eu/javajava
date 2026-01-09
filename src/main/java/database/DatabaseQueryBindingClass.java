@@ -1,10 +1,9 @@
 package database;
 
 import javajava.CommonClass;
-import javajava.LoggerLevelProviderClass;
 import javajava.StringManipulationClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -106,10 +105,7 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery relevant query
      */
     private static void setSqlExceptionError(final SQLException exptObj, final List<Properties> objValues, final String strQuery) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = exptObj.getLocalizedMessage() + " with Values " + objValues.getFirst().toString() + " for Query " + strQuery;
-            LoggerLevelProviderClass.LOGGER.error(strFeedback);
-        }
+        LogExposure.exposeMessageToErrorLog(String.format("%s with Values $s for Query %s", exptObj.getLocalizedMessage(), objValues.getFirst().toString(), strQuery));
     }
 
     /**
@@ -119,20 +115,17 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery query
      */
     private static void setSqlParameterBindingError(final SQLException exptObj, final String strParameterName, final String strQuery) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterBindingError")
+        LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterBindingError")
                 , exptObj.getLocalizedMessage()
                 , strParameterName
-                , strQuery);
-            LoggerLevelProviderClass.LOGGER.error(strFeedback);
-        }
+                , strQuery));
     }
 
     /**
      * Constructor
      */
     private DatabaseQueryBindingClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 
 }

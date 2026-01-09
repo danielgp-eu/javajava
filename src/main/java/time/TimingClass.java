@@ -1,6 +1,7 @@
-package javajava;
+package time;
 
 import localization.JavaJavaLocalizationClass;
+import log.LogExposure;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +11,8 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javajava.CommonClass;
 
 /**
  * Time methods
@@ -68,6 +71,7 @@ public final class TimingClass {
             default:
                 final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strRule, StackWalker.getInstance()
                         .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                LogExposure.exposeMessageToErrorLog(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
         }
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
@@ -138,6 +142,7 @@ public final class TimingClass {
             default -> {
                 final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                LogExposure.exposeMessageToErrorLog(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -156,6 +161,7 @@ public final class TimingClass {
         if (strFormats.isEmpty()) {
             final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+            LogExposure.exposeMessageToErrorLog(strFeedback);
             throw new UnsupportedOperationException(strFeedback);
         }
         String strReturn;
@@ -230,6 +236,6 @@ public final class TimingClass {
      * Constructor
      */
     private TimingClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 }

@@ -1,9 +1,9 @@
 package database;
 
 import javajava.CommonClass;
-import javajava.LoggerLevelProviderClass;
 import localization.JavaJavaLocalizationClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
+
 import shell.ShellingClass;
 
 import java.sql.Connection;
@@ -173,21 +173,12 @@ FROM
         Connection connection = null;
         final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
         final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), CommonClass.STR_DB_SNOWFLAKE, strDatabase, strConnection, propConnection);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), CommonClass.STR_DB_SNOWFLAKE, strDatabase, strConnection, propConnection));
         try {
             connection = DriverManager.getConnection(strConnection, propConnection);
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccessLight"), CommonClass.STR_DB_SNOWFLAKE, strDatabase);
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccessLight"), CommonClass.STR_DB_SNOWFLAKE, strDatabase));
         } catch(SQLException e) {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), CommonClass.STR_DB_SNOWFLAKE, e.getLocalizedMessage());
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), CommonClass.STR_DB_SNOWFLAKE, e.getLocalizedMessage()));
         }
         return connection;
     }
@@ -224,9 +215,7 @@ FROM
         if (strQueryToUse.isEmpty()) {
             final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strWhichQuery, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(strFeedback);
             throw new UnsupportedOperationException(strFeedback);
         }
         return strQueryToUse;
@@ -268,21 +257,12 @@ FROM
      */
     private static void loadSnowflakeDriver() {
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), CommonClass.STR_DB_SNOWFLAKE, strDriverName);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), CommonClass.STR_DB_SNOWFLAKE, strDriverName));
         try {
             Class.forName(strDriverName);
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), CommonClass.STR_DB_SNOWFLAKE, strDriverName);
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-            }
+            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), CommonClass.STR_DB_SNOWFLAKE, strDriverName));
         } catch (ClassNotFoundException ex) {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), CommonClass.STR_DB_SNOWFLAKE, strDriverName);
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), CommonClass.STR_DB_SNOWFLAKE, strDriverName));
         }
     }
 
@@ -297,17 +277,14 @@ FROM
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nError"), Arrays.toString(e.getStackTrace())));
         }
     }
 
     /**
-     * constructor
+     * Constructor
      */
     private DatabaseSpecificSnowflakeClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 }

@@ -1,8 +1,8 @@
 package dependency;
 
 import javajava.ListAndMapClass;
-import javajava.LoggerLevelProviderClass;
-import org.apache.logging.log4j.Level;
+import log.LogExposure;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -21,6 +21,7 @@ import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import project.ProjectClass;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,16 +45,17 @@ final public class ProjectDependencyResolverClass {
         final CollectRequest collectRequest = new CollectRequest();
         final RemoteRepository central = new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2/").build();
         collectRequest.addRepository(central);
-        for (final org.apache.maven.model.Dependency modelDep : model.getDependencies()) {
+        final List<org.apache.maven.model.Dependency> lstDeps = model.getDependencies();
+        lstDeps.stream().forEach(modelDep -> {
             final Artifact artifact = new DefaultArtifact(
-                modelDep.getGroupId(), 
-                modelDep.getArtifactId(), 
-                modelDep.getClassifier(), 
-                modelDep.getType(), 
-                modelDep.getVersion()
-            );
+                    modelDep.getGroupId(), 
+                    modelDep.getArtifactId(), 
+                    modelDep.getClassifier(), 
+                    modelDep.getType(), 
+                    modelDep.getVersion()
+                );
             collectRequest.addDependency(new Dependency(artifact, modelDep.getScope()));
-        }
+        });
         return collectRequest;
     }
 
@@ -170,15 +172,14 @@ final public class ProjectDependencyResolverClass {
             result = system.resolveDependencies(session, dependencyRequest);
             root = getRootNode(result);
         } catch (DependencyResolutionException e) {
-            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = Arrays.toString(e.getStackTrace());
-                LoggerLevelProviderClass.LOGGER.error(strFeedback);
-            }
+            LogExposure.exposeMessageToErrorLog(String.format("Dependency resolution error... %s", Arrays.toString(e.getStackTrace())));
         }
         return root;
     }
 
-    // Private constructor to prevent instantiation
+    /**
+     * Constructor
+     */
     private ProjectDependencyResolverClass() {
         // intentionally left blank
     }

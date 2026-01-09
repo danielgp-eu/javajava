@@ -1,4 +1,4 @@
-package javajava;
+package log;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +15,7 @@ public final class LoggerLevelProviderClass {
 
     /**
      * Get current Log Level
-     * @return
+     * @return current Log Level
      */
     public static Level getLogLevel() {
         return LOGGER.getLevel();

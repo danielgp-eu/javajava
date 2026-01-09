@@ -48,6 +48,9 @@ public final class NetworkTypesClass {
         );
     }
 
+    /**
+     * Constructor
+     */
     private NetworkTypesClass() {
         // intentionally left blank
     }

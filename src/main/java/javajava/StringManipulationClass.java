@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.Level;
-
 import localization.JavaJavaLocalizationClass;
+import log.LogExposure;
 
 /**
  * String Manipulation
@@ -35,20 +34,13 @@ public final class StringManipulationClass {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.TRACE)) {
-            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ));
         final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, CommonClass.STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
-            final String newParameter = getNamedParameterFromPromptOne(currentPrmtName);
-            strFinalQ = strFinalQ.replace(currentPrmtName, newParameter);
+            strFinalQ = strFinalQ.replace(currentPrmtName, getNamedParameterFromPromptOne(currentPrmtName));
         }
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.TRACE)) {
-            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ));
         return strFinalQ;
     }
 
@@ -58,26 +50,20 @@ public final class StringManipulationClass {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ));
         final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, CommonClass.STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
         }
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs"), strFinalQ);
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
-        }
+        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs"), strFinalQ));
         return strFinalQ;
     }
 
     /**
      * Convert String to BigDecimal
-     * @param strNumber
-     * @return
+     * @param strNumber string to evaluate
+     * @return BigDecimal
      */
     public static BigDecimal convertStringIntoBigDecimal(final String strNumber) {
         BigDecimal noToReturn = null;
@@ -141,6 +127,7 @@ public final class StringManipulationClass {
             default -> {
                 final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance()
                     .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                LogExposure.exposeMessageToErrorLog(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -184,6 +171,6 @@ public final class StringManipulationClass {
 
     // Private constructor to prevent instantiation
     private StringManipulationClass() {
-        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
+        // intentionally blank
     }
 }
