@@ -1,5 +1,7 @@
-package javajava;
+package xml;
 
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
 import org.apache.logging.log4j.Level;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -16,7 +18,7 @@ import java.util.List;
 /**
  * Secured XML parser
  */
-public final class SecureXmlParser {
+public final class SecureXmlParserClass {
 
     /**
      * Get Feature by Name
@@ -62,10 +64,10 @@ public final class SecureXmlParser {
             try {
                 docBuilderFactory.setFeature(getFeatureByName(strFeature), bolSettingType);
             } catch (ParserConfigurationException e) {
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
                     // Handle the exception if the feature is not supported by the parser
                     final String strFeedback = String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage());
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                    LoggerLevelProviderClass.LOGGER.error(strFeedback);
                 }
                 // Fallback to other protective measures if this isn't supported
             }
@@ -89,7 +91,7 @@ public final class SecureXmlParser {
     /**
      * Constructor
      */
-    private SecureXmlParser() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+    private SecureXmlParserClass() {
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 }

@@ -8,10 +8,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.maven.shared.utils.StringUtils;
 
 import database.DatabaseSpecificMySql;
-import database.DatabaseSpecificSnowflake;
+import database.DatabaseSpecificSnowflakeClass;
 import picocli.CommandLine;
-import selling.FileContentSellingClass;
+import shell.ShellFeedbackClass;
 import shell.ShellingClass;
+import localization.JavaJavaLocalizationClass;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -28,11 +29,9 @@ import java.util.*;
         ArchiveFolders.class,
         CleanOlderFilesFromFolder.class,
         GetInformationFromDatabase.class,
-        GetInformationFromTextWithSellingPointReceiptsIntoCsvFile.class,
         GetSpecificInformationFromSnowflake.class,
         GetSubFoldersFromFolder.class,
-        LogEnvironmentDetails.class,
-        PairBankRecordsWithSellingReceipts.class
+        LogEnvironmentDetails.class
     }
 )
 /**
@@ -55,9 +54,9 @@ public final class Example implements Runnable {
      * log Application Start
      */
     private static void logApplicationStart() {
-        final String strFeedback = JavaJavaLocalization.getMessage("i18nNewExec") + "-".repeat(80);
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nNewExec") + "-".repeat(80);
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+        	LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
     }
 
@@ -68,17 +67,17 @@ public final class Example implements Runnable {
      */
     /* default */ static void main(final String... args) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        final String userLocale = JavaJavaLocalization.getUserLocale();
-        JavaJavaLocalization.setLocaleByString(userLocale);
+        final String userLocale = JavaJavaLocalizationClass.getUserLocale();
+        JavaJavaLocalizationClass.setLocaleByString(userLocale);
         logApplicationStart();
         final int exitCode = new CommandLine(new Example()).execute(args);
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN) && (exitCode != 0)) {
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN) && (exitCode != 0)) {
             final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
-            LoggerLevelProvider.LOGGER.info(strFeedbackExit);
+            LoggerLevelProviderClass.LOGGER.info(strFeedbackExit);
         }
-        final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalization.getMessage("i18nEntOp"), args[0]));
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-            LoggerLevelProvider.LOGGER.info(strFeedback);
+        final String strFeedback = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nEntOp"), args[0]));
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
+        	LoggerLevelProviderClass.LOGGER.info(strFeedback);
         }
     }
 
@@ -156,10 +155,10 @@ class ArchiveFolders implements Runnable {
             final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
             final Path path = Paths.get(strFolder);
             final String strArchiveName = StringUtils.stripEnd(strDestFolder, File.separator) + File.separator
-                + ShellingClass.buildArchivingName(strArchivePrefix, path.getFileName().toString(), strArchiveSuffix);
+                + ShellFeedbackClass.buildArchivingName(strArchivePrefix, path.getFileName().toString(), strArchiveSuffix);
             final String strArchiveDir = StringUtils.stripEnd(strFolder, File.separator);
             ShellingClass.archiveFolderAs7zUltra(strArchivingExec, strArchiveDir, strArchiveName, strArchivePwd);
-            ShellingClass.exposeArchivedContent(strArchiveName, strFolder, folderProps);
+            ShellFeedbackClass.exposeArchivedContent(strArchiveName, strFolder, folderProps);
         }
     }
 
@@ -207,40 +206,6 @@ class CleanOlderFilesFromFolder implements Runnable {
      * Constructor
      */
     protected CleanOlderFilesFromFolder() {
-        super();
-    }
-}
-
-/**
- * Gets information from Text for Selling Point Sale Into CSV file
- */
-@CommandLine.Command(name = "GetInformationFromTextWithSellingPointReceiptsIntoCsvFile", description = "Gets information from text into CSV file")
-class GetInformationFromTextWithSellingPointReceiptsIntoCsvFile implements Runnable {
-
-    /**
-     * String for FileName
-     */
-    @CommandLine.Option(
-            names = {"-flIn", "--inFileName"},
-            description = "File Name to be analyzed",
-            arity = "1",
-            required = true)
-    private String strFileNameIn;
-
-    @Override
-    public void run() {
-        final String strFileNameOut = strFileNameIn + ".csv";
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format("I will process %s file and write results into %s as a CSV file", strFileNameIn, strFileNameOut);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
-        }
-        FileContentSellingClass.consolidateSellingPointReceiptIntoCsvFile(strFileNameIn, "MASTER TASTE", strFileNameOut);
-    }
-
-    /**
-     * Constructor
-     */
-    protected GetInformationFromTextWithSellingPointReceiptsIntoCsvFile() {
         super();
     }
 }
@@ -326,12 +291,12 @@ class GetInformationFromDatabase implements Runnable {
                 DatabaseSpecificMySql.performMySqlPreDefinedAction(strLclInfoType, properties);
                 break;
             case "Snowflake":
-                DatabaseSpecificSnowflake.performSnowflakePreDefinedAction(strLclInfoType, properties);
+                DatabaseSpecificSnowflakeClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
-                final String strMsg = String.format(JavaJavaLocalization.getMessage("i18nUnknParamFinal"), strDatabaseType, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                LoggerLevelProvider.LOGGER.error(strMsg);
+                final String strMsg = String.format(JavaJavaLocalizationClass.getMessage("i18nUnknParamFinal"), strDatabaseType, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                LoggerLevelProviderClass.LOGGER.error(strMsg);
                 break;
         }
     }
@@ -396,15 +361,15 @@ class GetSpecificInformationFromSnowflake implements Runnable {
         final Properties properties = null;
         switch(strLclInfoType) {
             case "CurrentUserAssignedRoles":
-                DatabaseSpecificSnowflake.performSnowflakePreDefinedAction("AvailableRoles", properties);
+                DatabaseSpecificSnowflakeClass.performSnowflakePreDefinedAction("AvailableRoles", properties);
                 break;
             case "Warehouses":
-                DatabaseSpecificSnowflake.performSnowflakePreDefinedAction("AvailableWarehouses", properties);
+                DatabaseSpecificSnowflakeClass.performSnowflakePreDefinedAction("AvailableWarehouses", properties);
                 break;
             default:
-                final String strMsg = String.format(JavaJavaLocalization.getMessage("i18nUnknParamFinal"), strLclInfoType, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                LoggerLevelProvider.LOGGER.error(strMsg);
+                final String strMsg = String.format(JavaJavaLocalizationClass.getMessage("i18nUnknParamFinal"), strLclInfoType, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                LoggerLevelProviderClass.LOGGER.error(strMsg);
                 break;
         }
     }
@@ -458,47 +423,13 @@ class LogEnvironmentDetails implements Runnable {
     @Override
     public void run() {
         final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
-        LoggerLevelProvider.LOGGER.info(strFeedback);
+        LoggerLevelProviderClass.LOGGER.info(strFeedback);
     }
 
     /**
      * Private constructor to prevent instantiation
      */
     public LogEnvironmentDetails() {
-        super();
-    }
-
-}
-
-/**
- * Pair bank records with selling receipts and store result-set into CSV file
- */
-@CommandLine.Command(name = "PairBankRecordsWithSellingReceipts", description = "Pair bank records with selling receipts and store result-set into CSV file")
-class PairBankRecordsWithSellingReceipts implements Runnable {
-
-    /**
-     * List for Output result
-     */
-    /* default */ final static List<String> LST_OUT_RESULT = new ArrayList<>();
-    /**
-     * String for FileName
-     */
-    @CommandLine.Option(
-            names = {"-flOut", "--outFileName"},
-            description = "File Name to store result-set",
-            arity = "1",
-            required = true)
-    private String strFileNameOut;
-
-    @Override
-    public void run() {
-        FileContentSellingClass.pairMySqlBankAndCashRegisterRecords(strFileNameOut);
-    }
-
-    /**
-     * Private constructor to prevent instantiation
-     */
-    public PairBankRecordsWithSellingReceipts() {
         super();
     }
 

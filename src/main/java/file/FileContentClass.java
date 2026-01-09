@@ -1,17 +1,11 @@
 package file;
 
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
+import localization.JavaJavaLocalizationClass;
 import org.apache.logging.log4j.Level;
 
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,15 +27,15 @@ public final class FileContentClass {
      * @return String
      */
     public static String getFileContentIntoString(final String strFileName) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
         String strReturn = "";
         try {
             strReturn = new String(Files.readAllBytes(Paths.get(strFileName)));
         } catch (IOException e) {
-            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace())));
         }
         return strReturn;
     }
@@ -53,7 +47,7 @@ public final class FileContentClass {
      * @return message for file operation error
      */
     private static String getFileErrorMessage(final String strFileName, final String strStagTrace) {
-        return String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
+        return String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
     }
 
     /**
@@ -63,17 +57,21 @@ public final class FileContentClass {
      * @return input stream
      */
     public static InputStream getIncludedFileContentIntoInputStream(final String strFileName) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoString"), strFileName);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        InputStream inStream = null;
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
-        final ClassLoader classLoader = Thread.currentThread().getContextClassLoader(); // NOPMD by E303778 on 30.04.2025, 15:47
-        final InputStream inputStream = classLoader.getResourceAsStream(strFileName); // NOPMD by E303778 on 30.04.2025, 15:47
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        try(InputStream inputStream = FileContentClass.class.getResourceAsStream(strFileName)) {
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
+            }
+            inStream = inputStream;
+        } catch (IOException ex) {
+            CommonClass.setInputOutputExecutionLoggedToError(String.format("IO exception on getting %s resource... %s", strFileName, Arrays.toString(ex.getStackTrace())));
         }
-        return inputStream;
+        return inStream;
     }
 
     /**
@@ -89,7 +87,7 @@ public final class FileContentClass {
                 BufferedReader bReader = new BufferedReader(inputStreamReader)) {
             strContent = bReader.readAllAsString();
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nError"), Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nError"), Arrays.toString(ex.getStackTrace())));
         }
         return strContent;
     }
@@ -116,7 +114,7 @@ public final class FileContentClass {
                             Collectors.mapping(cols -> cols[intColToEval].replaceAll("\"", ""), Collectors.toList()) // values
                     ));
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
         return grouped;
     }
@@ -145,7 +143,7 @@ public final class FileContentClass {
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -163,18 +161,18 @@ public final class FileContentClass {
                     bwr.write(strLine);
                     bwr.newLine();
                 } catch (IOException er) {
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
-                        LoggerLevelProvider.LOGGER.error(strFeedback);
+                    if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
+                        LoggerLevelProviderClass.LOGGER.error(strFeedback);
                     }
                 }
             });
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileWritingSuccess"), strFileName);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -206,7 +204,7 @@ public final class FileContentClass {
                 bwr.newLine();
             }
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -234,7 +232,7 @@ public final class FileContentClass {
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
         }
     }
 
@@ -242,7 +240,7 @@ public final class FileContentClass {
      * Constructor
      */
     private FileContentClass() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 
 }

@@ -1,7 +1,7 @@
 package environment;
 
-import javajava.Common;
-import javajava.StringManipulationClass;
+import javajava.CommonClass;
+import javajava.ListAndMapClass;
 import oshi.SystemInfo;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Capturing current environment software details
  */
-public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
+public final class EnvironmentSoftwareClass {
 
     /**
      * List with all partitions
@@ -23,7 +23,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      */
     public static String getDetailsAboutAvailableStoragePartitions() {
         final StringBuilder strJsonString = new StringBuilder(50);
-        final FileSystem osFileSystem = getOshiFileSystem();
+        final FileSystem osFileSystem = OshiUsageClass.OshiSoftware.getOshiFileSystem();
         final List<OSFileStore> osFileStores = osFileSystem.getFileStores();
         strJsonString.append("\"Partition(s)\":[");
         int strCounterDisk = 0;
@@ -31,12 +31,12 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
             if (strCounterDisk > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
                 "Description", fileStore.getDescription(),
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
                 "Mount", fileStore.getMount().replace("\\", "\\\\"),
-                Common.STR_NAME, fileStore.getName(),
+                CommonClass.STR_NAME, fileStore.getName(),
                 "Options", fileStore.getOptions(),
                 "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
                 "Type", fileStore.getType(),
@@ -55,14 +55,14 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      * @return String
      */
     public static String getDetailsAboutOperatingSystem() {
-        final OperatingSystem.OSVersionInfo version = getOshiVersionInfo();
-        return StringManipulationClass.getMapIntoJsonString(Map.of(
+        final OperatingSystem.OSVersionInfo version = OshiUsageClass.OshiSoftware.getOshiVersionInfo();
+        return ListAndMapClass.getMapIntoJsonString(Map.of(
                 "Architecture", System.getProperty("os.arch"),
                 "Build", version.getBuildNumber(),
                 "Code", version.getCodeName(),
-                "Family", getOshiFamily(),
-                "Manufacturer", getOshiManufacturer(),
-                Common.STR_NAME, System.getProperty("os.name"),
+                "Family", OshiUsageClass.OshiSoftware.getOshiFamily(),
+                "Manufacturer", OshiUsageClass.OshiSoftware.getOshiManufacturer(),
+                CommonClass.STR_NAME, System.getProperty("os.name"),
                 "Platform", SystemInfo.getCurrentPlatform().toString(),
                 "Version", version.getVersion()
         ));
@@ -74,7 +74,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      * @return String
      */
     public static String getDetailsAboutSoftwareUser() {
-        return StringManipulationClass.getMapIntoJsonString(Map.of(
+        return ListAndMapClass.getMapIntoJsonString(Map.of(
             "Country", System.getProperty("user.country"),
             "Country.Format", System.getProperty("user.country.format"),
             "Language", System.getProperty("user.language"),
@@ -91,7 +91,7 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
      * @return String
      */
     public static String getDetailsAboutSoftwarePlatformJava() {
-        return StringManipulationClass.getMapIntoJsonString(Map.of(
+        return ListAndMapClass.getMapIntoJsonString(Map.of(
             "Date", System.getProperty("java.version.date"),
             "Release", System.getProperty("java.vendor.version"),
             "Runtime", System.getProperty("java.runtime.name"),
@@ -104,8 +104,8 @@ public final class EnvironmentSoftware extends OshiUsage.OshiSoftware {
     /**
      * Constructor empty
      */
-    protected EnvironmentSoftware() {
-        super();
+    private EnvironmentSoftwareClass() {
+        // intentionally left blank
     }
 
 }

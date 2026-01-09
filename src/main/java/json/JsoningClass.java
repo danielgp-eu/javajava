@@ -1,5 +1,8 @@
-package javajava;
+package json;
 
+import javajava.LoggerLevelProviderClass;
+import javajava.StringManipulationClass;
+import localization.JavaJavaLocalizationClass;
 import org.apache.logging.log4j.Level;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -7,6 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -14,7 +18,7 @@ import java.util.Properties;
 /**
  * JSON handling
  */
-public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
+public final class JsoningClass {
 
     /**
      * Load all JSON nodes from String
@@ -26,9 +30,9 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(strJson);
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), strJson);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), strJson);
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
         return jsonRootNode;
     }
@@ -43,11 +47,33 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(jsonFile);
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
         return jsonRootNode;
+    }
+
+    /**
+     * Build a pair of Key and Value for JSON
+     * @param strKey Key to be used
+     * @param objValue Value to be used
+     * @return String with a pair of key and value
+     */
+    public static String getJsonKeyAndValue(final String strKey, final Object objValue) {
+        final List<String> unquotedValues = Arrays.asList("null", "true", "false");
+        final boolean needsQuotesAround = 
+            (objValue instanceof Integer)
+            || (objValue instanceof Double)
+            || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
+            || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
+            || StringManipulationClass.isStringActuallyNumeric(objValue.toString())
+            || StringManipulationClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
+        String strRaw = "\"%s\":\"%s\"";
+        if (needsQuotesAround) {
+            strRaw = "\"%s\":%s";
+        }
+        return String.format(strRaw, strKey, objValue);
     }
 
     /**
@@ -57,21 +83,21 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param strJsonNodeName name to search
      * @return JsonNode
      */
-    protected static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+    private static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         } else {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
         }
         return jsonNode;
@@ -154,16 +180,16 @@ public class JsoningClass { // NOPMD by Daniel Popiniuc on 17.04.2025, 16:28
      * @param objValues values found
      */
     private static void setNodeRetrievingToDebugLog(final String strWhat, final String strJsonNodeName, final Object objValues) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues);
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
     }
 
     /**
      * Constructor
      */
-    protected JsoningClass() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+    private JsoningClass() {
+        // intentionally left blank
     }
 }

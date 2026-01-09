@@ -1,21 +1,19 @@
 package shell;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDateTime;
-import java.util.Properties;
-
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
+import javajava.TimingClass;
+import localization.JavaJavaLocalizationClass;
 import org.apache.logging.log4j.Level;
 
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
-import javajava.TimingClass;
+import java.io.File;
+import java.time.LocalDateTime;
+import java.util.Properties;
 
 /**
  * class for exposing shell actions
  */
-public class ShellFeedbacks {
+public final class ShellFeedbackClass {
 
     /**
      * build Archive name with optional Suffix and Prefix
@@ -42,25 +40,19 @@ public class ShellFeedbacks {
      * @param strArchiveName archive name
      */
     public static void exposeArchivedContent(final String strArchiveName, final String strFolder, final Properties folderProps) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
             final File fileA = new File(strArchiveName);
             if (fileA.exists() && fileA.isFile()) {
                 final long fileArchSize = fileA.length();
                 final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
-                double percentage = 0;
-                if (fileOrigSize != 0) {
-                    final double percentageExact = (double) fileArchSize / fileOrigSize * 100;
-                    percentage = new BigDecimal(Double.toString(percentageExact))
-                        .setScale(2, RoundingMode.HALF_UP)
-                        .doubleValue();
-                }
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFolderStatisticsArchived"),
+                final float percentage = CommonClass.getPercentageSafely(fileArchSize, fileOrigSize);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"),
                         strFolder,
                         folderProps,
                         strArchiveName,
                         fileArchSize,
                         percentage);
-                LoggerLevelProvider.LOGGER.info(strFeedback);
+                LoggerLevelProviderClass.LOGGER.info(strFeedback);
             }
         }
     }
@@ -69,12 +61,12 @@ public class ShellFeedbacks {
      * Log Process Builder command conditionally
      * @param strCommand command to execute
      */
-    protected static void exposeProcessBuilder(final String strCommand) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            boolean bolFeedbackNeeded = !strCommand.contains("7za") || !strCommand.contains(", -p");
+    public static void exposeProcessBuilder(final String strCommand) {
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+            final boolean bolFeedbackNeeded = !strCommand.contains("7za") || !strCommand.contains(", -p");
             if (bolFeedbackNeeded) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
         }
     }
@@ -84,18 +76,25 @@ public class ShellFeedbacks {
      * @param strOutLineSep line separator for output
      * @param startTimeStamp starting time for statistics
      */
-    protected static void exposeProcessExecutionCompletion(final String strOutLineSep,
+    public static void exposeProcessExecutionCompletion(final String strOutLineSep,
             final LocalDateTime startTimeStamp,
             final int exitCode) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
             String strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
             if (strOutLineSep.isBlank()) {
                 strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
             }
             final String strFeedback = TimingClass.logDuration(startTimeStamp,
-                String.format(JavaJavaLocalization.getMessage(strCaptureMessage), exitCode));
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
+                String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage), exitCode));
+            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
         }
+    }
+
+    /**
+     * Constructor
+     */
+    private ShellFeedbackClass() {
+        // intentionally left blank
     }
 
 }

@@ -1,10 +1,9 @@
 package database;
 
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
+import localization.JavaJavaLocalizationClass;
 import org.apache.logging.log4j.Level;
-
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -43,30 +42,30 @@ public final class DatabaseResultSettingClass {
             case "expectedExactNumberOfColumns":
                 final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
                 if (intColumnsIs != intColumnsShould) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
+                    LoggerLevelProviderClass.LOGGER.error(strFeedback);
                 }
                 break;
             case "expectedExactNumberOfRows":
                 final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
                 if (intResultSetRows != intExpectedRows) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
+                    LoggerLevelProviderClass.LOGGER.error(strFeedback);
                 }
                 break;
             case "exposeNumberOfColumns":
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
-                LoggerLevelProvider.LOGGER.info(strFeedback);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
+                LoggerLevelProviderClass.LOGGER.info(strFeedback);
                 break;
             case "exposeNumberOfRows":
-                final String strFeedbackN = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
-                LoggerLevelProvider.LOGGER.info(strFeedbackN);
+                final String strFeedbackN = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
+                LoggerLevelProviderClass.LOGGER.info(strFeedbackN);
                 break;
             default:
-                final String strFeedbackD = String.format(Common.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                    LoggerLevelProvider.LOGGER.error(strFeedbackD);
+                final String strFeedbackD = String.format(CommonClass.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                    LoggerLevelProviderClass.LOGGER.error(strFeedbackD);
                 }
                 throw new UnsupportedOperationException(strFeedbackD);
         }
@@ -84,9 +83,9 @@ public final class DatabaseResultSettingClass {
         intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
             final String key = (String) obj;
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLqueryRuleEvaluation"), key);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleEvaluation"), key);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
             captureToLogResultsetAttributes(key, strPurpose, objProperties);
         }
@@ -115,9 +114,9 @@ public final class DatabaseResultSettingClass {
                 listResultSet.add(colProperties);
             }
         } catch (SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(CommonClass.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return listResultSet;
@@ -141,22 +140,22 @@ public final class DatabaseResultSettingClass {
                 for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
                     String crtValue = resultSet.getString(colIndex);
                     if (resultSet.wasNull()) {
-                        crtValue = Common.STR_NULL;
+                        crtValue = CommonClass.STR_NULL;
                     }
                     currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
                 }
                 listResultSet.add(currentRow);
                 intRow++;
             }
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
                 final String strFeedback = String.format("I have found %d records", intRow);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
             intRows = intRow;
         } catch (SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(CommonClass.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return listResultSet;
@@ -171,9 +170,9 @@ public final class DatabaseResultSettingClass {
     public static List<Properties> getResultSetColumnValuesWithNullCheck(final ResultSet resultSet) {
         List<Properties> listResultSet = new ArrayList<>();
         if (resultSet == null) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = JavaJavaLocalization.getMessage("i18nSQLresultSetNull");
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nSQLresultSetNull");
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
         } else {
             listResultSet = getResultSetColumnValues(resultSet);
@@ -195,9 +194,9 @@ public final class DatabaseResultSettingClass {
                 listStrings.add(resultSet.getString(1));
             }
         } catch (SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "list of strings", e.getLocalizedMessage());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(CommonClass.STR_I18N_STM_UNB, "list of strings", e.getLocalizedMessage());
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return listStrings;
@@ -215,9 +214,9 @@ public final class DatabaseResultSettingClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "columns", e.getLocalizedMessage());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(CommonClass.STR_I18N_STM_UNB, "columns", e.getLocalizedMessage());
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return intColumns;
@@ -238,9 +237,9 @@ public final class DatabaseResultSettingClass {
                 intResultSetRows = intRows;
             }
         } catch (SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(Common.STR_I18N_STM_UNB, "rows", e.getLocalizedMessage());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(CommonClass.STR_I18N_STM_UNB, "rows", e.getLocalizedMessage());
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return intResultSetRows;
@@ -267,17 +266,17 @@ public final class DatabaseResultSettingClass {
                     listReturn = getResultSetColumnValuesWithNullCheck(rsStandard);
                     break;
                 default:
-                    if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                        final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                        LoggerLevelProvider.LOGGER.error(strFeedback);
+                    if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                        final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance()
+                            .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                        LoggerLevelProviderClass.LOGGER.error(strFeedback);
                     }
                     break;
             }
         } catch (SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return listReturn;
@@ -287,7 +286,7 @@ public final class DatabaseResultSettingClass {
      * Constructor
      */
     private DatabaseResultSettingClass() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 
 }

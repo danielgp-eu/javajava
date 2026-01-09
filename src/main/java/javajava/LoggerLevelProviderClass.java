@@ -7,18 +7,25 @@ import org.apache.logging.log4j.Logger;
 /**
  * Managing current Log level
  */
-public final class LoggerLevelProvider {
+public final class LoggerLevelProviderClass {
     /**
      * Logger
      */
     public static final Logger LOGGER = LogManager.getLogger("io.github.danielgp-eu.javajava");
-    /**
-     * Current Log level
-     */
-    public static final Level currentLevel = LOGGER.getLevel(); // NOPMD by Daniel Popiniuc on 01.07.2025, 22:26
 
-    private LoggerLevelProvider() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+    /**
+     * Get current Log Level
+     * @return
+     */
+    public static Level getLogLevel() {
+        return LOGGER.getLevel();
+    }
+
+    /**
+     * Constructor
+     */
+    private LoggerLevelProviderClass() {
+        // intentionally left blank
     }
 
 }

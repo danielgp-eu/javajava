@@ -1,10 +1,10 @@
 package database;
 
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
+import javajava.StringManipulationClass;
+import localization.JavaJavaLocalizationClass;
 import org.apache.logging.log4j.Level;
-
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +31,7 @@ public final class DatabaseQueryBindingClass {
         final int intRows = objValues.size();
         final List<String> mapParameterOrder = DatabaseBasicClass.getPromptParametersOrderWithinQuery(strQuery, objValues);
         final int intParameters = mapParameterOrder.size();
-        final String strFinalQ = Common.convertPromptParametersIntoParameters(strQuery);
+        final String strFinalQ = StringManipulationClass.convertPromptParametersIntoParameters(strQuery);
         try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ)) {
             final Properties properties = new Properties();
             // cycle through each row
@@ -77,7 +77,7 @@ public final class DatabaseQueryBindingClass {
         final String[] arrayCleanable = properties.get("strArrayCleanable").toString().split("|");
         final String[] arrayNullable = properties.get("strArrayNullable").toString().split("|");
         try {
-            if (Common.STR_NULL.equalsIgnoreCase(strOriginalValue) 
+            if (CommonClass.STR_NULL.equalsIgnoreCase(strOriginalValue) 
                 || (Arrays.asList(arrayNullable).contains(strKey)
                     && strOriginalValue.isEmpty())) {
                 preparedStatement.setNull(index, Types.VARCHAR);
@@ -106,9 +106,9 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery relevant query
      */
     private static void setSqlExceptionError(final SQLException exptObj, final List<Properties> objValues, final String strQuery) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
             final String strFeedback = exptObj.getLocalizedMessage() + " with Values " + objValues.getFirst().toString() + " for Query " + strQuery;
-            LoggerLevelProvider.LOGGER.error(strFeedback);
+            LoggerLevelProviderClass.LOGGER.error(strFeedback);
         }
     }
 
@@ -119,12 +119,12 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery query
      */
     private static void setSqlParameterBindingError(final SQLException exptObj, final String strParameterName, final String strQuery) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLparameterBindingError")
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterBindingError")
                 , exptObj.getLocalizedMessage()
                 , strParameterName
                 , strQuery);
-            LoggerLevelProvider.LOGGER.error(strFeedback);
+            LoggerLevelProviderClass.LOGGER.error(strFeedback);
         }
     }
 
@@ -132,7 +132,7 @@ public final class DatabaseQueryBindingClass {
      * Constructor
      */
     private DatabaseQueryBindingClass() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 
 }

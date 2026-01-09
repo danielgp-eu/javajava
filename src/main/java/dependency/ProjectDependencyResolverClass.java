@@ -1,15 +1,10 @@
 package dependency;
 
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
-import javajava.StringManipulationClass;
-
+import javajava.ListAndMapClass;
+import javajava.LoggerLevelProviderClass;
 import org.apache.logging.log4j.Level;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -23,15 +18,8 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
+import project.ProjectClass;
 
-import file.FileHandlingClass;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class demonstrates how to resolve all dependencies (including transitive)
  * for a Maven project defined by a POM file using Eclipse Aether
  */
-final public class ProjectDependencyResolver {
+final public class ProjectDependencyResolverClass {
 
     /**
      * Minimum prefix length
@@ -91,31 +79,6 @@ final public class ProjectDependencyResolver {
             displayTransitive(arrayAttributes, strCurrentNode, child, depth + 1);
         }
     }
-    /**
-     * establish current POM file
-     * @return String
-     */
-    private static String getCurrentProjectObjectModelFile() {
-        String strPomFile = FileHandlingClass.getProjectFolder();
-        PropertiesReader reader;
-        try {
-            reader = new PropertiesReader("project.properties");
-            if (Common.isRunningFromJar()) {
-                strPomFile += String.format("/%s-%s.pom", 
-                        reader.getProperty("artifactId"),
-                        reader.getProperty("version"));
-            } else {
-                strPomFile += File.separator + "pom.xml";
-            }
-        } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), "pom.xml", Arrays.toString(ex.getStackTrace())));
-        }
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileContentIntoStreamSuccess"), strPomFile);
-            LoggerLevelProvider.LOGGER.debug(strFeedback);
-        }
-        return strPomFile;
-    }
 
     /**
      * capture Dependencies
@@ -132,7 +95,24 @@ final public class ProjectDependencyResolver {
             // Transitive dependencies are children of the direct nodes
             displayTransitive(arrayAttributes, strDirectNode, directNode, 1);
         }
-        return StringManipulationClass.getMapIntoJsonString(arrayAttributes);
+        return ListAndMapClass.getMapIntoJsonString(arrayAttributes);
+    }
+
+    /**
+     * Main method to execute the dependency resolution
+     * @return dependency details
+     */
+    public static String getDependency() {
+        final RepositorySystem system = new RepositorySystemSupplier().get();
+        final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        final LocalRepository localRepo = new LocalRepository("target/local-repo");
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+        final Model model = ProjectClass.getProjectObjectModelFileIntoModel();
+        final CollectRequest collectRequest = createCollectRequest(model);
+        final DependencyNode root = resolveDependencies(system, session, collectRequest);
+        final String strFeedback = getDependenciesIntoString(root);
+        system.shutdown();
+        return strFeedback;
     }
 
     /**
@@ -174,33 +154,6 @@ final public class ProjectDependencyResolver {
     }
 
     /**
-     * Main method to execute the dependency resolution
-     * @return dependency details
-     */
-    public static String getDependency() {
-        final String pomFile = getCurrentProjectObjectModelFile();
-        final RepositorySystem system = new RepositorySystemSupplier().get();
-        final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        final LocalRepository localRepo = new LocalRepository("target/local-repo");
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        final MavenXpp3Reader reader = new MavenXpp3Reader();
-        final Model model;
-        String strFeedback = "";
-        try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
-            model = reader.read(bReader);
-            final CollectRequest collectRequest = createCollectRequest(model);
-            final DependencyNode root = resolveDependencies(system, session, collectRequest);
-            strFeedback = getDependenciesIntoString(root);
-        } catch (IOException | XmlPullParserException ex) {
-            Common.setInputOutputExecutionLoggedToError(
-                    String.format(JavaJavaLocalization.getMessage("i18nErrorOnGettingDependencies"),
-                            Arrays.toString(ex.getStackTrace())));
-        }
-        system.shutdown();
-        return strFeedback;
-    }
-
-    /**
      * Resolve dependencies and return the root node
      * @param system RepositorySystem
      * @param session DefaultRepositorySystemSession
@@ -217,16 +170,16 @@ final public class ProjectDependencyResolver {
             result = system.resolveDependencies(session, dependencyRequest);
             root = getRootNode(result);
         } catch (DependencyResolutionException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = Arrays.toString(e.getStackTrace());
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
         return root;
     }
 
     // Private constructor to prevent instantiation
-    private ProjectDependencyResolver() {
+    private ProjectDependencyResolverClass() {
         // intentionally left blank
     }
 }

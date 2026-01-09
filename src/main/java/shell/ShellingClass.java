@@ -1,12 +1,11 @@
 package shell;
 
+import file.FileHandlingClass;
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
+import localization.JavaJavaLocalizationClass;
 import org.apache.logging.log4j.Level;
 import org.apache.maven.shared.utils.StringUtils;
-
-import file.FileHandlingClass;
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +17,7 @@ import java.util.Arrays;
 /**
  * Shell execution methods
  */
-public final class ShellingClass extends ShellFeedbacks {
+public final class ShellingClass {
 
     /**
      * Archive folder content as 7z using Ultra compression level
@@ -37,7 +36,7 @@ public final class ShellingClass extends ShellFeedbacks {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchiveDir, "-mx9", "-ms4g", "-mmt=on");
         } else {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchiveDir, "-mx9", "-ms4g", "-mmt=on", "-p" + strArchivePwd);
-            exposeProcessBuilder(builder.command().toString().replaceFirst("-p" + strArchivePwd, "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**"));
+            ShellFeedbackClass.exposeProcessBuilder(builder.command().toString().replaceFirst("-p" + strArchivePwd, "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**"));
         }
         executeShell(builder, " ");
     }
@@ -55,7 +54,7 @@ public final class ShellingClass extends ShellFeedbacks {
         } else {
             builder.command(strCommand, strParameters);
         }
-        exposeProcessBuilder(builder.command().toString());
+        ShellFeedbackClass.exposeProcessBuilder(builder.command().toString());
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
     }
@@ -74,7 +73,7 @@ public final class ShellingClass extends ShellFeedbacks {
             processOutReader.lines().forEach(strCrtLine -> processOutput.append(strCrtLine)
                     .append(strOutLineSep));
             strReturn = processOutput.toString();
-        } catch (IOException ex) {Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace())));
+        } catch (IOException ex) {CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace())));
         }
         return strReturn;
     }
@@ -87,7 +86,7 @@ public final class ShellingClass extends ShellFeedbacks {
      */
     private static String executeShell(final ProcessBuilder builder, final String strOutLineSep) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        exposeProcessBuilder(builder.command().toString());
+        ShellFeedbackClass.exposeProcessBuilder(builder.command().toString());
         String strReturn = "";
         try {
             builder.redirectErrorStream(true);
@@ -97,9 +96,9 @@ public final class ShellingClass extends ShellFeedbacks {
             }
             final int exitCode = process.waitFor();
             process.destroy();
-            exposeProcessExecutionCompletion(strOutLineSep, startTimeStamp, exitCode);
+            ShellFeedbackClass.exposeProcessExecutionCompletion(strOutLineSep, startTimeStamp, exitCode);
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace())));
         } catch(InterruptedException ei) {
             setExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
@@ -138,9 +137,9 @@ public final class ShellingClass extends ShellFeedbacks {
     public static String getCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
-            final String strFeedback = JavaJavaLocalization.getMessage("i18nUserPrincipalNameError");
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.ERROR)) {
-                LoggerLevelProvider.LOGGER.warn(strFeedback);
+            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nUserPrincipalNameError");
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.ERROR)) {
+                LoggerLevelProviderClass.LOGGER.warn(strFeedback);
             }
             strUser = executeShellUtility("WHOAMI", "", "");
         }
@@ -152,16 +151,16 @@ public final class ShellingClass extends ShellFeedbacks {
      * @param strTraceDetails details
      */
     private static void setExecutionInterrupedLoggedToError(final String strTraceDetails) {
-        if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
-            LoggerLevelProvider.LOGGER.error(strFeedback);
+        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
+            LoggerLevelProviderClass.LOGGER.error(strFeedback);
         }
     }
 
     /**
      * Constructor
      */
-    public ShellingClass() {
-        super();
+    private ShellingClass() {
+        // intentionally left blank
     }
 }

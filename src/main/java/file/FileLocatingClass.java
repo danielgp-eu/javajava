@@ -1,20 +1,19 @@
 package file;
 
+import javajava.CommonClass;
+import javajava.LoggerLevelProviderClass;
+import localization.JavaJavaLocalizationClass;
+import org.apache.logging.log4j.Level;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Stream;
-import java.util.Map.Entry;
-
-import org.apache.logging.log4j.Level;
-
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
 
 /**
  * Locate files of folders class
@@ -38,7 +37,7 @@ public final class FileLocatingClass {
     public static Properties checkFileExistanceAndReadability(final String strFileName) {
         final Properties propertiesReturn = new Properties();
         if (strFileName == null) {
-            propertiesReturn.put("NULL_FILE_NAME", JavaJavaLocalization.getMessage("i18nFileDoesNotExist"));
+            propertiesReturn.put("NULL_FILE_NAME", JavaJavaLocalizationClass.getMessage("i18nFileDoesNotExist"));
         } else {
             final File fileGiven = new File(strFileName);
             if (fileGiven.exists()) {
@@ -46,13 +45,13 @@ public final class FileLocatingClass {
                     if (fileGiven.canRead()) {
                         propertiesReturn.put("OK", strFileName);
                     } else {
-                        propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalization.getMessage("i18nFileUnreadable"), strFileName));
+                        propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalizationClass.getMessage("i18nFileUnreadable"), strFileName));
                     }
                 } else {
-                    propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalization.getMessage("i18nFileNotAfile"), strFileName));
+                    propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalizationClass.getMessage("i18nFileNotAfile"), strFileName));
                 }
             } else {
-                propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalization.getMessage("i18nFileDoesNotExist"), strFileName));
+                propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalizationClass.getMessage("i18nFileDoesNotExist"), strFileName));
             }
         }
         return propertiesReturn;
@@ -101,7 +100,7 @@ public final class FileLocatingClass {
             pathProps.put("FILES", stats.fileCount());
             pathProps.put("SIZE_BYTES", stats.totalSize());
         } catch (IOException ex) {
-            Common.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalization.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace())));
+            CommonClass.setInputOutputExecutionLoggedToError(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace())));
         }
         return pathProps;
     }
@@ -144,11 +143,11 @@ public final class FileLocatingClass {
         if (isItOk2) {
             strFileJson = ePreety.getValue().toString();
         } else {
-            final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nFileConfigurationNotFound")
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileConfigurationNotFound")
                 , propsFile.getProperty(STR_MINIFIED, "")
                 , propsFile.getProperty(STR_PRTY_PRNT, ""));
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.WARN)) {
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
             throw new IllegalArgumentException(strFeedback);
         }
@@ -157,7 +156,7 @@ public final class FileLocatingClass {
 
     // Private constructor to prevent instantiation
     private FileLocatingClass() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 
 }

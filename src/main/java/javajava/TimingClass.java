@@ -1,5 +1,7 @@
 package javajava;
 
+import localization.JavaJavaLocalizationClass;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -64,8 +66,8 @@ public final class TimingClass {
                 strFinalOne = "Millisecond";
                 break;
             default:
-                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strRule, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
+                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strRule, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
                 throw new UnsupportedOperationException(strFeedback);
         }
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
@@ -134,8 +136,8 @@ public final class TimingClass {
             case "Nanosecond" -> duration.toNanosPart();
             case "Second" -> duration.toSecondsPart();
             default -> {
-                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
+                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -152,13 +154,13 @@ public final class TimingClass {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
         final String strFormats = TIME_FORMATS.get(strHow);
         if (strFormats.isEmpty()) {
-            final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
+            final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
             throw new UnsupportedOperationException(strFeedback);
         }
         String strReturn;
         if (STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
-            strReturn = String.format(strFormats, lngNumber, JavaJavaLocalization.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
+            strReturn = String.format(strFormats, lngNumber, JavaJavaLocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
         } else {
             strReturn = String.format(strFormats, lngNumber);
         }
@@ -218,7 +220,7 @@ public final class TimingClass {
      */
     public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        return String.format(JavaJavaLocalization.getMessage("i18nWithDrtn")
+        return String.format(JavaJavaLocalizationClass.getMessage("i18nWithDrtn")
             , strPartial, objDuration.toString()
             , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
             , convertNanosecondsIntoSomething(objDuration, "TimeClock"));
@@ -228,6 +230,6 @@ public final class TimingClass {
      * Constructor
      */
     private TimingClass() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 }

@@ -1,21 +1,16 @@
 package environment;
 
-import java.util.List;
-
 import oshi.SystemInfoFFM;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.Display;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.GraphicsCard;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.NetworkIF;
+import oshi.hardware.*;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OperatingSystem;
+
+import java.util.List;
 
 /**
  * initiating OSHI package
  */
-public class OshiUsage {
+public class OshiUsageClass {
     /**
      * Hardware info
      */
@@ -24,14 +19,14 @@ public class OshiUsage {
     /**
      * Constructor empty
      */
-    protected OshiUsage() {
+    protected OshiUsageClass() {
         // no init required
     }
 
     /**
      * initiating Hardware package
      */
-    public static class OshiHardware {
+    public static final class OshiHardware {
 
         /**
          * Hardware info
@@ -79,6 +74,7 @@ public class OshiUsage {
         public static List<NetworkIF> getOshiNetworkInterfaces() {
             return getOshiNetworkInterfacesRaw().stream()
                     .filter(net -> net.getIfOperStatus() == NetworkIF.IfOperStatus.UP)
+                    .filter(net -> net.getIPv4addr().length != 0 || net.getIPv6addr().length != 0)
                     .toList();
         }
 
@@ -98,12 +94,19 @@ public class OshiUsage {
             return getOshiProcessor().getProcessorIdentifier();
         }
 
+        /**
+         * Constructor
+         */
+        private OshiHardware() {
+            // intentionally left blank
+        }
+
     }
 
     /**
      * initiating Software package
      */
-    public static class OshiSoftware {
+    public static final class OshiSoftware {
 
         /**
          * Software info
@@ -142,6 +145,13 @@ public class OshiUsage {
          */
         public static OperatingSystem.OSVersionInfo getOshiVersionInfo() {
             return getOshiSoftware().getVersionInfo();
+        }
+
+        /**
+         * Constructor
+         */
+        private OshiSoftware() {
+            // intentionally left blank
         }
 
     }

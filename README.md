@@ -10,6 +10,7 @@ Various Java classes to be re-used
 | Database - SQLite    | [xerial/sqlite-jdbc](https://github.com/xerial/sqlite-jdbc)                 | https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc                      |
 | JSON                 | [FasterXML/jackson](https://github.com/FasterXML/jackson)                   | https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind |
 | Logging              | [Apache Log4j](https://logging.apache.org/log4j/3.x/)                       | https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core         |
+| Picocli              | [Picocli](https://picocli.info/)                                            | https://mvnrepository.com/artifact/info.picocli/picocli                        |
 
 
 ## Optional References
@@ -26,7 +27,7 @@ Various Java classes to be re-used
 * [Understanding Maven Dependency Graph or Tree](https://www.baeldung.com/maven-dependency-graph)
 
 
-### Eclipse - Java Code Quality 
+### Eclipse - Java Code Quality
 
 * [Eclipse PMD](https://marketplace.eclipse.org/free-tagging/pmd)
 
@@ -40,7 +41,9 @@ Various Java classes to be re-used
 ### Java Coding
 
 * [Clean Coding in Java](https://www.baeldung.com/java-clean-code)
+* [Future of Java: What to Expect in 2026 and Beyond](https://www.javacodegeeks.com/2026/01/the-future-of-java-what-to-expect-in-2026-and-beyond.html)
 * [How to Run a Shell Command in Java](https://www.baeldung.com/run-shell-command-in-java)
+* [Java and Event‑Driven Architectures: Kafka, Pulsar, and the Modern Streaming Landscape](https://www.javacodegeeks.com/2026/01/java-and-event-driven-architectures-kafka-pulsar-and-the-modern-streaming-landscape.html)
 * [Java Configuring Multiple Appenders](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/#5-the-log4j2xml-file-location)
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
@@ -78,6 +81,7 @@ Various Java classes to be re-used
 * [Java String.format()](https://www.baeldung.com/string-format)
 * [Java String format() Method](https://www.geeksforgeeks.org/java-string-format-method-with-examples/)
 * [Java String format() Method With Examples](https://firstcode.school/java-string-format-method/)
+* [Logging Levels](https://howtodoinjava.com/log4j2/logging-levels/)
 
 
 ### Java Time Management

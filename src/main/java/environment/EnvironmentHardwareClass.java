@@ -1,7 +1,7 @@
 package environment;
 
-import javajava.Common;
-import javajava.StringManipulationClass;
+import javajava.CommonClass;
+import javajava.ListAndMapClass;
 import oshi.hardware.*;
 import oshi.util.FormatUtil;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Capturing current environment hardware details
  */
-public class EnvironmentHardware extends OshiUsage.OshiHardware {
+public final class EnvironmentHardwareClass {
     /**
      * string constant
      */
@@ -71,7 +71,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
                 arrayAttributes.put(STR_SRL_NUM, strSlimLine.replace(STR_SRL_NUM + " ", ""));
             }
         }
-        return StringManipulationClass.getMapIntoJsonString(arrayAttributes);
+        return ListAndMapClass.getMapIntoJsonString(arrayAttributes);
     }
 
     /**
@@ -80,15 +80,15 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
      * @return String
      */
     public static String getDetailsAboutCentralPowerUnit() {
-        final CentralProcessor processor = getOshiProcessor();
-        final CentralProcessor.ProcessorIdentifier procIdentif = getOshiProcessorIdentifier();
-        return StringManipulationClass.getMapIntoJsonString(Map.of(
+        final CentralProcessor processor = OshiUsageClass.OshiHardware.getOshiProcessor();
+        final CentralProcessor.ProcessorIdentifier procIdentif = OshiUsageClass.OshiHardware.getOshiProcessorIdentifier();
+        return ListAndMapClass.getMapIntoJsonString(Map.of(
             "Feature Flags", processor.getFeatureFlags().toString().replace("[", "[\"").replace(", ", "\",\"").replace("]", "\"]"),
             "Family", procIdentif.getFamily(),
             "Identifier", procIdentif.getIdentifier(),
             "Local Processors", processor.getLogicalProcessorCount(),
             "Model", procIdentif.getModel(),
-            Common.STR_NAME, procIdentif.getName(),
+            CommonClass.STR_NAME, procIdentif.getName(),
             "Physical", processor.getPhysicalProcessorCount()
         ));
     }
@@ -100,15 +100,15 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
      */
     public static String getDetailsAboutGraphicCards() {
         final StringBuilder strJsonString = new StringBuilder(50);
-        final List<GraphicsCard> graphicCards = getOshiGraphicsCards();
+        final List<GraphicsCard> graphicCards = OshiUsageClass.OshiHardware.getOshiGraphicsCards();
         int intCounter = 0;
         for (final GraphicsCard  graphicCard : graphicCards) {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
-                Common.STR_NAME, graphicCard.getName(),
+                CommonClass.STR_NAME, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
                 "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
                 "Driver Version", graphicCard.getVersionInfo()
@@ -125,7 +125,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
      */
     public static String getDetailsAboutMonitor() {
         final StringBuilder strJsonString = new StringBuilder();
-        final List<Display> displays = getOshiMonitor();
+        final List<Display> displays = OshiUsageClass.OshiHardware.getOshiMonitor();
         int intCounter = 0;
         for (final Display crtDisplay : displays) {
             if (intCounter > 0) {
@@ -143,7 +143,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
      * @return String
      */
     public static String getDetailsAboutNetworkInterfaces() {
-        final List<NetworkIF> networkIFs = getOshiNetworkInterfaces();
+        final List<NetworkIF> networkIFs = OshiUsageClass.OshiHardware.getOshiNetworkInterfaces();
         final StringBuilder strJsonString = new StringBuilder();
         int intCounter = 0;
         strJsonString.append('[');
@@ -152,8 +152,8 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
-                Common.STR_NAME, net.getName(),
+            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
+                CommonClass.STR_NAME, net.getName(),
                 "Display Name", net.getDisplayName(),
                 "MAC Address", net.getMacaddr(),
                 "IPv4", String.join(", ", net.getIPv4addr()),
@@ -174,7 +174,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
      * @return String
      */
     public static String getDetailsAboutRandomAccessMemory() {
-        final GlobalMemory globalMemory = getOshiMemory();
+        final GlobalMemory globalMemory = OshiUsageClass.OshiHardware.getOshiMemory();
         final StringBuilder strJsonString = new StringBuilder();
         strJsonString.append(String.format("{\"Total\":{\"Total\":\"%s\",\"Available\":\"%s\",\"Page Size\":\"%s\"}"
             , FormatUtil.formatBytes(globalMemory.getTotal())
@@ -187,7 +187,7 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(StringManipulationClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
                 "Bank/Slot Label", physicalMemory.getBankLabel(),
                 "Capacity", FormatUtil.formatBytes(physicalMemory.getCapacity()),
                 "Clock Speed", FormatUtil.formatHertz(physicalMemory.getClockSpeed()),
@@ -205,8 +205,8 @@ public class EnvironmentHardware extends OshiUsage.OshiHardware {
     /**
      * Constructor empty
      */
-    protected EnvironmentHardware() {
-        super();
+    private EnvironmentHardwareClass() {
+        // intentionally left blank
     }
 
 }

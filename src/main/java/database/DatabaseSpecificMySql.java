@@ -2,10 +2,10 @@ package database;
 
 import org.apache.logging.log4j.Level;
 
-import javajava.Common;
-import javajava.JavaJavaLocalization;
-import javajava.LoggerLevelProvider;
-import javajava.JsoningClass;
+import javajava.CommonClass;
+import localization.JavaJavaLocalizationClass;
+import javajava.LoggerLevelProviderClass;
+import json.JsoningClass;
 
 import tools.jackson.databind.JsonNode;
 
@@ -33,14 +33,14 @@ public final class DatabaseSpecificMySql {
         final String strEnv = "MYSQL";
         final String strEnvMySql = System.getenv(strEnv);
         if (strEnvMySql == null) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         } else {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nEnvironmentVariableFound"), strEnv);
-                LoggerLevelProvider.LOGGER.debug(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableFound"), strEnv);
+                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
             }
             final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
             final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
@@ -63,9 +63,9 @@ public final class DatabaseSpecificMySql {
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
         Connection connection = null;
         if (propInstance.isEmpty()) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionPropertiesEmpty"), Common.STR_DB_MYSQL);
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionPropertiesEmpty"), CommonClass.STR_DB_MYSQL);
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         } else {
             final String strServer = propInstance.get("ServerName").toString();
@@ -73,19 +73,19 @@ public final class DatabaseSpecificMySql {
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationAttempt"), Common.STR_DB_MYSQL, strDatabase, strConnection, propConnection);
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
+                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), CommonClass.STR_DB_MYSQL, strDatabase, strConnection, propConnection);
+                    LoggerLevelProviderClass.LOGGER.debug(strFeedback);
                 }
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.INFO)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationSuccess"), Common.STR_DB_MYSQL, strServer, strPort, strDatabase);
-                    LoggerLevelProvider.LOGGER.debug(strFeedback);
+                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccess"), CommonClass.STR_DB_MYSQL, strServer, strPort, strDatabase);
+                    LoggerLevelProviderClass.LOGGER.debug(strFeedback);
                 }
             } catch(SQLException e) {
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                    final String strFeedback = String.format(JavaJavaLocalization.getMessage("i18nSQLconnectionCreationFailed"), Common.STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailed"), CommonClass.STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
+                    LoggerLevelProviderClass.LOGGER.error(strFeedback);
                 }
             }
         }
@@ -208,10 +208,10 @@ SELECT
 FROM
     "INFORMATION_SCHEMA"."VIEWS";""";
             default -> {
-                final String strFeedback = String.format(Common.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(Common.STR_I18N_UNKN)));
-                if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
-                    LoggerLevelProvider.LOGGER.error(strFeedback);
+                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
+                if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+                	LoggerLevelProviderClass.LOGGER.error(strFeedback);
                 }
                 throw new UnsupportedOperationException(strFeedback);
             }
@@ -247,13 +247,13 @@ FROM
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = DatabaseConnectivity.createSqlStatement(Common.STR_DB_MYSQL, objConnection)) {
+            Statement objStatement = DatabaseConnectivityClass.createSqlStatement(CommonClass.STR_DB_MYSQL, objConnection)) {
             final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
-            LoggerLevelProvider.LOGGER.info(listProps);
+            LoggerLevelProviderClass.LOGGER.info(listProps);
         } catch(SQLException e) {
-            if (LoggerLevelProvider.currentLevel.isLessSpecificThan(Level.FATAL)) {
+            if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
                 final String strFeedback = String.format("Error %s", Arrays.toString(e.getStackTrace()));
-                LoggerLevelProvider.LOGGER.error(strFeedback);
+                LoggerLevelProviderClass.LOGGER.error(strFeedback);
             }
         }
     }
@@ -262,6 +262,6 @@ FROM
      * constructor
      */
     private DatabaseSpecificMySql() {
-        throw new UnsupportedOperationException(Common.STR_I18N_AP_CL_WN);
+        throw new UnsupportedOperationException(CommonClass.STR_I18N_AP_CL_WN);
     }
 }
