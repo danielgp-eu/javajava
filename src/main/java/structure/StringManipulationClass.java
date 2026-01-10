@@ -1,17 +1,27 @@
-package javajava;
+package structure;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 /**
  * String Manipulation
  */
 public final class StringManipulationClass {
+    /**
+     * standard Unknown
+     */
+    public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
+    /**
+     * standard Unknown feature
+     */
+    public static final String STR_I18N_UNKN_FTS = JavaJavaLocalizationClass.getMessage("i18nUnknFtrs");
+    /**
+     * Regular Expression for Prompt Parameters within SQL Query
+     */
+    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
 
     /**
      * Clean String From CurlyBraces
@@ -34,13 +44,15 @@ public final class StringManipulationClass {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ));
-        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, CommonClass.STR_PRMTR_RGX);
+        final String strFeedbackStrt = JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+        LogExposureClass.LOGGER.debug(strFeedbackStrt);
+        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, getNamedParameterFromPromptOne(currentPrmtName));
         }
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ));
+        final String strFeedbackEnd = JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+        LogExposureClass.LOGGER.debug(strFeedbackEnd);
         return strFinalQ;
     }
 
@@ -50,57 +62,16 @@ public final class StringManipulationClass {
      * @return query with named parameters
      */
     public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs"), strOriginalQ));
-        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, CommonClass.STR_PRMTR_RGX);
+        final String strFeedbackStrt = JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+        LogExposureClass.LOGGER.debug(strFeedbackStrt);
+        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
         String strFinalQ = strOriginalQ;
         for (final String currentPrmtName : listMatches) {
             strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
         }
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs"), strFinalQ));
+        final String strFeedbackEnd = JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+        LogExposureClass.LOGGER.debug(strFeedbackEnd);
         return strFinalQ;
-    }
-
-    /**
-     * Convert String to BigDecimal
-     * @param strNumber string to evaluate
-     * @return BigDecimal
-     */
-    public static BigDecimal convertStringIntoBigDecimal(final String strNumber) {
-        BigDecimal noToReturn = null;
-        if (isStringActuallyNumeric(strNumber)) {
-            noToReturn = new BigDecimal(strNumber).stripTrailingZeros();
-        }
-        return noToReturn;
-    }
-
-    /**
-     * Extracts all occurrences of a given regex pattern from a text.
-     * @param text The input string to search within.
-     * @return A List of strings, where each string is a full match found.
-     */
-    public static int countParametersWithinQuery(final String text) {
-        final Pattern pattern = Pattern.compile(CommonClass.STR_PRMTR_RGX);
-        final Matcher matcher = pattern.matcher(text);
-        int count = 0;
-        while (matcher.find()) {
-            count++;
-        }
-        return count;
-    }
-
-    /**
-     * Counts number of parameters with in a string
-     * @param inputString string to evaluate
-     * @return number of parameters within given string
-     */
-    public static int countParametersWithinString(final String inputString) {
-        final Pattern pattern = Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
-        final Matcher matcher = pattern.matcher(inputString);
-        int count = 0;
-        while (matcher.find()) {
-            count++;
-        }
-        return count;
     }
 
     /**
@@ -125,9 +96,9 @@ public final class StringManipulationClass {
             case 2 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString());
             case 3 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString(), strReplacement[2].toString());
             default -> {
-                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-                LogExposure.exposeMessageToErrorLog(strFeedback);
+                final String strFeedback = String.format(STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
         };

@@ -1,7 +1,7 @@
 package file;
 
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,7 +98,8 @@ public final class FileLocatingClass {
             pathProps.put("FILES", stats.fileCount());
             pathProps.put("SIZE_BYTES", stats.totalSize());
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return pathProps;
     }
@@ -144,7 +145,7 @@ public final class FileLocatingClass {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileConfigurationNotFound")
                 , propsFile.getProperty(STR_MINIFIED, "")
                 , propsFile.getProperty(STR_PRTY_PRNT, ""));
-            LogExposure.exposeMessageToErrorLog(strFeedback);
+            LogExposureClass.LOGGER.error(strFeedback);
             throw new IllegalArgumentException(strFeedback);
         }
         return strFileJson;

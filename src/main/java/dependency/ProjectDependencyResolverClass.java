@@ -1,7 +1,6 @@
 package dependency;
 
-import javajava.ListAndMapClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -19,6 +18,7 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import project.ProjectClass;
+import structure.ListAndMapClass;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class demonstrates how to resolve all dependencies (including transitive)
  * for a Maven project defined by a POM file using Eclipse Aether
  */
-final public class ProjectDependencyResolverClass {
+public final class ProjectDependencyResolverClass {
 
     /**
      * Minimum prefix length
@@ -172,7 +172,8 @@ final public class ProjectDependencyResolverClass {
             result = system.resolveDependencies(session, dependencyRequest);
             root = getRootNode(result);
         } catch (DependencyResolutionException e) {
-            LogExposure.exposeMessageToErrorLog(String.format("Dependency resolution error... %s", Arrays.toString(e.getStackTrace())));
+            final String strFeedback = String.format("Dependency resolution error... %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return root;
     }

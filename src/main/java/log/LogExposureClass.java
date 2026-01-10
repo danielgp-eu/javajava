@@ -3,6 +3,8 @@ package log;
 import java.time.LocalDateTime;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import localization.JavaJavaLocalizationClass;
 import time.TimingClass;
@@ -10,46 +12,20 @@ import time.TimingClass;
 /**
  * exposing things to Log
  */
-public final class LogExposure {
-
+public final class LogExposureClass {
     /**
-     * Execution Interrupted details captured to Debug log
-     * @param strMsg details
+     * Logger
      */
-    public static void exposeMessageToDebugLog(final String strMsg) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            LoggerLevelProviderClass.LOGGER.debug(strMsg);
-        }
-    }
-
-    /**
-     * Execution Interrupted details captured to Error log
-     * @param strMsg details
-     */
-    public static void exposeMessageToErrorLog(final String strMsg) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
-            LoggerLevelProviderClass.LOGGER.error(strMsg);
-        }
-    }
-
-    /**
-     * Execution Interrupted details captured to Info log
-     * @param strMsg details
-     */
-    public static void exposeMessageToInfoLog(final String strMsg) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN)) {
-            LoggerLevelProviderClass.LOGGER.info(strMsg);
-        }
-    }
+    public static final Logger LOGGER = LogManager.getLogger("io.github.danielgp-eu.javajava");
 
     /**
      * Execution Interrupted details captured to Error log
      * @param strTraceDetails details
      */
     public static void exposeExecutionInterrupedLoggedToError(final String strTraceDetails) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.FATAL)) {
+        if (getLogLevel().isLessSpecificThan(Level.FATAL)) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
-            LoggerLevelProviderClass.LOGGER.error(strFeedback);
+            LOGGER.error(strFeedback);
         }
     }
 
@@ -58,11 +34,11 @@ public final class LogExposure {
      * @param strCommand command to execute
      */
     public static void exposeProcessBuilder(final String strCommand) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+        if (getLogLevel().isLessSpecificThan(Level.INFO)) {
             final boolean bolFeedbackNeeded = !strCommand.contains("7za") || !strCommand.contains(", -p");
             if (bolFeedbackNeeded) {
                 final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
-                LoggerLevelProviderClass.LOGGER.debug(strFeedback);
+                LOGGER.debug(strFeedback);
             }
         } 
     }
@@ -76,15 +52,23 @@ public final class LogExposure {
     public static void exposeProcessExecutionCompletion(final String strOutLineSep,
             final LocalDateTime startTimeStamp,
             final int exitCode) {
-        if (LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
+        if (getLogLevel().isLessSpecificThan(Level.INFO)) {
             String strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
             if (strOutLineSep.isBlank()) {
                 strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
             }
             final String strFeedback = TimingClass.logDuration(startTimeStamp,
                 String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage), exitCode));
-            LoggerLevelProviderClass.LOGGER.debug(strFeedback);
+            LOGGER.debug(strFeedback);
         }
+    }
+
+    /**
+     * Get current Log Level
+     * @return current Log Level
+     */
+    public static Level getLogLevel() {
+        return LOGGER.getLevel();
     }
 
     /**
@@ -92,11 +76,11 @@ public final class LogExposure {
      * @return Boolean
      */
     public static boolean isCurrentLogLevelLessThanWarning() {
-        return LoggerLevelProviderClass.getLogLevel().isLessSpecificThan(Level.WARN);
+        return getLogLevel().isLessSpecificThan(Level.WARN);
     }
 
-    private LogExposure () {
-        // intentionally blank
+    private LogExposureClass () {
+        super();
     }
 
 }

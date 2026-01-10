@@ -1,11 +1,10 @@
 package environment;
 
-import javajava.CommonClass;
-import javajava.ListAndMapClass;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import structure.ListAndMapClass;
 
 /**
  * Network type class
@@ -44,7 +43,7 @@ public final class NetworkTypesClass {
      */
     public static String getNetworkPhysicalMediumType(final int intPhysMedType) {
         return ListAndMapClass.getMapIntoJsonString(
-                Map.of("Numeric", intPhysMedType, CommonClass.STR_NAME, MEDIUM_TYPES.getOrDefault(intPhysMedType, "Unknown"))
+                Map.of("Numeric", intPhysMedType, OshiUsageClass.STR_NAME, MEDIUM_TYPES.getOrDefault(intPhysMedType, "Unknown"))
         );
     }
 

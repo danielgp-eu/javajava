@@ -15,6 +15,10 @@ public class OshiUsageClass {
      * Hardware info
      */
     public static final SystemInfoFFM SYSTEM_INFO = new SystemInfoFFM();
+    /**
+     * standard String
+     */
+    public static final String STR_NAME = "Name";
 
     /**
      * Constructor empty

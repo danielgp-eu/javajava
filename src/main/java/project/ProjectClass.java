@@ -1,7 +1,7 @@
 package project;
 
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -37,9 +37,11 @@ public final class ProjectClass {
             } else {
                 strPomFile.append(File.separator).append("pom.xml");
             }
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strPomFile));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strPomFile);
+            LogExposureClass.LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "pom.xml", Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "pom.xml", Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return strPomFile.toString();
     }
@@ -55,9 +57,8 @@ public final class ProjectClass {
         try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
             model = reader.read(bReader);
         } catch (IOException | XmlPullParserException ex) {
-            LogExposure.exposeMessageToErrorLog(
-                    String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"),
-                            Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return model;
     }
@@ -72,7 +73,8 @@ public final class ProjectClass {
         try {
             strAppFolder = directory.getCanonicalPath();
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return strAppFolder;
     }

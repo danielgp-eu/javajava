@@ -1,7 +1,8 @@
 package time;
 
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
+import structure.StringManipulationClass;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -11,8 +12,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javajava.CommonClass;
 
 /**
  * Time methods
@@ -25,7 +24,7 @@ public final class TimingClass {
     /**
      * String for Second
      */
-    final private static String STR_SECOND = "Second";
+    private static final String STR_SECOND = "Second";
     /**
      * 
      */
@@ -69,9 +68,9 @@ public final class TimingClass {
                 strFinalOne = "Millisecond";
                 break;
             default:
-                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strRule, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-                LogExposure.exposeMessageToErrorLog(strFeedback);
+                final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strRule, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+			LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
         }
         return (getDurationWithCustomRules(duration, "Day", arrayStrings[0])
@@ -140,9 +139,9 @@ public final class TimingClass {
             case "Nanosecond" -> duration.toNanosPart();
             case "Second" -> duration.toSecondsPart();
             default -> {
-                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-                LogExposure.exposeMessageToErrorLog(strFeedback);
+                final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -159,9 +158,9 @@ public final class TimingClass {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
         final String strFormats = TIME_FORMATS.get(strHow);
         if (strFormats.isEmpty()) {
-            final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-            LogExposure.exposeMessageToErrorLog(strFeedback);
+            final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+            LogExposureClass.LOGGER.error(strFeedback);
             throw new UnsupportedOperationException(strFeedback);
         }
         String strReturn;

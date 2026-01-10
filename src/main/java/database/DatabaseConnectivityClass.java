@@ -1,7 +1,7 @@
 package database;
 
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -19,12 +19,15 @@ public final class DatabaseConnectivityClass {
      * @param givenConnection connection object
      */
     public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType));
+        final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
+        LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
         try {
             givenConnection.close();
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType));
+            final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
+            LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage()));
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
+            LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
     }
 
@@ -35,12 +38,15 @@ public final class DatabaseConnectivityClass {
      * @param givenStatement statement
      */
     public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType));
+        final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
+        LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
         try {
             givenStatement.close();
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType));
+            final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
+            LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage()));
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
+            LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
     }
 
@@ -52,13 +58,16 @@ public final class DatabaseConnectivityClass {
      * @return Statement
      */
     public static Statement createSqlStatement(final String strDatabaseType, final Connection connection) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType));
+        final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
+        LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
         Statement objStatement = null;
         try {
             objStatement = connection.createStatement();
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType));
+            final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
+            LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage()));
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
+            LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
         return objStatement;
     }

@@ -1,9 +1,8 @@
 package environment;
 
-import javajava.CommonClass;
-import javajava.ListAndMapClass;
 import oshi.hardware.*;
 import oshi.util.FormatUtil;
+import structure.ListAndMapClass;
 
 import java.util.List;
 import java.util.Map;
@@ -88,7 +87,7 @@ public final class EnvironmentHardwareClass {
             "Identifier", procIdentif.getIdentifier(),
             "Local Processors", processor.getLogicalProcessorCount(),
             "Model", procIdentif.getModel(),
-            CommonClass.STR_NAME, procIdentif.getName(),
+            OshiUsageClass.STR_NAME, procIdentif.getName(),
             "Physical", processor.getPhysicalProcessorCount()
         ));
     }
@@ -108,7 +107,7 @@ public final class EnvironmentHardwareClass {
             }
             strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
-                CommonClass.STR_NAME, graphicCard.getName(),
+                OshiUsageClass.STR_NAME, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
                 "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
                 "Driver Version", graphicCard.getVersionInfo()
@@ -153,7 +152,7 @@ public final class EnvironmentHardwareClass {
                 strJsonString.append(',');
             }
             strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
-                CommonClass.STR_NAME, net.getName(),
+                OshiUsageClass.STR_NAME, net.getName(),
                 "Display Name", net.getDisplayName(),
                 "MAC Address", net.getMacaddr(),
                 "IPv4", String.join(", ", net.getIPv4addr()),

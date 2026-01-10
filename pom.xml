@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.6</version>
     <name>JavaJava</name>
     <properties>
       <goals-goal>single</goals-goal>

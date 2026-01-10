@@ -1,8 +1,8 @@
 package database;
 
-import javajava.CommonClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
+import structure.StringManipulationClass;
 import json.JsoningClass;
 
 import tools.jackson.databind.JsonNode;
@@ -31,9 +31,11 @@ public final class DatabaseSpecificMySql {
         final String strEnv = "MYSQL";
         final String strEnvMySql = System.getenv(strEnv);
         if (strEnvMySql == null) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableNotFound"), strEnv));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
+            LogExposureClass.LOGGER.error(strFeedback);
         } else {
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableFound"), strEnv));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableFound"), strEnv);
+            LogExposureClass.LOGGER.debug(strFeedback);
             final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
             final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
             properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
@@ -55,18 +57,22 @@ public final class DatabaseSpecificMySql {
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
         Connection connection = null;
         if (propInstance.isEmpty()) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionPropertiesEmpty"), CommonClass.STR_DB_MYSQL));
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionPropertiesEmpty"), DatabaseBasicClass.STR_DB_MYSQL);
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
             final String strPort = propInstance.get("Port").toString();
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
-                LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), CommonClass.STR_DB_MYSQL, strDatabase, strConnection, propConnection));
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), DatabaseBasicClass.STR_DB_MYSQL, strDatabase, strConnection, propConnection);
+                LogExposureClass.LOGGER.debug(strFeedback);
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccess"), CommonClass.STR_DB_MYSQL, strServer, strPort, strDatabase));
+                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccess"), DatabaseBasicClass.STR_DB_MYSQL, strServer, strPort, strDatabase);
+                LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch(SQLException e) {
-                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailed"), CommonClass.STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage()));
+                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailed"), DatabaseBasicClass.STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
+                LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
         }
         return connection;
@@ -188,9 +194,9 @@ SELECT
 FROM
     "INFORMATION_SCHEMA"."VIEWS";""";
             default -> {
-                final String strFeedback = String.format(CommonClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-                LogExposure.exposeMessageToErrorLog(strFeedback);
+                final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
         };
@@ -225,11 +231,13 @@ FROM
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = DatabaseConnectivityClass.createSqlStatement(CommonClass.STR_DB_MYSQL, objConnection)) {
+            Statement objStatement = DatabaseConnectivityClass.createSqlStatement(DatabaseBasicClass.STR_DB_MYSQL, objConnection)) {
             final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
-            LogExposure.exposeMessageToInfoLog(listProps.toString());
+            final String strFeedback = listProps.toString();
+            LogExposureClass.LOGGER.info(strFeedback);
         } catch(SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format("Error %s", Arrays.toString(e.getStackTrace())));
+            final String strFeedbackErr = String.format("Error %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
     }
 

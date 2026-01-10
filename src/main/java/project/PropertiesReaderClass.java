@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 
-import log.LogExposure;
+import log.LogExposureClass;
 
 /**
  * Project Properties Reader
@@ -26,7 +26,8 @@ public class PropertiesReaderClass {
         try(InputStream inputStream = PropertiesReaderClass.class.getResourceAsStream(propertyFileName)) {
             this.properties.load(inputStream);
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(String.format("IO exception on getting %s resource... %s", propertyFileName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format("IO exception on getting %s resource... %s", propertyFileName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
     }
 

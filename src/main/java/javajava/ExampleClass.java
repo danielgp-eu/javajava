@@ -8,9 +8,10 @@ import database.DatabaseSpecificMySql;
 import database.DatabaseSpecificSnowflakeClass;
 import picocli.CommandLine;
 import shell.ArchivingClass;
+import structure.StringManipulationClass;
 import time.TimingClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,10 +55,13 @@ public final class ExampleClass implements Runnable {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
         final String userLocale = JavaJavaLocalizationClass.getUserLocale();
         JavaJavaLocalizationClass.setLocaleByString(userLocale);
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nNewExec") + "-".repeat(80));
+        final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nNewExec") + "-".repeat(80);
+        LogExposureClass.LOGGER.info(strFeedback);
         final int exitCode = new CommandLine(new ExampleClass()).execute(args);
-        LogExposure.exposeMessageToInfoLog(String.format("Exiting with code %s", exitCode));
-        LogExposure.exposeMessageToInfoLog(TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nEntOp"), args[0])));
+        final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
+        LogExposureClass.LOGGER.info(strFeedbackExit);
+        final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nEntOp"), args[0]));
+        LogExposureClass.LOGGER.info(strFeedbackEnd);
     }
 
     @Override
@@ -136,7 +140,7 @@ class ArchiveFolders implements Runnable {
             propFolder.clear();
             final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
-            ArchivingClass.setArchiveNameFromFolderName(strFolder);
+            ArchivingClass.setArchiveNameFromFolderName(strDestFolder, strFolder);
             ArchivingClass.archiveFolderAs7zUltra();
             ArchivingClass.exposeArchivedStatistics(folderProps);
         }
@@ -274,9 +278,8 @@ class GetInformationFromDatabase implements Runnable {
                 DatabaseSpecificSnowflakeClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
-                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nUnknParamFinal"),
-                        strDatabaseType,
-                        StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN))));
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nUnknParamFinal"), strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
                 break;
         }
     }
@@ -347,9 +350,8 @@ class GetSpecificInformationFromSnowflake implements Runnable {
                 DatabaseSpecificSnowflakeClass.performSnowflakePreDefinedAction("AvailableWarehouses", properties);
                 break;
             default:
-                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nUnknParamFinal"),
-                        strLclInfoType,
-                        StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN))));
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nUnknParamFinal"), strLclInfoType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
                 break;
         }
     }
@@ -382,7 +384,7 @@ class GetSubFoldersFromFolder implements Runnable {
 
     @Override
     public void run() {
-        FileHandlingClass.getSubFolderFromFolder("C:\\www\\Config\\");
+        FileHandlingClass.getSubFoldersFromFolder("C:\\www\\Config\\");
     }
 
     /**
@@ -402,7 +404,8 @@ class LogEnvironmentDetails implements Runnable {
 
     @Override
     public void run() {
-        LogExposure.exposeMessageToInfoLog(EnvironmentCapturingClass.getCurrentEnvironmentDetails());
+        final String strFeedback = EnvironmentCapturingClass.getCurrentEnvironmentDetails();
+        LogExposureClass.LOGGER.info(strFeedback);
     }
 
     /**

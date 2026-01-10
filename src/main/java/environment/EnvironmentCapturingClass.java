@@ -2,7 +2,7 @@ package environment;
 
 import dependency.ProjectDependencyResolverClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 /**
  * Capturing current environment details
@@ -15,17 +15,58 @@ public final class EnvironmentCapturingClass extends OshiUsageClass {
      * @return String
      */
     public static String getCurrentEnvironmentDetails() {
-        LogExposure.exposeMessageToInfoLog(JavaJavaLocalizationClass.getMessage("i18nAppInformationCapturing"));
         final StringBuilder strJsonString = new StringBuilder(100);
-        strJsonString.append(String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", EnvironmentHardwareClass.getDetailsAboutCentralPowerUnit(), EnvironmentHardwareClass.getDetailsAboutRandomAccessMemory(), EnvironmentSoftwareClass.getDetailsAboutAvailableStoragePartitions(), EnvironmentHardwareClass.getDetailsAboutGraphicCards(), EnvironmentHardwareClass.getDetailsAboutMonitor(), EnvironmentHardwareClass.getDetailsAboutNetworkInterfaces()));
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nAppInformationHardwareCaptured"));
-        strJsonString.append(String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", EnvironmentSoftwareClass.getDetailsAboutOperatingSystem(), EnvironmentSoftwareClass.getDetailsAboutSoftwarePlatformJava(), EnvironmentSoftwareClass.getDetailsAboutSoftwareUser()));
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nAppInformationSoftwareCaptured"));
-        strJsonString.append(String.format(",\"Application\":{\"Dependencies\":%s}", ProjectDependencyResolverClass.getDependency()));
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured"));
-        strJsonString.append(String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME")));
-        LogExposure.exposeMessageToDebugLog(JavaJavaLocalizationClass.getMessage("i18nAppInformationEnvironmentCaptured"));
+        final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationCapturing");
+        LogExposureClass.LOGGER.info(strFeedback);
+        strJsonString.append(getHardwareDetails())
+                .append(getSoftwareDetails())
+                .append(getApplicationDetails())
+                .append(getEnvironmentDetails());
         return String.format("{%s}", strJsonString);
+    }
+
+    /**
+     * Application details
+     * @return String
+     */
+    private static String getApplicationDetails() {
+        final String strDetails = String.format(",\"Application\":{\"Dependencies\":%s}", ProjectDependencyResolverClass.getDependency());
+        final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
+        LogExposureClass.LOGGER.debug(strFeedback);
+        return strDetails;
+    }
+
+    /**
+     * Environment details
+     * @return String
+     */
+    private static String getEnvironmentDetails() {
+        final String strDetails = String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME"));
+        final String strFeedbackEnv = JavaJavaLocalizationClass.getMessage("i18nAppInformationEnvironmentCaptured");
+        LogExposureClass.LOGGER.debug(strFeedbackEnv);
+        return strDetails;
+    }
+
+    /**
+     * Hardware details
+     * @return String
+     */
+    private static String getHardwareDetails() {
+        final String strDetails = String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", EnvironmentHardwareClass.getDetailsAboutCentralPowerUnit(), EnvironmentHardwareClass.getDetailsAboutRandomAccessMemory(), EnvironmentSoftwareClass.getDetailsAboutAvailableStoragePartitions(), EnvironmentHardwareClass.getDetailsAboutGraphicCards(), EnvironmentHardwareClass.getDetailsAboutMonitor(), EnvironmentHardwareClass.getDetailsAboutNetworkInterfaces());
+        final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationHardwareCaptured");
+        LogExposureClass.LOGGER.debug(strFeedback);
+        return strDetails;
+    }
+
+    /**
+     * Software details
+     * @return String
+     */
+    private static String getSoftwareDetails() {
+        final String strDetails = String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", EnvironmentSoftwareClass.getDetailsAboutOperatingSystem(), EnvironmentSoftwareClass.getDetailsAboutSoftwarePlatformJava(), EnvironmentSoftwareClass.getDetailsAboutSoftwareUser());
+        final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationSoftwareCaptured");
+        LogExposureClass.LOGGER.debug(strFeedback);
+        return strDetails;
     }
 
     /**

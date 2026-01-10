@@ -1,10 +1,9 @@
 package database;
 
-import javajava.CommonClass;
-import javajava.ListAndMapClass;
-import javajava.StringManipulationClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
+import structure.ListAndMapClass;
+import structure.StringManipulationClass;
 import time.TimingClass;
 
 import java.sql.ResultSet;
@@ -20,6 +19,18 @@ import java.util.Properties;
  * Database methods
  */
 public final class DatabaseBasicClass {
+    /**
+     * Database MySQL
+     */
+    public static final String STR_DB_MYSQL = "MySQL";
+    /**
+     * NULL string
+     */
+    public static final String STR_NULL = "NULL";
+    /**
+     * Regular Expression for Prompt Parameters within SQL Query
+     */
+    public static final String STR_QTD_STR_VL = "\"%s\"";
 
     /**
      * Fill values into a dynamic query
@@ -34,18 +45,18 @@ public final class DatabaseBasicClass {
         for (final Object obj : queryProperties.keySet()) {
             final String strKey = (String) obj;
             final String strOriginalValue = queryProperties.getProperty(strKey);
-            String strValueToUse = String.format(CommonClass.STR_QTD_STR_VL, strOriginalValue);
-            if (strOriginalValue.matches(CommonClass.STR_NULL)) {
+            String strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue);
+            if (strOriginalValue.matches(STR_NULL)) {
                 strValueToUse = strOriginalValue;
             } else if (Arrays.asList(arrayCleanable).contains(strKey)) {
-                strValueToUse = String.format(CommonClass.STR_QTD_STR_VL, strOriginalValue.replaceAll("([\"'])", ""));
+                strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue.replaceAll("([\"'])", ""));
                 if (strOriginalValue.isEmpty()) {
-                    strValueToUse = CommonClass.STR_NULL;
+                    strValueToUse = STR_NULL;
                 }
             } else if (Arrays.asList(arrayNullable).contains(strKey) && strOriginalValue.isEmpty()) {
-                strValueToUse = CommonClass.STR_NULL;
+                strValueToUse = STR_NULL;
             } else if (strKey.contains("_JSON") || strKey.startsWith("JSON_")) {
-                strValueToUse = String.format(CommonClass.STR_QTD_STR_VL, strOriginalValue.replace("\"", "\"\""));
+                strValueToUse = String.format(STR_QTD_STR_VL, strOriginalValue.replace("\"", "\"\""));
             }
             strQueryToReturn = strQueryToReturn.replace(String.format("{%s}", strKey), strValueToUse);
         }
@@ -64,15 +75,19 @@ public final class DatabaseBasicClass {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse));
+            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
+            LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose));
+                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                LogExposureClass.LOGGER.debug(strFeedbackOk);
                 DatabaseResultSettingClass.digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage()));
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
+                LogExposureClass.LOGGER.error(strFeedback);
             }
-            LogExposure.exposeMessageToDebugLog(TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose)));
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
+            LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
         return resultSet;
     }
@@ -87,7 +102,8 @@ public final class DatabaseBasicClass {
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose));
+            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
+            LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
                     objStatement.executeLargeUpdate(strQueryToUse);
@@ -96,9 +112,11 @@ public final class DatabaseBasicClass {
                 }
                 setSqlExecutionSuccessInfo(strQueryPurpose);
             } catch (SQLException e) {
-                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace())));
+                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
             }
-            LogExposure.exposeMessageToDebugLog(TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose)));
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
+            LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
     }
 
@@ -111,9 +129,11 @@ public final class DatabaseBasicClass {
     public static List<String> getPromptParametersOrderWithinQuery(final String strOriginalQ, final List<Properties> objValues) {
         final List<String> valFields = new ArrayList<>();
         objValues.getFirst().forEach((strKey, _) -> valFields.add(strKey.toString()));
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields));
-        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, CommonClass.STR_PRMTR_RGX);
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches));
+        final String strFeedbackPrmV = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields);
+        LogExposureClass.LOGGER.debug(strFeedbackPrmV);
+        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, StringManipulationClass.STR_PRMTR_RGX);
+        final String strFeedbackPrm = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches);
+        LogExposureClass.LOGGER.debug(strFeedbackPrm);
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
         for (final String listMatch : listMatches) {
@@ -123,7 +143,8 @@ public final class DatabaseBasicClass {
                 mapParameterOrder.add(crtParameter);
             }
         }
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder));
+        final String strFeedbackPrmM = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder);
+        LogExposureClass.LOGGER.debug(strFeedbackPrmM);
         final int foundParameters = mapParameterOrder.size();
         if (foundParameters != intParameters) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValueMissing")
@@ -131,7 +152,7 @@ public final class DatabaseBasicClass {
                 , foundParameters
                 , mapParameterOrder + " vs. " + objValues.getFirst().toString()
                 , strOriginalQ);
-            LogExposure.exposeMessageToErrorLog(strFeedback);
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return mapParameterOrder;
     }
@@ -141,7 +162,8 @@ public final class DatabaseBasicClass {
      * @param strQueryPurpose Query purpose
      */
     public static void setSqlExecutionSuccessInfo(final String strQueryPurpose) {
-        LogExposure.exposeMessageToInfoLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+        LogExposureClass.LOGGER.info(strFeedback);
     }
 
     /**

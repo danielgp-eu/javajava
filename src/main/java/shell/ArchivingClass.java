@@ -7,9 +7,9 @@ import java.util.Properties;
 
 import org.apache.maven.shared.utils.StringUtils;
 
-import javajava.CommonClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
+import structure.NumberClass;
 
 /**
  * Archiving wrapper
@@ -41,6 +41,15 @@ public final class ArchivingClass {
     private static String strArchivingDir;
 
     /**
+     * Append File Separator to given Folder 
+     * @param inFolder folder given
+     * @return String
+     */
+    private static String appendSeparatorSuffixToFolder(final String inFolder) {
+        return StringUtils.stripEnd(inFolder, File.separator) + File.separator;
+    }
+
+    /**
      * Archive folder content as 7z using Ultra compression level
      */
     public static void archiveFolderAs7zUltra() {
@@ -50,7 +59,7 @@ public final class ArchivingClass {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchDir, "-mx9", "-ms4g", "-mmt=on");
         } else {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchDir, "-mx9", "-ms4g", "-mmt=on", "-p" + strArchivePwd);
-            LogExposure.exposeProcessBuilder(builder.command().toString().replaceFirst("-p" + strArchivePwd, "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**"));
+            LogExposureClass.exposeProcessBuilder(builder.command().toString().replaceFirst("-p" + strArchivePwd, "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**"));
         }
         ShellingClass.executeShell(builder, " ");
     }
@@ -60,18 +69,14 @@ public final class ArchivingClass {
      * @param folderProps folder Properties
      */
     public static void exposeArchivedStatistics(final Properties folderProps) {
-        if (LogExposure.isCurrentLogLevelLessThanWarning()) {
+        if (LogExposureClass.isCurrentLogLevelLessThanWarning()) {
             final File fileA = new File(strArchiveName);
             if (fileA.exists() && fileA.isFile()) {
                 final long fileArchSize = fileA.length();
                 final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
-                final float percentage = CommonClass.getPercentageSafely(fileArchSize, fileOrigSize);
-                LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"),
-                        strArchivingDir,
-                        folderProps,
-                        strArchiveName,
-                        fileArchSize,
-                        percentage));
+                final float percentage = NumberClass.computePercentageSafely(fileArchSize, fileOrigSize);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir, folderProps, strArchiveName, fileArchSize, percentage);
+                LogExposureClass.LOGGER.info(strFeedback);
             }
         }
     }
@@ -97,9 +102,10 @@ public final class ArchivingClass {
      * Setter for Archive Name from Folder Name
      * @param inFolderName String
      */
-    public static void setArchiveNameFromFolderName(final String inFolderName) {
+    public static void setArchiveNameFromFolderName(final String inFolderDest, final String inFolderName) {
         final Path path = Paths.get(inFolderName);
-        setArchiveName(path.getFileName().toString());
+        setArchiveName(appendSeparatorSuffixToFolder(inFolderDest)
+                + path.getFileName().toString());
     }
 
     /**
@@ -139,7 +145,7 @@ public final class ArchivingClass {
      * @param inArchivingDir String
      */
     public static void setArchivingDir(final String inArchivingDir) {
-        strArchivingDir = StringUtils.stripEnd(inArchivingDir, File.separator);
+        strArchivingDir = appendSeparatorSuffixToFolder(inArchivingDir);
     }
 
     /**

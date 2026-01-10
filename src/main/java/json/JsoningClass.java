@@ -1,9 +1,8 @@
 package json;
 
-import javajava.StringManipulationClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
-
+import log.LogExposureClass;
+import structure.StringManipulationClass;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
@@ -30,7 +29,8 @@ public final class JsoningClass {
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(strJson);
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), strJson));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), strJson);
+        LogExposureClass.LOGGER.debug(strFeedback);
         return jsonRootNode;
     }
 
@@ -44,7 +44,8 @@ public final class JsoningClass {
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(jsonFile);
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), jsonFile.toString()));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONstringLoaded"), jsonFile.toString());
+        LogExposureClass.LOGGER.debug(strFeedback);
         return jsonRootNode;
     }
 
@@ -78,12 +79,15 @@ public final class JsoningClass {
      * @return JsonNode
      */
     private static JsonNode getJsonNodeFromTree(final JsonNode givenJsonNode, final String strJsonNodeName) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName));
+        final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchAttempt"), strJsonNodeName);
+        LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
         final JsonNode jsonNode = givenJsonNode.at(strJsonNodeName);
         if (jsonNode.isMissingNode()) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchNotFound"), strJsonNodeName, givenJsonNode);
+            LogExposureClass.LOGGER.error(strFeedback);
         } else {
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFound"), strJsonNodeName);
+            LogExposureClass.LOGGER.debug(strFeedback);
         }
         return jsonNode;
     }
@@ -165,7 +169,8 @@ public final class JsoningClass {
      * @param objValues values found
      */
     private static void setNodeRetrievingToDebugLog(final String strWhat, final String strJsonNodeName, final Object objValues) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nJSONnodeSearchFoundX"), strWhat, strJsonNodeName, objValues);
+        LogExposureClass.LOGGER.debug(strFeedback);
     }
 
     /**

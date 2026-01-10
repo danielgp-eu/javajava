@@ -2,7 +2,7 @@ package shell;
 
 import file.FileHandlingClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +29,7 @@ public final class ShellingClass {
         } else {
             builder.command(strCommand, strParameters);
         }
-        LogExposure.exposeProcessBuilder(builder.command().toString());
+        LogExposureClass.exposeProcessBuilder(builder.command().toString());
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
     }
@@ -49,7 +49,8 @@ public final class ShellingClass {
                     .append(strOutLineSep));
             strReturn = processOutput.toString();
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCaptureFailure"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return strReturn;
     }
@@ -62,7 +63,7 @@ public final class ShellingClass {
      */
     public static String executeShell(final ProcessBuilder builder, final String strOutLineSep) {
         final LocalDateTime startTimeStamp = LocalDateTime.now();
-        LogExposure.exposeProcessBuilder(builder.command().toString());
+        LogExposureClass.exposeProcessBuilder(builder.command().toString());
         String strReturn = "";
         try {
             builder.redirectErrorStream(true);
@@ -72,11 +73,13 @@ public final class ShellingClass {
             }
             final int exitCode = process.waitFor();
             process.destroy();
-            LogExposure.exposeProcessExecutionCompletion(strOutLineSep, startTimeStamp, exitCode);
+            LogExposureClass.exposeProcessExecutionCompletion(strOutLineSep, startTimeStamp, exitCode);
         } catch (IOException ex) {
-        	LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         } catch(InterruptedException ei) {
-            LogExposure.exposeExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
+            final String strFeedback = String.format("Interrupted exception tracing %s", Arrays.toString(ei.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
             throw (IllegalStateException)new IllegalStateException().initCause(ei);
         }
         return strReturn;
@@ -113,7 +116,8 @@ public final class ShellingClass {
     public static String getCurrentUserAccount() {
         String strUser = executeShellUtility("WHOAMI", "/UPN", "");
         if (strUser.startsWith("ERROR:")) {
-            LogExposure.exposeMessageToErrorLog(JavaJavaLocalizationClass.getMessage("i18nUserPrincipalNameError"));
+            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nUserPrincipalNameError");
+            LogExposureClass.LOGGER.error(strFeedback);
             strUser = executeShellUtility("WHOAMI", "", "");
         }
         return strUser;

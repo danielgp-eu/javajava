@@ -1,6 +1,6 @@
 package xml;
 
-import log.LogExposure;
+import log.LogExposureClass;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -63,7 +63,8 @@ public final class SecureXmlParserClass {
             try {
                 docBuilderFactory.setFeature(getFeatureByName(strFeature), bolSettingType);
             } catch (ParserConfigurationException e) {
-                LogExposure.exposeMessageToErrorLog(String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage()));
+                final String strFeedback = String.format("Parser does not support the feature %s... %s", strFeature, e.getMessage());
+                LogExposureClass.LOGGER.error(strFeedback);
                 // Fallback to other protective measures if this isn't supported
             }
         });

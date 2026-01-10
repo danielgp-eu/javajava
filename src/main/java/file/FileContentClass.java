@@ -1,7 +1,7 @@
 package file;
 
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -25,12 +25,14 @@ public final class FileContentClass {
      * @return String
      */
     public static String getFileContentIntoString(final String strFileName) {
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
+        LogExposureClass.LOGGER.debug(strFeedback);
         String strReturn = "";
         try {
             strReturn = new String(Files.readAllBytes(Paths.get(strFileName)));
         } catch (IOException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace())));
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         return strReturn;
     }
@@ -53,14 +55,17 @@ public final class FileContentClass {
      */
     public static String getIncludedFileContentIntoString(final String strFileName) {
         String strContent = null;
-        LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
+        LogExposureClass.LOGGER.debug(strFeedback);
         try (InputStream iStream = FileContentClass.class.getResourceAsStream(strFileName);
                 InputStreamReader inputStreamReader = new InputStreamReader(iStream);
                 BufferedReader bReader = new BufferedReader(inputStreamReader)) {
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strFileName));
             strContent = bReader.readAllAsString();
+            final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);
+            LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nError"), Arrays.toString(ex.getStackTrace())));
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nError"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         return strContent;
     }
@@ -87,7 +92,8 @@ public final class FileContentClass {
                             Collectors.mapping(cols -> cols[intColToEval].replaceAll("\"", ""), Collectors.toList()) // values
                     ));
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return grouped;
     }
@@ -116,7 +122,8 @@ public final class FileContentClass {
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
     }
 
@@ -134,12 +141,15 @@ public final class FileContentClass {
                     bwr.write(strLine);
                     bwr.newLine();
                 } catch (IOException er) {
-                    LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace())));
+                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
+                    LogExposureClass.LOGGER.error(strFeedback);
                 }
             });
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName);
+            LogExposureClass.LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
     }
 
@@ -171,7 +181,8 @@ public final class FileContentClass {
                 bwr.newLine();
             }
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
     }
 
@@ -199,7 +210,8 @@ public final class FileContentClass {
             }
             Files.write(Path.of(strFileName), strLines, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException ex) {
-            LogExposure.exposeMessageToErrorLog(getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace())));
+            final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
         }
     }
 

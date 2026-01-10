@@ -1,12 +1,11 @@
 package environment;
 
-import javajava.CommonClass;
-import javajava.ListAndMapClass;
 import oshi.SystemInfo;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
+import structure.ListAndMapClass;
 
 import java.util.List;
 import java.util.Map;
@@ -36,7 +35,7 @@ public final class EnvironmentSoftwareClass {
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
                 "Mount", fileStore.getMount().replace("\\", "\\\\"),
-                CommonClass.STR_NAME, fileStore.getName(),
+                OshiUsageClass.STR_NAME, fileStore.getName(),
                 "Options", fileStore.getOptions(),
                 "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
                 "Type", fileStore.getType(),
@@ -62,7 +61,7 @@ public final class EnvironmentSoftwareClass {
                 "Code", version.getCodeName(),
                 "Family", OshiUsageClass.OshiSoftware.getOshiFamily(),
                 "Manufacturer", OshiUsageClass.OshiSoftware.getOshiManufacturer(),
-                CommonClass.STR_NAME, System.getProperty("os.name"),
+                OshiUsageClass.STR_NAME, System.getProperty("os.name"),
                 "Platform", SystemInfo.getCurrentPlatform().toString(),
                 "Version", version.getVersion()
         ));

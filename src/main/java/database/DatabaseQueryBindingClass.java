@@ -1,9 +1,8 @@
 package database;
 
-import javajava.CommonClass;
-import javajava.StringManipulationClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
+import structure.StringManipulationClass;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -76,7 +75,7 @@ public final class DatabaseQueryBindingClass {
         final String[] arrayCleanable = properties.get("strArrayCleanable").toString().split("|");
         final String[] arrayNullable = properties.get("strArrayNullable").toString().split("|");
         try {
-            if (CommonClass.STR_NULL.equalsIgnoreCase(strOriginalValue) 
+            if (DatabaseBasicClass.STR_NULL.equalsIgnoreCase(strOriginalValue) 
                 || (Arrays.asList(arrayNullable).contains(strKey)
                     && strOriginalValue.isEmpty())) {
                 preparedStatement.setNull(index, Types.VARCHAR);
@@ -105,7 +104,8 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery relevant query
      */
     private static void setSqlExceptionError(final SQLException exptObj, final List<Properties> objValues, final String strQuery) {
-        LogExposure.exposeMessageToErrorLog(String.format("%s with Values $s for Query %s", exptObj.getLocalizedMessage(), objValues.getFirst().toString(), strQuery));
+        final String strFeedback = String.format("%s with Values $s for Query %s", exptObj.getLocalizedMessage(), objValues.getFirst().toString(), strQuery);
+        LogExposureClass.LOGGER.error(strFeedback);
     }
 
     /**
@@ -115,10 +115,11 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery query
      */
     private static void setSqlParameterBindingError(final SQLException exptObj, final String strParameterName, final String strQuery) {
-        LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterBindingError")
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterBindingError")
                 , exptObj.getLocalizedMessage()
                 , strParameterName
-                , strQuery));
+                , strQuery);
+        LogExposureClass.LOGGER.error(strFeedback);
     }
 
     /**

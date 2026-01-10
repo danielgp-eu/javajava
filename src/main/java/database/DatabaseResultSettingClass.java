@@ -1,8 +1,8 @@
 package database;
 
-import javajava.CommonClass;
 import localization.JavaJavaLocalizationClass;
-import log.LogExposure;
+import log.LogExposureClass;
+import structure.StringManipulationClass;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -16,7 +16,10 @@ import java.util.Properties;
  * Basic features for Databases 
  */
 public final class DatabaseResultSettingClass {
-
+    /**
+     * standard SQL statement unable
+     */
+    public static final String STR_I18N_STM_UNB = JavaJavaLocalizationClass.getMessage("i18nSQLstatementUnableToGetX");
     /**
      * Rows counter
      */
@@ -40,28 +43,28 @@ public final class DatabaseResultSettingClass {
         switch (key) {
             case "expectedExactNumberOfColumns":
                 final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
-                if (intColumnsIs != intColumnsShould) {
-                    LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs));
-                }
+                final String strFeedbackC = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
+                LogExposureClass.LOGGER.error(strFeedbackC);
                 break;
             case "expectedExactNumberOfRows":
                 final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
                 if (intResultSetRows != intExpectedRows) {
-                    LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows));
+                    final String strFeedbackExR = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
+                    LogExposureClass.LOGGER.error(strFeedbackExR);
                 }
                 break;
             case "exposeNumberOfColumns":
                 final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
-                LogExposure.exposeMessageToInfoLog(strFeedback);
+                LogExposureClass.LOGGER.info(strFeedback);
                 break;
             case "exposeNumberOfRows":
                 final String strFeedbackN = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
-                LogExposure.exposeMessageToInfoLog(strFeedbackN);
+                LogExposureClass.LOGGER.info(strFeedbackN);
                 break;
             default:
-                final String strFeedbackD = String.format(CommonClass.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN)));
-                LogExposure.exposeMessageToErrorLog(strFeedbackD);
+                final String strFeedbackD = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedbackD);
                 throw new UnsupportedOperationException(strFeedbackD);
         }
     }
@@ -78,7 +81,8 @@ public final class DatabaseResultSettingClass {
         intColumnsIs = getResultSetNumberOfColumns(resultSet);
         for (final Object obj : objProperties.keySet()) {
             final String key = (String) obj;
-            LogExposure.exposeMessageToDebugLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleEvaluation"), key));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleEvaluation"), key);
+            LogExposureClass.LOGGER.debug(strFeedback);
             captureToLogResultsetAttributes(key, strPurpose, objProperties);
         }
     }
@@ -106,7 +110,8 @@ public final class DatabaseResultSettingClass {
                 listResultSet.add(colProperties);
             }
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(CommonClass.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage()));
+            final String strFeedbackErr = String.format(STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         return listResultSet;
     }
@@ -129,17 +134,19 @@ public final class DatabaseResultSettingClass {
                 for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
                     String crtValue = resultSet.getString(colIndex);
                     if (resultSet.wasNull()) {
-                        crtValue = CommonClass.STR_NULL;
+                        crtValue = DatabaseBasicClass.STR_NULL;
                     }
                     currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
                 }
                 listResultSet.add(currentRow);
                 intRow++;
             }
-            LogExposure.exposeMessageToDebugLog(String.format("I have found %d records", intRow));
+            final String strFeedback = String.format("I have found %d records", intRow);
+            LogExposureClass.LOGGER.debug(strFeedback);
             intRows = intRow;
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(CommonClass.STR_I18N_STM_UNB, "structures", e.getLocalizedMessage()));
+            final String strFeedbackErr = String.format(STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
+            LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         return listResultSet;
     }
@@ -153,7 +160,8 @@ public final class DatabaseResultSettingClass {
     public static List<Properties> getResultSetColumnValuesWithNullCheck(final ResultSet resultSet) {
         List<Properties> listResultSet = new ArrayList<>();
         if (resultSet == null) {
-            LogExposure.exposeMessageToErrorLog(JavaJavaLocalizationClass.getMessage("i18nSQLresultSetNull"));
+            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nSQLresultSetNull");
+            LogExposureClass.LOGGER.error(strFeedback);
         } else {
             listResultSet = getResultSetColumnValues(resultSet);
         }
@@ -174,7 +182,8 @@ public final class DatabaseResultSettingClass {
                 listStrings.add(resultSet.getString(1));
             }
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(CommonClass.STR_I18N_STM_UNB, "list of strings", e.getLocalizedMessage()));
+            final String strFeedback = String.format(STR_I18N_STM_UNB, "list of strings", e.getLocalizedMessage());
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return listStrings;
     }
@@ -191,7 +200,8 @@ public final class DatabaseResultSettingClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             intColumns = resultSetMetaData.getColumnCount();
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(CommonClass.STR_I18N_STM_UNB, "columns", e.getLocalizedMessage()));
+            final String strFeedback = String.format(STR_I18N_STM_UNB, "columns", e.getLocalizedMessage());
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return intColumns;
     }
@@ -211,7 +221,8 @@ public final class DatabaseResultSettingClass {
                 intResultSetRows = intRows;
             }
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(CommonClass.STR_I18N_STM_UNB, "rows", e.getLocalizedMessage()));
+            final String strFeedback = String.format(STR_I18N_STM_UNB, "rows", e.getLocalizedMessage());
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return intResultSetRows;
     }
@@ -237,12 +248,13 @@ public final class DatabaseResultSettingClass {
                     listReturn = getResultSetColumnValuesWithNullCheck(rsStandard);
                     break;
                 default:
-                    LogExposure.exposeMessageToErrorLog(String.format(CommonClass.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(CommonClass.STR_I18N_UNKN))));
+                    final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                    LogExposureClass.LOGGER.error(strFeedback);
                     break;
             }
         } catch (SQLException e) {
-            LogExposure.exposeMessageToErrorLog(String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage()));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
+            LogExposureClass.LOGGER.error(strFeedback);
         }
         return listReturn;
     }

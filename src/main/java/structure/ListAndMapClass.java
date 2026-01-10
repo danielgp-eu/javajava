@@ -1,4 +1,4 @@
-package javajava;
+package structure;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
