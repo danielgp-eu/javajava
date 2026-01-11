@@ -69,7 +69,7 @@ public final class ArchivingClass {
      * @param folderProps folder Properties
      */
     public static void exposeArchivedStatistics(final Properties folderProps) {
-        if (LogExposureClass.isCurrentLogLevelLessThanWarning()) {
+        if (LogExposureClass.isCurrentLogLevelLessThanWarning() && (strArchiveName != null)) {
             final File fileA = new File(strArchiveName);
             if (fileA.exists() && fileA.isFile()) {
                 final long fileArchSize = fileA.length();
