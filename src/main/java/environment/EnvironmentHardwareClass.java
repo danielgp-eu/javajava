@@ -2,11 +2,12 @@ package environment;
 
 import oshi.hardware.*;
 import oshi.util.FormatUtil;
-import structure.ListAndMapClass;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import json.JsoningClass;
 
 /**
  * Capturing current environment hardware details
@@ -70,7 +71,7 @@ public final class EnvironmentHardwareClass {
                 arrayAttributes.put(STR_SRL_NUM, strSlimLine.replace(STR_SRL_NUM + " ", ""));
             }
         }
-        return ListAndMapClass.getMapIntoJsonString(arrayAttributes);
+        return JsoningClass.getMapIntoJsonString(arrayAttributes);
     }
 
     /**
@@ -81,7 +82,7 @@ public final class EnvironmentHardwareClass {
     public static String getDetailsAboutCentralPowerUnit() {
         final CentralProcessor processor = OshiUsageClass.OshiHardware.getOshiProcessor();
         final CentralProcessor.ProcessorIdentifier procIdentif = OshiUsageClass.OshiHardware.getOshiProcessorIdentifier();
-        return ListAndMapClass.getMapIntoJsonString(Map.of(
+        return JsoningClass.getMapIntoJsonString(Map.of(
             "Feature Flags", processor.getFeatureFlags().toString().replace("[", "[\"").replace(", ", "\",\"").replace("]", "\"]"),
             "Family", procIdentif.getFamily(),
             "Identifier", procIdentif.getIdentifier(),
@@ -105,7 +106,7 @@ public final class EnvironmentHardwareClass {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(JsoningClass.getMapIntoJsonString(Map.of(
                 "Device Id", graphicCard.getDeviceId(),
                 OshiUsageClass.STR_NAME, graphicCard.getName(),
                 "Vendor", graphicCard.getVendor(),
@@ -151,7 +152,7 @@ public final class EnvironmentHardwareClass {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(JsoningClass.getMapIntoJsonString(Map.of(
                 OshiUsageClass.STR_NAME, net.getName(),
                 "Display Name", net.getDisplayName(),
                 "MAC Address", net.getMacaddr(),
@@ -186,7 +187,7 @@ public final class EnvironmentHardwareClass {
             if (intCounter > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(JsoningClass.getMapIntoJsonString(Map.of(
                 "Bank/Slot Label", physicalMemory.getBankLabel(),
                 "Capacity", FormatUtil.formatBytes(physicalMemory.getCapacity()),
                 "Clock Speed", FormatUtil.formatHertz(physicalMemory.getClockSpeed()),

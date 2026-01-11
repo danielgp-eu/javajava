@@ -139,8 +139,7 @@ public final class TimingClass {
             case "Nanosecond" -> duration.toNanosPart();
             case "Second" -> duration.toSecondsPart();
             default -> {
-                final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }
@@ -226,7 +225,8 @@ public final class TimingClass {
     public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
         return String.format(JavaJavaLocalizationClass.getMessage("i18nWithDrtn")
-            , strPartial, objDuration.toString()
+            , strPartial
+            , objDuration.toString()
             , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
             , convertNanosecondsIntoSomething(objDuration, "TimeClock"));
     }

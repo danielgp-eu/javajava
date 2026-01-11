@@ -163,6 +163,23 @@ public final class JsoningClass {
     }
 
     /**
+     * Cycle inside Map and build a JSON string out of it
+     *
+     * @param arrayAttrib array with attribute values
+     * @return String
+     */
+    public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
+        final StringBuilder strJsonSubString = new StringBuilder(100);
+        arrayAttrib.forEach((strKey, objValue) -> {
+            if (!strJsonSubString.isEmpty()) {
+                strJsonSubString.append(',');
+            }
+            strJsonSubString.append(getJsonKeyAndValue(strKey, objValue));
+        });
+        return String.format("{%s}", strJsonSubString);
+    }
+
+    /**
      * Logging node retrieval activity to Debug Log
      * @param strWhat meaning of search
      * @param strJsonNodeName JSON node to look into

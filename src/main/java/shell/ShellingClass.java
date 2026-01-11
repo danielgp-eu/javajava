@@ -3,6 +3,7 @@ package shell;
 import file.FileHandlingClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
+import time.TimingClass;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -73,7 +74,13 @@ public final class ShellingClass {
             }
             final int exitCode = process.waitFor();
             process.destroy();
-            LogExposureClass.exposeProcessExecutionCompletion(strOutLineSep, startTimeStamp, exitCode);
+            String strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
+            if (strOutLineSep.isBlank()) {
+                strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
+            }
+            final String strFeedback = TimingClass.logDuration(startTimeStamp,
+                String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage), exitCode));
+            LogExposureClass.LOGGER.debug(strFeedback);
         } catch (IOException ex) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);

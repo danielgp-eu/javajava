@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import json.JsoningClass;
-
 /**
  * List and Maps management
  */
@@ -27,23 +25,6 @@ public final class ListAndMapClass {
             matches.add(matcher.group()); // group() or group(0) returns the entire matched sequence
         }
         return matches;
-    }
-
-    /**
-     * Cycle inside Map and build a JSON string out of it
-     *
-     * @param arrayAttrib array with attribute values
-     * @return String
-     */
-    public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
-        final StringBuilder strJsonSubString = new StringBuilder(100);
-        arrayAttrib.forEach((strKey, objValue) -> {
-            if (!strJsonSubString.isEmpty()) {
-                strJsonSubString.append(',');
-            }
-            strJsonSubString.append(JsoningClass.getJsonKeyAndValue(strKey, objValue));
-        });
-        return String.format("{%s}", strJsonSubString);
     }
 
     /**

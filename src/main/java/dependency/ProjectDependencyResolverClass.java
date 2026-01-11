@@ -17,8 +17,9 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
+
+import json.JsoningClass;
 import project.ProjectClass;
-import structure.ListAndMapClass;
 
 import java.util.Arrays;
 import java.util.List;
@@ -97,7 +98,7 @@ public final class ProjectDependencyResolverClass {
             // Transitive dependencies are children of the direct nodes
             displayTransitive(arrayAttributes, strDirectNode, directNode, 1);
         }
-        return ListAndMapClass.getMapIntoJsonString(arrayAttributes);
+        return JsoningClass.getMapIntoJsonString(arrayAttributes);
     }
 
     /**

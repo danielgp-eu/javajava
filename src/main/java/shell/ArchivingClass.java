@@ -69,7 +69,7 @@ public final class ArchivingClass {
      * @param folderProps folder Properties
      */
     public static void exposeArchivedStatistics(final Properties folderProps) {
-        if (LogExposureClass.isCurrentLogLevelLessThanWarning() && (strArchiveName != null)) {
+        if (strArchiveName != null) {
             final File fileA = new File(strArchiveName);
             if (fileA.exists() && fileA.isFile()) {
                 final long fileArchSize = fileA.length();
@@ -100,10 +100,10 @@ public final class ArchivingClass {
 
     /**
      * Setter for Archive Name from Folder Name
-     * @param inFolderName String
+     * @param inFolderDest destination folder
      */
-    public static void setArchiveNameFromFolderName(final String inFolderDest, final String inFolderName) {
-        final Path path = Paths.get(inFolderName);
+    public static void setArchiveNameWithinDestinationFolder(final String inFolderDest) {
+        final Path path = Paths.get(strArchivingDir);
         setArchiveName(appendSeparatorSuffixToFolder(inFolderDest)
                 + path.getFileName().toString());
     }

@@ -1,13 +1,10 @@
 package log;
 
-import java.time.LocalDateTime;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import localization.JavaJavaLocalizationClass;
-import time.TimingClass;
 
 /**
  * exposing things to Log
@@ -44,39 +41,11 @@ public final class LogExposureClass {
     }
 
     /**
-     * Log Process Builder execution completion
-     * @param strOutLineSep line separator for output
-     * @param startTimeStamp starting time for statistics
-     * @param exitCode execution exit code
-     */
-    public static void exposeProcessExecutionCompletion(final String strOutLineSep,
-            final LocalDateTime startTimeStamp,
-            final int exitCode) {
-        if (getLogLevel().isLessSpecificThan(Level.INFO)) {
-            String strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
-            if (strOutLineSep.isBlank()) {
-                strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
-            }
-            final String strFeedback = TimingClass.logDuration(startTimeStamp,
-                String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage), exitCode));
-            LOGGER.debug(strFeedback);
-        }
-    }
-
-    /**
      * Get current Log Level
      * @return current Log Level
      */
     public static Level getLogLevel() {
         return LOGGER.getLevel();
-    }
-
-    /**
-     * Is the current Log Level less than Warning
-     * @return Boolean
-     */
-    public static boolean isCurrentLogLevelLessThanWarning() {
-        return getLogLevel().isLessSpecificThan(Level.WARN);
     }
 
     private LogExposureClass () {

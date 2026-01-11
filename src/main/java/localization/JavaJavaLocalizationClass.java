@@ -73,12 +73,35 @@ public final class JavaJavaLocalizationClass {
     }
 
     /**
+     * get User country
+     * @return String
+     */
+    private static String getUserCountry() {
+        String strUserCountry = System.getProperty("user.country.format");
+        if (strUserCountry == null) {
+            strUserCountry = System.getProperty("user.country");
+        }
+        return strUserCountry;
+    }
+
+    /**
+     * get User language
+     * @return String
+     */
+    private static String getUserLanguage() {
+        String strUserLanguage = System.getProperty("user.language.format");
+        if (strUserLanguage == null) {
+            strUserLanguage = System.getProperty("user.language");
+        }
+        return strUserLanguage;
+    }
+
+    /**
      * get User locale
      * @return String
      */
     public static String getUserLocale() {
-        return System.getProperty("user.language.format")
-            + "-" + System.getProperty("user.country.format");
+        return getUserLanguage() + "-" + getUserCountry();
     }
 
     /**
@@ -125,12 +148,12 @@ public final class JavaJavaLocalizationClass {
             strFeedback = String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
         }
         if (LogExposureClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-		    LogExposureClass.LOGGER.debug(strFeedback1);
-		}
-		final String strMsg = strFeedback;
+            LogExposureClass.LOGGER.debug(strFeedback1);
+        }
+        final String strMsg = strFeedback;
         if (LogExposureClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-		    LogExposureClass.LOGGER.debug(strMsg);
-		}
+            LogExposureClass.LOGGER.debug(strMsg);
+        }
     }
 
     /**

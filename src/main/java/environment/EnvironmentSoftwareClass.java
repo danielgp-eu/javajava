@@ -5,10 +5,11 @@ import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
-import structure.ListAndMapClass;
 
 import java.util.List;
 import java.util.Map;
+
+import json.JsoningClass;
 
 /**
  * Capturing current environment software details
@@ -30,7 +31,7 @@ public final class EnvironmentSoftwareClass {
             if (strCounterDisk > 0) {
                 strJsonString.append(',');
             }
-            strJsonString.append(ListAndMapClass.getMapIntoJsonString(Map.of(
+            strJsonString.append(JsoningClass.getMapIntoJsonString(Map.of(
                 "Description", fileStore.getDescription(),
                 "Label", fileStore.getLabel(),
                 "Logical Volume", fileStore.getLogicalVolume(),
@@ -55,7 +56,7 @@ public final class EnvironmentSoftwareClass {
      */
     public static String getDetailsAboutOperatingSystem() {
         final OperatingSystem.OSVersionInfo version = OshiUsageClass.OshiSoftware.getOshiVersionInfo();
-        return ListAndMapClass.getMapIntoJsonString(Map.of(
+        return JsoningClass.getMapIntoJsonString(Map.of(
                 "Architecture", System.getProperty("os.arch"),
                 "Build", version.getBuildNumber(),
                 "Code", version.getCodeName(),
@@ -73,7 +74,7 @@ public final class EnvironmentSoftwareClass {
      * @return String
      */
     public static String getDetailsAboutSoftwareUser() {
-        return ListAndMapClass.getMapIntoJsonString(Map.of(
+        return JsoningClass.getMapIntoJsonString(Map.of(
             "Country", System.getProperty("user.country"),
             "Country.Format", System.getProperty("user.country.format"),
             "Language", System.getProperty("user.language"),
@@ -90,7 +91,7 @@ public final class EnvironmentSoftwareClass {
      * @return String
      */
     public static String getDetailsAboutSoftwarePlatformJava() {
-        return ListAndMapClass.getMapIntoJsonString(Map.of(
+        return JsoningClass.getMapIntoJsonString(Map.of(
             "Date", System.getProperty("java.version.date"),
             "Release", System.getProperty("java.vendor.version"),
             "Runtime", System.getProperty("java.runtime.name"),

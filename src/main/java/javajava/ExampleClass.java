@@ -60,7 +60,8 @@ public final class ExampleClass implements Runnable {
         final int exitCode = new CommandLine(new ExampleClass()).execute(args);
         final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
         LogExposureClass.LOGGER.info(strFeedbackExit);
-        final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nEntOp"), args[0]));
+        final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp,
+                String.format(JavaJavaLocalizationClass.getMessage("i18nEntOp"), args[0]));
         LogExposureClass.LOGGER.info(strFeedbackEnd);
     }
 
@@ -73,7 +74,8 @@ public final class ExampleClass implements Runnable {
 /**
  * clean files older than a given number of days
  */
-@CommandLine.Command(name = "ArchiveFolders", description = "Archive sub-folders from a given folder")
+@CommandLine.Command(name = "ArchiveFolders",
+                     description = "Archive sub-folders from a given folder")
 class ArchiveFolders implements Runnable {
 
     /**
@@ -136,11 +138,14 @@ class ArchiveFolders implements Runnable {
         ArchivingClass.setArchivingExecutable(strArchivingExec);
         ArchivingClass.setArchivePrefix(strArchivePrefix);
         ArchivingClass.setArchiveSuffix(strArchiveSuffix);
+        if (strArchivePwd != null) {
+            ArchivingClass.setArchivePwd(strArchivePwd);
+        }
         for (final String strFolder : strFolderNames) {
             propFolder.clear();
             final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
-            ArchivingClass.setArchiveNameFromFolderName(strDestFolder, strFolder);
+            ArchivingClass.setArchiveNameWithinDestinationFolder(strDestFolder);
             ArchivingClass.archiveFolderAs7zUltra();
             ArchivingClass.exposeArchivedStatistics(folderProps);
         }
@@ -157,7 +162,8 @@ class ArchiveFolders implements Runnable {
 /**
  * clean files older than a given number of days
  */
-@CommandLine.Command(name = "CleanOlderFilesFromFolder", description = "Clean files older than a given number of days")
+@CommandLine.Command(name = "CleanOlderFilesFromFolder",
+                     description = "Clean files older than a given number of days")
 class CleanOlderFilesFromFolder implements Runnable {
 
     /**
@@ -197,7 +203,8 @@ class CleanOlderFilesFromFolder implements Runnable {
 /**
  * Gets information from Database into Log file
  */
-@CommandLine.Command(name = "GetInformationFromDatabase", description = "Gets information from Database into Log file")
+@CommandLine.Command(name = "GetInformationFromDatabase",
+                     description = "Gets information from Database into Log file")
 class GetInformationFromDatabase implements Runnable {
 
     /**
@@ -313,7 +320,8 @@ class GetInformationFromDatabase implements Runnable {
 /**
  * Gets specific information from Snowflake into Log file
  */
-@CommandLine.Command(name = "GetSpecificInformationFromSnowflake", description = "Gets specific information from Snowflake into Log file")
+@CommandLine.Command(name = "GetSpecificInformationFromSnowflake",
+                     description = "Gets specific information from Snowflake into Log file")
 class GetSpecificInformationFromSnowflake implements Runnable {
 
     /**
@@ -379,7 +387,8 @@ class GetSpecificInformationFromSnowflake implements Runnable {
 /**
  * Captures sub-folder from a Given Folder into Log file
  */
-@CommandLine.Command(name = "GetSubFoldersFromFolder", description = "Captures sub-folder from a Given Folder into Log file")
+@CommandLine.Command(name = "GetSubFoldersFromFolder",
+                     description = "Captures sub-folders from a Given Folder into Log file")
 class GetSubFoldersFromFolder implements Runnable {
 
     @Override
@@ -399,7 +408,8 @@ class GetSubFoldersFromFolder implements Runnable {
 /**
  * Captures execution environment details into Log file
  */
-@CommandLine.Command(name = "LogEnvironmentDetails", description = "Captures execution environment details into Log file")
+@CommandLine.Command(name = "LogEnvironmentDetails",
+                     description = "Captures execution environment details into Log file")
 class LogEnvironmentDetails implements Runnable {
 
     @Override
