@@ -2,7 +2,6 @@ package database;
 
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
-import structure.StringManipulationClass;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -62,8 +61,8 @@ public final class DatabaseResultSettingClass {
                 LogExposureClass.LOGGER.info(strFeedbackN);
                 break;
             default:
-                final String strFeedbackD = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
-                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                final String strFeedbackD = String.format(LogExposureClass.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
+                        .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedbackD);
                 throw new UnsupportedOperationException(strFeedbackD);
         }
@@ -248,7 +247,7 @@ public final class DatabaseResultSettingClass {
                     listReturn = getResultSetColumnValuesWithNullCheck(rsStandard);
                     break;
                 default:
-                    final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                    final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                     LogExposureClass.LOGGER.error(strFeedback);
                     break;
             }

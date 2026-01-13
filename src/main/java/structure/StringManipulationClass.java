@@ -11,14 +11,6 @@ import log.LogExposureClass;
  */
 public final class StringManipulationClass {
     /**
-     * standard Unknown
-     */
-    public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
-    /**
-     * standard Unknown feature
-     */
-    public static final String STR_I18N_UNKN_FTS = JavaJavaLocalizationClass.getMessage("i18nUnknFtrs");
-    /**
      * Regular Expression for Prompt Parameters within SQL Query
      */
     public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z\\s_\\-]{2,50}\\}";
@@ -96,8 +88,7 @@ public final class StringManipulationClass {
             case 2 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString());
             case 3 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString(), strReplacement[2].toString());
             default -> {
-                final String strFeedback = String.format(STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(STR_I18N_UNKN)));
+                final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }

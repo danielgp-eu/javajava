@@ -14,6 +14,14 @@ public final class LogExposureClass {
      * Logger
      */
     public static final Logger LOGGER = LogManager.getLogger("io.github.danielgp-eu.javajava");
+    /**
+     * standard Unknown feature
+     */
+    public static final String STR_I18N_UNKN_FTS = JavaJavaLocalizationClass.getMessage("i18nUnknFtrs");
+    /**
+     * standard Unknown
+     */
+    public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
 
     /**
      * Execution Interrupted details captured to Error log

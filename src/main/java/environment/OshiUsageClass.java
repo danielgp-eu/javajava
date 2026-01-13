@@ -1,7 +1,12 @@
 package environment;
 
 import oshi.SystemInfoFFM;
-import oshi.hardware.*;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.Display;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.GraphicsCard;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.NetworkIF;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OperatingSystem;
 

@@ -2,7 +2,6 @@ package database;
 
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
-import structure.StringManipulationClass;
 import json.JsoningClass;
 
 import tools.jackson.databind.JsonNode;
@@ -194,8 +193,8 @@ SELECT
 FROM
     "INFORMATION_SCHEMA"."VIEWS";""";
             default -> {
-                final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+                final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
                 throw new UnsupportedOperationException(strFeedback);
             }

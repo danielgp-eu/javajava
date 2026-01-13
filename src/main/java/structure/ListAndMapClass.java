@@ -40,18 +40,7 @@ public final class ListAndMapClass {
                        word -> word,
                        Collectors.counting()
                 ));
-        // Sort by value, then key
-        return wordCounts.entrySet().stream()
-                .sorted(
-                        Comparator.comparing(Map.Entry<String, Long>::getValue).reversed()
-                                .thenComparing(Map.Entry::getKey)
-                )
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, _) -> e1, // merge function (not used here)
-                        LinkedHashMap::new // preserve sorted order
-                ));
+        return sortMapByValueReversedAndKey(wordCounts);
     }
 
     /**
@@ -86,6 +75,41 @@ public final class ListAndMapClass {
             }
         }
         return result;
+    }
+
+    /**
+     * Sort Map by Key
+     * @param origMap original Map
+     * @return Map of String and Object
+     */
+    public static Map<String, Object> sortMapByKey(final Map<String, Object> origMap) {
+        return origMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, 
+                        Map.Entry::getValue, 
+                        (oldValue, _) -> oldValue, 
+                        LinkedHashMap::new // preserve sorted order
+                ));
+    }
+
+    /**
+     * Sort Map by Value reversed then by Key
+     * @param origMap original Map
+     * @return Map of String and Long
+     */
+    private static Map<String, Long> sortMapByValueReversedAndKey(final Map<String, Long> origMap) {
+        return origMap.entrySet().stream()
+                .sorted(
+                        Comparator.comparing(Map.Entry<String, Long>::getValue).reversed()
+                                .thenComparing(Map.Entry::getKey)
+                )
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, _) -> e1, // merge function (not used here)
+                        LinkedHashMap::new // preserve sorted order
+                ));
     }
 
     // Private constructor to prevent instantiation

@@ -1,13 +1,12 @@
 package environment;
 
-import dependency.ProjectDependencyResolverClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
 /**
  * Capturing current environment details
  */
-public final class EnvironmentCapturingClass extends OshiUsageClass {
+public final class EnvironmentCapturingAssembleClass extends OshiUsageClass {
 
     /**
      * Capturing current Environment details
@@ -18,11 +17,15 @@ public final class EnvironmentCapturingClass extends OshiUsageClass {
         final StringBuilder strJsonString = new StringBuilder(100);
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationCapturing");
         LogExposureClass.LOGGER.info(strFeedback);
-        strJsonString.append(getHardwareDetails())
+        return strJsonString.append('{')
+                .append(getHardwareDetails())
+                .append(',')
                 .append(getSoftwareDetails())
+                .append(',')
                 .append(getApplicationDetails())
-                .append(getEnvironmentDetails());
-        return String.format("{%s}", strJsonString);
+                .append(',')
+                .append(getEnvironmentDetails())
+                .append('}').toString();
     }
 
     /**
@@ -30,7 +33,7 @@ public final class EnvironmentCapturingClass extends OshiUsageClass {
      * @return String
      */
     private static String getApplicationDetails() {
-        final String strDetails = String.format(",\"Application\":{\"Dependencies\":%s}", ProjectDependencyResolverClass.getDependency());
+        final String strDetails = String.format("\"Application\":{\"Dependencies\":%s}", ProjectDependencyResolverClass.getDependency());
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);
         return strDetails;
@@ -41,7 +44,7 @@ public final class EnvironmentCapturingClass extends OshiUsageClass {
      * @return String
      */
     private static String getEnvironmentDetails() {
-        final String strDetails = String.format(",\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME"));
+        final String strDetails = String.format("\"Environment\":{\"Computer\":\"%s\",\"User\":\"%s\"}", System.getenv("COMPUTERNAME"), System.getenv("USERNAME"));
         final String strFeedbackEnv = JavaJavaLocalizationClass.getMessage("i18nAppInformationEnvironmentCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
         return strDetails;
@@ -63,7 +66,7 @@ public final class EnvironmentCapturingClass extends OshiUsageClass {
      * @return String
      */
     private static String getSoftwareDetails() {
-        final String strDetails = String.format(",\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", EnvironmentSoftwareClass.getDetailsAboutOperatingSystem(), EnvironmentSoftwareClass.getDetailsAboutSoftwarePlatformJava(), EnvironmentSoftwareClass.getDetailsAboutSoftwareUser());
+        final String strDetails = String.format("\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", EnvironmentSoftwareClass.getDetailsAboutOperatingSystem(), EnvironmentSoftwareClass.getDetailsAboutSoftwarePlatformJava(), EnvironmentSoftwareClass.getDetailsAboutSoftwareUser());
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationSoftwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);
         return strDetails;
@@ -72,7 +75,7 @@ public final class EnvironmentCapturingClass extends OshiUsageClass {
     /**
      * Constructor
      */
-    private EnvironmentCapturingClass() {
+    private EnvironmentCapturingAssembleClass() {
         super();
     }
 }

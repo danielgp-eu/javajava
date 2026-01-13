@@ -2,6 +2,7 @@ package json;
 
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
+import structure.ListAndMapClass;
 import structure.StringManipulationClass;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -170,7 +171,8 @@ public final class JsoningClass {
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
         final StringBuilder strJsonSubString = new StringBuilder(100);
-        arrayAttrib.forEach((strKey, objValue) -> {
+        final Map<String, Object> sortedMap = ListAndMapClass.sortMapByKey(arrayAttrib);
+        sortedMap.forEach((strKey, objValue) -> {
             if (!strJsonSubString.isEmpty()) {
                 strJsonSubString.append(',');
             }

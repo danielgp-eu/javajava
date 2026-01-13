@@ -9,8 +9,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
-import org.apache.logging.log4j.Level;
-
 /**
  * Internationalization
  */
@@ -137,23 +135,19 @@ public final class JavaJavaLocalizationClass {
      * @param strLocale localization to use
      */
     public static void setLocaleByString(final String strLocale) {
-        String strFeedback = "~".repeat(60);
-        final String strFeedback1 = strFeedback;
+        final String strLineSep = "~".repeat(60);
+        final StringBuilder strBuilder = new StringBuilder(strLineSep);
         final Locale lclRequested = Locale.forLanguageTag(strLocale);
         if (isSupported(lclRequested)) {
             Locale.setDefault(lclRequested);
-            strFeedback = String.format("Requested localization to %s is supported and has been successfully set!", strLocale);
+            strBuilder.append(String.format("Requested localization to %s is supported and has been successfully set!", strLocale));
         } else {
             Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
-            strFeedback = String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE);
+            strBuilder.append(String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE));
         }
-        if (LogExposureClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            LogExposureClass.LOGGER.debug(strFeedback1);
-        }
-        final String strMsg = strFeedback;
-        if (LogExposureClass.getLogLevel().isLessSpecificThan(Level.INFO)) {
-            LogExposureClass.LOGGER.debug(strMsg);
-        }
+        strBuilder.append(strLineSep);
+        final String strFeedback = strBuilder.toString();
+        LogExposureClass.LOGGER.debug(strFeedback);
     }
 
     /**

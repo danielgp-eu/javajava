@@ -4,7 +4,6 @@ import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
 import shell.ShellingClass;
-import structure.StringManipulationClass;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -224,8 +223,8 @@ FROM
     public static String getSnowflakePreDefinedMetadataQuery(final String strWhichQuery) {
         final String strQueryToUse = STD_QUERY.get(strWhichQuery);
         if (strQueryToUse.isEmpty()) {
-            final String strFeedback = String.format(StringManipulationClass.STR_I18N_UNKN_FTS, strWhichQuery, StackWalker.getInstance()
-                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(StringManipulationClass.STR_I18N_UNKN)));
+            final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhichQuery, StackWalker.getInstance()
+                    .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
             LogExposureClass.LOGGER.error(strFeedback);
             throw new UnsupportedOperationException(strFeedback);
         }

@@ -1,4 +1,4 @@
-package dependency;
+package environment;
 
 import log.LogExposureClass;
 
@@ -19,7 +19,6 @@ import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
 
 import json.JsoningClass;
-import project.ProjectClass;
 
 import java.util.Arrays;
 import java.util.List;
