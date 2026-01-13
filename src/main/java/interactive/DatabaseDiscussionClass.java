@@ -25,10 +25,6 @@ import picocli.CommandLine;
  * Example class
  */
 public final class DatabaseDiscussionClass implements Runnable {
-    /**
-     * Database MySQL
-     */
-    public static final String STR_ONE_OR_MANY = "1..*";
 
     /**
      * Constructor empty

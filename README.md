@@ -21,6 +21,9 @@ Various Java classes to be re-used
 | Database - Snowflake | [snowflakedb/snowflake-jdbc](https://github.com/snowflakedb/snowflake-jdbc) | https://mvnrepository.com/artifact/net.snowflake/snowflake-jdbc                |
 
 
+## IDE
+
+
 ### Eclipse
 
 * [Java Dependency Viewer](https://marketplace.eclipse.org/content/java-dependency-viewer)
@@ -32,10 +35,17 @@ Various Java classes to be re-used
 * [Eclipse PMD](https://marketplace.eclipse.org/free-tagging/pmd)
 
 
-### Java
+## Java
 
 * [JDK Releases](https://www.java.com/releases/matrix/)
-* [Java SE - Naming Conventions](https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html)
+
+* [JDK Comparison](https://jdkcomparison.com/?versions=25)
+
+* [OpenJDK by Adoptium aka Eclipse Temurin](https://adoptium.net/temurin/releases?version=25&mode=filter&os=windows&arch=x64)
+* [OpenJDK by Azul](https://www.azul.com/downloads/?os=windows&package=jdk#zulu)
+* [OpenJDK by Java.Net](https://jdk.java.net/)
+* [OpenJDK by Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+* [Which JDK Image Should You Use: OpenJDK, Zulu, Eclipse Temurin?](https://devopskit.tech/en/posts/jdk-image-guide/)
 
 
 ### Java Coding
@@ -51,13 +61,20 @@ Various Java classes to be re-used
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
 * [Java Best Practices That Every Java Developer Should Know in 2024](https://medium.com/@learnwithakshay/java-best-practices-that-every-java-developer-should-know-in-2024-ea84bc0b0fec)
 * [Java Maven OWASP Dependency-Check Example](https://www.javacodegeeks.com/java-maven-owasp-dependency-check-example.html)
-* [Java Naming Conventions - Best Practices](https://www.javaguides.net/2018/08/java-standard-naming-conventions.html)
 * [Java Secret: Loading and unloading static fields](https://www.javacodegeeks.com/2011/10/java-secret-loading-and-unloading.html)
 * [Java Secret: Using an enum to build a State machine](https://www.javacodegeeks.com/2011/07/java-secret-using-enum-to-build-state.html)
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
+* [Laws of Software Design](https://www.javacodegeeks.com/2011/01/laws-of-software-design.html)
 * [Secure Coding Guidelines for Java SE](https://www.oracle.com/java/technologies/javase/seccodeguide.html)
 * [Switch as an expression in Java with Lambda-like syntax](https://www.javacodegeeks.com/2020/05/switch-as-an-expression-in-java-with-lambda-like-syntax.html)
+* [Things Every Programmer Should Know](https://www.javacodegeeks.com/2010/12/things-every-programmer-should-know.html)
 * [Top 10 Java Programming Best Practices](https://www.geeksforgeeks.org/java-best-practices/)
+
+
+## Java Conventions
+
+* [Java SE - Naming Conventions](https://www.oracle.com/java/technologies/javase/codeconventions-namingconventions.html)
+* [Java Naming Conventions - Best Practices](https://www.javaguides.net/2018/08/java-standard-naming-conventions.html)
 
 
 ### Java Command Line (CLI)
@@ -113,18 +130,12 @@ Various Java classes to be re-used
 * [Mocking JDBC for Unit Testing](https://www.baeldung.com/mocking-jdbc-unit-testing)
 
 
-### Programing
-
-* [Laws of Software Design](https://www.javacodegeeks.com/2011/01/laws-of-software-design.html)
-* [Things Every Programmer Should Know](https://www.javacodegeeks.com/2010/12/things-every-programmer-should-know.html)
-
-
-### Project Management
+## Project Management
 
 * [Apache Maven Project](https://maven.apache.org/)
 
 
-### Snowflake with Java
+## Snowflake with Java
 
 * [Connect to Snowflake with JDBC](https://www.snowflake.com/en/blog/ability-to-connect-to-snowflake-with-jdbc/)
 * [Guide to the JDBC ResultSet Interface](https://www.baeldung.com/jdbc-resultset)

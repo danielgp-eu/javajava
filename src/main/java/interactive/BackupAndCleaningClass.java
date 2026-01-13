@@ -66,7 +66,7 @@ class ArchiveFolders implements Runnable {
     @CommandLine.Option(
             names = {"-fldNm", "--folderName"},
             description = "Folder Name to be inspected",
-            arity = DatabaseDiscussionClass.STR_ONE_OR_MANY,
+            arity = "1..*",
             required = true)
     private String[] strFolderNames;
 
@@ -144,7 +144,7 @@ class CleanOlderFilesFromFolder implements Runnable {
     @CommandLine.Option(
             names = {"-fldNm", "--folderName"},
             description = "Folder Name to be inspected",
-            arity = DatabaseDiscussionClass.STR_ONE_OR_MANY,
+            arity = "1..*",
             required = true)
     private String[] strFolderNames;
     /**
