@@ -26,7 +26,7 @@
             <roles>
                 <role>Architect</role>
                 <role>Project Manager</role>
-                <role>Chief Developer</role>
+                <role>Developer</role>
             </roles>
             <timezone>+2</timezone>
             <organization>DanielGP-EU</organization>
@@ -35,7 +35,7 @@
     </developers>
     <build>
         <plugins>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-compiler-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
             <plugin>
               <groupId>io.takari.maven.plugins</groupId>
               <artifactId>takari-lifecycle-plugin</artifactId>
@@ -113,7 +113,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>

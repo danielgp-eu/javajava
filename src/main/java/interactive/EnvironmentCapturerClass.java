@@ -23,6 +23,7 @@ public final class EnvironmentCapturerClass {
      */
     /* default */ static void main(final String... args) {
         CommonInteractiveClass.setAutoLocale(true);
+        CommonInteractiveClass.initializeLocalization();
         CommonInteractiveClass.setStartDateTime();
         CommonInteractiveClass.startMeUp();
         // execute appropriate Command with 

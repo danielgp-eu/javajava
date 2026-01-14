@@ -135,8 +135,8 @@ public final class JavaJavaLocalizationClass {
      * @param strLocale localization to use
      */
     public static void setLocaleByString(final String strLocale) {
-        final String strLineSep = "~".repeat(60);
-        final StringBuilder strBuilder = new StringBuilder(strLineSep);
+        final String strLineSep = "~".repeat(30);
+        final StringBuilder strBuilder = new StringBuilder();
         final Locale lclRequested = Locale.forLanguageTag(strLocale);
         if (isSupported(lclRequested)) {
             Locale.setDefault(lclRequested);

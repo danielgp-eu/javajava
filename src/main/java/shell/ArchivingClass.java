@@ -5,8 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
 
-import org.apache.maven.shared.utils.StringUtils;
-
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import structure.NumberClass;
@@ -46,7 +44,13 @@ public final class ArchivingClass {
      * @return String
      */
     private static String appendSeparatorSuffixToFolder(final String inFolder) {
-        return StringUtils.stripEnd(inFolder, File.separator) + File.separator;
+        final StringBuilder sbFolder = new StringBuilder();
+        final int intLength = inFolder.length();
+        if (inFolder.substring(intLength - 1, intLength).equalsIgnoreCase(File.separator)) {
+            sbFolder.append(inFolder.substring(0, intLength - 1));
+        }
+        sbFolder.append(File.separator);
+        return sbFolder.toString();
     }
 
     /**
