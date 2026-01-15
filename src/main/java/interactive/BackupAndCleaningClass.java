@@ -6,6 +6,7 @@ import file.FileHandlingClass;
 import file.FileLocatingClass;
 import picocli.CommandLine;
 import shell.ArchivingClass;
+import shell.ShellingClass;
 
 /**
  * Main Command Line
@@ -14,6 +15,7 @@ import shell.ArchivingClass;
     name = "top",
     subcommands = {
         ArchiveFolders.class,
+        CaptureWindowsApplicationsInstalledIntoCsv.class,
         CleanOlderFilesFromFolder.class
     }
 )
@@ -33,6 +35,7 @@ public final class BackupAndCleaningClass {
      */
     /* default */ static void main(final String... args) {
         CommonInteractiveClass.setAutoLocale(true);
+        CommonInteractiveClass.initializeLocalization();
         CommonInteractiveClass.setStartDateTime();
         CommonInteractiveClass.startMeUp();
         // execute appropriate Command with 
@@ -127,6 +130,26 @@ class ArchiveFolders implements Runnable {
      * Constructor
      */
     protected ArchiveFolders() {
+        super();
+    }
+}
+
+/**
+ * clean files older than a given number of days
+ */
+@CommandLine.Command(name = "CaptureWindowsApplicationsInstalledIntoCsv",
+        description = "Run the experimental new feature")
+class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
+
+    @Override
+    public void run() {
+        ShellingClass.captureWindowsApplicationsIntoCsvFile();
+    }
+
+    /**
+     * Constructor
+     */
+    protected CaptureWindowsApplicationsInstalledIntoCsv() {
         super();
     }
 }

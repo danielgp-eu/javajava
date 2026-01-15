@@ -65,6 +65,7 @@ public final class ArchivingClass {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchDir, "-mx9", "-ms4g", "-mmt=on", "-p" + strArchivePwd);
             LogExposureClass.exposeProcessBuilder(builder.command().toString().replaceFirst("-p" + strArchivePwd, "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**"));
         }
+        ShellingClass.setProcessCaptureNeed(false);
         ShellingClass.executeShell(builder, " ");
     }
 
