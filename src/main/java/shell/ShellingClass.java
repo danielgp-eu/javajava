@@ -54,7 +54,7 @@ public final class ShellingClass {
     public static void captureWindowsApplicationsIntoCsvFile() {
         final String crtOperatingSys = System.getProperty("os.name");
         if (crtOperatingSys.startsWith(STR_OS_WIN)) {
-            final String[] arrayCommand = {"powershell.exe", "-Command", "\"Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object Publisher, DisplayName, DisplayVersion, EngineVersion, InstallDate, EstimatedSize, URLInfoAbout | Export-Csv -Encoding utf8 -Path WindowsApps.csv -UseCulture -NoTypeInformation -Force\""};
+            final String[] arrayCommand = {"powershell.exe", "-Command", "\"Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object Publisher, DisplayName, DisplayVersion, EngineVersion, InstallDate, EstimatedSize, URLInfoAbout | Export-Csv -Encoding utf8 -Path ${user.home}\\WindowsApps.csv -UseCulture -NoTypeInformation -Force\""};
             final ProcessBuilder builder = new ProcessBuilder(arrayCommand);
             setProcessCaptureNeed(false);
             executeShell(builder, System.lineSeparator());
