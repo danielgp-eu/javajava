@@ -6,7 +6,7 @@ import file.FileHandlingClass;
 import file.FileLocatingClass;
 import picocli.CommandLine;
 import shell.ArchivingClass;
-import shell.ShellingClass;
+import shell.PowerShellExecutionClass;
 
 /**
  * Main Command Line
@@ -138,12 +138,12 @@ class ArchiveFolders implements Runnable {
  * clean files older than a given number of days
  */
 @CommandLine.Command(name = "CaptureWindowsApplicationsInstalledIntoCsv",
-        description = "Run the experimental new feature")
+                     description = "Run the experimental new feature")
 class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
 
     @Override
     public void run() {
-        ShellingClass.captureWindowsApplicationsIntoCsvFile();
+        PowerShellExecutionClass.captureWindowsApplicationsIntoCsvFile();
     }
 
     /**

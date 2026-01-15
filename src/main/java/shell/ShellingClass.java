@@ -22,10 +22,6 @@ public final class ShellingClass {
      */
     private static boolean needProcCapture;
     /**
-     * Windows OS string
-     */
-    private static final String STR_OS_WIN = "Windows";
-    /**
      * Timestamp started
      */
     private static LocalDateTime startTimestamp;
@@ -54,19 +50,6 @@ public final class ShellingClass {
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
         builder.directory(FileHandlingClass.getCurrentUserFolder());
         return builder;
-    }
-
-    /**
-     * Capture Windows installed application into a CSV file 
-     */
-    public static void captureWindowsApplicationsIntoCsvFile() {
-        final String crtOperatingSys = System.getProperty("os.name");
-        if (crtOperatingSys.startsWith(STR_OS_WIN)) {
-            final String[] arrayCommand = {"powershell.exe", "-Command", "\"Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Select-Object Publisher, DisplayName, DisplayVersion, EngineVersion, InstallDate, EstimatedSize, URLInfoAbout | Export-Csv -Encoding utf8 -Path ${user.home}\\WindowsApps.csv -UseCulture -NoTypeInformation -Force\""};
-            final ProcessBuilder builder = new ProcessBuilder(arrayCommand);
-            setProcessCaptureNeed(false);
-            executeShell(builder, System.lineSeparator());
-        }
     }
 
     /**
@@ -217,4 +200,5 @@ public final class ShellingClass {
     private ShellingClass() {
         // intentionally left blank
     }
+
 }
