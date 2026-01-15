@@ -26,6 +26,14 @@ public final class ShellingClass {
      */
     private static String STR_OS_WIN = "Windows";
     /**
+     * Timestamp started
+     */
+    private static LocalDateTime startTimestamp;
+    /**
+     * Process error
+     */
+    private static String strProcErr;
+    /**
      * Process standard output
      */
     private static String strProcOut;
@@ -67,11 +75,9 @@ public final class ShellingClass {
      * @param strOutLineSep line separator for the output
      */
     public static void executeShell(final ProcessBuilder builder, final String strOutLineSep) {
-        final LocalDateTime startTimeStamp = LocalDateTime.now();
+        startTimestamp = LocalDateTime.now();
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
-        String strReturn = "";
         try {
-            // builder.redirectErrorStream(true);
             final Process process = builder.start();
             // Read stdout and stderr asynchronously with CompletableFuture
             final CompletableFuture<String> stdoutFuture = CompletableFuture.supplyAsync(() ->
@@ -82,23 +88,7 @@ public final class ShellingClass {
             );
             final int exitCode = process.waitFor();
             CompletableFuture.allOf(stdoutFuture, stderrFuture).join();
-            final String strCaptureMessage;
-            if (needProcCapture) {
-                try {
-                    strProcOut = stdoutFuture.get();
-                } catch (ExecutionException e) {
-                    final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(e.getStackTrace()));
-                    LogExposureClass.LOGGER.error(strFeedback);
-                    throw (IllegalStateException)new IllegalStateException().initCause(e);
-                }
-                strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
-            } else {
-                strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
-            }
-            final String strFeedback = TimingClass.logDuration(startTimeStamp,
-                    String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage),
-                            exitCode));
-            LogExposureClass.LOGGER.debug(strFeedback);
+            setProcessResults(stdoutFuture, stderrFuture, exitCode);
         } catch (IOException ex) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
@@ -157,8 +147,44 @@ public final class ShellingClass {
      * Getter for Process Output
      * @return String Process Output content
      */
+    public static String getProcessError() {
+        return strProcErr;
+    }
+
+    /**
+     * Getter for Process Output
+     * @return String Process Output content
+     */
     public static String getProcessOutput() {
         return strProcOut;
+    }
+
+    /**
+     * 
+     * @param stdoutFuture
+     * @param stderrFuture
+     * @param exitCode
+     */
+    private static void setProcessResults(final CompletableFuture<String> stdoutFuture,
+            final CompletableFuture<String> stderrFuture,
+            final int exitCode) {
+        final String strCaptureMessage;
+        if (needProcCapture) {
+            try {
+                strProcOut = stdoutFuture.get();
+                strProcErr = stderrFuture.get();
+            } catch (InterruptedException | ExecutionException e) {
+                final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+                throw (IllegalStateException)new IllegalStateException().initCause(e);
+            }
+            strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
+        } else {
+            strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
+        }
+        final String strFeedback = TimingClass.logDuration(startTimestamp,
+                String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage), exitCode));
+        LogExposureClass.LOGGER.debug(strFeedback);
     }
 
     /**

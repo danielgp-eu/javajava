@@ -69,7 +69,8 @@ public final class NumberClass {
      */
     public static BigDecimal convertStringIntoBigDecimal(final String strNumber) {
         BigDecimal noToReturn = null;
-        if (StringManipulationClass.isStringActuallyNumeric(strNumber)) {
+        final boolean isNumeric = StringManipulationClass.isStringActuallyNumeric(strNumber);
+        if (isNumeric) {
             noToReturn = new BigDecimal(strNumber).stripTrailingZeros();
         }
         return noToReturn;

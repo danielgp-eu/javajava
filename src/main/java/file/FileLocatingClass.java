@@ -88,6 +88,8 @@ public final class FileLocatingClass {
                         try {
                             return new FolderStats(1, 0, Files.size(path));
                         } catch (IOException e) {
+                            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nEmptyFolder"), strFolderName, Arrays.toString(e.getStackTrace()));
+                            LogExposureClass.LOGGER.debug(strFeedback);
                             return FolderStats.empty();
                         }
                     }

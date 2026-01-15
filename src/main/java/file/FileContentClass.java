@@ -89,7 +89,7 @@ public final class FileContentClass {
                     .map(line -> line.split("\",\"")) // split by comma
                     .collect(Collectors.groupingBy(
                             cols -> cols[intColToGrpBy], // key = Category
-                            Collectors.mapping(cols -> cols[intColToEval].replaceAll("\"", ""), Collectors.toList()) // values
+                            Collectors.mapping(cols -> cols[intColToEval].replace("\"", ""), Collectors.toList()) // values
                     ));
         } catch (IOException ex) {
             final String strFeedback = getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));

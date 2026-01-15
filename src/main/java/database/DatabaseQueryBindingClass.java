@@ -104,7 +104,7 @@ public final class DatabaseQueryBindingClass {
      * @param strQuery relevant query
      */
     private static void setSqlExceptionError(final SQLException exptObj, final List<Properties> objValues, final String strQuery) {
-        final String strFeedback = String.format("%s with Values $s for Query %s", exptObj.getLocalizedMessage(), objValues.getFirst().toString(), strQuery);
+        final String strFeedback = String.format("%s with Values %s for Query %s", exptObj.getLocalizedMessage(), objValues.getFirst().toString(), strQuery);
         LogExposureClass.LOGGER.error(strFeedback);
     }
 

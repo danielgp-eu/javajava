@@ -274,7 +274,7 @@ FROM
             final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), STR_DB_SNOWFLAKE, strDriverName);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (ClassNotFoundException ex) {
-            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), STR_DB_SNOWFLAKE, strDriverName);
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), STR_DB_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
     }
