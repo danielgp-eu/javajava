@@ -24,19 +24,6 @@ public final class LogExposureClass {
     public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
 
     /**
-     * Execution Interrupted details captured to Error log
-     * @param strTraceDetails details
-     */
-    public static void exposeExecutionInterrupedLoggedToError(final String strTraceDetails) {
-        if (getLogLevel().isLessSpecificThan(Level.ERROR)) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
-            LOGGER.warn(strFeedback);
-            /* Clean up whatever needs to be handled before interrupting  */
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    /**
      * Log Process Builder command conditionally
      * @param strCommand command to execute
      */

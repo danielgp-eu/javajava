@@ -76,7 +76,10 @@ public final class ShellingClass {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         } catch(InterruptedException ei) {
-            LogExposureClass.exposeExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+            LogExposureClass.LOGGER.warn(strFeedback);
+            /* Clean up whatever needs to be handled before interrupting  */
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -155,7 +158,10 @@ public final class ShellingClass {
                 strProcOut = stdoutFuture.get();
                 strProcErr = stderrFuture.get();
             } catch (InterruptedException ei) {
-                LogExposureClass.exposeExecutionInterrupedLoggedToError(Arrays.toString(ei.getStackTrace()));
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+                LogExposureClass.LOGGER.warn(strFeedback);
+                /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
             } catch (ExecutionException ee) {
                 final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(ee.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
