@@ -28,9 +28,11 @@ public final class LogExposureClass {
      * @param strTraceDetails details
      */
     public static void exposeExecutionInterrupedLoggedToError(final String strTraceDetails) {
-        if (getLogLevel().isLessSpecificThan(Level.FATAL)) {
+        if (getLogLevel().isLessSpecificThan(Level.ERROR)) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), strTraceDetails);
-            LOGGER.error(strFeedback);
+            LOGGER.warn(strFeedback);
+            /* Clean up whatever needs to be handled before interrupting  */
+            Thread.currentThread().interrupt();
         }
     }
 

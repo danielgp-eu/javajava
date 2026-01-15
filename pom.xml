@@ -121,6 +121,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- https://mvnrepository.com/artifact/org.cyclonedx/cyclonedx-maven-plugin -->
+            <plugin>
+                <groupId>org.cyclonedx</groupId>
+                <artifactId>cyclonedx-maven-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>makeAggregateBom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -136,7 +150,7 @@
                         <configuration>
                             <target>
                                 <echo message="Running Ant Task to create Checksum files (MD5, SHA-1 and SHA-256 in scope)" />
-                                <property name="local_project_repository" value="${settings.localRepository}/io/github/compliance/central/${project.artifactId}/${project.version}"/>
+                                <property name="local_project_repository" value="${settings.localRepository}/io/github/danielgp-eu/${project.artifactId}/${project.version}"/>
                                 <!-- MD5 checksums -->
                                 <!-- Just project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="MD5" property="jar.md5.checksum"/>
