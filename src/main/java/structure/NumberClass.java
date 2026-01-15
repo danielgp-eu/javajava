@@ -77,6 +77,20 @@ public final class NumberClass {
     }
 
     /**
+     * Convert String to Integer
+     * @param strNumber string to evaluate
+     * @return integer
+     */
+    public static int convertStringIntoInteger(final String strNumber) {
+        int noToReturn = 0;
+        final boolean isNumeric = StringManipulationClass.isStringActuallyNumeric(strNumber);
+        if (isNumeric) {
+            noToReturn = Integer.parseInt(strNumber);
+        }
+        return noToReturn;
+    }
+
+    /**
      * Constructor
      */
     private NumberClass() {

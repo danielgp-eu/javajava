@@ -2,6 +2,7 @@ package database;
 
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
+import structure.NumberClass;
 import json.JsoningClass;
 
 import tools.jackson.databind.JsonNode;
@@ -60,7 +61,7 @@ public final class DatabaseSpecificMySql {
             LogExposureClass.LOGGER.error(strFeedbackErr);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
-            final String strPort = propInstance.get("Port").toString();
+            final int strPort = NumberClass.convertStringIntoInteger(propInstance.get("Port").toString());
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
