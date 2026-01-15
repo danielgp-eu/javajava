@@ -3,7 +3,9 @@ package shell;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
+import file.ProjectClass;
 import log.LogExposureClass;
 
 /**
@@ -14,18 +16,6 @@ public final class PowerShellExecutionClass {
      * Power Shell file
      */
     private static String psPath;
-    /**
-     * Windows Sys32 path
-     */
-    private static final String STR_OS_PATH = "C:\\Windows\\System32";
-    /**
-     * Windows OS string
-     */
-    private static final String STR_OS_WIN = "Windows";
-    /**
-     * Power Shell path
-     */
-    private static final String STR_PS_PATH = "\\WindowsPowerShell\\v1.0";
 
     private static String[] buildWindowsApplicationCommandSafely() {
         final String userHome = System.getProperty("user.home");
@@ -46,13 +36,15 @@ public final class PowerShellExecutionClass {
      */
     public static void captureWindowsApplicationsIntoCsvFile() {
         final String crtOperatingSys = System.getProperty("os.name");
-        if (crtOperatingSys.startsWith(STR_OS_WIN)) {
+        if (crtOperatingSys.startsWith("Windows")) {
             try {
-                setPowerShellFile();
+                final String[] varsToPick = {"osWindowsSystem32Path", "powerShellBinary"};
+                final Properties svProperties = ProjectClass.getVariableFromProjectProperties(varsToPick);
+                setPowerShellFile(svProperties.get("powerShellBinary").toString());
                 validatePathEnvironmentVariable();
                 final String[] arrayCommand = buildWindowsApplicationCommandSafely();
                 final ProcessBuilder builder = new ProcessBuilder(arrayCommand);
-                builder.directory(new File(STR_OS_PATH));
+                builder.directory(new File(svProperties.get("osWindowsSystem32Path").toString()));
                 ShellingClass.setProcessCaptureNeed(false);
                 ShellingClass.executeShell(builder, System.lineSeparator());
             } catch (SecurityException se) {
@@ -64,15 +56,16 @@ public final class PowerShellExecutionClass {
 
     /**
      * Validate that the executable exists and is not writable by non-admin users
+     * @param psBinary Power Shell binary
      */
-    private static void setPowerShellFile() {
-        final String psPathFromPieces = STR_OS_PATH + STR_PS_PATH + "powershell.exe";
-        LogExposureClass.LOGGER.debug(psPathFromPieces);
-        final File psFileLocal = new File(psPathFromPieces);
+    private static void setPowerShellFile(final String psBinary) {
+        final File psFileLocal = new File(psBinary);
         if (psFileLocal.exists() || psFileLocal.canExecute()) {
-            psPath = psPathFromPieces;
+            psPath = psBinary;
         } else {
-            throw new SecurityException("PowerShell executable not found or not executable: " + psPath);
+            final String strFeedback = String.format("Security violation: PowerShell executable not found or not executable: %s...", psBinary);
+            LogExposureClass.LOGGER.error(strFeedback);
+            throw new SecurityException(strFeedback);
         }
     }
 
@@ -87,7 +80,9 @@ public final class PowerShellExecutionClass {
             arrayPaths.forEach(crtPath -> {
                 final File pathDir = new File(crtPath);
                 if (pathDir.exists() && pathDir.canWrite()) {
-                    throw new SecurityException("Writable directory detected in PATH: " + crtPath);
+                    final String strFeedback = String.format("Security violation: Writable directory detected in PATH: %s...", crtPath);
+                    LogExposureClass.LOGGER.error(strFeedback);
+                    throw new SecurityException(strFeedback);
                 }
             });
         }

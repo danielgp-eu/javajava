@@ -3,7 +3,9 @@ package environment;
 import log.LogExposureClass;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -18,8 +20,15 @@ import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
 
+import file.ProjectClass;
 import json.JsoningClass;
+import localization.JavaJavaLocalizationClass;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +118,7 @@ public final class ProjectDependencyResolverClass {
         final DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         final LocalRepository localRepo = new LocalRepository("target/local-repo");
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-        final Model model = ProjectClass.getProjectObjectModelFileIntoModel();
+        final Model model = getProjectObjectModelFileIntoModel();
         final CollectRequest collectRequest = createCollectRequest(model);
         final DependencyNode root = resolveDependencies(system, session, collectRequest);
         final String strFeedback = getDependenciesIntoString(root);
@@ -144,6 +153,23 @@ public final class ProjectDependencyResolverClass {
     private static String getNodeVersion(final DependencyNode directNode) {
         final Artifact node = getNodeArtifact(directNode);
         return node.getVersion();
+    }
+
+    /**
+     * get POM into Model
+     * @return Model
+     */
+    public static Model getProjectObjectModelFileIntoModel() {
+        final String pomFile = ProjectClass.getCurrentProjectObjectModelFile();
+        final MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = null;
+        try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
+            model = reader.read(bReader);
+        } catch (IOException | XmlPullParserException ex) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
+        }
+        return model;
     }
 
     /**
