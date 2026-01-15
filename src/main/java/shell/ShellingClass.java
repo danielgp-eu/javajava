@@ -161,10 +161,10 @@ public final class ShellingClass {
     }
 
     /**
-     * 
-     * @param stdoutFuture
-     * @param stderrFuture
-     * @param exitCode
+     * Seter for Process output and error
+     * @param stdoutFuture Process output
+     * @param stderrFuture Process error
+     * @param exitCode process execution exit code
      */
     private static void setProcessResults(final CompletableFuture<String> stdoutFuture,
             final CompletableFuture<String> stderrFuture,

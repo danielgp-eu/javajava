@@ -286,7 +286,7 @@ FROM
      */
     public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-            Statement objStatement = DatabaseConnectivityClass.createSqlStatement("Snowflake", objConnection)) {
+            Statement objStatement = DatabaseConnectivityClass.createSqlStatement(STR_DB_SNOWFLAKE, objConnection)) {
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {
