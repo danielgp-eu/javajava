@@ -24,7 +24,7 @@ public final class ShellingClass {
     /**
      * Windows OS string
      */
-    private static String STR_OS_WIN = "Windows";
+    private static final String STR_OS_WIN = "Windows";
     /**
      * Timestamp started
      */
@@ -94,8 +94,9 @@ public final class ShellingClass {
             LogExposureClass.LOGGER.error(strFeedback);
         } catch(InterruptedException ei) {
             final String strFeedback = String.format("Interrupted exception tracing %s", Arrays.toString(ei.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-            throw (IllegalStateException)new IllegalStateException().initCause(ei);
+            LogExposureClass.LOGGER.warn(strFeedback);
+            /* Clean up whatever needs to be handled before interrupting  */
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -173,10 +174,15 @@ public final class ShellingClass {
             try {
                 strProcOut = stdoutFuture.get();
                 strProcErr = stderrFuture.get();
-            } catch (InterruptedException | ExecutionException e) {
-                final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(e.getStackTrace()));
+            } catch (InterruptedException ei) {
+                final String strFeedback = String.format("Interrupted exception tracing %s", Arrays.toString(ei.getStackTrace()));
+                LogExposureClass.LOGGER.warn(strFeedback);
+                /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException ee) {
+                final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(ee.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
-                throw (IllegalStateException)new IllegalStateException().initCause(e);
+                throw (IllegalStateException)new IllegalStateException().initCause(ee);
             }
             strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
         } else {

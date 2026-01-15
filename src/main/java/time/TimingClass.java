@@ -25,9 +25,25 @@ public final class TimingClass {
      */
     private static final Map<String, String> TIME_FORMATS;
     /**
+     * String for internal ETL
+     */
+    private static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
+    /**
      * String for Second
      */
     private static final String STR_SECOND = "Second";
+    /**
+     * String for internal ETL
+     */
+    private static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
+    /**
+     * String for internal ETL
+     */
+    private static final String STR_TWO = "TwoDigitNumber";
+    /**
+     * String for internal ETL
+     */
+    private static final String STR_TWO_NON_ZERO = "TwoDigitNumberOnlyIfGreaterThanZero";
     /**
      * 
      */
@@ -37,11 +53,11 @@ public final class TimingClass {
         // Initialize the concurrent map
         final Map<String, String> tempMap = new ConcurrentHashMap<>();
         tempMap.put("DotAndNineDigitNumber", ".%09d");
-        tempMap.put("DotAndThreeDigitNumber", ".%03d");
-        tempMap.put("SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero", " %02d %s");
-        tempMap.put("SemicolumnAndTwoDigitNumber", ":%02d");
-        tempMap.put("TwoDigitNumber", "%02d");
-        tempMap.put("TwoDigitNumberOnlyIfGreaterThanZero", "%02d");
+        tempMap.put(STR_DOT_THREE, ".%03d");
+        tempMap.put(STR_TM_FRM_SP, " %02d %s");
+        tempMap.put(STR_SLMN_TWO, ":%02d");
+        tempMap.put(STR_TWO, "%02d");
+        tempMap.put(STR_TWO_NON_ZERO, "%02d");
         // Make the map unmodifiable
         TIME_FORMATS = Collections.unmodifiableMap(tempMap);
     }
@@ -59,15 +75,15 @@ public final class TimingClass {
         String strFinalOne = null;
         switch (strRule) {
             case "HumanReadableTime":
-                final String strFinalRule = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+                final String strFinalRule = STR_TM_FRM_SP;
                 arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                 strFinalOne = "Nanosecond";
                 break;
             case "TimeClockClassic":
-                arrayStrings = new String[] {"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber"};
+                arrayStrings = new String[] {STR_TWO_NON_ZERO, STR_TWO, STR_SLMN_TWO};
                 break;
             case "TimeClock":
-                arrayStrings = new String[] {"TwoDigitNumberOnlyIfGreaterThanZero", "TwoDigitNumber", "SemicolumnAndTwoDigitNumber", "DotAndThreeDigitNumber"};
+                arrayStrings = new String[] {STR_TWO_NON_ZERO, STR_TWO, STR_SLMN_TWO, STR_DOT_THREE};
                 strFinalOne = "Millisecond";
                 break;
             default:
@@ -144,7 +160,7 @@ public final class TimingClass {
             case "Millisecond" -> duration.toMillisPart();
             case "Minute" -> duration.toMinutesPart();
             case "Nanosecond" -> duration.toNanosPart();
-            case "Second" -> duration.toSecondsPart();
+            case STR_SECOND -> duration.toSecondsPart();
             default -> {
                 final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
