@@ -17,7 +17,7 @@ public final class PowerShellExecutionClass {
     /**
      * Windows Sys32 path
      */
-    private static final String STR_OS_PATH = "C:\\Windows\\System32\\";
+    private static final String STR_OS_PATH = "C:\\Windows\\System32";
     /**
      * Windows OS string
      */
@@ -25,7 +25,7 @@ public final class PowerShellExecutionClass {
     /**
      * Power Shell path
      */
-    private static final String STR_PS_PATH = "WindowsPowerShell\\v1.0\\";
+    private static final String STR_PS_PATH = "\\WindowsPowerShell\\v1.0";
 
     private static String[] buildWindowsApplicationCommandSafely() {
         final String userHome = System.getProperty("user.home");
@@ -36,7 +36,7 @@ public final class PowerShellExecutionClass {
             userHome
         );
         final String[] arrayCommand = { psPath, "-Command", strCmd };
-        final String strFeedback = String.format("PowerShell command to be executed is: %s", arrayCommand.toString());
+        final String strFeedback = String.format("PowerShell command to be executed is: %s", Arrays.toString(arrayCommand));
         LogExposureClass.LOGGER.debug(strFeedback);
         return arrayCommand;
     }
