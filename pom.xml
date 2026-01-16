@@ -14,9 +14,10 @@
     <packaging>jar</packaging>
 
     <properties>
-      <goals-goal>single</goals-goal>
+        <goals-goal>single</goals-goal>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
     </properties>
 
     <licenses>
@@ -131,6 +132,29 @@
                         <phase>package</phase>
                         <goals>
                             <goal>makeAggregateBom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>12.2.0</version>
+                <configuration>
+                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
+                    <failBuildOnCVSS>7</failBuildOnCVSS>
+                    <formats>
+                        <format>HTML</format>
+                        <format>JSON</format>
+                    </formats>
+                    <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
