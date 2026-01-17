@@ -60,7 +60,6 @@ Various Java classes to be re-used
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
 * [Java Best Practices That Every Java Developer Should Know in 2024](https://medium.com/@learnwithakshay/java-best-practices-that-every-java-developer-should-know-in-2024-ea84bc0b0fec)
-* [Java Maven OWASP Dependency-Check Example](https://www.javacodegeeks.com/java-maven-owasp-dependency-check-example.html)
 * [Java Secret: Loading and unloading static fields](https://www.javacodegeeks.com/2011/10/java-secret-loading-and-unloading.html)
 * [Java Secret: Using an enum to build a State machine](https://www.javacodegeeks.com/2011/07/java-secret-using-enum-to-build-state.html)
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
@@ -106,6 +105,13 @@ Various Java classes to be re-used
 * [Log4j2 XML Configuration: Log4j2.xml Example](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/)
 
 
+### Java Security
+
+* [Check Component Vulnerabilities Using OWASP Dependency-Check](https://www.baeldung.com/java-maven-owasp-dependency-check#bd-overview)
+* [Integrating OWASP Dependency-Check into Maven Verify Goal](https://medium.com/@giannakopoulosj/integrating-owasp-dependency-check-into-maven-verify-goal-69219ed364ab)
+* [Java Maven OWASP Dependency-Check Example](https://www.javacodegeeks.com/java-maven-owasp-dependency-check-example.html)
+
+
 ### Java String Format
 
 * [Java String.format()](https://www.baeldung.com/string-format)
@@ -118,7 +124,6 @@ Various Java classes to be re-used
 
 * [Java LocalDateTime](https://howtodoinjava.com/java/date-time/java-localdatetime-class/)
 * [java.time.LocalDateTime Class in Java](https://www.geeksforgeeks.org/java-time-localdatetime-class-in-java/)
-
 
 ### Java Unit Testing
 

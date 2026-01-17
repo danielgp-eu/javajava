@@ -1,9 +1,11 @@
 package interactive;
 
+import java.util.Map;
 import java.util.Properties;
 
 import file.FileHandlingClass;
 import file.FileLocatingClass;
+import log.LogExposureClass;
 import picocli.CommandLine;
 import shell.ArchivingClass;
 import shell.PowerShellExecutionClass;
@@ -182,8 +184,13 @@ class CleanOlderFilesFromFolder implements Runnable {
 
     @Override
     public void run() {
+        FileHandlingClass.setCleanedFolderStatistics(true);
         for (final String strFolder : strFolderNames) {
+            FileHandlingClass.setOrResetCleanedFolderStatistics();
             FileHandlingClass.removeFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
+            final Map<String, Long> statsClndFldr = FileHandlingClass.getCleanedFolderStatistics();
+            final String strFeedback = String.format("Folder %s has been cleaned eliminating %s files and freeing %s bytes in terms of disk space...", strFolder, statsClndFldr.get("Files"), statsClndFldr.get("Size"));
+            LogExposureClass.LOGGER.info(strFeedback);
         }
     }
 

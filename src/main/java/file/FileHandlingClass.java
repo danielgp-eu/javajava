@@ -11,15 +11,39 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * File operation class
  */
 public final class FileHandlingClass {
     /**
+     * Cleaned Folder Statistics
+     */
+    private static boolean bolClnFldrStats;
+    /**
      * String constant
      */
     private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
+    /**
+     * Counter for removed files
+     */
+    private static long lngFilesClnd;
+    /**
+     * Size in bytes for removed files
+     */
+    private static long lngByteSizeClnd;
+
+    /**
+     * Getter for Cleaned Folder Statistics
+     */
+    public static Map<String, Long> getCleanedFolderStatistics() {
+        final Map<String, Long> statsClndFldr = new ConcurrentHashMap<>();
+        statsClndFldr.put("Files", lngFilesClnd);
+        statsClndFldr.put("Size", lngByteSizeClnd);
+        return statsClndFldr;
+    }
 
     /**
      * Getting current user
@@ -140,6 +164,10 @@ public final class FileHandlingClass {
                     final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
                     final long modifTime = attr.lastModifiedTime().toMillis();
                     if (modifTime <= cutoff) {
+                        if (bolClnFldrStats) {
+                            lngFilesClnd = lngFilesClnd + 1;
+                            lngByteSizeClnd = lngByteSizeClnd + attr.size();
+                        }
                         Files.delete(entry);
                     }
                 }
@@ -148,6 +176,25 @@ public final class FileHandlingClass {
             final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
+    }
+
+    /**
+     * Setter for Cleaned Folder Statistics
+     * @param inClnFldrStats boolean
+     */
+    public static void setCleanedFolderStatistics(final boolean inClnFldrStats) {
+        if (bolClnFldrStats != inClnFldrStats) {
+            setOrResetCleanedFolderStatistics();
+        }
+        bolClnFldrStats = inClnFldrStats;
+    }
+
+    /**
+     * Setter Resetter for Cleaned Folder Statistics
+     */
+    public static void setOrResetCleanedFolderStatistics() {
+        lngFilesClnd = 0;
+        lngByteSizeClnd = 0;
     }
 
     /**
