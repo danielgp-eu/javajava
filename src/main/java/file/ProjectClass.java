@@ -14,10 +14,6 @@ import java.util.Properties;
  * Project related goodies
  */
 public final class ProjectClass {
-    /**
-     * Project properties file name
-     */
-    private static final String STR_PRJ_PROPS = "/project.properties";
 
     /**
      * establish current POM file
@@ -60,15 +56,15 @@ public final class ProjectClass {
      */
     public static Properties getVariableFromProjectProperties(final String... strVariables) {
         final Properties svProperties = new Properties();
-        final PropertiesReaderClass reader;
+        final String prjProps = "/project.properties";
         try {
-            reader = new PropertiesReaderClass(STR_PRJ_PROPS);
+            final PropertiesReaderClass reader = new PropertiesReaderClass(prjProps);
             final List<String> arrayVariables = Arrays.asList(strVariables);
             arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, reader.getProperty(crtVariable)));
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties.toString());
             LogExposureClass.LOGGER.debug(strFeedback);
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), STR_PRJ_PROPS, Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), prjProps, Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return svProperties;
@@ -79,7 +75,7 @@ public final class ProjectClass {
      * @return boolean
      */
     public static boolean isRunningFromJar() {
-        // Get the URL of the current class's bytecode
+        // Get the URL of the current class's byte-code
         final URL classUrl = ProjectClass.class.getResource("ProjectClass.class");
         if (classUrl == null) {
             throw new IllegalStateException("Class resource not found");

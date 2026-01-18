@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
 
     <name>JavaJava</name>
     <description>Various Java classes to be re-used</description>

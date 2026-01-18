@@ -1,5 +1,7 @@
 package environment;
 
+import java.util.Properties;
+
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
@@ -33,7 +35,9 @@ public final class EnvironmentCapturingAssembleClass extends OshiUsageClass {
      * @return String
      */
     private static String getApplicationDetails() {
-        final String strDetails = String.format("\"Application\":{\"Dependencies\":%s}", ProjectDependencyResolverClass.getDependency());
+        final String projDependencies = ProjectDependencyResolverClass.getDependency();
+        final Properties projProperties = ProjectModelClass.getProjectProperties();
+        final String strDetails = String.format("\"Application\":{\"%s/%s\":\"%s\",\"Dependencies\":%s}", projProperties.get("groupId"), projProperties.get("artifactId"), projProperties.get("version"), projDependencies);
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);
         return strDetails;

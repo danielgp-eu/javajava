@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -25,6 +26,10 @@ import log.LogExposureClass;
  * Project Model
  */
 public final class ProjectModelClass {
+    /**
+     * current Project properties
+     */
+    private static final Properties projProperties = new Properties();
 
     /**
      * Create CollectRequest from Maven Model
@@ -62,6 +67,23 @@ public final class ProjectModelClass {
     }
 
     /**
+     * Getter for Project Properties
+     */
+    public static Properties getProjectProperties() {
+        return projProperties;
+    }
+
+    /**
+     * Setter for Project Properties
+     * @param model model
+     */
+    public static void setProjectProperties(final Model model) {
+        projProperties.put("groupId", model.getGroupId());
+        projProperties.put("artifactId", model.getArtifactId());
+        projProperties.put("version", model.getVersion());
+    }
+
+    /**
      * get POM into Model
      * @return Model
      */
@@ -71,6 +93,7 @@ public final class ProjectModelClass {
         Model model = null;
         try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
             model = reader.read(bReader);
+            setProjectProperties(model);
         } catch (IOException | XmlPullParserException ex) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
