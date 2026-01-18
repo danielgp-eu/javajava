@@ -3,8 +3,6 @@ package interactive;
 import java.time.LocalDateTime;
 import java.util.Properties;
 
-import org.apache.maven.model.Model;
-
 import environment.ProjectModelClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
@@ -61,9 +59,9 @@ public final class CommonInteractiveClass {
     public static void startMeUp() {
         final String strFeedbackLines = "-".repeat(80);
         LogExposureClass.LOGGER.info(strFeedbackLines);
-        final Model projModel = ProjectModelClass.getProjectObjectModelFileIntoModel();
+        ProjectModelClass.loadProjectObjectModelFileIntoModel();
         final Properties projProperties = ProjectModelClass.getProjectProperties();
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec") + " %s/%s v.%s", projProperties.get("groupId"), projProperties.get("artifactId"), projProperties.get("version"));
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec"), projProperties.get("groupId"), projProperties.get("artifactId"), projProperties.get("version"));
         LogExposureClass.LOGGER.info(strFeedback);
         LogExposureClass.LOGGER.info(strFeedbackLines);
     }

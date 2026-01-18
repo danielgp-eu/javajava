@@ -27,6 +27,10 @@ import log.LogExposureClass;
  */
 public final class ProjectModelClass {
     /**
+     * current Project Model
+     */
+    private static Model projModel;
+    /**
      * current Project properties
      */
     private static final Properties PROJ_PROPS = new Properties();
@@ -59,8 +63,8 @@ public final class ProjectModelClass {
      * @return CollectRequest
      */
     public static CollectRequest getCollectRequestForCurrentProject() {
-        final Model model = getProjectObjectModelFileIntoModel();
-        final CollectRequest collectRequest = createCollectRequest(model);
+        loadProjectObjectModelFileIntoModel();
+        final CollectRequest collectRequest = createCollectRequest(projModel);
         final String strFeedback = "I have created Request for Collection of current project!";
         LogExposureClass.LOGGER.debug(strFeedback);
         return collectRequest;
@@ -77,28 +81,26 @@ public final class ProjectModelClass {
      * Setter for Project Properties
      * @param model model
      */
-    public static void setProjectProperties(final Model model) {
+    private static void setProjectProperties(final Model model) {
         PROJ_PROPS.put("groupId", model.getGroupId());
         PROJ_PROPS.put("artifactId", model.getArtifactId());
         PROJ_PROPS.put("version", model.getVersion());
     }
 
     /**
-     * get POM into Model
-     * @return Model
+     * load POM into Project Model
      */
-    public static Model getProjectObjectModelFileIntoModel() {
+    public static void loadProjectObjectModelFileIntoModel() {
         final String pomFile = ProjectClass.getCurrentProjectObjectModelFile();
         final MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = null;
         try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
-            model = reader.read(bReader);
-            setProjectProperties(model);
+            final Model modelContent = reader.read(bReader);
+            setProjectProperties(modelContent);
+            projModel = modelContent;
         } catch (IOException | XmlPullParserException ex) {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
-        return model;
     }
 
     /**
