@@ -165,11 +165,11 @@ public final class FileHandlingClass {
                     final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
                     final long modifTime = attr.lastModifiedTime().toMillis();
                     if (modifTime <= cutoff) {
+                        Files.delete(entry);
                         if (bolClnFldrStats) {
                             lngFilesClnd = lngFilesClnd + 1;
                             lngByteSizeClnd = lngByteSizeClnd + attr.size();
                         }
-                        Files.delete(entry);
                     }
                 }
             }

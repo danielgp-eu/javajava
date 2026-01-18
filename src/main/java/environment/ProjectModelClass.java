@@ -29,7 +29,7 @@ public final class ProjectModelClass {
     /**
      * current Project properties
      */
-    private static final Properties projProperties = new Properties();
+    private static final Properties PROJ_PROPS = new Properties();
 
     /**
      * Create CollectRequest from Maven Model
@@ -70,7 +70,7 @@ public final class ProjectModelClass {
      * Getter for Project Properties
      */
     public static Properties getProjectProperties() {
-        return projProperties;
+        return PROJ_PROPS;
     }
 
     /**
@@ -78,9 +78,9 @@ public final class ProjectModelClass {
      * @param model model
      */
     public static void setProjectProperties(final Model model) {
-        projProperties.put("groupId", model.getGroupId());
-        projProperties.put("artifactId", model.getArtifactId());
-        projProperties.put("version", model.getVersion());
+        PROJ_PROPS.put("groupId", model.getGroupId());
+        PROJ_PROPS.put("artifactId", model.getArtifactId());
+        PROJ_PROPS.put("version", model.getVersion());
     }
 
     /**
