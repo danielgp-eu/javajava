@@ -3,7 +3,8 @@ package interactive;
 import java.util.List;
 import java.util.Map;
 
-import file.FileContentClass;
+import file.FileContentReadClass;
+import file.FileContentWriteClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
 import structure.ListAndMapClass;
@@ -59,7 +60,7 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
                                                       final Integer intColToEval,
                                                       final Integer intColToGrpBy) {
         // Group values by category
-        final Map<String, List<String>> groupedColumns = FileContentClass.getListOfValuesFromColumnsGroupedByAnotherColumnValuesFromCsvFile(strFileName, intColToEval, intColToGrpBy);
+        final Map<String, List<String>> groupedColumns = FileContentReadClass.getListOfValuesFromColumnsGroupedByAnotherColumnValuesFromCsvFile(strFileName, intColToEval, intColToGrpBy);
         // Define merge rules
         final Map<List<String>, String> mergeRules = Map.of(
                 List.of("ARRAY", "OBJECT", "VARIANT"), "COMPOSITE__STRUCTURED",
@@ -70,15 +71,17 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
         final Map<String, List<String>> grpCols = ListAndMapClass.mergeKeys(groupedColumns, mergeRules);
         final String strFeedback = "=".repeat(20) + strFileName + "=".repeat(20);
         LogExposureClass.LOGGER.info(strFeedback);
+        FileContentWriteClass.setCsvColumnSeparator(',');
         grpCols.forEach((keyDataType, valList) -> {
             final String strColFileName = strFileName.replace(".csv", "__columns.csv");
             final String strFeedbackFile = "Writing file " + strColFileName;
             LogExposureClass.LOGGER.info(strFeedbackFile);
-            FileContentClass.writeStringListToCsvFile(strColFileName, keyDataType, "DataType,Column", valList);
+            FileContentWriteClass.setCsvLinePrefix(keyDataType);
+            FileContentWriteClass.writeStringListToCsvFile(strColFileName, "DataType,Column", valList);
             final String strFeedbackWrt = String.format("Writing file for %s which has %s values", keyDataType, valList.size());
             LogExposureClass.LOGGER.info(strFeedbackWrt);
             final Map<String, Long> sorted = ListAndMapClass.getWordCounts(valList, "(_| )");
-            FileContentClass.writeLinkedHashMapToCsvFile(strFileName.replace(".csv", "__words.csv"), keyDataType, "DataType,Word,Occurrences", sorted);
+            FileContentWriteClass.writeLinkedHashMapToCsvFile(strFileName.replace(".csv", "__words.csv"), "DataType,Word,Occurrences", sorted);
         });
     }
 

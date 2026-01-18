@@ -50,7 +50,7 @@ public final class ProjectModelClass {
     }
 
     /**
-     * 
+     * collect request for this project
      * @return CollectRequest
      */
     public static CollectRequest getCollectRequestForCurrentProject() {

@@ -38,6 +38,16 @@ public final class LogExposureClass {
     }
 
     /**
+     * Build message for file operation error
+     * @param strFileName file name
+     * @param strStagTrace stag trace
+     * @return message for file operation error
+     */
+    public static String getFileErrorMessage(final String strFileName, final String strStagTrace) {
+        return String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
+    }
+
+    /**
      * Get current Log Level
      * @return current Log Level
      */

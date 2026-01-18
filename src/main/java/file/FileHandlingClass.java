@@ -37,6 +37,7 @@ public final class FileHandlingClass {
 
     /**
      * Getter for Cleaned Folder Statistics
+     * @return Map with folder statistics
      */
     public static Map<String, Long> getCleanedFolderStatistics() {
         final Map<String, Long> statsClndFldr = new ConcurrentHashMap<>();

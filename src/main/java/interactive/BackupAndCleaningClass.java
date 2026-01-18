@@ -1,14 +1,18 @@
 package interactive;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Properties;
 
+import file.FileContentReadClass;
 import file.FileHandlingClass;
 import file.FileLocatingClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
 import shell.ArchivingClass;
 import shell.PowerShellExecutionClass;
+import time.TimingClass;
 
 /**
  * Main Command Line
@@ -18,6 +22,7 @@ import shell.PowerShellExecutionClass;
     subcommands = {
         ArchiveFolders.class,
         CaptureWindowsApplicationsInstalledIntoCsv.class,
+        ChecksumsForFilesWithinFolder.class,
         CleanOlderFilesFromFolder.class
     }
 )
@@ -152,6 +157,44 @@ class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
      * Constructor
      */
     protected CaptureWindowsApplicationsInstalledIntoCsv() {
+        super();
+    }
+}
+
+/**
+ * clean files older than a given number of days
+ */
+@CommandLine.Command(name = "ChecksumsForFilesWithinFolder",
+                     description = "Get statistics for all files within a given folder")
+class ChecksumsForFilesWithinFolder implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldNm", "--folderName"},
+            description = "Folder Name to be inspected",
+            arity = "1..*",
+            required = true)
+    private String[] strFolderNames;
+
+    @Override
+    public void run() {
+        final String[] inAlgorithms = {"SHA-256"};
+        FileContentReadClass.setChecksumAlgorithms(inAlgorithms);
+        for (final String strFolder : strFolderNames) {
+            final LocalDateTime startComputeTime = LocalDateTime.now();
+            final Map<String, Map<String, String>> fileStats = FileContentReadClass.getFileStatisticsFromFolder(strFolder);
+            final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
+            final String strFeedback = String.format("For the folder %s calculated checksums are %s operation completed in %s (which means %s | %s)", strFolder, fileStats.toString(), objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+            LogExposureClass.LOGGER.info(strFeedback);
+        }
+    }
+
+    /**
+     * Constructor
+     */
+    protected ChecksumsForFilesWithinFolder() {
         super();
     }
 }

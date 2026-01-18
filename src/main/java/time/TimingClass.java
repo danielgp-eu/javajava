@@ -1,6 +1,10 @@
 package time;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -8,6 +12,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -60,6 +65,27 @@ public final class TimingClass {
         tempMap.put(STR_TWO_NON_ZERO, "%02d");
         // Make the map unmodifiable
         TIME_FORMATS = Collections.unmodifiableMap(tempMap);
+    }
+
+    /**
+     * get file last modified date time as human readable format 
+     * @param file given file
+     * @return String
+     */
+    public static String getFileLastModifiedTimeAsHumanReadableFormat(final Path file) {
+        String lastModifTime = null;
+        try {
+            final long modifTime = Files.getLastModifiedTime(file).toMillis();
+            // Convert to Instant
+            final Instant instant = Instant.ofEpochMilli(modifTime);
+            // Convert to LocalDateTime in system default zone
+            final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            lastModifTime = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace('T', ' ');
+        } catch (IOException ex) {
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "*", file, Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.debug(strFeedbackErr);
+        }
+        return lastModifTime;
     }
 
     /**
