@@ -68,6 +68,34 @@ public final class StringManipulationClass {
 
     /**
      * get Named Parameter From Prompt One
+     * @param inString Original string
+     * @return String
+     */
+    public static String encloseStringWithCharacter(final String inString) {
+        final StringBuilder strBuilder = new StringBuilder();
+        if (inString.matches("^\"|\"$")) {
+            strBuilder.append('\"').append(inString).append('\"');
+        } else {
+            strBuilder.append(inString);
+        }
+        return strBuilder.toString();
+    }
+
+    /**
+     * get Named Parameter From Prompt One
+     * @param inString Original string
+     * @return String
+     */
+    public static String encloseStringIfContainsSpace(final String inString) {
+        String strReturn = inString;
+        if (inString.contains(" ")) {
+            strReturn = encloseStringWithCharacter(inString);
+        }
+        return strReturn;
+    }
+
+    /**
+     * get Named Parameter From Prompt One
      * @param strOriginal Original string
      * @return String
      */
@@ -103,6 +131,21 @@ public final class StringManipulationClass {
      */
     public static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
         return substrings.stream().anyMatch(str::contains);
+    }
+
+    /**
+     * Check if String is actually Numeric
+     *
+     * @param inputString string to evaluate
+     * @return True if given String is actually Integer
+     */
+    public static Boolean isStringActuallyInteger(final String inputString) {
+        boolean bolReturn = false;
+        if (inputString != null) {
+            final Pattern pattern = Pattern.compile("-?\\d+?");
+            bolReturn = pattern.matcher(inputString).matches();
+        }
+        return bolReturn;
     }
 
     /**

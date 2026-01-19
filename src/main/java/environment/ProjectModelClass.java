@@ -37,14 +37,13 @@ public final class ProjectModelClass {
 
     /**
      * Create CollectRequest from Maven Model
-     * @param model Model
      * @return CollectRequest
      */
-    private static CollectRequest createCollectRequest(final Model model) {
+    private static CollectRequest createCollectRequest() {
         final CollectRequest collectRequest = new CollectRequest();
         final RemoteRepository central = new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2/").build();
         collectRequest.addRepository(central);
-        final List<org.apache.maven.model.Dependency> lstDeps = model.getDependencies();
+        final List<org.apache.maven.model.Dependency> lstDeps = projModel.getDependencies();
         lstDeps.stream().forEach(modelDep -> {
             final Artifact artifact = new DefaultArtifact(
                     modelDep.getGroupId(), 
@@ -64,7 +63,7 @@ public final class ProjectModelClass {
      */
     public static CollectRequest getCollectRequestForCurrentProject() {
         loadProjectObjectModelFileIntoModel();
-        final CollectRequest collectRequest = createCollectRequest(projModel);
+        final CollectRequest collectRequest = createCollectRequest();
         final String strFeedback = "I have created Request for Collection of current project!";
         LogExposureClass.LOGGER.debug(strFeedback);
         return collectRequest;
@@ -72,6 +71,7 @@ public final class ProjectModelClass {
 
     /**
      * Getter for Project Properties
+     * @return Properties
      */
     public static Properties getProjectProperties() {
         return PROJ_PROPS;

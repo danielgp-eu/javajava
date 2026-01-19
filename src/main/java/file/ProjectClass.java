@@ -20,15 +20,14 @@ public final class ProjectClass {
      * @return String
      */
     public static String getCurrentProjectObjectModelFile() {
-        final StringBuilder strPomFile = new StringBuilder(getProjectFolder());
+        final StringBuilder strPomFile = new StringBuilder();
         if (isRunningFromJar()) {
-            final String[] varsToPick = {"artifactId", "version"};
-            final Properties svProperties = getVariableFromProjectProperties(varsToPick);
-            strPomFile.append(String.format("/%s-%s.pom",
-                    svProperties.getProperty("artifactId"),
-                    svProperties.getProperty("version")));
+            FileHandlingClass.setSilentFileSearch(true);
+            final List<String> pomFiles = FileHandlingClass.getSpecificFilesFromFolder(getProjectFolder(), "pom");
+            strPomFile.append(pomFiles.getFirst());
+            FileHandlingClass.setSilentFileSearch(false);
         } else {
-            strPomFile.append(File.separator).append("pom.xml");
+            strPomFile.append(getProjectFolder()).append(File.separator).append("pom.xml");
         }
         return strPomFile.toString();
     }

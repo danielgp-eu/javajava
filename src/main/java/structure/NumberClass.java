@@ -83,7 +83,7 @@ public final class NumberClass {
      */
     public static int convertStringIntoInteger(final String strNumber) {
         int noToReturn = 0;
-        final boolean isNumeric = StringManipulationClass.isStringActuallyNumeric(strNumber);
+        final boolean isNumeric = StringManipulationClass.isStringActuallyInteger(strNumber);
         if (isNumeric) {
             noToReturn = Integer.parseInt(strNumber);
         }

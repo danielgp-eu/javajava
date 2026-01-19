@@ -76,7 +76,7 @@ public final class FileLocatingClass {
      * @return Properties
      */
     public static Properties getFolderStatisticsRecursive(final String strFolderName, final Properties pathProps) {
-        final Path directory = Paths.get(strFolderName);
+        final Path directory = Paths.get(strFolderName.replace("\"", ""));
         // use DirectoryStream to list files which are present in specific
         try (Stream<Path> stream = Files.walk(directory)) {
             final FolderStats stats = stream
