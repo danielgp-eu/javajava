@@ -40,17 +40,22 @@ public final class FileChangeClass {
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                     if (file.getFileName().toString().matches(strPattern)) {
                         // Use a temporary file to handle the modified content
-                        final Path tempFile = Files.createTempFile("temp", ".tmp");
-                        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
-                                BufferedWriter writer = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                writer.write(line.replace(matchingContent, replacedContent));
-                                writer.newLine(); // Reintroduce the line separator
-                            }
+                        Path tempFile = null;
+                        try {
+	                        tempFile = Files.createTempFile("secure-", ".tmp");
+	                        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
+	                                BufferedWriter writer = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+	                            String line;
+	                            while ((line = reader.readLine()) != null) {
+	                                writer.write(line.replace(matchingContent, replacedContent));
+	                                writer.newLine(); // Reintroduce the line separator
+	                            }
+	                        }
+	                        // Replace the original file with the modified content
+	                        Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+                        } finally {
+                            Files.deleteIfExists(tempFile);
                         }
-                        // Replace the original file with the modified content
-                        Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
                         final String strFeedback = String.format("File %s has been modified...", file);
                         LogExposureClass.LOGGER.debug(strFeedback);
                     }
