@@ -73,7 +73,7 @@ public final class StringManipulationClass {
      */
     public static String encloseStringWithCharacter(final String inString) {
         final StringBuilder strBuilder = new StringBuilder();
-        if (inString.matches("^\"|\"$")) {
+        if (inString.matches("(^\")|(\"$)")) {
             strBuilder.append('\"').append(inString).append('\"');
         } else {
             strBuilder.append(inString);
@@ -142,7 +142,7 @@ public final class StringManipulationClass {
     public static Boolean isStringActuallyInteger(final String inputString) {
         boolean bolReturn = false;
         if (inputString != null) {
-            final Pattern pattern = Pattern.compile("-?\\d+?");
+            final Pattern pattern = Pattern.compile("-?\\d-?");
             bolReturn = pattern.matcher(inputString).matches();
         }
         return bolReturn;
@@ -157,7 +157,7 @@ public final class StringManipulationClass {
     public static Boolean isStringActuallyNumeric(final String inputString) {
         boolean bolReturn = false;
         if (inputString != null) {
-            final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+            final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?-?");
             bolReturn = pattern.matcher(inputString).matches();
         }
         return bolReturn;

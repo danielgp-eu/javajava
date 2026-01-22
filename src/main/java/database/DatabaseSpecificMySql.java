@@ -41,7 +41,7 @@ public final class DatabaseSpecificMySql {
             properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
             properties.put("Port", JsoningClass.getJsonValue(ndMySQL, "/Port"));
             properties.put("Username", JsoningClass.getJsonValue(ndMySQL, "/Username"));
-            properties.put("Password", "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**");
+            properties.put("Password", JsoningClass.getJsonValue(ndMySQL, "/Password"));
             properties.put("ServerTimezone", JsoningClass.getJsonValue(ndMySQL, "/ServerTimezone"));
         }
         return properties;
