@@ -28,6 +28,15 @@ public final class LogExposureClass {
     public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
 
     /**
+     * Build message for I/O exception
+     * @param inStackTrace tracking back the Stack Trace
+     */
+    public static void exposeInputOutputException(final String inStackTrace) {
+        final String strFeedbackErr = String.format("Input/Output exception on... %s", inStackTrace);
+        LOGGER.error(strFeedbackErr);
+    }
+
+    /**
      * Log Process Builder command conditionally
      * @param strCommand command to execute
      */
@@ -64,6 +73,9 @@ public final class LogExposureClass {
         needProcExposure = inProcExposure;
     }
 
+    /**
+     * Constructor
+     */
     private LogExposureClass () {
         super();
     }

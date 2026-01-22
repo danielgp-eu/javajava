@@ -8,12 +8,12 @@ import java.util.regex.Pattern;
 import log.LogExposureClass;
 
 /**
- * Number 
+ * Number handling
  */
 public final class NumberClass {
 
     /**
-     * safely compute percentage
+     * Safely computes percentage
      * @param numerator top number
      * @param denominator dividing number
      * @return float value
