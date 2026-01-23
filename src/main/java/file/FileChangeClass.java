@@ -20,17 +20,26 @@ import log.LogExposureClass;
  */
 public final class FileChangeClass {
     /**
+     * holding characters being replaced
+     */
+    private static String existingContent;
+    /**
+     * holding characters to replace it with
+     */
+    private static String replacedContent;
+    /**
      * variable for folder
      */
     private static String strFolder;
+    /**
+     * variable for pattern
+     */
+    private static String strPattern;
 
     /**
      * Change String to all files within a folder based on a pattern
-     * @param strPattern pattern to filter files
-     * @param matchingContent characters being replaced
-     * @param replacedContent characters to replace it with
      */
-    public static void massChangeToFilesWithinFolder(final String strPattern, final String matchingContent, final String replacedContent) {
+    public static void massChangeToFilesWithinFolder() {
         try {
             final String strFeedback = String.format("I will attempt to mass change all matched files based on %s pattern from folder %s...", strPattern, strFolder);
             LogExposureClass.LOGGER.info(strFeedback);
@@ -40,24 +49,11 @@ public final class FileChangeClass {
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                     if (file.getFileName().toString().matches(strPattern)) {
                         // Use a temporary file to handle the modified content
-                        Path tempFile = null;
-                        try {
-	                        tempFile = Files.createTempFile("secure-", ".tmp");
-	                        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
-	                                BufferedWriter writer = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
-	                            String line;
-	                            while ((line = reader.readLine()) != null) {
-	                                writer.write(line.replace(matchingContent, replacedContent));
-	                                writer.newLine(); // Reintroduce the line separator
-	                            }
-	                        }
-	                        // Replace the original file with the modified content
-	                        Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
-                        } finally {
-                            Files.deleteIfExists(tempFile);
+                        try (SecureTempFileClass tempFile = SecureTempFileClass.create("secure-", ".tmp")) {
+                            secureModify(file, Path.of(tempFile.toString()));
+                        } catch (IOException ei) {
+                            LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
                         }
-                        final String strFeedback = String.format("File %s has been modified...", file);
-                        LogExposureClass.LOGGER.debug(strFeedback);
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -66,6 +62,52 @@ public final class FileChangeClass {
             final String strFeedbackErr = String.format("Inout/Output exception on... %s", Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
+    }
+
+    /**
+     * secure modification
+     * @param file file to write to
+     * @param tempFile temporary file
+     */
+    public static void secureModify(final Path file, final Path tempFile) {
+        try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
+            BufferedWriter writer = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line.replace(existingContent, replacedContent));
+                writer.newLine(); // Reintroduce the line separator
+            }
+            // Replace the original file with the modified content
+            Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+            final String strFeedback = String.format("File %s has been modified...", file);
+            LogExposureClass.LOGGER.debug(strFeedback);
+        } catch (IOException ei) {
+            LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
+        }
+    }
+
+    /**
+     * Setter for replacedContent
+     * @param inNewContent new content
+     */
+    public static void setNewContent(final String inNewContent) {
+        replacedContent = inNewContent;
+    }
+
+    /**
+     * Setter for existingContent
+     * @param inOldContent old content
+     */
+    public static void setOldContent(final String inOldContent) {
+        existingContent = inOldContent;
+    }
+
+    /**
+     * Setter for strPattern
+     * @param inPattern pattern for file matching
+     */
+    public static void setPattern(final String inPattern) {
+        strPattern = inPattern;
     }
 
     /**

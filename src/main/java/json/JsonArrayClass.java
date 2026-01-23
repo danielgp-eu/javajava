@@ -134,6 +134,12 @@ public final class JsonArrayClass {
         }
     }
 
+    /**
+     * getting Value and Record
+     * @param jsonParser big JSON file handler
+     * @param jsonFactory content
+     * @return splitSize
+     */
     private static Properties getValueAndRecord(final JsonParser jsonParser, final JsonFactory jsonFactory) {
         final Properties properties = new Properties();
         final ByteArrayOutputStream tempBuffer = new ByteArrayOutputStream();
@@ -245,11 +251,14 @@ public final class JsonArrayClass {
     private static void writeObjectStart(final Path outFile) {
         boolean isFileNew = true;
         if (Files.exists(outFile)) {
-            FileChangeClass.massChangeToFilesWithinFolder(outFile.getFileName().toString(), "]", ",");
+            FileChangeClass.setOldContent("]");
+            FileChangeClass.setNewContent(",");
+            FileChangeClass.setPattern(outFile.getFileName().toString());
+            FileChangeClass.massChangeToFilesWithinFolder();
             isFileNew = false;
         }
         try {
-            writer = Files.newBufferedWriter(outFile, StandardOpenOption.APPEND, StandardOpenOption.APPEND);
+            writer = Files.newBufferedWriter(outFile, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             if (isFileNew) {
                 writer.write("[");
                 writer.write(System.lineSeparator());
