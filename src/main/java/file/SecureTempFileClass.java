@@ -1,6 +1,5 @@
 package file;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +21,6 @@ public final class SecureTempFileClass implements AutoCloseable {
      */
     private SecureTempFileClass(final String prefix, final String suffix) throws IOException {
         this.tempFile = Files.createTempFile(prefix, suffix);
-        securePermissions();
     }
 
     /**
@@ -45,22 +43,9 @@ public final class SecureTempFileClass implements AutoCloseable {
     }
 
     /**
-     * Securing
-     */
-    private void securePermissions() {
-        final File file = tempFile.toFile();
-        // Remove permissions for others
-        file.setReadable(false, false);
-        file.setWritable(false, false);
-        file.setExecutable(false, false);
-        // Allow owner full access
-        file.setReadable(true, true);
-        file.setWritable(true, true);
-    }
-
-    /**
      * Closer
      */
+    @Override
     public void close() throws IOException {
         Files.deleteIfExists(tempFile);
     }
