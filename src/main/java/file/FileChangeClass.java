@@ -49,11 +49,8 @@ public final class FileChangeClass {
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                     if (file.getFileName().toString().matches(strPattern)) {
                         // Use a temporary file to handle the modified content
-                        try (SecureTempFileClass tempFile = SecureTempFileClass.create("secure-", ".tmp")) {
-                            secureModify(file, Path.of(tempFile.toString()));
-                        } catch (IOException ei) {
-                            LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
-                        }
+                        final Path tempFile = Files.createTempFile("temp", ".tmp");
+                        secureModify(file, Path.of(tempFile.toString()));
                     }
                     return FileVisitResult.CONTINUE;
                 }
