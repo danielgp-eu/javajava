@@ -26,7 +26,7 @@ public final class JsonOperationClass {
      *
      * @param args command-line arguments
      */
-	/* default */ static void main(final String... args) {
+    /* default */ static void main(final String... args) {
         CommonInteractiveClass.setAutoLocale(true);
         CommonInteractiveClass.initializeLocalization();
         CommonInteractiveClass.setStartDateTime();
@@ -92,7 +92,7 @@ class JsonSplit implements Runnable {
      */
     @CommandLine.Option(
             names = {"-sz", "--splitSize"},
-            description = "Size of JSON file beyou Split is neded")
+            description = "Threshold size value beyound which split will be performed")
     private static long splitSize;
 
     /**
@@ -117,7 +117,7 @@ class JsonSplit implements Runnable {
                 final String strFeedback = String.format("File %s has a size of %s bytes which compare to split file threshold of %s bytes is %s%% smaller, hence split is NOT neccesary!", strFileName, fileSize, sizeThreshold, sizeDifference);
                 LogExposureClass.LOGGER.info(strFeedback);
             } else {
-            	performJsonSplit();
+                performJsonSplit();
             }
         }
     }
