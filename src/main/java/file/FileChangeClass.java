@@ -48,9 +48,7 @@ public final class FileChangeClass {
                 @Override
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                     if (file.getFileName().toString().matches(strPattern)) {
-                        // Use a temporary file to handle the modified content
-                        final Path tempFile = Files.createTempFile("temp", ".tmp");
-                        secureModify(file, Path.of(tempFile.toString()));
+                        secureModify(file);
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -64,18 +62,20 @@ public final class FileChangeClass {
     /**
      * secure modification
      * @param file file to write to
-     * @param tempFile temporary file
      */
-    public static void secureModify(final Path file, final Path tempFile) {
+    public static void secureModify(final Path file) {
+        final String newPath = file.getParent().toString();
+        final String newFileName = file.getFileName().toString().replace(".json", "-new.json");
+        final Path newFile = Path.of(newPath).resolve(newFileName);
         try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
-            BufferedWriter writer = Files.newBufferedWriter(tempFile, StandardCharsets.UTF_8)) {
+            BufferedWriter writer = Files.newBufferedWriter(newFile, StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
                 writer.write(line.replace(existingContent, replacedContent));
                 writer.newLine(); // Reintroduce the line separator
             }
             // Replace the original file with the modified content
-            Files.move(tempFile, file, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(newFile, file, StandardCopyOption.REPLACE_EXISTING);
             final String strFeedback = String.format("File %s has been modified...", file);
             LogExposureClass.LOGGER.debug(strFeedback);
         } catch (IOException ei) {
