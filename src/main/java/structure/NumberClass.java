@@ -8,12 +8,12 @@ import java.util.regex.Pattern;
 import log.LogExposureClass;
 
 /**
- * Number 
+ * Number handling
  */
 public final class NumberClass {
 
     /**
-     * safely compute percentage
+     * Safely computes percentage
      * @param numerator top number
      * @param denominator dividing number
      * @return float value
@@ -83,7 +83,7 @@ public final class NumberClass {
      */
     public static int convertStringIntoInteger(final String strNumber) {
         int noToReturn = 0;
-        final boolean isNumeric = StringManipulationClass.isStringActuallyNumeric(strNumber);
+        final boolean isNumeric = StringManipulationClass.isStringActuallyInteger(strNumber);
         if (isNumeric) {
             noToReturn = Integer.parseInt(strNumber);
         }

@@ -8,6 +8,7 @@ import java.util.Properties;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import structure.NumberClass;
+import structure.StringManipulationClass;
 
 /**
  * Archiving wrapper
@@ -48,6 +49,8 @@ public final class ArchivingClass {
         final int intLength = inFolder.length();
         if (inFolder.substring(intLength - 1, intLength).equalsIgnoreCase(File.separator)) {
             sbFolder.append(inFolder.substring(0, intLength - 1));
+        } else {
+            sbFolder.append(inFolder);
         }
         sbFolder.append(File.separator);
         return sbFolder.toString();
@@ -57,13 +60,14 @@ public final class ArchivingClass {
      * Archive folder content as 7z using Ultra compression level
      */
     public static void archiveFolderAs7zUltra() {
-        final String strArchDir = "-ir!" + strArchivingDir + "*";
+        final String strArchDir = "-ir!" + strArchivingDir.replace("\"", "") + "*";
         final ProcessBuilder builder;
         if (strArchivePwd == null) {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchDir, "-mx9", "-ms4g", "-mmt=on");
         } else {
             builder = new ProcessBuilder(strArchivingExec, "a", "-t7z", strArchiveName, strArchDir, "-mx9", "-ms4g", "-mmt=on", "-p" + strArchivePwd);
             LogExposureClass.exposeProcessBuilder(builder.command().toString().replaceFirst("-p" + strArchivePwd, "**H*I*D*D*E*N**P*A*S*S*W*O*R*D**"));
+            LogExposureClass.setProcessExposureNeed(false);
         }
         ShellingClass.setProcessCaptureNeed(false);
         ShellingClass.executeShell(builder, " ");
@@ -80,7 +84,7 @@ public final class ArchivingClass {
                 final long fileArchSize = fileA.length();
                 final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
                 final float percentage = NumberClass.computePercentageSafely(fileArchSize, fileOrigSize);
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir, folderProps, strArchiveName, fileArchSize, percentage);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
                 LogExposureClass.LOGGER.info(strFeedback);
             }
         }
@@ -93,14 +97,14 @@ public final class ArchivingClass {
     public static void setArchiveName(final String inArchiveName) {
         final StringBuilder sbArchiveName = new StringBuilder();
         if (strArchivePrefix != null) {
-        	sbArchiveName.append(strArchivePrefix);
+            sbArchiveName.append(strArchivePrefix);
         }
         sbArchiveName.append(inArchiveName);
         if (strArchiveSuffix != null) {
-        	sbArchiveName.append(strArchiveSuffix);
+            sbArchiveName.append(strArchiveSuffix);
         }
         sbArchiveName.append(".7z");
-        strArchiveName = sbArchiveName.toString();
+        strArchiveName = StringManipulationClass.encloseStringIfContainsSpace(sbArchiveName.toString());
     }
 
     /**
@@ -108,7 +112,7 @@ public final class ArchivingClass {
      * @param inFolderDest destination folder
      */
     public static void setArchiveNameWithinDestinationFolder(final String inFolderDest) {
-        final Path path = Paths.get(strArchivingDir);
+        final Path path = Paths.get(strArchivingDir.replace("\"", ""));
         setArchiveName(appendSeparatorSuffixToFolder(inFolderDest)
                 + path.getFileName().toString());
     }
@@ -126,7 +130,11 @@ public final class ArchivingClass {
      * @param inArchivePwd String
      */
     public static void setArchivePwd(final String inArchivePwd) {
-        strArchivePwd = inArchivePwd;
+        String strGivenPassword = inArchivePwd;
+        if (inArchivePwd.matches("[A-Z_]+")) {
+            strGivenPassword = System.getenv(inArchivePwd); // get password value from Environment variable
+        }
+        strArchivePwd = StringManipulationClass.encloseStringIfContainsSpace(strGivenPassword);
     }
 
     /**
@@ -142,7 +150,7 @@ public final class ArchivingClass {
      * @param inArchivingExec String
      */
     public static void setArchivingExecutable(final String inArchivingExec) {
-        strArchivingExec = inArchivingExec;
+        strArchivingExec = StringManipulationClass.encloseStringIfContainsSpace(inArchivingExec);
     }
 
     /**

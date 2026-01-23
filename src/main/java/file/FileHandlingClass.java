@@ -23,6 +23,10 @@ public final class FileHandlingClass {
      */
     private static boolean bolClnFldrStats;
     /**
+     * Silent File Search
+     */
+    private static boolean bolSilentFileSrch;
+    /**
      * String constant
      */
     private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
@@ -63,8 +67,10 @@ public final class FileHandlingClass {
      * @return List of Strings
      */
     public static List<String> getSpecificFilesFromFolder(final String strFolderName, final String strExtension) {
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName);
-        LogExposureClass.LOGGER.debug(strFeedback);
+        if (!bolSilentFileSrch) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileAllCertainOnesFromFolder"), strExtension, strFolderName);
+            LogExposureClass.LOGGER.debug(strFeedback);
+        }
         final List<String> arrayFiles = new ArrayList<>();
         final Path directory = Paths.get(strFolderName);
         // use DirectoryStream to list files which are present in specific
@@ -74,8 +80,10 @@ public final class FileHandlingClass {
                 if (file.getFileName().toString().endsWith(strExtension)) {
                     final String strFile = file.getParent().toString() + File.separator + file.getFileName();
                     arrayFiles.add(strFile);
-                    final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFound"), strExtension, strFile);
-                    LogExposureClass.LOGGER.debug(strFeedbackOk);
+                    if (!bolSilentFileSrch) {
+                        final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFound"), strExtension, strFile);
+                        LogExposureClass.LOGGER.debug(strFeedbackOk);
+                    }
                 }
             }
         } catch (IOException ex) {
@@ -196,6 +204,14 @@ public final class FileHandlingClass {
     public static void setOrResetCleanedFolderStatistics() {
         lngFilesClnd = 0;
         lngByteSizeClnd = 0;
+    }
+
+    /**
+     * Setter for Cleaned Folder Statistics
+     * @param inSilentFileSrch value to set
+     */
+    public static void setSilentFileSearch(final boolean inSilentFileSrch) {
+        bolSilentFileSrch = inSilentFileSrch;
     }
 
     /**

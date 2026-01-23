@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.4.3</version>
+    <version>1.5.2</version>
 
     <name>JavaJava</name>
     <description>Various Java classes to be re-used</description>
@@ -342,13 +342,13 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.0.3</version>
+            <version>3.0.4</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/tools.jackson.dataformat/jackson-dataformat-xml -->
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
-            <version>3.0.3</version>
+            <version>3.0.4</version>
         </dependency>
     </dependencies>
 
@@ -386,4 +386,5 @@
             </build>
         </profile>
     </profiles>
+
 </project>

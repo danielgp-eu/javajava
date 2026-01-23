@@ -5,9 +5,12 @@ import log.LogExposureClass;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -27,35 +30,6 @@ public final class FileLocatingClass {
     private static final String STR_PRTY_PRNT = "PrettyPrint";
 
     /**
-     * Checking if a file exists and is readable
-     * 
-     * @param strFileName file name
-     * @return Properties
-     */
-    public static Properties checkFileExistanceAndReadability(final String strFileName) {
-        final Properties propertiesReturn = new Properties();
-        if (strFileName == null) {
-            propertiesReturn.put("NULL_FILE_NAME", JavaJavaLocalizationClass.getMessage("i18nFileDoesNotExist"));
-        } else {
-            final File fileGiven = new File(strFileName);
-            if (fileGiven.exists()) {
-                if (fileGiven.isFile()) {
-                    if (fileGiven.canRead()) {
-                        propertiesReturn.put("OK", strFileName);
-                    } else {
-                        propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalizationClass.getMessage("i18nFileUnreadable"), strFileName));
-                    }
-                } else {
-                    propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalizationClass.getMessage("i18nFileNotAfile"), strFileName));
-                }
-            } else {
-                propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalizationClass.getMessage("i18nFileDoesNotExist"), strFileName));
-            }
-        }
-        return propertiesReturn;
-    }
-
-    /**
      * A simple record to hold our results
      */
     /* default */ record FolderStats(long fileCount, long folderCount, long totalSize) {
@@ -70,13 +44,106 @@ public final class FileLocatingClass {
     }
 
     /**
+     * Checking if a file exists and is readable
+     * @param fileSize file size
+     * @param strFileName file name
+     * @return Properties
+     */
+    public static Properties checkFileExistanceAndReadability(final long fileSize, final String strFileName) {
+        final Properties propertiesReturn = new Properties();
+        switch(String.valueOf(fileSize)) {
+            case "-1":
+                propertiesReturn.put("NOT_READABLE", String.format(JavaJavaLocalizationClass.getMessage("i18nFileUnreadable"), strFileName));
+                break;
+            case "-2":
+                propertiesReturn.put("NOT_A_FILE", String.format(JavaJavaLocalizationClass.getMessage("i18nFileNotAfile"), strFileName));
+                break;
+            case "-3":
+                propertiesReturn.put("DOES_NOT_EXIST", String.format(JavaJavaLocalizationClass.getMessage("i18nFileDoesNotExist"), strFileName));
+                break;
+            case "-99":
+                propertiesReturn.put("NULL_FILE_NAME", JavaJavaLocalizationClass.getMessage("i18nFileDoesNotExist"));
+                break;
+            default:
+                propertiesReturn.put("OK", strFileName);
+                break;
+        }
+        return propertiesReturn;
+    }
+
+    /**
+     * Checking if a file exists and is readable
+     * @param strFileName file name
+     * @return Properties
+     */
+    public static Properties checkFileExistanceAndReadability(final String strFileName) {
+        final long fileSize = getFileSizeIfFileExistsAndIsReadable(strFileName);
+        return checkFileExistanceAndReadability(fileSize, strFileName);
+    }
+
+    /**
+     * Deletes all files matching given pattern from folder
+     * @param strFolder input folder
+     * @param strPattern input pattern
+     */
+    public static void deleteFilesMathingPatternFromFolder(final String strFolder, final String strPattern) {
+        try {
+            final String strFeedback = String.format("I will attempt to removed all matched files based on %s pattern from folder %s...", strPattern, strFolder);
+            LogExposureClass.LOGGER.info(strFeedback);
+            final Path dir = Paths.get(strFolder);
+            Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                    if (file.getFileName().toString().matches(strPattern)) {
+                        Files.delete(file);
+                        final String strFeedbackD = String.format("File %s has been deleted", file.toString());
+                        LogExposureClass.LOGGER.info(strFeedbackD);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException ei) {
+            final String strFeedbackErr = String.format("Inout/Output exception on... %s", Arrays.toString(ei.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedbackErr);
+        }
+    }
+
+    /**
+     * Gets file size if exits and is readable
+     * @param strFileName file name
+     * @return long
+     */
+    public static long getFileSizeIfFileExistsAndIsReadable(final String strFileName) {
+        final long fileSize;
+        if (strFileName == null) {
+            fileSize = -99;
+        } else {
+            final File fileGiven = new File(strFileName);
+            if (fileGiven.exists()) {
+                if (fileGiven.isFile()) {
+                    if (fileGiven.canRead()) {
+                        fileSize = fileGiven.length();
+                    } else {
+                        fileSize = -1;
+                    }
+                } else {
+                    fileSize = -2;
+                }
+            } else {
+                fileSize = -3;
+            }
+        }
+        return fileSize;
+    }
+
+    /**
      * get Folder statistics recursively
      * @param strFolderName folder name
      * @param pathProps path properties
      * @return Properties
      */
     public static Properties getFolderStatisticsRecursive(final String strFolderName, final Properties pathProps) {
-        final Path directory = Paths.get(strFolderName);
+        final Path directory = Paths.get(strFolderName.replace("\"", ""));
         // use DirectoryStream to list files which are present in specific
         try (Stream<Path> stream = Files.walk(directory)) {
             final FolderStats stats = stream

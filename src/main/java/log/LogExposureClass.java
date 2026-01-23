@@ -11,6 +11,10 @@ import localization.JavaJavaLocalizationClass;
  */
 public final class LogExposureClass {
     /**
+     * Process Capture Need
+     */
+    /* default */ private static boolean needProcExposure = true;
+    /**
      * Logger
      */
     public static final Logger LOGGER = LogManager.getLogger("io.github.danielgp-eu.javajava");
@@ -24,16 +28,22 @@ public final class LogExposureClass {
     public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
 
     /**
+     * Build message for I/O exception
+     * @param inStackTrace tracking back the Stack Trace
+     */
+    public static void exposeInputOutputException(final String inStackTrace) {
+        final String strFeedbackErr = String.format("Input/Output exception on... %s", inStackTrace);
+        LOGGER.error(strFeedbackErr);
+    }
+
+    /**
      * Log Process Builder command conditionally
      * @param strCommand command to execute
      */
     public static void exposeProcessBuilder(final String strCommand) {
-        if (getLogLevel().isLessSpecificThan(Level.INFO)) {
-            final boolean bolFeedbackNeeded = !strCommand.contains("7za") || !strCommand.contains(", -p");
-            if (bolFeedbackNeeded) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
-                LOGGER.debug(strFeedback);
-            }
+        if (getLogLevel().isLessSpecificThan(Level.INFO) && needProcExposure) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
+            LOGGER.debug(strFeedback);
         } 
     }
 
@@ -55,6 +65,17 @@ public final class LogExposureClass {
         return LOGGER.getLevel();
     }
 
+    /**
+     * Setter for Process Exposure
+     * @param inProcExposure true or false for exposing process parameters to Log
+     */
+    public static void setProcessExposureNeed(final boolean inProcExposure) {
+        needProcExposure = inProcExposure;
+    }
+
+    /**
+     * Constructor
+     */
     private LogExposureClass () {
         super();
     }
