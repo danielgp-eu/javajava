@@ -37,6 +37,17 @@ public final class FileChangeClass {
     private static String strPattern;
 
     /**
+     * Build new file from existing one
+     * @param existingFile existing file as Path
+     * @return Path
+     */
+    private static Path getNewFile(final Path existingFile) {
+        final String newPath = existingFile.getParent().toString();
+        final String newFileName = existingFile.getFileName().toString().replace(".json", "-new.json");
+        return Path.of(newPath).resolve(newFileName);
+    }
+
+    /**
      * Change String to all files within a folder based on a pattern
      */
     public static void massChangeToFilesWithinFolder() {
@@ -63,10 +74,8 @@ public final class FileChangeClass {
      * secure modification
      * @param file file to write to
      */
-    public static void secureModify(final Path file) {
-        final String newPath = file.getParent().toString();
-        final String newFileName = file.getFileName().toString().replace(".json", "-new.json");
-        final Path newFile = Path.of(newPath).resolve(newFileName);
+    private static void secureModify(final Path file) {
+        final Path newFile = getNewFile(file);
         try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
             BufferedWriter writer = Files.newBufferedWriter(newFile, StandardCharsets.UTF_8)) {
             String line;
