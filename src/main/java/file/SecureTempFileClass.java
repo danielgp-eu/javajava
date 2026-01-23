@@ -20,7 +20,8 @@ public final class SecureTempFileClass implements AutoCloseable {
      * @throws IOException
      */
     private SecureTempFileClass(final String prefix, final String suffix) throws IOException {
-        this.tempFile = Files.createTempFile(prefix, suffix);
+        final Path secureDir = Files.createTempDirectory("secureDir");
+        this.tempFile = Files.createTempFile(secureDir, prefix, suffix);
     }
 
     /**
