@@ -34,7 +34,7 @@ public final class FileContentReadClass {
     /**
      * Checksum algorithms
      */
-    private static String[] listAlgorithms = {"MD5", "SHA-1", "SHA-256", "SHA-512"};
+    private static String[] listAlgorithms = {"SHA-256", "SHA-512", "SHA3-256", "SHA3-512"};
 
     /**
      * Compute checksum for a given file
