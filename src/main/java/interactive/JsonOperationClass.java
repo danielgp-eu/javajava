@@ -66,7 +66,6 @@ class JsonSplit implements Runnable {
      * balances threshold size
      */
     private static long sizeThreshold;
-
     /**
      * String for file name
      */
@@ -76,7 +75,6 @@ class JsonSplit implements Runnable {
             arity = "1",
             required = true)
     private static String strFileName;
-
     /**
      * String for folder name
      */
@@ -86,7 +84,6 @@ class JsonSplit implements Runnable {
             arity = "1",
             required = true)
     private static String strDestFolder;
-
     /**
      * size of Split threshold (optional)
      */
@@ -94,14 +91,13 @@ class JsonSplit implements Runnable {
             names = {"-sz", "--splitSize"},
             description = "Threshold size value beyound which split will be performed")
     private static long splitSize;
-
     /**
      * size of Split threshold (optional)
      */
     @CommandLine.Option(
-            names = {"-bsz", "--bucketSize"},
-            description = "Size of final characters to be overwritten as part of the bucketing logic (use -1 for no bucketing)")
-    private static int bucketSize;
+            names = {"-bl", "--bucketLength"},
+            description = "Length of final characters to be overwritten as part of the bucketing logic (use -1 for no bucketing)")
+    private static int bucketLength;
 
     @Override
     public void run() {
@@ -128,8 +124,8 @@ class JsonSplit implements Runnable {
         JsonArrayClass.setInputJsonFile(strFileName);
         JsonArrayClass.setDestinationFolder(strDestFolder);
         JsonArrayClass.setRelevantField("ProjectID");
-        if (bucketSize != 0) {
-            JsonArrayClass.setBucketLength(bucketSize);
+        if (bucketLength != 0) {
+            JsonArrayClass.setBucketLength(bucketLength);
         }
         final String destPattern = JsonArrayClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
         FileLocatingClass.deleteFilesMathingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
