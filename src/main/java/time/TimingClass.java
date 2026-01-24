@@ -81,9 +81,9 @@ public final class TimingClass {
             // Convert to LocalDateTime in system default zone
             final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             lastModifTime = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace('T', ' ');
-        } catch (IOException ex) {
-            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "*", file, Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.debug(strFeedbackErr);
+        } catch (IOException ei) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), file.getParent(), file.getFileName());
+            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return lastModifTime;
     }

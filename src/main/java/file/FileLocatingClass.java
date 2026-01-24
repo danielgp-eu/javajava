@@ -166,9 +166,10 @@ public final class FileLocatingClass {
             pathProps.put("DIRECTORIES", stats.folderCount());
             pathProps.put("FILES", stats.fileCount());
             pathProps.put("SIZE_BYTES", stats.totalSize());
-        } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strFolderName, Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
+        } catch (IOException ei) {
+            final Path foderName = Path.of(strFolderName);
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), foderName.getParent(), foderName.getFileName());
+            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return pathProps;
     }

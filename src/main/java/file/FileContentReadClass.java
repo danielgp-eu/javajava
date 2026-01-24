@@ -108,9 +108,9 @@ public final class FileContentReadClass {
                             computeFileMultipleChecksums(file));
                 }
             }
-        } catch (IOException ex) {
-            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "*", strFolderName, Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.debug(strFeedbackErr);
+        } catch (IOException ei) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), "*", strFolderName);
+            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
     }
 

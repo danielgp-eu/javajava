@@ -62,9 +62,10 @@ public final class ProjectClass {
             arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, reader.getProperty(crtVariable)));
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties.toString());
             LogExposureClass.LOGGER.debug(strFeedback);
-        } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), prjProps, Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
+        } catch (IOException ei) {
+            final Path ptPrjProps = Path.of(prjProps);
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), ptPrjProps.getParent(), ptPrjProps.getFileName());
+            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return svProperties;
     }

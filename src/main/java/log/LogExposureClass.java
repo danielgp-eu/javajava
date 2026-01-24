@@ -37,6 +37,16 @@ public final class LogExposureClass {
     }
 
     /**
+     * Build message for I/O exception
+     * @param customMsg custom message
+     * @param inStackTrace tracking back the Stack Trace
+     */
+    public static void exposeInputOutputException(final String customMsg, final String inStackTrace) {
+        final String strFeedbackErr = customMsg + String.format("... %s", inStackTrace);
+        LOGGER.error(strFeedbackErr);
+    }
+
+    /**
      * Log Process Builder command conditionally
      * @param strCommand command to execute
      */

@@ -129,8 +129,7 @@ public final class JsonArrayClass {
             final String strFeedback = String.format("I just closed file %s after %s records", crtFile, recordCounter);
             LogExposureClass.LOGGER.info(strFeedback);
         } catch (IOException ei) {
-            final String strFeedback = String.format("Input/Output exception when closing the file %s... %s", crtFile, Arrays.toString(ei.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
+            LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
         }
     }
 

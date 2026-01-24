@@ -86,9 +86,9 @@ public final class FileHandlingClass {
                     }
                 }
             }
-        } catch (IOException ex) {
-            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strExtension, strFolderName, Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.debug(strFeedbackErr);
+        } catch (IOException ei) {
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), strExtension, strFolderName);
+            LogExposureClass.exposeInputOutputException(strFeedbackErr, Arrays.toString(ei.getStackTrace()));
         }
         return arrayFiles;
     }
