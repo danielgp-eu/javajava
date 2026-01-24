@@ -1,14 +1,13 @@
 package time;
 
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import org.jspecify.annotations.NonNull;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
@@ -17,9 +16,6 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
 
 /**
  * Time methods
@@ -72,7 +68,7 @@ public final class TimingClass {
      * @param file given file
      * @return String
      */
-    public static String getFileLastModifiedTimeAsHumanReadableFormat(final Path file) {
+    public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file) {
         String lastModifTime = null;
         try {
             final long modifTime = Files.getLastModifiedTime(file).toMillis();
@@ -95,7 +91,8 @@ public final class TimingClass {
      * @param strRule rule to use for conversion
      * @return String
      */
-    public static String convertNanosecondsIntoSomething(final Duration duration, final String strRule) {
+    @NonNull
+    public static String convertNanosecondsIntoSomething(@NonNull final Duration duration, @NonNull final String strRule) {
         final StringBuilder strFinalString = new StringBuilder(100);
         final String[] arrayStrings;
         String strFinalOne = null;
@@ -138,7 +135,8 @@ public final class TimingClass {
      * @param outTimeFormat output Time Format
      * @return String
      */
-    public static String convertTimeFormat(final String inDate, final String inTimeFormat, final String outTimeFormat) {
+    @NonNull
+    public static String convertTimeFormat(@NonNull final String inDate, @NonNull final String inTimeFormat, @NonNull final String outTimeFormat) {
         // Define input and output formatters
         final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat);
         final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat);
@@ -153,7 +151,8 @@ public final class TimingClass {
      * @param strDtTmPattern Date and time pattern to use
      * @return String
      */
-    public static String getCurrentTimestamp(final String strDtTmPattern) {
+    @NonNull
+    public static String getCurrentTimestamp(@NonNull final String strDtTmPattern) {
         final LocalDateTime nowI = LocalDateTime.now();
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern);
         return formatter.format(nowI);
@@ -166,7 +165,8 @@ public final class TimingClass {
      * @param strZoneName time zone name
      * @return String
      */
-    public static String getCurrentTimestamp(final String strDtTmPattern, final String strZoneName) {
+    @NonNull
+    public static String getCurrentTimestamp(@NonNull final String strDtTmPattern, @NonNull final String strZoneName) {
         final ZonedDateTime nowI = ZonedDateTime.now(ZoneId.of(strZoneName));
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern);
         return formatter.format(nowI);
@@ -179,7 +179,7 @@ public final class TimingClass {
      * @param strWhich which part of Date or Time to use for conversion
      * @return final part of Date or Time
      */
-    private static long getDurationPartNumber(final Duration duration, final String strWhich) {
+    private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhich) {
         return switch (strWhich) {
             case "Day" -> duration.toDaysPart();
             case "Hour" -> duration.toHoursPart();
@@ -203,7 +203,8 @@ public final class TimingClass {
      * @param strHow controls output format
      * @return String
      */
-    private static String getDurationWithCustomRules(final Duration duration, final String strWhich, final String strHow) {
+    @NonNull
+    private static String getDurationWithCustomRules(@NonNull final Duration duration, @NonNull final String strWhich, @NonNull final String strHow) {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
         final String strFormats = TIME_FORMATS.get(strHow);
         if (strFormats.isEmpty()) {
@@ -230,7 +231,8 @@ public final class TimingClass {
      * @param strDateIso8601 date as yyyy-MM-dd (aka ISO 8601 format type)
      * @return String as year, wk string + 2 digits week #
      */
-    public static String getIsoYearWeek(final String strDateIso8601) {
+    @NonNull
+    public static String getIsoYearWeek(@NonNull final String strDateIso8601) {
         final LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
         return inLocalDate.get(WeekFields.ISO.weekBasedYear()) + "wk"
                 + String.format("%02d", inLocalDate.get(WeekFields.ISO.weekOfWeekBasedYear()));
@@ -242,7 +244,8 @@ public final class TimingClass {
      * @param strTimeWoSeps input Time
      * @return LocalDateTime
      */
-    public static LocalDateTime getLocalDateTimeFromStrings(final String strDateIso8601, final String strTimeWoSeps) {
+    @NonNull
+    public static LocalDateTime getLocalDateTimeFromStrings(@NonNull final String strDateIso8601, @NonNull final String strTimeWoSeps) {
         return LocalDateTime.of(
                 Integer.parseInt(strDateIso8601.substring(1, 5)),
                 Integer.parseInt(strDateIso8601.substring(6, 8)),
@@ -257,7 +260,8 @@ public final class TimingClass {
      * @param strDateIso8601 date as yyyy-MM-dd (aka ISO 8601 format type)
      * @return String as yyyy-MM (MonthName)
      */
-    public static String getYearMonthWithFullName(final String strDateIso8601) {
+    @NonNull
+    public static String getYearMonthWithFullName(@NonNull final String strDateIso8601) {
         final LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
         return strDateIso8601.substring(0, 7)
                 + " (" + inLocalDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH)
@@ -271,7 +275,8 @@ public final class TimingClass {
      * @param strPartial prefix for feedback
      * @return String
      */
-    public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
+    @NonNull
+    public static String logDuration(@NonNull final LocalDateTime startTimeStamp, @NonNull final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
         return String.format(JavaJavaLocalizationClass.getMessage("i18nWithDrtn")
             , strPartial
