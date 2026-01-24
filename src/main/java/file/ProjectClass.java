@@ -6,6 +6,7 @@ import log.LogExposureClass;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -21,13 +22,14 @@ public final class ProjectClass {
      */
     public static String getCurrentProjectObjectModelFile() {
         final StringBuilder strPomFile = new StringBuilder();
+        final String strPrjFolder = getProjectFolder();
         if (isRunningFromJar()) {
             FileHandlingClass.setSilentFileSearch(true);
-            final List<String> pomFiles = FileHandlingClass.getSpecificFilesFromFolder(getProjectFolder(), "pom");
+            final List<String> pomFiles = FileHandlingClass.getSpecificFilesFromFolder(strPrjFolder, "pom");
             strPomFile.append(pomFiles.getFirst());
             FileHandlingClass.setSilentFileSearch(false);
         } else {
-            strPomFile.append(getProjectFolder()).append(File.separator).append("pom.xml");
+            strPomFile.append(strPrjFolder).append(File.separator).append("pom.xml");
         }
         return strPomFile.toString();
     }
