@@ -3,35 +3,69 @@ package file;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Project related goodies
  */
 public final class ProjectClass {
+    /**
+     * External POM file to be considered (Optional)
+     */
+    private static String externalPomFile;
+    /**
+     * special value
+     */
+    private static final String GLOBAL_VERSION = "${project.version}";
+    /**
+     * holder of Managed Versions
+     */
+    private static Map<String, Object> managedVersions;
+    /**
+     * holder of Plugin Management Versions
+     */
+    private static Map<String, Object> pluginCentralVers;
+    /**
+     * working POM file as Path
+     */
+    private static Path pomFile;
+    /**
+     * current Project Model Interpolator
+     */
+    private static StringSearchInterpolator prjInterpolator;
+    /**
+     * current Project Model
+     */
+    private static Model prjModel;
 
     /**
-     * establish current POM file
-     * @return String
+     * Getter for pomFile
+     * @return Path
      */
-    public static String getCurrentProjectObjectModelFile() {
-        final StringBuilder strPomFile = new StringBuilder();
-        final String strPrjFolder = getProjectFolder();
-        if (isRunningFromJar()) {
-            FileHandlingClass.setSilentFileSearch(true);
-            final List<String> pomFiles = FileHandlingClass.getSpecificFilesFromFolder(strPrjFolder, "pom");
-            strPomFile.append(pomFiles.getFirst());
-            FileHandlingClass.setSilentFileSearch(false);
-        } else {
-            strPomFile.append(strPrjFolder).append(File.separator).append("pom.xml");
-        }
-        return strPomFile.toString();
+    public static Path getPomFile() {
+        return pomFile;
     }
 
     /**
@@ -51,25 +85,38 @@ public final class ProjectClass {
     }
 
     /**
-     * get variable
-     * @param strVariables variables to pick
-     * @return Properties
+     * Getter for projectModel
+     * @return Model
      */
-    public static Properties getVariableFromProjectProperties(final String... strVariables) {
-        final Properties svProperties = new Properties();
-        final String prjProps = "/project.properties";
-        try {
-            final PropertiesReaderClass reader = new PropertiesReaderClass(prjProps);
-            final List<String> arrayVariables = Arrays.asList(strVariables);
-            arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, reader.getProperty(crtVariable)));
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties.toString());
-            LogExposureClass.LOGGER.debug(strFeedback);
-        } catch (IOException ei) {
-            final Path ptPrjProps = Path.of(prjProps);
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), ptPrjProps.getParent(), ptPrjProps.getFileName());
-            LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+    public static Model getProjectModel() {
+        if (prjModel == null) {
+            loadProjectModel();
         }
-        return svProperties;
+        return prjModel;
+    }
+
+    /**
+     * get POM value through interpolation if needed
+     * @param rawValue original value
+     * @return String
+     */
+    @NonNull
+    private static String getProjectModelValueWithInterpolationIfNeeded(@Nullable final String rawValue) {
+        String finalValue = rawValue;
+        if (rawValue == null || rawValue.isBlank()) {
+            finalValue = "";
+        } else if (GLOBAL_VERSION.equals(rawValue)) {
+            finalValue = prjModel.getVersion();
+        } else if (rawValue.startsWith("${")
+                && rawValue.endsWith("}")) {
+            try {
+                finalValue = prjInterpolator.interpolate(rawValue);
+            } catch (InterpolationException e) {
+                final String strFeedback = String.format("InterpolationException %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+        }
+        return finalValue;
     }
 
     /**
@@ -87,7 +134,206 @@ public final class ProjectClass {
         return "jar".equals(protocol);
     }
 
-    private ProjectClass () {
+    /**
+     * Load POM for current project
+     */
+    public static void loadProjectModel() {
+        setPomFile();
+        // 1. Read the raw model
+        final MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = null;
+        try(BufferedReader bReader = Files.newBufferedReader(pomFile, StandardCharsets.UTF_8)) {
+            model = reader.read(bReader);
+        } catch (IOException | XmlPullParserException ex) {
+            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"), Arrays.toString(ex.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
+        }
+        prjModel = model;
+        if (prjModel.getProperties() != null) {
+            loadProjectModelInterpolator();
+        }
+        if (prjModel.getDependencyManagement() != null) {
+            loadProjectModelCentralDependencies();
+        }
+        if (prjModel.getBuild().getPluginManagement() != null) {
+            loadProjectModelPluginManagement();
+        }
+    }
+
+    /**
+     * Loading central dependency management if set
+     */
+    private static void loadProjectModelCentralDependencies() {
+        final Map<String, Object> centralDeps = new ConcurrentHashMap<>();
+        for (final Dependency dependency : prjModel.getDependencyManagement().getDependencies()) {
+            final String strKkey = dependency.getGroupId() + ":" + dependency.getArtifactId();
+            final String strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
+            centralDeps.put(strKkey, strVersion);
+        }
+        managedVersions = centralDeps;
+    }
+
+    /**
+     * Loading central plugin management if set
+     */
+    private static void loadProjectModelPluginManagement() {
+        final Map<String, Object> centralPlugM = new ConcurrentHashMap<>();
+        for (final Plugin plugin : prjModel.getBuild().getPluginManagement().getPlugins()) {
+            final String strKkey = plugin.getGroupId() + ":" + plugin.getArtifactId();
+            final String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
+            centralPlugM.put(strKkey, strVersion);
+        }
+        pluginCentralVers = centralPlugM;
+    }
+
+    /**
+     * Loading Properties for current Project Model if set
+     */
+    private static void loadProjectModelInterpolator() {
+        final StringSearchInterpolator interpolator = new StringSearchInterpolator();
+        final Properties props = prjModel.getProperties();
+        interpolator.addValueSource(new MapBasedValueSource(props));
+        prjInterpolator = interpolator;
+    }
+
+    /**
+     * Setter for externalPomFile
+     * @param inExtPomFile
+     */
+    public static void setExternalPomFile(final String inExtPomFile) {
+        externalPomFile = inExtPomFile;
+    }
+
+    /**
+     * set the POM to work with
+     */
+    private static void setPomFile() {
+        String strPomFile = null;
+        if (externalPomFile == null) {
+            final StringBuilder sbPom = new StringBuilder();
+            final String strPrjFolder = getProjectFolder();
+            if (isRunningFromJar()) {
+                FileHandlingClass.setSilentFileSearch(true);
+                final List<String> pomFiles = FileHandlingClass.getSpecificFilesFromFolder(strPrjFolder, "pom");
+                sbPom.append(pomFiles.getFirst());
+                FileHandlingClass.setSilentFileSearch(false);
+            } else {
+                sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
+            }
+            strPomFile = sbPom.toString();
+        } else {
+            strPomFile = externalPomFile;
+            final String strFeedback = String.format("External POM file %s is being considered!", externalPomFile);
+            LogExposureClass.LOGGER.info(strFeedback);
+        }
+        pomFile = Path.of(strPomFile);
+    }
+
+    /**
+     * initiating Components class
+     */
+    public static final class Components {
+        /**
+         * special value
+         */
+        private static final String UNKNOWN = "UNKNOWN";
+
+        /**
+         * Project Build Plugins exposed
+         * @return Map
+         */
+        public static Map<String, Object> getProjectModelComponent(final String strComponentName) {
+            Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
+            switch(strComponentName) {
+                case "BuildPlugins":
+                    if (prjModel.getBuild() != null) {
+                        mapToReturn = getBuildPlugins();
+                    }
+                    break;
+                case "Dependencies":
+                    if (prjModel.getDependencies() != null) {
+                        mapToReturn = getDependencies();
+                    }
+                    break;
+                case "ProfilePlugins":
+                    if (prjModel.getProfiles() != null) {
+                        mapToReturn = getProfilePlugins();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return mapToReturn;
+        }
+
+        /**
+         * Build Plugins gathering
+         * @return
+         */
+        private static Map<String, Object> getBuildPlugins() {
+            final Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
+            prjModel.getBuild().getPlugins().forEach(plugin -> {
+                final String strKey = plugin.getGroupId() + ":" + plugin.getArtifactId();
+                String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
+                if (strVersion.isEmpty() && !managedVersions.isEmpty()) {
+                    strVersion = pluginCentralVers.getOrDefault(strKey, UNKNOWN).toString();
+                }
+                mapToReturn.put(strKey, strVersion);
+            });
+            return mapToReturn;
+        }
+
+        /**
+         * Dependencies gathering
+         * @return
+         */
+        private static Map<String, Object> getDependencies() {
+            final Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
+            prjModel.getDependencies().forEach(dependency -> {
+                final String strKey = dependency.getGroupId() + ":" + dependency.getArtifactId();
+                String strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
+                if (strVersion.isEmpty() && !managedVersions.isEmpty()) {
+                    strVersion = managedVersions.getOrDefault(strKey, UNKNOWN).toString();
+                }
+                mapToReturn.put(strKey, strVersion);
+            });
+            return mapToReturn;
+        }
+
+        /**
+         * Profile Plugins gathering
+         * @return
+         */
+        private static Map<String, Object> getProfilePlugins() {
+            final Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
+            prjModel.getProfiles().forEach(profile -> {
+                if (profile.getBuild() != null) {
+                    profile.getBuild().getPlugins().forEach(plugin -> {
+                        final String strKey = plugin.getGroupId() + ":" + plugin.getArtifactId();
+                        String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
+                        if (strVersion.isEmpty() && !managedVersions.isEmpty()) {
+                            strVersion = pluginCentralVers.getOrDefault(strKey, UNKNOWN).toString();
+                        }
+                        mapToReturn.put(strKey, strVersion);
+                    });
+                }
+            });
+            return mapToReturn;
+        }
+
+        /**
+         * Constructor
+         */
+        private Components() {
+            // intentionally left blank
+        }
+
+    }
+
+    /**
+     * Constructor
+     */
+    private ProjectClass() {
         // intentionally left blank
     }
 

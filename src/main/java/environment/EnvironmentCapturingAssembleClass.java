@@ -1,7 +1,13 @@
 package environment;
 
-import java.util.Properties;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Map;
 
+import org.apache.maven.model.Model;
+
+import file.ProjectClass;
+import json.JsoningClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
@@ -16,7 +22,7 @@ public final class EnvironmentCapturingAssembleClass extends OshiUsageClass {
      * @return String
      */
     public static String getCurrentEnvironmentDetails() {
-        final StringBuilder strJsonString = new StringBuilder(100);
+        final StringBuilder strJsonString = new StringBuilder();
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationCapturing");
         LogExposureClass.LOGGER.info(strFeedback);
         return strJsonString.append('{')
@@ -34,13 +40,70 @@ public final class EnvironmentCapturingAssembleClass extends OshiUsageClass {
      * Application details
      * @return String
      */
-    private static String getApplicationDetails() {
-        final String projDependencies = ProjectDependencyResolverClass.getDependency();
-        final Properties projProperties = ProjectModelClass.getProjectProperties();
-        final String strDetails = String.format("\"Application\":{\"%s/%s\":\"%s\",\"Dependencies\":%s}", projProperties.get("groupId"), projProperties.get("artifactId"), projProperties.get("version"), projDependencies);
+    public static String getApplicationDetails() {
+        final Model prjModel = ProjectClass.getProjectModel();
+        final StringBuilder strJsonString = new StringBuilder(100);
+        strJsonString.append("\"Application\":{\"")
+                .append(prjModel.getGroupId())
+                .append(':')
+                .append(prjModel.getArtifactId())
+                .append("\":\"")
+                .append(prjModel.getVersion())
+                .append('\"');
+        final Map<String, Object> projDependencies = ProjectClass.Components.getProjectModelComponent("Dependencies");
+        if (!projDependencies.isEmpty()) {
+            strJsonString.append(",\"Dependencies\":")
+                    .append(JsoningClass.getMapIntoJsonString(projDependencies));
+        }
+        final Map<String, Object> projBuildPlugins = ProjectClass.Components.getProjectModelComponent("BuildPlugins");
+        if (!projBuildPlugins.isEmpty()) {
+            strJsonString.append(",\"Build Plugins\":")
+                    .append(JsoningClass.getMapIntoJsonString(projBuildPlugins));
+        }
+        final Map<String, Object> projPrflPlugins = ProjectClass.Components.getProjectModelComponent("ProfilePlugins");
+        if (!projPrflPlugins.isEmpty()) {
+            strJsonString.append(",\"Profile Plugins\":")
+                    .append(JsoningClass.getMapIntoJsonString(projPrflPlugins));
+        }
+        if (!prjModel.getModules().isEmpty()) {
+            strJsonString.append(",\"Modules\":[");
+            final Path pathPomFile = ProjectClass.getPomFile();
+            final StringBuilder strJsonModule = new StringBuilder(100);
+            prjModel.getModules().forEach(module -> {
+                final String crtModulePom = pathPomFile.getParent()
+                        + File.separator + module+ File.separator + "pom.xml";
+                if (!strJsonModule.isEmpty()) {
+                    strJsonModule.append(',');
+                }
+                ProjectClass.setExternalPomFile(crtModulePom);
+                ProjectClass.loadProjectModel();
+                final Model prjModuleModel = ProjectClass.getProjectModel();
+                String mdlVersion = prjModuleModel.getVersion();
+                if (mdlVersion == null) {
+                    mdlVersion = prjModel.getVersion();
+                }
+                strJsonModule.append("{\"POM\":\"")
+                        .append(crtModulePom.replace("\\", "\\\\"))
+                        .append("\",\"")
+                        .append(prjModel.getGroupId())
+                        .append(':')
+                        .append(prjModuleModel.getArtifactId())
+                        .append("\":\"")
+                        .append(mdlVersion)
+                        .append('\"')
+                        ;
+                final Map<String, Object> mdlDependencies = ProjectClass.Components.getProjectModelComponent("Dependencies");
+                if (!mdlDependencies.isEmpty()) {
+                    strJsonModule.append(",\"Dependencies\":")
+                            .append(JsoningClass.getMapIntoJsonString(mdlDependencies));
+                }
+                strJsonModule.append('}');
+            });
+            strJsonString.append(strJsonModule.toString()).append(']');
+        }
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);
-        return strDetails;
+        return strJsonString.append('}').toString();
     }
 
     /**

@@ -2,6 +2,7 @@ package interactive;
 
 import environment.EnvironmentCapturingAssembleClass;
 import file.FileHandlingClass;
+import file.ProjectClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
 
@@ -11,7 +12,9 @@ import picocli.CommandLine;
 @CommandLine.Command(
     name = "top",
     subcommands = {
-        LogEnvironmentDetails.class
+            AnlyzePom.class,
+            GetSubFoldersFromFolder.class,
+            LogEnvironmentDetails.class
     }
 )
 public final class EnvironmentCapturerClass {
@@ -43,13 +46,61 @@ public final class EnvironmentCapturerClass {
 /**
  * Captures sub-folder from a Given Folder into Log file
  */
+@CommandLine.Command(name = "AnlyzePom",
+                     description = "Exposes information about a given POM")
+class AnlyzePom implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fNm", "--fileName"},
+            description = "POM file(s) to analyze and expose information from",
+            arity = "1..*",
+            required = true)
+    private String[] strFileNames;
+
+    @Override
+    public void run() {
+        final String strFeedbackThis = String.format("For this project relevant POM information is: {%s}", EnvironmentCapturingAssembleClass.getApplicationDetails());
+        LogExposureClass.LOGGER.info(strFeedbackThis);
+        for (final String strFileName : strFileNames) {
+            ProjectClass.setExternalPomFile(strFileName);
+            ProjectClass.loadProjectModel();
+            final String strFeedback = String.format("For given POM file %s relevant information is: {%s}", strFileName, EnvironmentCapturingAssembleClass.getApplicationDetails());
+            LogExposureClass.LOGGER.info(strFeedback);
+        }
+    }
+
+    /**
+     * Private constructor to prevent instantiation
+     */
+    public AnlyzePom() {
+        super();
+    }
+
+}
+
+/**
+ * Captures sub-folder from a Given Folder into Log file
+ */
 @CommandLine.Command(name = "GetSubFoldersFromFolder",
                      description = "Captures sub-folders from a Given Folder into Log file")
 class GetSubFoldersFromFolder implements Runnable {
 
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fldNm", "--folderName"},
+            description = "Folder Name to use",
+            arity = "1",
+            required = true)
+    private String strFolderName;
+
     @Override
     public void run() {
-        FileHandlingClass.getSubFoldersFromFolder("C:\\www\\Config\\");
+        FileHandlingClass.getSubFoldersFromFolder(strFolderName);
     }
 
     /**

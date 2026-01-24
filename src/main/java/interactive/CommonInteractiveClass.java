@@ -1,9 +1,10 @@
 package interactive;
 
 import java.time.LocalDateTime;
-import java.util.Properties;
 
-import environment.ProjectModelClass;
+import org.apache.maven.model.Model;
+
+import file.ProjectClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import time.TimingClass;
@@ -59,9 +60,8 @@ public final class CommonInteractiveClass {
     public static void startMeUp() {
         final String strFeedbackLines = "-".repeat(80);
         LogExposureClass.LOGGER.info(strFeedbackLines);
-        ProjectModelClass.loadProjectObjectModelFileIntoModel();
-        final Properties projProperties = ProjectModelClass.getProjectProperties();
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec"), projProperties.get("groupId"), projProperties.get("artifactId"), projProperties.get("version"));
+        final Model prjModel = ProjectClass.getProjectModel();
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec"), prjModel.getGroupId(), prjModel.getArtifactId(), prjModel.getVersion());
         LogExposureClass.LOGGER.info(strFeedback);
         LogExposureClass.LOGGER.info(strFeedbackLines);
     }
