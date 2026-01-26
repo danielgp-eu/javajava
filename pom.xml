@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -64,7 +64,6 @@
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <takari-lifecycle-plugin.version>2.3.2</takari-lifecycle-plugin.version>
         <!-- Profile plugin versions -->
@@ -73,7 +72,7 @@
 
     <build>
         <plugins>
-            <!-- Source: https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
+            <!-- https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
             <plugin>
               <groupId>io.takari.maven.plugins</groupId>
               <artifactId>takari-lifecycle-plugin</artifactId>
