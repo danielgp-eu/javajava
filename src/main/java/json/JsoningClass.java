@@ -1,12 +1,5 @@
 package json;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.ListAndMapClass;
-import structure.StringManipulationClass;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,6 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import structure.ListAndMapClass;
+import structure.StringManipulationClass;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * JSON handling

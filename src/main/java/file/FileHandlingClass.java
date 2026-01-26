@@ -1,11 +1,12 @@
 package file;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
 
 /**
  * File operation class
@@ -108,7 +112,7 @@ public final class FileHandlingClass {
             for (final Path entry : stream) {
                 if (Files.isDirectory(entry)) {
                     arraySubFolders.add(entry.toString());
-                    final String strFeedback = String.format("Folder %s was found", entry.toString());
+                    final String strFeedback = String.format("Folder %s was found", entry);
                     LogExposureClass.LOGGER.info(strFeedback);
                 }
             }
@@ -189,13 +193,13 @@ public final class FileHandlingClass {
 
     /**
      * Setter for Cleaned Folder Statistics
-     * @param inClnFldrStats boolean
+     * @param inStats boolean
      */
-    public static void setCleanedFolderStatistics(final boolean inClnFldrStats) {
-        if (bolClnFldrStats != inClnFldrStats) {
+    public static void setCleanedFolderStatistics(final boolean inStats) {
+        if (bolClnFldrStats != inStats) {
             setOrResetCleanedFolderStatistics();
         }
-        bolClnFldrStats = inClnFldrStats;
+        bolClnFldrStats = inStats;
     }
 
     /**
@@ -208,10 +212,10 @@ public final class FileHandlingClass {
 
     /**
      * Setter for Cleaned Folder Statistics
-     * @param inSilentFileSrch value to set
+     * @param inFileSearch value to set
      */
-    public static void setSilentFileSearch(final boolean inSilentFileSrch) {
-        bolSilentFileSrch = inSilentFileSrch;
+    public static void setSilentFileSearch(final boolean inFileSearch) {
+        bolSilentFileSrch = inFileSearch;
     }
 
     /**

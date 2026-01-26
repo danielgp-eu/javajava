@@ -16,8 +16,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
@@ -30,7 +34,7 @@ public final class FileContentReadClass {
     /**
      * File Statistics variable
      */
-    private static Map<String, Map<String, String>> fileStats = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, String>> fileStats = new ConcurrentHashMap<>();
     /**
      * Checksum algorithms
      */
@@ -40,7 +44,7 @@ public final class FileContentReadClass {
      * Compute checksum for a given file
      * @param file input file
      * @param algorithm checksum algorithm name
-     * @return 
+     * @return String
      */
     private static String computeSingleChecksum(final Path file, final String algorithm) {
         MessageDigest digest = null;
@@ -59,6 +63,7 @@ public final class FileContentReadClass {
             final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentError"), "*", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
+        assert digest != null;
         final byte[] hashBytes = digest.digest();
         for (final byte byteVar : hashBytes) {
             sbChecksumValue.append(String.format("%02x", byteVar));
@@ -68,8 +73,8 @@ public final class FileContentReadClass {
 
     /**
      * Compute all known checksums for a given file
-     * @param file
-     * @return
+     * @param file input file
+     * @return Map
      */
     private static Map<String, String> computeFileMultipleChecksums(final Path file) {
         final Map<String, String> crtFileStats = new ConcurrentHashMap<>();
@@ -139,9 +144,7 @@ public final class FileContentReadClass {
      * @return Map with file statistics
      */
     public static Map<String, Map<String, String>> getFileStatisticsFromFolder(final String strFolderName) {
-        if (fileStats != null) {
-            fileStats.clear();
-        }
+        fileStats.clear();
         gatherFileStatisticsFromFolder(strFolderName);
         return fileStats;
     }
@@ -181,9 +184,9 @@ public final class FileContentReadClass {
             final Integer intColToEval,
             final Integer intColToGrpBy) {
         Map<String, List<String>> grouped = null;
-        try {
+        try (Stream<String> lines = Files.lines(Path.of(strFileName))) {
             // Group values by category
-            grouped = Files.lines(Path.of(strFileName))
+            grouped = lines
                     .skip(1)
                     .map(line -> line.split("\",\"")) // split by comma
                     .collect(Collectors.groupingBy(

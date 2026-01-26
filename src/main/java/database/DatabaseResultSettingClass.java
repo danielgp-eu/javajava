@@ -1,8 +1,5 @@
 package database;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -10,6 +7,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
 
 /**
  * Basic features for Databases 
@@ -33,7 +33,7 @@ public final class DatabaseResultSettingClass {
     private static int intColumnsIs;
 
     /**
-     * capture to Log resultset properties
+     * capture to Log result-set properties
      * @param key current key within loop
      * @param strPurpose query purpose for log text
      * @param objProperties object properties

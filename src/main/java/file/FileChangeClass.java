@@ -57,7 +57,7 @@ public final class FileChangeClass {
             final Path dir = Paths.get(strFolder);
             Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                 @Override
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {
                     if (file.getFileName().toString().matches(strPattern)) {
                         secureModify(file);
                     }

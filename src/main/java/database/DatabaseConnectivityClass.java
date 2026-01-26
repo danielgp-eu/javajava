@@ -1,11 +1,11 @@
 package database;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
 
 /**
  * Database connectivity

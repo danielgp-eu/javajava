@@ -1,5 +1,7 @@
 package environment;
 
+import java.util.List;
+
 import oshi.SystemInfoFFM;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.Display;
@@ -9,8 +11,6 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.NetworkIF;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OperatingSystem;
-
-import java.util.List;
 
 /**
  * initiating OSHI package

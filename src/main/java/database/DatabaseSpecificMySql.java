@@ -1,12 +1,5 @@
 package database;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.NumberClass;
-import json.JsoningClass;
-
-import tools.jackson.databind.JsonNode;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -16,6 +9,12 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import json.JsoningClass;
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import structure.NumberClass;
+import tools.jackson.databind.JsonNode;
 
 /**
  * MySQL methods

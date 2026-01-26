@@ -1,16 +1,20 @@
 package database;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
-import shell.ShellingClass;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import shell.ShellingClass;
 
 /**
  * Snowflake methods
@@ -252,7 +256,11 @@ FROM
      */
     private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
         final Properties properties = new Properties();
-        properties.put("user", ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault()));
+        String currentUser = ShellingClass.getCurrentUserAccount();
+        if (currentUser.isEmpty()) {
+            currentUser = "UNKNOWN_USER";
+        }
+        properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
         properties.put("db", strDatabase);
         properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
         properties.put("role", propInstance.get("Role").toString().replace("\"", ""));

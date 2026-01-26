@@ -1,13 +1,14 @@
 package localization;
 
-import com.ibm.icu.text.PluralRules;
-import log.LogExposureClass;
-
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.PluralRules;
+
+import log.LogExposureClass;
 
 /**
  * Internationalization

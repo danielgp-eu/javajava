@@ -1,15 +1,15 @@
 package environment;
 
+import java.util.List;
+import java.util.Map;
+
+
+import json.JsoningClass;
 import oshi.SystemInfo;
 import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
-
-import java.util.List;
-import java.util.Map;
-
-import json.JsoningClass;
 
 /**
  * Capturing current environment software details

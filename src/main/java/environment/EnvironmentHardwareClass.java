@@ -1,13 +1,17 @@
 package environment;
 
-import oshi.hardware.*;
-import oshi.util.FormatUtil;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import json.JsoningClass;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.Display;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.GraphicsCard;
+import oshi.hardware.NetworkIF;
+import oshi.hardware.PhysicalMemory;
+import oshi.util.FormatUtil;
 
 /**
  * Capturing current environment hardware details
@@ -76,7 +80,6 @@ public final class EnvironmentHardwareClass {
 
     /**
      * Capturing details about CPU
-     * 
      * @return String
      */
     public static String getDetailsAboutCentralPowerUnit() {

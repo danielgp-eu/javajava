@@ -1,10 +1,5 @@
 package shell;
 
-import file.FileHandlingClass;
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import time.TimingClass;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -12,6 +7,11 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+
+import file.FileHandlingClass;
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import time.TimingClass;
 
 /**
  * Shell execution methods
@@ -144,12 +144,13 @@ public final class ShellingClass {
     }
 
     /**
-     * Seter for Process output and error
+     * Setter for Process output and error
      * @param stdoutFuture Process output
      * @param stderrFuture Process error
      * @param exitCode process execution exit code
      */
-    private static void setProcessResults(final CompletableFuture<String> stdoutFuture,
+    private static void setProcessResults(
+            final CompletableFuture<String> stdoutFuture,
             final CompletableFuture<String> stderrFuture,
             final int exitCode) {
         final String strCaptureMessage;

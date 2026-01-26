@@ -112,9 +112,9 @@ public final class StringManipulationClass {
      */
     public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final Object... strReplacement) {
         return switch (intRsParams) {
-            case 1 -> String.format(strUnformatted, strReplacement[0].toString());
-            case 2 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString());
-            case 3 -> String.format(strUnformatted, strReplacement[0].toString(), strReplacement[1].toString(), strReplacement[2].toString());
+            case 1 -> String.format(strUnformatted, strReplacement[0]);
+            case 2 -> String.format(strUnformatted, strReplacement[0], strReplacement[1]);
+            case 3 -> String.format(strUnformatted, strReplacement[0], strReplacement[1], strReplacement[2]);
             default -> {
                 final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
@@ -139,7 +139,7 @@ public final class StringManipulationClass {
      * @param inputString string to evaluate
      * @return True if given String is actually Integer
      */
-    public static Boolean isStringActuallyInteger(final String inputString) {
+    public static boolean isStringActuallyInteger(final String inputString) {
         boolean bolReturn = false;
         if (inputString != null) {
             final Pattern pattern = Pattern.compile("-?\\d-?");
@@ -154,7 +154,7 @@ public final class StringManipulationClass {
      * @param inputString string to evaluate
      * @return True if given String is actually Numeric
      */
-    public static Boolean isStringActuallyNumeric(final String inputString) {
+    public static boolean isStringActuallyNumeric(final String inputString) {
         boolean bolReturn = false;
         if (inputString != null) {
             final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?-?");

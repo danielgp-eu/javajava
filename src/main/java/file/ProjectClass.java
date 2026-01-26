@@ -1,17 +1,14 @@
 package file;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,8 +21,9 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
 
 /**
  * Project related goodies
@@ -40,6 +38,10 @@ public final class ProjectClass {
      */
     private static final String GLOBAL_VERSION = "${project.version}";
     /**
+     * special value
+     */
+    private static final String INTERNAL_POM = "/pom.xml";
+    /**
      * holder of Managed Versions
      */
     private static Map<String, Object> managedVersions;
@@ -48,9 +50,9 @@ public final class ProjectClass {
      */
     private static Map<String, Object> pluginCentralVers;
     /**
-     * working POM file as Path
+     * working POM file as String
      */
-    private static Path pomFile;
+    private static String pomFile;
     /**
      * current Project Model Interpolator
      */
@@ -62,9 +64,9 @@ public final class ProjectClass {
 
     /**
      * Getter for pomFile
-     * @return Path
+     * @return String
      */
-    public static Path getPomFile() {
+    public static String getPomFile() {
         return pomFile;
     }
 
@@ -72,8 +74,8 @@ public final class ProjectClass {
      * Getting current project folder
      * @return application folder
      */
-    public static String getProjectFolder() {
-        String strAppFolder = null;
+    public static String getCurrentFolder() {
+        String strAppFolder = "";
         final File directory = new File(""); // parameter is empty
         try {
             strAppFolder = directory.getCanonicalPath();
@@ -91,6 +93,7 @@ public final class ProjectClass {
     public static Model getProjectModel() {
         if (prjModel == null) {
             loadProjectModel();
+            Loaders.loadComponents();
         }
         return prjModel;
     }
@@ -100,8 +103,7 @@ public final class ProjectClass {
      * @param rawValue original value
      * @return String
      */
-    @NonNull
-    private static String getProjectModelValueWithInterpolationIfNeeded(@Nullable final String rawValue) {
+    private static String getProjectModelValueWithInterpolationIfNeeded(final String rawValue) {
         String finalValue = rawValue;
         if (rawValue == null || rawValue.isBlank()) {
             finalValue = "";
@@ -142,63 +144,26 @@ public final class ProjectClass {
         // 1. Read the raw model
         final MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = null;
-        try(BufferedReader bReader = Files.newBufferedReader(pomFile, StandardCharsets.UTF_8)) {
-            model = reader.read(bReader);
-        } catch (IOException | XmlPullParserException ex) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingDependencies"), Arrays.toString(ex.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
+        if (INTERNAL_POM.equals(pomFile)) {
+            try (InputStream inputStream = ProjectClass.class.getResourceAsStream(INTERNAL_POM)) {
+                model = reader.read(inputStream);
+            } catch (IOException | XmlPullParserException ex) {
+                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+            }
+        } else {
+            try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
+                model = reader.read(bReader);
+            } catch (IOException | XmlPullParserException ex) {
+                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+            }
         }
         prjModel = model;
-        if (prjModel.getProperties() != null) {
-            loadProjectModelInterpolator();
-        }
-        if (prjModel.getDependencyManagement() != null) {
-            loadProjectModelCentralDependencies();
-        }
-        if (prjModel.getBuild().getPluginManagement() != null) {
-            loadProjectModelPluginManagement();
-        }
-    }
-
-    /**
-     * Loading central dependency management if set
-     */
-    private static void loadProjectModelCentralDependencies() {
-        final Map<String, Object> centralDeps = new ConcurrentHashMap<>();
-        for (final Dependency dependency : prjModel.getDependencyManagement().getDependencies()) {
-            final String strKkey = dependency.getGroupId() + ":" + dependency.getArtifactId();
-            final String strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
-            centralDeps.put(strKkey, strVersion);
-        }
-        managedVersions = centralDeps;
-    }
-
-    /**
-     * Loading central plugin management if set
-     */
-    private static void loadProjectModelPluginManagement() {
-        final Map<String, Object> centralPlugM = new ConcurrentHashMap<>();
-        for (final Plugin plugin : prjModel.getBuild().getPluginManagement().getPlugins()) {
-            final String strKkey = plugin.getGroupId() + ":" + plugin.getArtifactId();
-            final String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
-            centralPlugM.put(strKkey, strVersion);
-        }
-        pluginCentralVers = centralPlugM;
-    }
-
-    /**
-     * Loading Properties for current Project Model if set
-     */
-    private static void loadProjectModelInterpolator() {
-        final StringSearchInterpolator interpolator = new StringSearchInterpolator();
-        final Properties props = prjModel.getProperties();
-        interpolator.addValueSource(new MapBasedValueSource(props));
-        prjInterpolator = interpolator;
+        Loaders.loadComponents();
     }
 
     /**
      * Setter for externalPomFile
-     * @param inExtPomFile
+     * @param inExtPomFile input external POM file
      */
     public static void setExternalPomFile(final String inExtPomFile) {
         externalPomFile = inExtPomFile;
@@ -208,25 +173,91 @@ public final class ProjectClass {
      * set the POM to work with
      */
     private static void setPomFile() {
-        String strPomFile = null;
+        final StringBuilder sbPom = new StringBuilder(100);
         if (externalPomFile == null) {
-            final StringBuilder sbPom = new StringBuilder();
-            final String strPrjFolder = getProjectFolder();
             if (isRunningFromJar()) {
-                FileHandlingClass.setSilentFileSearch(true);
-                final List<String> pomFiles = FileHandlingClass.getSpecificFilesFromFolder(strPrjFolder, "pom");
-                sbPom.append(pomFiles.getFirst());
-                FileHandlingClass.setSilentFileSearch(false);
+                sbPom.append(INTERNAL_POM);
             } else {
+                final String strPrjFolder = getCurrentFolder();
                 sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
             }
-            strPomFile = sbPom.toString();
         } else {
-            strPomFile = externalPomFile;
+            sbPom.append(externalPomFile);
             final String strFeedback = String.format("External POM file %s is being considered!", externalPomFile);
             LogExposureClass.LOGGER.info(strFeedback);
         }
-        pomFile = Path.of(strPomFile);
+        pomFile = sbPom.toString();
+    }
+
+    /**
+     * Constructor
+     */
+    private ProjectClass() {
+        // intentionally left blank
+    }
+
+    /**
+     * initiating Components class
+     */
+    private static final class Loaders {
+
+        /**
+         * Load all components: Dependencies and Plug-ins
+         */
+        public static void loadComponents() {
+            if (prjModel.getProperties() != null) {
+                loadProjectModelInterpolator();
+            }
+            if (prjModel.getDependencyManagement() != null) {
+                loadProjectModelCentralDependencies();
+            }
+            if (prjModel.getBuild().getPluginManagement() != null) {
+                loadProjectModelPluginManagement();
+            }
+        }
+
+        /**
+         * Loading central dependency management if set
+         */
+        private static void loadProjectModelCentralDependencies() {
+            final Map<String, Object> centralDeps = new ConcurrentHashMap<>();
+            for (final Dependency dependency : prjModel.getDependencyManagement().getDependencies()) {
+                final String strKkey = dependency.getGroupId() + ":" + dependency.getArtifactId();
+                final String strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
+                centralDeps.put(strKkey, strVersion);
+            }
+            managedVersions = centralDeps;
+        }
+
+        /**
+         * Loading central plugin management if set
+         */
+        private static void loadProjectModelPluginManagement() {
+            final Map<String, Object> centralPlugM = new ConcurrentHashMap<>();
+            for (final Plugin plugin : prjModel.getBuild().getPluginManagement().getPlugins()) {
+                final String strKkey = plugin.getGroupId() + ":" + plugin.getArtifactId();
+                final String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
+                centralPlugM.put(strKkey, strVersion);
+            }
+            pluginCentralVers = centralPlugM;
+        }
+
+        /**
+         * Loading Properties for current Project Model if set
+         */
+        private static void loadProjectModelInterpolator() {
+            final StringSearchInterpolator interpolator = new StringSearchInterpolator();
+            final Properties props = prjModel.getProperties();
+            interpolator.addValueSource(new MapBasedValueSource(props));
+            prjInterpolator = interpolator;
+        }
+
+        /**
+         * Constructor
+         */
+        private Loaders() {
+            // intentionally left blank
+        }
     }
 
     /**
@@ -268,7 +299,7 @@ public final class ProjectClass {
 
         /**
          * Build Plugins gathering
-         * @return
+         * @return Map
          */
         private static Map<String, Object> getBuildPlugins() {
             final Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
@@ -285,7 +316,7 @@ public final class ProjectClass {
 
         /**
          * Dependencies gathering
-         * @return
+         * @return Map
          */
         private static Map<String, Object> getDependencies() {
             final Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
@@ -302,7 +333,7 @@ public final class ProjectClass {
 
         /**
          * Profile Plugins gathering
-         * @return
+         * @return Map
          */
         private static Map<String, Object> getProfilePlugins() {
             final Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
@@ -328,13 +359,6 @@ public final class ProjectClass {
             // intentionally left blank
         }
 
-    }
-
-    /**
-     * Constructor
-     */
-    private ProjectClass() {
-        // intentionally left blank
     }
 
 }

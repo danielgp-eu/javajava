@@ -1,9 +1,5 @@
 package database;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.StringManipulationClass;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -11,6 +7,10 @@ import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import structure.StringManipulationClass;
 
 /**
  * Database Query Binding 
@@ -65,15 +65,14 @@ public final class DatabaseQueryBindingClass {
      * bind Single Parameter
      * @param preparedStatement original Prepared Statement
      * @param properties properties with relevant components
-     * @return PreparedStatement
      */
-    private static PreparedStatement bindSingleParameter(final PreparedStatement preparedStatement, final Properties properties) {
+    private static void bindSingleParameter(final PreparedStatement preparedStatement, final Properties properties) {
         final int index = Integer.parseInt(properties.get("index").toString());
         final String strKey = properties.get("strKey").toString();
         final String strQuery = properties.get("strQuery").toString();
         final String strOriginalValue = properties.get("strOriginalValue").toString();
-        final String[] arrayCleanable = properties.get("strArrayCleanable").toString().split("|");
-        final String[] arrayNullable = properties.get("strArrayNullable").toString().split("|");
+        final String[] arrayCleanable = properties.get("strArrayCleanable").toString().split("\\|");
+        final String[] arrayNullable = properties.get("strArrayNullable").toString().split("\\|");
         try {
             if (DatabaseBasicClass.STR_NULL.equalsIgnoreCase(strOriginalValue) 
                 || (Arrays.asList(arrayNullable).contains(strKey)
@@ -94,7 +93,6 @@ public final class DatabaseQueryBindingClass {
         } catch (SQLException e) {
             setSqlParameterBindingError(e, strKey, strQuery);
         }
-        return preparedStatement;
     }
 
     /**

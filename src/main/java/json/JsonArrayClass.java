@@ -126,8 +126,10 @@ public final class JsonArrayClass {
         try {
             writer.write(']');
             writer.close();
-            final String strFeedback = String.format("I just closed file %s after %s records", crtFile, recordCounter);
-            LogExposureClass.LOGGER.info(strFeedback);
+            if (crtFile != null) {
+                final String strFeedback = String.format("I just closed file %s after %s records", crtFile, recordCounter);
+                LogExposureClass.LOGGER.info(strFeedback);
+            }
         } catch (IOException ei) {
             LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
         }
@@ -176,10 +178,10 @@ public final class JsonArrayClass {
         LogExposureClass.LOGGER.debug(strFeedbackTemp);
         String remeberedValue = null;
         long recordCounter = 0;
-        Path crtFile = null;
         // initiate JSON parsing
         try (JsonParser jsonParser = jsonFactory.createParser(readContext, Path.of(strInputJsonFile))) {
             checkIfJsonFileIsOfArrayType(jsonParser);
+            Path crtFile = null;
             // Iterate through each object in the array
             while (jsonParser.nextToken() == JsonToken.START_OBJECT) {
                 // Buffer the object so we can inspect the field
@@ -201,13 +203,13 @@ public final class JsonArrayClass {
                 writeValueToNewBufferedWriter(recordCounter, writer, strRecord);
                 recordCounter++;
             }
+            // Close the last writer
+            if (writer != null) {
+                closeCurrentFile(crtFile, writer, recordCounter);
+            }
         } catch(JacksonException ej) {
             final String strFeedback = String.format("Jackson exception on... %s", Arrays.toString(ej.getStackTrace()));
             LogExposureClass.LOGGER.debug(strFeedback);
-        }
-        // Close the last writer
-        if (writer != null) {
-            closeCurrentFile(crtFile, writer, recordCounter);
         }
     }
 

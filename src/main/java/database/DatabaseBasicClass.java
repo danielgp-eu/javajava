@@ -1,11 +1,5 @@
 package database;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.ListAndMapClass;
-import structure.StringManipulationClass;
-import time.TimingClass;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,6 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
+import structure.ListAndMapClass;
+import structure.StringManipulationClass;
+import time.TimingClass;
 
 /**
  * Database methods

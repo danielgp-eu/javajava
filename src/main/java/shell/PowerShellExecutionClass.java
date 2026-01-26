@@ -5,14 +5,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import file.ProjectPropertiesClass;
 import log.LogExposureClass;
 
 /**
- * Power Shell execution
+ * PowerShell execution
  */
 public final class PowerShellExecutionClass {
     /**
-     * Power Shell file
+     * PowerShell file
      */
     private static String psPath;
 
@@ -38,7 +39,7 @@ public final class PowerShellExecutionClass {
         if (crtOperatingSys.startsWith("Windows")) {
             try {
                 final String[] varsToPick = {"osWindowsSystem32Path", "powerShellBinary"};
-                final Properties svProperties = ProjectPropertiesClass.getVariableFromProjectProperties(varsToPick);
+                final Properties svProperties = ProjectPropertiesClass.getVariableFromProjectProperties("/project.properties", varsToPick);
                 setPowerShellFile(svProperties.get("powerShellBinary").toString());
                 validatePathEnvironmentVariable();
                 final String[] arrayCommand = buildWindowsApplicationCommandSafely();
@@ -55,7 +56,7 @@ public final class PowerShellExecutionClass {
 
     /**
      * Validate that the executable exists and is not writable by non-admin users
-     * @param psBinary Power Shell binary
+     * @param psBinary PowerShell binary
      */
     private static void setPowerShellFile(final String psBinary) {
         final File psFileLocal = new File(psBinary);

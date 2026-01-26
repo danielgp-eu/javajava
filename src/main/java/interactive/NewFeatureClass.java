@@ -30,7 +30,7 @@ public final class NewFeatureClass {
         CommonInteractiveClass.initializeLocalization();
         CommonInteractiveClass.setStartDateTime();
         CommonInteractiveClass.startMeUp();
-        // execute appropriate Command with 
+        // execute appropriate Command with
         final int iExitCode = new CommandLine(new NewFeatureClass()).execute(args);
         CommonInteractiveClass.setExitCode(iExitCode);
         CommonInteractiveClass.shutMeDown(args[0]);

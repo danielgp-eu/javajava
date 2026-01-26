@@ -1,8 +1,5 @@
 package file;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -15,6 +12,9 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Stream;
+
+import localization.JavaJavaLocalizationClass;
+import log.LogExposureClass;
 
 /**
  * Locate files of folders class
@@ -96,7 +96,7 @@ public final class FileLocatingClass {
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
                     if (file.getFileName().toString().matches(strPattern)) {
                         Files.delete(file);
-                        final String strFeedbackD = String.format("File %s has been deleted", file.toString());
+                        final String strFeedbackD = String.format("File %s has been deleted", file);
                         LogExposureClass.LOGGER.info(strFeedbackD);
                     }
                     return FileVisitResult.CONTINUE;

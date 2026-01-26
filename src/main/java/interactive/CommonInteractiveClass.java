@@ -1,10 +1,12 @@
 package interactive;
 
 import java.time.LocalDateTime;
+import java.util.Properties;
 
 import org.apache.maven.model.Model;
 
 import file.ProjectClass;
+import file.ProjectPropertiesClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import time.TimingClass;
@@ -60,10 +62,31 @@ public final class CommonInteractiveClass {
     public static void startMeUp() {
         final String strFeedbackLines = "-".repeat(80);
         LogExposureClass.LOGGER.info(strFeedbackLines);
-        final Model prjModel = ProjectClass.getProjectModel();
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec"), prjModel.getGroupId(), prjModel.getArtifactId(), prjModel.getVersion());
+        final String[] prjProperties = getProjectProperties();
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec"), prjProperties[0], prjProperties[1], prjProperties[2]);
         LogExposureClass.LOGGER.info(strFeedback);
         LogExposureClass.LOGGER.info(strFeedbackLines);
+    }
+
+    /**
+     * Get Project Properties
+     * @return String array with GroupId, ArtifactId and Version
+     */
+    private static String[] getProjectProperties() {
+        final String[] strToReturn = new String[3];
+        if (ProjectClass.isRunningFromJar()) {
+            final String[] varsToPick = {"groupId", "artifactId", "version"};
+            final Properties projProperties = ProjectPropertiesClass.getVariableFromProjectProperties("/META-INF/maven/io.github.danielgp-eu/javajava/pom.properties", varsToPick);
+            strToReturn[0] = projProperties.getProperty("groupId");
+            strToReturn[1] = projProperties.getProperty("artifactId");
+            strToReturn[2] = projProperties.getProperty("version");
+        } else {
+            final Model projectModel = ProjectClass.getProjectModel();
+            strToReturn[0] = projectModel.getGroupId();
+            strToReturn[1] = projectModel.getArtifactId();
+            strToReturn[2] = projectModel.getVersion();
+        }
+        return strToReturn;
     }
 
     /**

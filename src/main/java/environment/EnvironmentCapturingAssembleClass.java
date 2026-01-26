@@ -67,7 +67,7 @@ public final class EnvironmentCapturingAssembleClass extends OshiUsageClass {
         }
         if (!prjModel.getModules().isEmpty()) {
             strJsonString.append(",\"Modules\":[");
-            final Path pathPomFile = ProjectClass.getPomFile();
+            final Path pathPomFile = Path.of(ProjectClass.getPomFile());
             final StringBuilder strJsonModule = new StringBuilder(100);
             prjModel.getModules().forEach(module -> {
                 final String crtModulePom = pathPomFile.getParent()
@@ -99,7 +99,7 @@ public final class EnvironmentCapturingAssembleClass extends OshiUsageClass {
                 }
                 strJsonModule.append('}');
             });
-            strJsonString.append(strJsonModule.toString()).append(']');
+            strJsonString.append(strJsonModule).append(']');
         }
         final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);

@@ -58,6 +58,15 @@ public final class LogExposureClass {
     }
 
     /**
+     * Log Process Builder command conditionally
+     * @param inStackTrace tracking back the Stack Trace
+     */
+    public static void exposeProjectModel(final String inStackTrace) {
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingProjectModel"), inStackTrace);
+        LOGGER.error(strFeedback);
+    }
+
+    /**
      * Build message for file operation error
      * @param strFileName file name
      * @param strStagTrace stag trace
