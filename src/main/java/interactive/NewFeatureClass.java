@@ -1,5 +1,12 @@
 package interactive;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+
+import archive.SevenZipCompressorClass;
+import log.LogExposureClass;
 import picocli.CommandLine;
 
 /**
@@ -48,6 +55,13 @@ class ExperimentalFeature implements Runnable {
     @Override
     public void run() {
         // no-op
+        final Path sourceDir = Paths.get("C:\\www\\Action\\"); // Replace with your directory
+        final Path output7z = Paths.get("C:\\www\\Action.7z"); // Output path
+        try {
+            SevenZipCompressorClass.compressFolder(sourceDir, output7z);
+        } catch (IOException ei) {
+            LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
+        }
     }
 
     /**

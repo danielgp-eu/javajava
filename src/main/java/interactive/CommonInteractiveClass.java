@@ -1,12 +1,10 @@
 package interactive;
 
 import java.time.LocalDateTime;
-import java.util.Properties;
 
 import org.apache.maven.model.Model;
 
 import file.ProjectClass;
-import file.ProjectPropertiesClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import time.TimingClass;
@@ -74,18 +72,10 @@ public final class CommonInteractiveClass {
      */
     private static String[] getProjectProperties() {
         final String[] strToReturn = new String[3];
-        if (ProjectClass.isRunningFromJar()) {
-            final String[] varsToPick = {"groupId", "artifactId", "version"};
-            final Properties projProperties = ProjectPropertiesClass.getVariableFromProjectProperties("/META-INF/maven/io.github.danielgp-eu/javajava/pom.properties", varsToPick);
-            strToReturn[0] = projProperties.getProperty("groupId");
-            strToReturn[1] = projProperties.getProperty("artifactId");
-            strToReturn[2] = projProperties.getProperty("version");
-        } else {
-            final Model projectModel = ProjectClass.getProjectModel();
-            strToReturn[0] = projectModel.getGroupId();
-            strToReturn[1] = projectModel.getArtifactId();
-            strToReturn[2] = projectModel.getVersion();
-        }
+        final Model projectModel = ProjectClass.getProjectModel();
+        strToReturn[0] = projectModel.getGroupId();
+        strToReturn[1] = projectModel.getArtifactId();
+        strToReturn[2] = projectModel.getVersion();
         return strToReturn;
     }
 
