@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Properties;
 
+import archive.ArchivingClass;
 import file.FileContentReadClass;
 import file.FileHandlingClass;
 import file.FileLocatingClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
-import shell.ArchivingClass;
 import shell.PowerShellExecutionClass;
 import time.TimingClass;
 
@@ -65,9 +65,7 @@ class ArchiveFolders implements Runnable {
      */
     @CommandLine.Option(
             names = {"-aExe", "--archivingExecutable"},
-            description = "Archiving executable (includes full path)",
-            arity = "1",
-            required = true)
+            description = "Archiving executable (including full path, optional)")
     private String strArchivingExec;
 
     /**
@@ -117,7 +115,9 @@ class ArchiveFolders implements Runnable {
     @Override
     public void run() {
         final Properties propFolder = new Properties();
-        ArchivingClass.setArchivingExecutable(strArchivingExec);
+        if (strArchivingExec != null) {
+            ArchivingClass.setArchivingExecutable(strArchivingExec);
+        }
         ArchivingClass.setArchivePrefix(strArchivePrefix);
         ArchivingClass.setArchiveSuffix(strArchiveSuffix);
         if (strArchivePwd != null) {
@@ -128,7 +128,7 @@ class ArchiveFolders implements Runnable {
             final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
             ArchivingClass.setArchiveNameWithinDestinationFolder(strDestFolder);
-            ArchivingClass.archiveFolderAs7zUltra();
+            ArchivingClass.archiveFolderAs7z();
             ArchivingClass.exposeArchivedStatistics(folderProps);
         }
     }

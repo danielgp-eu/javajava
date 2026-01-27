@@ -1,4 +1,4 @@
-package shell;
+package archive;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
+import shell.ShellingClass;
 import structure.NumberClass;
 import structure.StringManipulationClass;
 
@@ -31,13 +32,13 @@ public final class ArchivingClass {
      */
     private static String strArchiveSuffix;
     /**
-     * Archive Executable variable
-     */
-    private static String strArchivingExec;
-    /**
      * Archive Folder variable
      */
     private static String strArchivingDir;
+    /**
+     * Archive Executable variable
+     */
+    private static String strArchivingExec;
 
     /**
      * Append File Separator to given Folder 
@@ -57,9 +58,9 @@ public final class ArchivingClass {
     }
 
     /**
-     * Archive folder content as 7z using Ultra compression level
+     * Archive folder content as 7z using external binary
      */
-    public static void archiveFolderAs7zUltra() {
+    public static void archiveFolderAs7z() {
         final String strArchDir = "-ir!" + strArchivingDir.replace("\"", "") + "*";
         final ProcessBuilder builder;
         if (strArchivePwd == null) {
@@ -131,7 +132,7 @@ public final class ArchivingClass {
      */
     public static void setArchivePwd(final String inArchivePwd) {
         String strGivenPassword = inArchivePwd;
-        if (inArchivePwd.matches("[A-Z_]+")) {
+        if (inArchivePwd.matches("[A-Z0-9_]+")) {
             strGivenPassword = System.getenv(inArchivePwd); // get password value from Environment variable
         }
         strArchivePwd = StringManipulationClass.encloseStringIfContainsSpace(strGivenPassword);
@@ -146,19 +147,19 @@ public final class ArchivingClass {
     }
 
     /**
-     * Setter for Archive Executable
-     * @param inArchivingExec String
-     */
-    public static void setArchivingExecutable(final String inArchivingExec) {
-        strArchivingExec = StringManipulationClass.encloseStringIfContainsSpace(inArchivingExec);
-    }
-
-    /**
      * Setter for Archive Folder
      * @param inArchivingDir String
      */
     public static void setArchivingDir(final String inArchivingDir) {
         strArchivingDir = appendSeparatorSuffixToFolder(inArchivingDir);
+    }
+
+    /**
+     * Setter for Archive Executable
+     * @param inArchivingExec String
+     */
+    public static void setArchivingExecutable(final String inArchivingExec) {
+        strArchivingExec = StringManipulationClass.encloseStringIfContainsSpace(inArchivingExec);
     }
 
     /**
