@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.maven.model.Model;
+
 import file.ProjectClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
