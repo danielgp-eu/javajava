@@ -122,6 +122,22 @@ public final class ProjectClass {
     }
 
     /**
+     * Map with current project module libraries
+     * @return Map with modules name and its version
+     */
+    public static Map<String, String> getProjectModuleLibraries() {
+        // Initialize the concurrent map
+        final Map<String, String> moduleMap = new ConcurrentHashMap<>();
+        // Get the boot layer (the primary module layer)
+        ModuleLayer.boot().modules().forEach(module -> {
+            final String strName = module.getName();
+            final String strVersion = module.getDescriptor().toNameAndVersion().substring(strName.length() + 1);
+            moduleMap.put(strName, strVersion);
+        });
+        return moduleMap;
+    }
+
+    /**
      * detects if current execution is from JAR or not
      * @return boolean
      */

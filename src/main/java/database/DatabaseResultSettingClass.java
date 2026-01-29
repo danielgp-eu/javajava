@@ -127,9 +127,8 @@ public final class DatabaseResultSettingClass {
             final ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             final int columnCount = resultSetMetaData.getColumnCount();
             int intRow = 0;
-            final Properties currentRow = new Properties();
             while (resultSet.next()) {
-                currentRow.clear();
+                final Properties currentRow = new Properties();
                 for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
                     String crtValue = resultSet.getString(colIndex);
                     if (resultSet.wasNull()) {

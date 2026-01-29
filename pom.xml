@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.6.3</version>
+    <version>1.6.4</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -48,7 +48,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <!-- Dependencies versions -->
-        <commons-compress.version>1.28.0</commons-compress.version>
         <icu4j.version>78.2</icu4j.version>
         <jackson-databind.version>3.0.4</jackson-databind.version>
         <jackson-dataformat-xml.version>3.0.4</jackson-dataformat-xml.version>
@@ -59,7 +58,6 @@
         <maven-model-builder.version>3.9.12</maven-model-builder.version>
         <oshi-core-java25.version>6.9.2</oshi-core-java25.version>
         <picocli.version>4.7.7</picocli.version>
-        <xz.version>1.11</xz.version>
         <!-- Plugin versions -->
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
         <dependency-check-maven.version>12.2.0</dependency-check-maven.version>

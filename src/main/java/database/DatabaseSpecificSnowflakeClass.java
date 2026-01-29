@@ -32,6 +32,10 @@ public final class DatabaseSpecificSnowflakeClass {
      * Map with predefined queries
      */
     private static final Map<String, String> STD_QUERY;
+    /**
+     * Snowflake JDBC version
+     */
+    private static String jdbcVersion;
 
     static {
         // Initialize the concurrent map
@@ -198,6 +202,29 @@ FROM
     }
 
     /**
+     * Retrieving Snowflake JDBC driver version
+     * @return String
+     */
+    private static String getSnowflakeJdbcDriverVersion() {
+        final String vSnowflakeId = "snowflake.jdbc";
+        String vSnowflakeJdbc = null;
+        String vFoundIn = null;
+        final Map<String, String> moduleMap = ProjectClass.getProjectModuleLibraries();
+        if (moduleMap.containsKey(vSnowflakeId)) {
+            vSnowflakeJdbc = moduleMap.get(vSnowflakeId);
+            vFoundIn = "Modules";
+        } else {
+            final Model prjModel = ProjectClass.getProjectModel();
+            final Map<String, Object> projDependencies = ProjectClass.Components.getProjectModelComponent("Dependencies");
+            if (projDependencies.containsKey(vSnowflakeId)) {
+                vSnowflakeJdbc = projDependencies.get(vSnowflakeId).toString();
+                vFoundIn = "Dependencies";
+            }
+        }
+        return vSnowflakeJdbc;
+    }
+
+    /**
      * get standardized Information from Snowflake
      * 
      * @param objStatement statement
@@ -274,6 +301,7 @@ FROM
      * Loading Snowflake driver
      */
     private static void loadSnowflakeDriver() {
+        jdbcVersion = getSnowflakeJdbcDriverVersion();
         final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
         final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_DB_SNOWFLAKE, strDriverName);
         LogExposureClass.LOGGER.debug(strFeedback);
