@@ -34,7 +34,7 @@ public final class FileContentReadClass {
     /**
      * File Statistics variable
      */
-    private static final Map<String, Map<String, String>> fileStats = new ConcurrentHashMap<>();
+    /* default */ private static final Map<String, Map<String, String>> FILE_STATS = new ConcurrentHashMap<>();
     /**
      * Checksum algorithms
      */
@@ -109,7 +109,7 @@ public final class FileContentReadClass {
                 if (Files.isDirectory(file)) {
                     gatherFileStatisticsFromFolder(file.toString());
                 } else if (Files.isRegularFile(file)) {
-                    fileStats.put(file.getParent() + File.separator + file.getFileName().toString(),
+                    FILE_STATS.put(file.getParent() + File.separator + file.getFileName().toString(),
                             computeFileMultipleChecksums(file));
                 }
             }
@@ -144,9 +144,9 @@ public final class FileContentReadClass {
      * @return Map with file statistics
      */
     public static Map<String, Map<String, String>> getFileStatisticsFromFolder(final String strFolderName) {
-        fileStats.clear();
+        FILE_STATS.clear();
         gatherFileStatisticsFromFolder(strFolderName);
-        return fileStats;
+        return FILE_STATS;
     }
 
     /**
