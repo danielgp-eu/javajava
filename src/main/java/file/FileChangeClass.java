@@ -12,6 +12,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
+import java.util.Objects;
 
 import log.LogExposureClass;
 
@@ -78,10 +79,11 @@ public final class FileChangeClass {
         final Path newFile = getNewFile(file);
         try (BufferedReader reader = Files.newBufferedReader(file, StandardCharsets.UTF_8);
             BufferedWriter writer = Files.newBufferedWriter(newFile, StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
+            String line = reader.readLine();  // Initialize the variable outside the loop
+            while (Objects.nonNull(line)) {
                 writer.write(line.replace(existingContent, replacedContent));
                 writer.newLine(); // Reintroduce the line separator
+                line = reader.readLine();  // Update the variable within the loop, not in the condition
             }
             // Replace the original file with the modified content
             Files.move(newFile, file, StandardCopyOption.REPLACE_EXISTING);
