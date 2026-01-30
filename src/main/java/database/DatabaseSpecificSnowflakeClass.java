@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.maven.model.Model;
-
 import file.ProjectClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
@@ -210,21 +208,24 @@ FROM
      */
     private static String getSnowflakeJdbcDriverVersion() {
         final String vSnowflakeId = "snowflake.jdbc";
-        String vSnowflakeJdbc = null;
+        String vJdbcVersion = null;
         String vFoundIn = null;
-        final Map<String, String> moduleMap = ProjectClass.getProjectModuleLibraries();
+        final Map<String, Object> moduleMap = ProjectClass.getProjectModuleLibraries();
         if (moduleMap.containsKey(vSnowflakeId)) {
-            vSnowflakeJdbc = moduleMap.get(vSnowflakeId);
+            vJdbcVersion = moduleMap.get(vSnowflakeId).toString();
             vFoundIn = "Modules";
         } else {
-            final Model prjModel = ProjectClass.getProjectModel();
+            ProjectClass.loadProjectModel();
+            ProjectClass.Loaders.loadComponents();
             final Map<String, Object> projDependencies = ProjectClass.Components.getProjectModelComponent("Dependencies");
             if (projDependencies.containsKey(vSnowflakeId)) {
-                vSnowflakeJdbc = projDependencies.get(vSnowflakeId).toString();
+                vJdbcVersion = projDependencies.get(vSnowflakeId).toString();
                 vFoundIn = "Dependencies";
             }
         }
-        return vSnowflakeJdbc;
+        final String strFeedback = String.format("I have found Snowflake JDBC driver v.%s from %s", vJdbcVersion, vFoundIn);
+        LogExposureClass.LOGGER.debug(strFeedback);
+        return vJdbcVersion;
     }
 
     /**
@@ -292,7 +293,12 @@ FROM
         }
         properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
         properties.put("db", strDatabase);
-        properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
+        String authValue = propInstance.get("Authenticator").toString().replace("\"", "");
+        if (jdbcVersion.startsWith("4.0") 
+                && "externalbrowser".equalsIgnoreCase(authValue)) {
+            authValue = "EXTERNAL_BROWSER";
+        }
+        properties.put("authenticator", authValue);
         properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
         properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
         properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
@@ -305,12 +311,18 @@ FROM
      */
     private static void loadSnowflakeDriver() {
         jdbcVersion = getSnowflakeJdbcDriverVersion();
-        final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
+        final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver"; // for 3.x
+        /*String strDriverName = null;
+        if (jdbcVersion.startsWith("4.0")) {
+            strDriverName = "net.snowflake.client.api.driver.SnowflakeDriver"; // for 4.x
+        } else {
+            strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver"; // for 3.x
+        }*/
         final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_DB_SNOWFLAKE, strDriverName);
         LogExposureClass.LOGGER.debug(strFeedback);
         try {
             Class.forName(strDriverName);
-            final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), STR_DB_SNOWFLAKE, strDriverName);
+            final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), STR_DB_SNOWFLAKE, strDriverName + " v. " + jdbcVersion);
             LogExposureClass.LOGGER.debug(strFeedbackOk);
         } catch (ClassNotFoundException ex) {
             final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), STR_DB_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
