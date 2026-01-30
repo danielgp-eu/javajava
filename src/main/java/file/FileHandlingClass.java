@@ -33,7 +33,7 @@ public final class FileHandlingClass {
     /**
      * String constant
      */
-    private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
+    /* default */ private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
     /**
      * Counter for removed files
      */
@@ -174,20 +174,30 @@ public final class FileHandlingClass {
                 if (Files.isDirectory(entry)) {
                     removeFilesOlderThanGivenDays(entry.toString(), intOlderLimit);
                 } else if (Files.isRegularFile(entry)) {
-                    final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
-                    final long modifTime = attr.lastModifiedTime().toMillis();
-                    if (modifTime <= cutoff) {
-                        Files.delete(entry);
-                        if (bolClnFldrStats) {
-                            lngFilesClnd = lngFilesClnd + 1;
-                            lngByteSizeClnd = lngByteSizeClnd + attr.size();
-                        }
-                    }
+                    removeFilesOlderThanGivenDaysWithoutChecks(entry, cutoff);
                 }
             }
         } catch (IOException ex) {
             final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
+        }
+    }
+
+    /**
+     * Remove files older than given days without checks
+     * @param entry Path to file
+     * @param cutoff cutoff time in milliseconds
+     * @throws IOException check exception
+     */
+    private static void removeFilesOlderThanGivenDaysWithoutChecks(final Path entry, final long cutoff) throws IOException {
+        final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
+        final long modifTime = attr.lastModifiedTime().toMillis();
+        if (modifTime <= cutoff) {
+            Files.delete(entry);
+            if (bolClnFldrStats) {
+                lngFilesClnd = lngFilesClnd + 1;
+                lngByteSizeClnd = lngByteSizeClnd + attr.size();
+            }
         }
     }
 
