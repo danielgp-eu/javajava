@@ -13,13 +13,9 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import file.FileChangeClass;
+import file.WriteContextSingletonClass;
 import log.LogExposureClass;
-import tools.jackson.core.JacksonException;
-import tools.jackson.core.JsonGenerator;
-import tools.jackson.core.JsonParser;
-import tools.jackson.core.JsonToken;
-import tools.jackson.core.ObjectReadContext;
-import tools.jackson.core.ObjectWriteContext;
+import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
 
 /**
@@ -46,10 +42,6 @@ public final class JsonArrayClass {
      * variable for destination folder
      */
     private static String strOutFolder;
-    /**
-     * Write content for JsonGenerator
-     */
-    /* default */ private static final ObjectWriteContext writeContext = ObjectWriteContext.empty();
     /**
      * Writer for JSON content
      */
@@ -144,6 +136,7 @@ public final class JsonArrayClass {
     private static Properties getValueAndRecord(final JsonParser jsonParser, final JsonFactory jsonFactory) {
         final Properties properties = new Properties();
         final ByteArrayOutputStream tempBuffer = new ByteArrayOutputStream();
+        final ObjectWriteContext writeContext = WriteContextSingletonClass.get();
         try (JsonGenerator tempGen = jsonFactory.createGenerator(writeContext, tempBuffer)) {
                 int depth = 1;
                 tempGen.copyCurrentEvent(jsonParser);
