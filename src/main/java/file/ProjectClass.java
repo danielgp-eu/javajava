@@ -125,9 +125,9 @@ public final class ProjectClass {
      * Map with current project module libraries
      * @return Map with modules name and its version
      */
-    public static Map<String, String> getProjectModuleLibraries() {
+    public static Map<String, Object> getProjectModuleLibraries() {
         // Initialize the concurrent map
-        final Map<String, String> moduleMap = new ConcurrentHashMap<>();
+        final Map<String, Object> moduleMap = new ConcurrentHashMap<>();
         // Get the boot layer (the primary module layer)
         ModuleLayer.boot().modules().forEach(module -> {
             final String strName = module.getName();
@@ -215,7 +215,7 @@ public final class ProjectClass {
     /**
      * initiating Components class
      */
-    private static final class Loaders {
+    public static final class Loaders {
 
         /**
          * Load all components: Dependencies and Plug-ins
