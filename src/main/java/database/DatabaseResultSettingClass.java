@@ -87,6 +87,26 @@ public final class DatabaseResultSettingClass {
     }
 
     /**
+     * Collecting current row 
+     * @param resultSet digesting result-set
+     * @param columnCount number of columns to iterate through
+     * @param resultSetMetaData column names
+     * @return Properties with current row value and their name 
+     * @throws SQLException
+     */
+    private static Properties getCurrentRowIntoProperties(final ResultSet resultSet, final int columnCount, final ResultSetMetaData resultSetMetaData) throws SQLException {
+        final Properties currentRow = new Properties();
+        for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
+            String crtValue = resultSet.getString(colIndex);
+            if (resultSet.wasNull()) {
+                crtValue = DatabaseBasicClass.STR_NULL;
+            }
+            currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
+        }
+        return currentRow;
+    }
+
+    /**
      * get structure from ResultSet
      * 
      * @param resultSet result-set
@@ -128,15 +148,7 @@ public final class DatabaseResultSettingClass {
             final int columnCount = resultSetMetaData.getColumnCount();
             int intRow = 0;
             while (resultSet.next()) {
-                final Properties currentRow = new Properties();
-                for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
-                    String crtValue = resultSet.getString(colIndex);
-                    if (resultSet.wasNull()) {
-                        crtValue = DatabaseBasicClass.STR_NULL;
-                    }
-                    currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
-                }
-                listResultSet.add(currentRow);
+                listResultSet.add(getCurrentRowIntoProperties(resultSet, columnCount, resultSetMetaData));
                 intRow++;
             }
             final String strFeedback = String.format("I have found %d records", intRow);
