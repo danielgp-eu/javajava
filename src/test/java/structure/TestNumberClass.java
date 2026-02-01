@@ -40,7 +40,8 @@ class TestNumberClass {
     @Test
     @DisplayName("Simple test to verify that 2026 is not the same as converted value from String 01.01.2026")
     void testConvertStringIntoBigDecimalInvalid() {
-        assertNotEquals(26, NumberClass.convertStringIntoBigDecimal("01.01.2026"));
+        final BigDecimal expectedNo = new BigDecimal("01.2026");
+        assertNotEquals(expectedNo, NumberClass.convertStringIntoBigDecimal("01.01.2026"));
     }
 
     @Test
