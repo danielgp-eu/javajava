@@ -63,8 +63,8 @@ public final class JsoningClass {
             || (objValue instanceof Double)
             || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
             || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
-            || StringManipulationClass.isStringActuallyNumeric(objValue.toString())
-            || StringManipulationClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
+            || StringManipulationClass.EvaluatingClass.isStringActuallyNumeric(objValue.toString())
+            || StringManipulationClass.EvaluatingClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
         String strRaw = "\"%s\":\"%s\"";
         if (needsQuotesAround) {
             strRaw = "\"%s\":%s";

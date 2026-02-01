@@ -308,16 +308,12 @@ FROM
 
     /**
      * Loading Snowflake driver
+     * if (jdbcVersion.startsWith("4.")) {
+     *  strDriverName = "net.snowflake.client.api.driver.SnowflakeDriver";
      */
     private static void loadSnowflakeDriver() {
         jdbcVersion = getSnowflakeJdbcDriverVersion();
-        final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver"; // for 3.x
-        /*String strDriverName = null;
-        if (jdbcVersion.startsWith("4.0")) {
-            strDriverName = "net.snowflake.client.api.driver.SnowflakeDriver"; // for 4.x
-        } else {
-            strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver"; // for 3.x
-        }*/
+        final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
         final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_DB_SNOWFLAKE, strDriverName);
         LogExposureClass.LOGGER.debug(strFeedback);
         try {

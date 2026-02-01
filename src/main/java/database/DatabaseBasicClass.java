@@ -137,7 +137,7 @@ public final class DatabaseBasicClass {
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
         for (final String listMatch : listMatches) {
-            final String crtParameter = StringManipulationClass.cleanStringFromCurlyBraces(listMatch);
+            final String crtParameter = StringManipulationClass.CleaningClass.cleanStringFromCurlyBraces(listMatch);
             final int intPosition = valFields.indexOf(crtParameter);
             if (intPosition != -1) {
                 mapParameterOrder.add(crtParameter);
