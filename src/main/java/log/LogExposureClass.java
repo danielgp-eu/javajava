@@ -67,6 +67,15 @@ public final class LogExposureClass {
     }
 
     /**
+     * Success confirmation to Info log
+     * @param strQueryPurpose Query purpose
+     */
+    public static void exposeSqlExecutionSuccessInfo(final String strQueryPurpose) {
+        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+        LOGGER.info(strFeedback);
+    }
+
+    /**
      * Build message for file operation error
      * @param strFileName file name
      * @param strStagTrace stag trace

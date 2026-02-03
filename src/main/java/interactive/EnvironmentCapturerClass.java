@@ -1,10 +1,10 @@
 package interactive;
 
 import environment.EnvironmentCapturingAssembleClass;
-import file.FileHandlingClass;
-import file.ProjectClass;
+import file.FileOperationsClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
+import project.ProjectClass;
 
 /**
  * Main Command Line
@@ -62,12 +62,12 @@ class AnlyzePom implements Runnable {
 
     @Override
     public void run() {
-        final String strFeedbackThis = String.format("For this project relevant POM information is: {%s}", EnvironmentCapturingAssembleClass.getApplicationDetails());
+        final String strFeedbackThis = String.format("For this project relevant POM information is: {%s}", ProjectClass.Application.getApplicationDetails());
         LogExposureClass.LOGGER.info(strFeedbackThis);
         for (final String strFileName : strFileNames) {
             ProjectClass.setExternalPomFile(strFileName);
             ProjectClass.loadProjectModel();
-            final String strFeedback = String.format("For given POM file %s relevant information is: {%s}", strFileName, EnvironmentCapturingAssembleClass.getApplicationDetails());
+            final String strFeedback = String.format("For given POM file %s relevant information is: {%s}", strFileName, ProjectClass.Application.getApplicationDetails());
             LogExposureClass.LOGGER.info(strFeedback);
         }
     }
@@ -100,7 +100,7 @@ class GetSubFoldersFromFolder implements Runnable {
 
     @Override
     public void run() {
-        FileHandlingClass.getSubFoldersFromFolder(strFolderName);
+        FileOperationsClass.RetrievingClass.getSubFoldersFromFolder(strFolderName);
     }
 
     /**

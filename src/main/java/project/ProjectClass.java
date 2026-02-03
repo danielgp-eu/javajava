@@ -1,4 +1,4 @@
-package file;
+package project;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,6 +22,7 @@ import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import json.JsoningClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
@@ -206,10 +207,101 @@ public final class ProjectClass {
     }
 
     /**
-     * Constructor
+     * initiating Components class
      */
-    private ProjectClass() {
-        // intentionally left blank
+    public static final class Application {
+
+        /**
+         * Application details
+         * @return String
+         */
+        public static String getApplicationDetails() {
+            final Model prjModel = getProjectModel();
+            final StringBuilder strJsonString = new StringBuilder(100);
+            strJsonString.append("\"Application\":{\"")
+                    .append(prjModel.getGroupId())
+                    .append(':')
+                    .append(prjModel.getArtifactId())
+                    .append("\":\"")
+                    .append(prjModel.getVersion())
+                    .append('\"');
+            final Map<String, Object> projDependencies = Components.getProjectModelComponent("Dependencies");
+            if (!projDependencies.isEmpty()) {
+                strJsonString.append(",\"Dependencies\":")
+                        .append(JsoningClass.getMapIntoJsonString(projDependencies));
+            }
+            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent("BuildPlugins");
+            if (!projBuildPlugins.isEmpty()) {
+                strJsonString.append(",\"Build Plugins\":")
+                        .append(JsoningClass.getMapIntoJsonString(projBuildPlugins));
+            }
+            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent("ProfilePlugins");
+            if (!projPrflPlugins.isEmpty()) {
+                strJsonString.append(",\"Profile Plugins\":")
+                        .append(JsoningClass.getMapIntoJsonString(projPrflPlugins));
+            }
+            if (!prjModel.getModules().isEmpty()) {
+                strJsonString.append(getComponentModulesDetailsIfProjectModulesArePresent(prjModel));
+            }
+            final Map<String, Object> projLibModules = getProjectModuleLibraries();
+            strJsonString.append(",\"Libary Modules\":")
+                    .append(JsoningClass.getMapIntoJsonString(projLibModules));
+            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
+            LogExposureClass.LOGGER.debug(strFeedback);
+            return strJsonString.append('}').toString();
+        }
+
+        /**
+         * expose Project Modules (if defined)
+         * @param prjModel current project model
+         * @return JSON String with module details
+         */
+        private static String getComponentModulesDetailsIfProjectModulesArePresent(final Model prjModel) {
+            final StringBuilder strJsonString = new StringBuilder(100);
+            strJsonString.append(",\"Component Modules\":[");
+            final Path pathPomFile = Path.of(getPomFile());
+            final StringBuilder strJsonModule = new StringBuilder(100);
+            prjModel.getModules().forEach(module -> {
+                final String crtModulePom = pathPomFile.getParent()
+                        + File.separator + module+ File.separator + "pom.xml";
+                if (!strJsonModule.isEmpty()) {
+                    strJsonModule.append(',');
+                }
+                setExternalPomFile(crtModulePom);
+                loadProjectModel();
+                final Model prjModuleModel = getProjectModel();
+                String mdlVersion = prjModuleModel.getVersion();
+                if (mdlVersion == null) {
+                    mdlVersion = prjModel.getVersion();
+                }
+                strJsonModule.append("{\"POM\":\"")
+                        .append(crtModulePom.replace("\\", "\\\\"))
+                        .append("\",\"")
+                        .append(prjModel.getGroupId())
+                        .append(':')
+                        .append(prjModuleModel.getArtifactId())
+                        .append("\":\"")
+                        .append(mdlVersion)
+                        .append('\"')
+                        ;
+                final Map<String, Object> mdlDependencies = Components.getProjectModelComponent("Dependencies");
+                if (!mdlDependencies.isEmpty()) {
+                    strJsonModule.append(",\"Dependencies\":")
+                            .append(JsoningClass.getMapIntoJsonString(mdlDependencies));
+                }
+                strJsonModule.append('}');
+            });
+            strJsonString.append(strJsonModule).append(']');
+            return strJsonString.toString();
+        }
+
+        /**
+         * Constructor
+         */
+        private Application() {
+            // intentionally left blank
+        }
+
     }
 
     /**
@@ -375,6 +467,13 @@ public final class ProjectClass {
             // intentionally left blank
         }
 
+    }
+
+    /**
+     * Constructor
+     */
+    private ProjectClass() {
+        // intentionally left blank
     }
 
 }

@@ -1,14 +1,13 @@
 package interactive;
 
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Properties;
 
 import archive.ArchivingClass;
-import file.FileContentReadClass;
-import file.FileHandlingClass;
-import file.FileLocatingClass;
+import file.FileOperationsClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
 import shell.PowerShellExecutionClass;
@@ -21,6 +20,7 @@ import time.TimingClass;
     name = "top",
     subcommands = {
         ArchiveFolders.class,
+        CaptureImportsFromJavaSourceFilesIntoCsv.class,
         CaptureWindowsApplicationsInstalledIntoCsv.class,
         ChecksumsForFilesWithinFolder.class,
         CleanOlderFilesFromFolder.class
@@ -72,9 +72,9 @@ class ArchiveFolders implements Runnable {
      * String for FolderName
      */
     @CommandLine.Option(
-            names = {"-fldNm", "--folderName"},
-            description = "Folder Name to be inspected",
-            arity = "1..*",
+            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
+            description = CommonInteractiveClass.FOLDER_DESC,
+            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
             required = true)
     private String[] strFolderNames;
 
@@ -125,7 +125,7 @@ class ArchiveFolders implements Runnable {
         }
         for (final String strFolder : strFolderNames) {
             propFolder.clear();
-            final Properties folderProps = FileLocatingClass.getFolderStatisticsRecursive(strFolder, propFolder);
+            final Properties folderProps = FileOperationsClass.FolderStatisticsClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
             ArchivingClass.setArchiveNameWithinDestinationFolder(strDestFolder);
             ArchivingClass.archiveFolderAs7z();
@@ -164,6 +164,48 @@ class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
 /**
  * clean files older than a given number of days
  */
+@CommandLine.Command(name = "CaptureImportsFromJavaSourceFilesIntoCsv",
+                     description = "Get import inventory from all Java source files within a given folder")
+class CaptureImportsFromJavaSourceFilesIntoCsv implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
+            description = CommonInteractiveClass.FOLDER_DESC,
+            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
+            required = true)
+    private String[] strFolderNames;
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-csv", "--csvFileName"},
+            description = "CSV file to store retrieved imports into",
+            arity = "1",
+            required = true)
+    private String strCsvFileName;
+
+    @Override
+    public void run() {
+        for (final String strFolder : strFolderNames) {
+            FileOperationsClass.ContentReadingClass.extractImportStatementsFromJavaSourceFilesIntoCsvFile(Path.of(strFolder), Path.of(strCsvFileName));
+        }
+    }
+
+    /**
+     * Constructor
+     */
+    protected CaptureImportsFromJavaSourceFilesIntoCsv() {
+        super();
+    }
+}
+
+/**
+ * clean files older than a given number of days
+ */
 @CommandLine.Command(name = "ChecksumsForFilesWithinFolder",
                      description = "Get statistics for all files within a given folder")
 class ChecksumsForFilesWithinFolder implements Runnable {
@@ -172,19 +214,19 @@ class ChecksumsForFilesWithinFolder implements Runnable {
      * String for FolderName
      */
     @CommandLine.Option(
-            names = {"-fldNm", "--folderName"},
-            description = "Folder Name to be inspected",
-            arity = "1..*",
+            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
+            description = CommonInteractiveClass.FOLDER_DESC,
+            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
             required = true)
     private String[] strFolderNames;
 
     @Override
     public void run() {
         final String[] inAlgorithms = {"SHA-256"};
-        FileContentReadClass.setChecksumAlgorithms(inAlgorithms);
+        FileOperationsClass.FolderStatisticsClass.setChecksumAlgorithms(inAlgorithms);
         for (final String strFolder : strFolderNames) {
             final LocalDateTime startComputeTime = LocalDateTime.now();
-            final Map<String, Map<String, String>> fileStats = FileContentReadClass.getFileStatisticsFromFolder(strFolder);
+            final Map<String, Map<String, String>> fileStats = FileOperationsClass.FolderStatisticsClass.getFileStatisticsFromFolder(strFolder);
             final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
             final String strFeedback = String.format("For the folder %s calculated checksums are %s operation completed in %s (which means %s | %s)", strFolder, fileStats.toString(), objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
             LogExposureClass.LOGGER.info(strFeedback);
@@ -210,9 +252,9 @@ class CleanOlderFilesFromFolder implements Runnable {
      * String for FolderName
      */
     @CommandLine.Option(
-            names = {"-fldNm", "--folderName"},
-            description = "Folder Name to be inspected",
-            arity = "1..*",
+            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
+            description = CommonInteractiveClass.FOLDER_DESC,
+            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
             required = true)
     private String[] strFolderNames;
     /**
@@ -227,11 +269,11 @@ class CleanOlderFilesFromFolder implements Runnable {
 
     @Override
     public void run() {
-        FileHandlingClass.setCleanedFolderStatistics(true);
+        FileOperationsClass.DeletingOlderClass.setCleanedFolderStatistics(true);
         for (final String strFolder : strFolderNames) {
-            FileHandlingClass.setOrResetCleanedFolderStatistics();
-            FileHandlingClass.removeFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
-            final Map<String, Long> statsClndFldr = FileHandlingClass.getCleanedFolderStatistics();
+            FileOperationsClass.DeletingOlderClass.setOrResetCleanedFolderStatistics();
+            FileOperationsClass.DeletingOlderClass.deleteFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
+            final Map<String, Long> statsClndFldr = FileOperationsClass.DeletingOlderClass.getCleanedFolderStatistics();
             final String strFeedback = String.format("Folder %s has been cleaned eliminating %s files and freeing %s bytes in terms of disk space...", strFolder, statsClndFldr.get("Files"), statsClndFldr.get("Size"));
             LogExposureClass.LOGGER.info(strFeedback);
         }

@@ -4,15 +4,19 @@ import java.time.LocalDateTime;
 
 import org.apache.maven.model.Model;
 
-import file.ProjectClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
+import project.ProjectClass;
 import time.TimingClass;
 
 /**
  * Common class for Interactive service
  */
 public final class CommonInteractiveClass {
+    /**
+     * arity one or more
+     */
+    /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
     /**
      * boolean Auto Locale
      */
@@ -25,6 +29,18 @@ public final class CommonInteractiveClass {
      * Exit Code
      */
     private static int exitCode;
+    /**
+     * Short command for Folder
+     */
+    public static final String FOLDER_CMD_SHORT = "-fldNm";
+    /**
+     * Long command for Folder
+     */
+    public static final String FOLDER_CMD_LONG = "--folderName";
+    /**
+     * Description for Folder
+     */
+    public static final String FOLDER_DESC = "Folder Name to be inspected";
     /**
      * Start Date Time
      */

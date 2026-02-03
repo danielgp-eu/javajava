@@ -110,7 +110,7 @@ public final class DatabaseBasicClass {
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                setSqlExecutionSuccessInfo(strQueryPurpose);
+                LogExposureClass.exposeSqlExecutionSuccessInfo(strQueryPurpose);
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -155,15 +155,6 @@ public final class DatabaseBasicClass {
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return mapParameterOrder;
-    }
-
-    /**
-     * Success confirmation to Info log
-     * @param strQueryPurpose Query purpose
-     */
-    public static void setSqlExecutionSuccessInfo(final String strQueryPurpose) {
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
-        LogExposureClass.LOGGER.info(strFeedback);
     }
 
     /**

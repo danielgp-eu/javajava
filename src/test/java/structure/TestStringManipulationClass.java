@@ -19,39 +19,39 @@ class TestStringManipulationClass {
     void convertPromptParametersIntoNamedParameters() {
         final String strOrig = "SELECT {Field A}";
         final String strExpected = "SELECT :Field_A";
-        assertEquals(strExpected, StringManipulationClass.convertPromptParametersIntoNamedParameters(strOrig));
+        assertEquals(strExpected, StringManipulationClass.TransformingClass.convertPromptParametersIntoNamedParameters(strOrig));
     }
 
     @Test
     void convertPromptParametersIntoParameters() {
         final String strOrig = "SELECT {Field A}";
         final String strExpected = "SELECT ?";
-        assertEquals(strExpected, StringManipulationClass.convertPromptParametersIntoParameters(strOrig));
+        assertEquals(strExpected, StringManipulationClass.TransformingClass.convertPromptParametersIntoParameters(strOrig));
     }
 
     @Test
     void encloseStringIfContainsSpace() {
         final String strOrig = "Original String";
         final String strExpected = "\"Original String\"";
-        assertEquals(strExpected, StringManipulationClass.encloseStringIfContainsSpace(strOrig));
+        assertEquals(strExpected, StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(strOrig, '\"'));
     }
 
     @Test
     void encloseStringIfContainsSpaceFutile() {
         final String strExpected = "\"Original String\"";
-        assertEquals(strExpected, StringManipulationClass.encloseStringIfContainsSpace(strExpected));
+        assertEquals(strExpected, StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(strExpected, '\"'));
     }
 
     @Test
     void encloseStringIfContainsSpacePartialEnd() {
         final String strExpected = "\"Original String";
-        assertEquals(strExpected + '"', StringManipulationClass.encloseStringIfContainsSpace(strExpected));
+        assertEquals(strExpected + '"', StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(strExpected, '\"'));
     }
 
     @Test
     void encloseStringIfContainsSpacePartialStart() {
         final String strExpected = "Original String\"";
-        assertEquals('"' + strExpected, StringManipulationClass.encloseStringIfContainsSpace(strExpected));
+        assertEquals('"' + strExpected, StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(strExpected, '\"'));
     }
 
     @Test

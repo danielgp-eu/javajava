@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import file.ProjectPropertiesClass;
+import file.FileOperationsClass;
 import log.LogExposureClass;
 
 /**
@@ -39,7 +39,7 @@ public final class PowerShellExecutionClass {
         if (crtOperatingSys.startsWith("Windows")) {
             try {
                 final String[] varsToPick = {"osWindowsSystem32Path", "powerShellBinary"};
-                final Properties svProperties = ProjectPropertiesClass.getVariableFromProjectProperties("/project.properties", varsToPick);
+                final Properties svProperties = FileOperationsClass.ContentReadingClass.getVariableFromProjectProperties("/project.properties", varsToPick);
                 setPowerShellFile(svProperties.get("powerShellBinary").toString());
                 validatePathEnvironmentVariable();
                 final String[] arrayCommand = buildWindowsApplicationCommandSafely();

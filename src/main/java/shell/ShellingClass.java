@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import file.FileHandlingClass;
+import file.FileOperationsClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import time.TimingClass;
@@ -22,7 +22,7 @@ public final class ShellingClass {
      */
     private static boolean needProcCapture;
     /**
-     * Timestamp started
+     * Time-stamp started
      */
     private static LocalDateTime startTimestamp;
     /**
@@ -48,7 +48,7 @@ public final class ShellingClass {
             builder.command(strCommand, strParameters);
         }
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
-        builder.directory(FileHandlingClass.getCurrentUserFolder());
+        builder.directory(FileOperationsClass.RetrievingClass.getCurrentUserFolder());
         return builder;
     }
 

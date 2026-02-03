@@ -14,97 +14,6 @@ public final class StringManipulationClass {
      * Regular Expression for Prompt Parameters within SQL Query
      */
     public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
-    /**
-     * Single Question Mark Character
-     */
-    private static final String Q_MARK_PARAM = "SingleQuestionMarkCharacterParameter";
-    /**
-     * Named Character
-     */
-    private static final String NAMED_PARAM = "NamedParameter";
-
-    /**
-     * Convert Prompt Parameters into Named Parameters
-     * @param strOriginalQ query with prompt parameter
-     * @return query with named parameters
-     */
-    private static String convertPromptParameters(final String strOriginalQ, final String type) {
-        final String strFeedbackStrt = JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
-        LogExposureClass.LOGGER.debug(strFeedbackStrt);
-        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
-        String strFinalQ = strOriginalQ;
-        if (Q_MARK_PARAM.equalsIgnoreCase(type)) {
-            for (final String currentPrmtName : listMatches) {
-                strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
-            }
-        } else if (NAMED_PARAM.equalsIgnoreCase(type)) {
-            for (final String currentPrmtName : listMatches) {
-                strFinalQ = strFinalQ.replace(currentPrmtName, getNamedParameterFromPromptOne(currentPrmtName));
-            }
-        }
-        final String strFeedbackEnd = JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
-        LogExposureClass.LOGGER.debug(strFeedbackEnd);
-        return strFinalQ;
-    }
-
-    /**
-     * Convert Prompt Parameters into Named Parameters
-     * @param strOriginalQ query with prompt parameter
-     * @return query with named parameters
-     */
-    public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-        return convertPromptParameters(strOriginalQ, NAMED_PARAM);
-    }
-
-    /**
-     * Convert Prompt Parameters into Named Parameters
-     * @param strOriginalQ query with prompt parameter
-     * @return query with named parameters
-     */
-    public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
-        return convertPromptParameters(strOriginalQ, Q_MARK_PARAM);
-    }
-
-    /**
-     * get Named Parameter From Prompt One
-     * @param inString Original string
-     * @return String
-     */
-    public static String encloseStringWithCharacter(final String inString) {
-        final StringBuilder strBuilder = new StringBuilder();
-        if (inString.matches("^\".*\"$")) {
-            strBuilder.append(inString);
-        } else if (inString.matches("^\".*[^\"]$")) {
-            strBuilder.append(inString).append('\"');
-        } else if (inString.matches("^[^\"].*\"$")) {
-            strBuilder.append('\"').append(inString);
-        } else {
-            strBuilder.append('\"').append(inString).append('\"');
-        }
-        return strBuilder.toString();
-    }
-
-    /**
-     * get Named Parameter From Prompt One
-     * @param inString Original string
-     * @return String
-     */
-    public static String encloseStringIfContainsSpace(final String inString) {
-        String strReturn = inString;
-        if (inString.contains(" ")) {
-            strReturn = encloseStringWithCharacter(inString);
-        }
-        return strReturn;
-    }
-
-    /**
-     * get Named Parameter From Prompt One
-     * @param strOriginal Original string
-     * @return String
-     */
-    public static String getNamedParameterFromPromptOne(final String strOriginal) {
-        return ":" + CleaningClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
-    }
 
     /**
      * handle NameUnformatted
@@ -123,7 +32,7 @@ public final class StringManipulationClass {
     }
 
     /**
-     * Cleaning String
+     * Cleaning things
      */
     public final class CleaningClass {
 
@@ -161,7 +70,7 @@ public final class StringManipulationClass {
     }
 
     /**
-     * Cleaning String
+     * Evaluating things
      */
     public final class EvaluatingClass {
 
@@ -207,6 +116,109 @@ public final class StringManipulationClass {
 
         // Private constructor to prevent instantiation
         private EvaluatingClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Transforming things
+     */
+    public final class TransformingClass {
+        /**
+         * Single Question Mark Character
+         */
+        private static final String Q_MARK_PARAM = "SingleQuestionMarkCharacterParameter";
+        /**
+         * Named Character
+         */
+        private static final String NAMED_PARAM = "NamedParameter";
+
+        /**
+         * Convert Prompt Parameters into Named Parameters
+         * @param strOriginalQ query with prompt parameter
+         * @return query with named parameters
+         */
+        private static String convertPromptParameters(final String strOriginalQ, final String type) {
+            final String strFeedbackStrt = JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+            LogExposureClass.LOGGER.debug(strFeedbackStrt);
+            final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
+            String strFinalQ = strOriginalQ;
+            if (Q_MARK_PARAM.equalsIgnoreCase(type)) {
+                for (final String currentPrmtName : listMatches) {
+                    strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
+                }
+            } else if (NAMED_PARAM.equalsIgnoreCase(type)) {
+                for (final String currentPrmtName : listMatches) {
+                    strFinalQ = strFinalQ.replace(currentPrmtName, convertSinglePromptParameterIntoNamedParameter(currentPrmtName));
+                }
+            }
+            final String strFeedbackEnd = JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+            LogExposureClass.LOGGER.debug(strFeedbackEnd);
+            return strFinalQ;
+        }
+
+        /**
+         * Convert Prompt Parameters into Named Parameters
+         * @param strOriginalQ query with prompt parameter
+         * @return query with named parameters
+         */
+        public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
+            return convertPromptParameters(strOriginalQ, NAMED_PARAM);
+        }
+
+        /**
+         * Convert Prompt Parameters into Named Parameters
+         * @param strOriginalQ query with prompt parameter
+         * @return query with named parameters
+         */
+        public static String convertPromptParametersIntoParameters(final String strOriginalQ) {
+            return convertPromptParameters(strOriginalQ, Q_MARK_PARAM);
+        }
+
+        /**
+         * get Named Parameter From Prompt One
+         * @param strOriginal Original string
+         * @return String
+         */
+        private static String convertSinglePromptParameterIntoNamedParameter(final String strOriginal) {
+            return ":" + CleaningClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
+        }
+
+        /**
+         * get Named Parameter From Prompt One
+         * @param inString Original string
+         * @return String
+         */
+        private static String encloseStringWithCharacter(final String inString, final char inChar) {
+            final StringBuilder strBuilder = new StringBuilder();
+            if (inString.matches(String.format("^%s.*%s$", inChar, inChar))) { // is already enclosed
+                strBuilder.append(inString);
+            } else if (inString.matches(String.format("^%s.*[^%s]$", inChar, inChar))) { // has only start enclosed
+                strBuilder.append(inString).append('\"');
+            } else if (inString.matches(String.format("^[^%s].*%s$", inChar, inChar))) { // has only end enclosed
+                strBuilder.append('\"').append(inString);
+            } else { // does not have neither start nor end enclosed
+                strBuilder.append('\"').append(inString).append('\"');
+            }
+            return strBuilder.toString();
+        }
+
+        /**
+         * get Named Parameter From Prompt One
+         * @param inString Original string
+         * @return String
+         */
+        public static String encloseStringIfContainsSpace(final String inString, final char inChar) {
+            String strReturn = inString;
+            if (inString.contains(" ")) {
+                strReturn = encloseStringWithCharacter(inString, inChar);
+            }
+            return strReturn;
+        }
+
+        // Private constructor to prevent instantiation
+        private TransformingClass() {
             // intentionally blank
         }
 

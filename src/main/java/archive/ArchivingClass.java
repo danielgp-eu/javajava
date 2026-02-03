@@ -105,7 +105,7 @@ public final class ArchivingClass {
             sbArchiveName.append(strArchiveSuffix);
         }
         sbArchiveName.append(".7z");
-        strArchiveName = StringManipulationClass.encloseStringIfContainsSpace(sbArchiveName.toString());
+        strArchiveName = StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(sbArchiveName.toString(), '\"');
     }
 
     /**
@@ -135,7 +135,7 @@ public final class ArchivingClass {
         if (inArchivePwd.matches("[A-Z0-9_]+")) {
             strGivenPassword = System.getenv(inArchivePwd); // get password value from Environment variable
         }
-        strArchivePwd = StringManipulationClass.encloseStringIfContainsSpace(strGivenPassword);
+        strArchivePwd = StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(strGivenPassword, '\"');
     }
 
     /**
@@ -159,7 +159,7 @@ public final class ArchivingClass {
      * @param inArchivingExec String
      */
     public static void setArchivingExecutable(final String inArchivingExec) {
-        strArchivingExec = StringManipulationClass.encloseStringIfContainsSpace(inArchivingExec);
+        strArchivingExec = StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(inArchivingExec, '\"');
     }
 
     /**

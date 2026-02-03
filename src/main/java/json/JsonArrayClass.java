@@ -12,8 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Properties;
 
-import file.FileChangeClass;
-import file.WriteContextSingletonClass;
+import file.FileOperationsClass;
 import log.LogExposureClass;
 import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
@@ -166,7 +165,7 @@ public final class JsonArrayClass {
     public static void splitJsonIntoSmallerGrouped() {
         final JsonFactory jsonFactory = JsonFactory.builder().build();
         final ObjectReadContext readContext = ObjectReadContext.empty();
-        FileChangeClass.setSearchingFolder(strOutFolder); // used for Mass Change (if necessary)
+        FileOperationsClass.MassChangeClass.setSearchingFolder(strOutFolder); // used for Mass Change (if necessary)
         final String strFeedbackTemp = String.format("JSON file named %s will be split into smaller pieces...", strInputJsonFile);
         LogExposureClass.LOGGER.debug(strFeedbackTemp);
         String remeberedValue = null;
@@ -245,10 +244,10 @@ public final class JsonArrayClass {
     private static void writeObjectStart(final Path outFile) {
         boolean isFileNew = true;
         if (Files.exists(outFile)) {
-            FileChangeClass.setOldContent("]");
-            FileChangeClass.setNewContent(",");
-            FileChangeClass.setPattern(outFile.getFileName().toString());
-            FileChangeClass.massChangeToFilesWithinFolder();
+            FileOperationsClass.MassChangeClass.setOldContent("]");
+            FileOperationsClass.MassChangeClass.setNewContent(",");
+            FileOperationsClass.MassChangeClass.setPattern(outFile.getFileName().toString());
+            FileOperationsClass.MassChangeClass.massChangeToFilesWithinFolder();
             isFileNew = false;
         }
         try {

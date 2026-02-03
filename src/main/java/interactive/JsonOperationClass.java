@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Properties;
 
-import file.FileLocatingClass;
+import file.FileOperationsClass;
 import json.JsonArrayClass;
 import log.LogExposureClass;
 import picocli.CommandLine;
@@ -103,7 +103,7 @@ class JsonSplit implements Runnable {
     public void run() {
         setFileSize();
         if (fileSize <= 0) {
-            final Properties propertiesReturn = FileLocatingClass.checkFileExistanceAndReadability(fileSize, strFileName);
+            final Properties propertiesReturn = FileOperationsClass.RetrievingClass.checkFileExistanceAndReadability(fileSize, strFileName);
             final String strFeedback = String.format("There is something not right with given file name... %s", propertiesReturn);
             LogExposureClass.LOGGER.error(strFeedback);
         } else {
@@ -128,7 +128,7 @@ class JsonSplit implements Runnable {
             JsonArrayClass.setBucketLength(bucketLength);
         }
         final String destPattern = JsonArrayClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
-        FileLocatingClass.deleteFilesMathingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
+        FileOperationsClass.DeletingClass.deleteFilesMatchingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
         JsonArrayClass.splitJsonIntoSmallerGrouped(); // actual logic
     }
 
@@ -136,7 +136,7 @@ class JsonSplit implements Runnable {
      * Setter for fileSize
      */
     public static void setFileSize() {
-        fileSize = FileLocatingClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
+        fileSize = FileOperationsClass.RetrievingClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
     }
 
     /**

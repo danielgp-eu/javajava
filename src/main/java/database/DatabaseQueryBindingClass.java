@@ -29,7 +29,7 @@ public final class DatabaseQueryBindingClass {
         final int intRows = objValues.size();
         final List<String> mapParameterOrder = DatabaseBasicClass.getPromptParametersOrderWithinQuery(strQuery, objValues);
         final int intParameters = mapParameterOrder.size();
-        final String strFinalQ = StringManipulationClass.convertPromptParametersIntoParameters(strQuery);
+        final String strFinalQ = StringManipulationClass.TransformingClass.convertPromptParametersIntoParameters(strQuery);
         try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ)) {
             final Properties properties = new Properties();
             // cycle through each row
@@ -52,7 +52,7 @@ public final class DatabaseQueryBindingClass {
                 if ((crtRow % 200 == 0)
                     || (crtRow == intRows)) { // each 200 rows OR final one
                     preparedStatement.executeLargeBatch();
-                    DatabaseBasicClass.setSqlExecutionSuccessInfo(strQueryPurpose);
+                    LogExposureClass.exposeSqlExecutionSuccessInfo(strQueryPurpose);
                 }
             }
         } catch (SQLException e) {

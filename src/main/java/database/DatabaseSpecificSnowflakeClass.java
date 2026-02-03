@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import file.ProjectClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
+import project.ProjectClass;
 import shell.ShellingClass;
 
 /**
