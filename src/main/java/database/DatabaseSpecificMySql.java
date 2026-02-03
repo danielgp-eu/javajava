@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import json.JsoningClass;
+import json.JsonOperationsClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 import structure.NumberClass;
@@ -36,12 +36,12 @@ public final class DatabaseSpecificMySql {
             final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nEnvironmentVariableFound"), strEnv);
             LogExposureClass.LOGGER.debug(strFeedback);
             final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
-            final JsonNode ndMySQL = JsoningClass.getJsonFileNodes(inputStream);
-            properties.put("ServerName", JsoningClass.getJsonValue(ndMySQL, "/ServerName"));
-            properties.put("Port", JsoningClass.getJsonValue(ndMySQL, "/Port"));
-            properties.put("Username", JsoningClass.getJsonValue(ndMySQL, "/Username"));
-            properties.put("Password", JsoningClass.getJsonValue(ndMySQL, "/Password"));
-            properties.put("ServerTimezone", JsoningClass.getJsonValue(ndMySQL, "/ServerTimezone"));
+            final JsonNode ndMySQL = JsonOperationsClass.getJsonFileNodes(inputStream);
+            properties.put("ServerName", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerName"));
+            properties.put("Port", JsonOperationsClass.getJsonValue(ndMySQL, "/Port"));
+            properties.put("Username", JsonOperationsClass.getJsonValue(ndMySQL, "/Username"));
+            properties.put("Password", JsonOperationsClass.getJsonValue(ndMySQL, "/Password"));
+            properties.put("ServerTimezone", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerTimezone"));
         }
         return properties;
     }
@@ -56,7 +56,7 @@ public final class DatabaseSpecificMySql {
     public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
         Connection connection = null;
         if (propInstance.isEmpty()) {
-            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionPropertiesEmpty"), DatabaseBasicClass.STR_DB_MYSQL);
+            final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionPropertiesEmpty"), DatabaseOperationsClass.STR_DB_MYSQL);
             LogExposureClass.LOGGER.error(strFeedbackErr);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
@@ -64,13 +64,13 @@ public final class DatabaseSpecificMySql {
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), DatabaseBasicClass.STR_DB_MYSQL, strDatabase, strConnection, propConnection);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), DatabaseOperationsClass.STR_DB_MYSQL, strDatabase, strConnection, propConnection);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccess"), DatabaseBasicClass.STR_DB_MYSQL, strServer, strPort, strDatabase);
+                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationSuccess"), DatabaseOperationsClass.STR_DB_MYSQL, strServer, strPort, strDatabase);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch(SQLException e) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailed"), DatabaseBasicClass.STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
+                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCreationFailed"), DatabaseOperationsClass.STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
         }
@@ -92,7 +92,7 @@ public final class DatabaseSpecificMySql {
         rsProperties.put("strQueryToUse", strQueryToUse);
         rsProperties.put("strKind", strKind);
         final Properties queryProperties = new Properties();
-        return DatabaseResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
+        return DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
     }
 
     /**
@@ -230,7 +230,7 @@ FROM
      */
     public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
         try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-            Statement objStatement = DatabaseConnectivityClass.createSqlStatement(DatabaseBasicClass.STR_DB_MYSQL, objConnection)) {
+            Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(DatabaseOperationsClass.STR_DB_MYSQL, objConnection)) {
             final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
             final String strFeedback = listProps.toString();
             LogExposureClass.LOGGER.info(strFeedback);

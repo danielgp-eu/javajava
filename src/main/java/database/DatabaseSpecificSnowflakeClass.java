@@ -174,7 +174,7 @@ FROM
      */
     public static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
         final String strQueryToUse = "ALTER SESSION SET JDBC_QUERY_RESULT_FORMAT='JSON';";
-        DatabaseBasicClass.executeQueryWithoutResultSet(objStatement, "Bootstrap", strQueryToUse);
+        DatabaseOperationsClass.executeQueryWithoutResultSet(objStatement, "Bootstrap", strQueryToUse);
     }
 
     /**
@@ -246,7 +246,7 @@ FROM
         rsProperties.put("strWhich", strWhich);
         rsProperties.put("strQueryToUse", strQueryToUse);
         rsProperties.put("strKind", strKind);
-        return DatabaseResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
+        return DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
     }
 
     /**
@@ -333,7 +333,7 @@ FROM
      */
     public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
         try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-            Statement objStatement = DatabaseConnectivityClass.createSqlStatement(STR_DB_SNOWFLAKE, objConnection)) {
+            Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(STR_DB_SNOWFLAKE, objConnection)) {
             executeSnowflakeBootstrapQuery(objStatement);
             getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
         } catch(SQLException e) {

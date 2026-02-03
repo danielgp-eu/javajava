@@ -22,7 +22,7 @@ import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import json.JsoningClass;
+import json.JsonOperationsClass;
 import localization.JavaJavaLocalizationClass;
 import log.LogExposureClass;
 
@@ -228,24 +228,24 @@ public final class ProjectClass {
             final Map<String, Object> projDependencies = Components.getProjectModelComponent("Dependencies");
             if (!projDependencies.isEmpty()) {
                 strJsonString.append(",\"Dependencies\":")
-                        .append(JsoningClass.getMapIntoJsonString(projDependencies));
+                        .append(JsonOperationsClass.getMapIntoJsonString(projDependencies));
             }
             final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent("BuildPlugins");
             if (!projBuildPlugins.isEmpty()) {
                 strJsonString.append(",\"Build Plugins\":")
-                        .append(JsoningClass.getMapIntoJsonString(projBuildPlugins));
+                        .append(JsonOperationsClass.getMapIntoJsonString(projBuildPlugins));
             }
             final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent("ProfilePlugins");
             if (!projPrflPlugins.isEmpty()) {
                 strJsonString.append(",\"Profile Plugins\":")
-                        .append(JsoningClass.getMapIntoJsonString(projPrflPlugins));
+                        .append(JsonOperationsClass.getMapIntoJsonString(projPrflPlugins));
             }
             if (!prjModel.getModules().isEmpty()) {
                 strJsonString.append(getComponentModulesDetailsIfProjectModulesArePresent(prjModel));
             }
             final Map<String, Object> projLibModules = getProjectModuleLibraries();
             strJsonString.append(",\"Libary Modules\":")
-                    .append(JsoningClass.getMapIntoJsonString(projLibModules));
+                    .append(JsonOperationsClass.getMapIntoJsonString(projLibModules));
             final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
             LogExposureClass.LOGGER.debug(strFeedback);
             return strJsonString.append('}').toString();
@@ -287,7 +287,7 @@ public final class ProjectClass {
                 final Map<String, Object> mdlDependencies = Components.getProjectModelComponent("Dependencies");
                 if (!mdlDependencies.isEmpty()) {
                     strJsonModule.append(",\"Dependencies\":")
-                            .append(JsoningClass.getMapIntoJsonString(mdlDependencies));
+                            .append(JsonOperationsClass.getMapIntoJsonString(mdlDependencies));
                 }
                 strJsonModule.append('}');
             });
