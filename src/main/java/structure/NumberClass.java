@@ -2,7 +2,6 @@ package structure;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,17 +19,16 @@ public final class NumberClass {
      * @return float value
      */
     public static float computePercentageSafely(final long numerator, final long denominator) {
-        float percentage = 0;
-        try {
-            final double percentageExact = (float) numerator / denominator * 100;
-            percentage = (float) new BigDecimal(Double.toString(percentageExact))
-                .setScale(2, RoundingMode.HALF_UP)
-                .doubleValue();
-        } catch (ArithmeticException ea) {
-            final String strFeedback = String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return 0.. %s", numerator, Arrays.toString(ea.getStackTrace()));
+        long denominatorUsed = denominator;
+        if (denominator == 0) {
+            denominatorUsed = 100;
+            final String strFeedback = String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return same numerator...", numerator);
             LogExposureClass.LOGGER.error(strFeedback);
         }
-        return percentage;
+        final double percentageExact = (float) numerator / denominatorUsed * 100;
+        return (float) new BigDecimal(Double.toString(percentageExact))
+            .setScale(2, RoundingMode.HALF_UP)
+            .doubleValue();
     }
 
     /**

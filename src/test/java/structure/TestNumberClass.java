@@ -21,7 +21,7 @@ class TestNumberClass {
     @Test
     @DisplayName("Simple test to verify that 0 is same as 51 divided by 0")
     void testComputePercentageZeroDivision() {
-        assertEquals(0, NumberClass.computePercentageSafely(51, 0));
+        assertEquals(51, NumberClass.computePercentageSafely(51, 0));
     }
 
     @Test
