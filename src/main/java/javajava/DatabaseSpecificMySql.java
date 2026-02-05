@@ -1,4 +1,4 @@
-package database;
+package javajava;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -10,10 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import json.JsonOperationsClass;
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.NumberClass;
 import tools.jackson.databind.JsonNode;
 
 /**
@@ -60,7 +56,7 @@ public final class DatabaseSpecificMySql {
             LogExposureClass.LOGGER.error(strFeedbackErr);
         } else {
             final String strServer = propInstance.get("ServerName").toString();
-            final int strPort = NumberClass.convertStringIntoInteger(propInstance.get("Port").toString());
+            final int strPort = BasicStructuresClass.convertStringIntoInteger(propInstance.get("Port").toString());
             try {
                 final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
                 final Properties propConnection = getMySqlProperties(propInstance);

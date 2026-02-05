@@ -1,4 +1,4 @@
-package json;
+package javajava;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -12,11 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import file.FileOperationsClass;
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.ListAndMapClass;
-import structure.StringManipulationClass;
 import tools.jackson.core.*;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.JsonNode;
@@ -70,8 +65,8 @@ public final class JsonOperationsClass {
             || (objValue instanceof Double)
             || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
             || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
-            || StringManipulationClass.EvaluatingClass.isStringActuallyNumeric(objValue.toString())
-            || StringManipulationClass.EvaluatingClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
+            || BasicStructuresClass.StringEvaluationClass.isStringActuallyNumeric(objValue.toString())
+            || BasicStructuresClass.StringEvaluationClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
         String strRaw = "\"%s\":\"%s\"";
         if (needsQuotesAround) {
             strRaw = "\"%s\":%s";
@@ -178,7 +173,7 @@ public final class JsonOperationsClass {
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
         final StringBuilder strJsonSubString = new StringBuilder(100);
-        final Map<String, Object> sortedMap = ListAndMapClass.sortMapByKey(arrayAttrib);
+        final Map<String, Object> sortedMap = BasicStructuresClass.ListAndMapClass.sortMapByKey(arrayAttrib);
         sortedMap.forEach((strKey, objValue) -> {
             if (!strJsonSubString.isEmpty()) {
                 strJsonSubString.append(',');

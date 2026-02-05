@@ -1,10 +1,8 @@
-package log;
+package javajava;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import localization.JavaJavaLocalizationClass;
 
 /**
  * exposing things to Log
@@ -91,6 +89,22 @@ public final class LogExposureClass {
      */
     public static Level getLogLevel() {
         return LOGGER.getLevel();
+    }
+
+    /**
+     * handle NameUnformatted
+     * @param intRsParams number for parameters
+     * @param strUnformatted original string
+     * @param strReplacement replacements (1 to multiple)
+     * @return String
+     */
+    public static String handleNameUnformattedMessage(final int intRsParams, final String strUnformatted, final Object... strReplacement) {
+        return switch (intRsParams) {
+            case 1 -> String.format(strUnformatted, strReplacement[0]);
+            case 2 -> String.format(strUnformatted, strReplacement[0], strReplacement[1]);
+            case 3 -> String.format(strUnformatted, strReplacement[0], strReplacement[1], strReplacement[2]);
+            default -> String.format(STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(STR_I18N_UNKN)));
+        };
     }
 
     /**

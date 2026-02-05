@@ -1,15 +1,9 @@
-package archive;
+package javajava;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import shell.ShellingClass;
-import structure.NumberClass;
-import structure.StringManipulationClass;
 
 /**
  * Archiving wrapper
@@ -84,7 +78,7 @@ public final class ArchivingClass {
             if (fileA.exists() && fileA.isFile()) {
                 final long fileArchSize = fileA.length();
                 final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
-                final float percentage = NumberClass.computePercentageSafely(fileArchSize, fileOrigSize);
+                final float percentage = BasicStructuresClass.computePercentageSafely(fileArchSize, fileOrigSize);
                 final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
                 LogExposureClass.LOGGER.info(strFeedback);
             }
@@ -105,7 +99,7 @@ public final class ArchivingClass {
             sbArchiveName.append(strArchiveSuffix);
         }
         sbArchiveName.append(".7z");
-        strArchiveName = StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(sbArchiveName.toString(), '\"');
+        strArchiveName = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(sbArchiveName.toString(), '\"');
     }
 
     /**
@@ -135,7 +129,7 @@ public final class ArchivingClass {
         if (inArchivePwd.matches("[A-Z0-9_]+")) {
             strGivenPassword = System.getenv(inArchivePwd); // get password value from Environment variable
         }
-        strArchivePwd = StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(strGivenPassword, '\"');
+        strArchivePwd = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(strGivenPassword, '\"');
     }
 
     /**
@@ -159,7 +153,7 @@ public final class ArchivingClass {
      * @param inArchivingExec String
      */
     public static void setArchivingExecutable(final String inArchivingExec) {
-        strArchivingExec = StringManipulationClass.TransformingClass.encloseStringIfContainsSpace(inArchivingExec, '\"');
+        strArchivingExec = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(inArchivingExec, '\"');
     }
 
     /**

@@ -1,4 +1,4 @@
-package database;
+package javajava;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,11 +11,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
-
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import project.ProjectClass;
-import shell.ShellingClass;
 
 /**
  * Snowflake methods

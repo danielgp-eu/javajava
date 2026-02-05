@@ -152,3 +152,30 @@ Various Java classes to be re-used
 ## Execution Remarks
 
 To avoid a pesky warning at execution time a VM Attribute having the value `--enable-native-access=ALL-UNNAMED` needs to be added
+
+
+## Features implemented
+
+* AnalyzeColumnsFromCsvFile                   --fileName (1..*)
+* AnalyzePom                                  --fileName (1..*)
+* ArchiveFolders                              --archivingExecutable (0..1)
+                                                --folderName (1..*)
+                                                    --folderDestination  (1)
+                                                        --archivePrefix (0..1)
+                                                            --archiveSuffix (0..1)
+                                                                --archivePassword (0..1)
+* CaptureChecksumsOfFilesFromFolderWithinCsv  --folderName (1..*)
+                                                --csvFileName (1)
+* CaptureImportsFromJavaSourceFilesIntoCsv    --folderName (1..*)
+                                                --csvFileName (1)
+* CaptureWindowsApplicationsInstalledIntoCsv  --csvFileName (1)
+* CleanOlderFilesFromFolder                   --folderName (1..*)
+                                                --daysOlderLimit (1)
+* ExperimentalFeature
+* GetSubFoldersFromFolder                     --folderName (1)
+* JsonSplit                                   --fileName (1)
+                                                --folderDestination (1)
+                                                    --splitSize (0..1)
+                                                        --field (1)
+                                                            --bucketLength (0..1)
+* LogEnvironmentDetails

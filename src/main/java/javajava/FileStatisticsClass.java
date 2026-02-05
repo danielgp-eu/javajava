@@ -1,9 +1,11 @@
-package file;
+package javajava;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,18 +26,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import time.TimingClass;
-
 /**
  * Statistics
  */
 public final class FileStatisticsClass {
-    /**
-     * File Statistics variable
-     */
-    /* default */ private static final Map<String, Map<String, String>> FILE_STAT_W_CHKSM = new ConcurrentHashMap<>();
     /**
      * Checksum algorithms
      */
@@ -52,6 +46,24 @@ public final class FileStatisticsClass {
                 this.folderCount + other.folderCount,
                 this.totalSize + other.totalSize
             );
+        }
+    }
+
+    /**
+     * Get statistics for all files within a given folder
+     * @param strFolderName input folder name
+     * @return Map with file statistics
+     */
+    public static void captureFileStatisticsFromFolder(final String strFolderName, final String outCsvFile) {
+        try (BufferedWriter writer = Files.newBufferedWriter(Path.of(outCsvFile), StandardCharsets.UTF_8)) {
+            writer.write("Folder;File;Size;Last Modified Time");
+            for(final String crtAlgo: listAlgorithms) {
+                writer.write(';' + crtAlgo);
+            }
+            writer.newLine();
+            gatherFileStatisticsFromFolder(strFolderName, writer);
+        } catch (IOException ei) {
+            LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
         }
     }
 
@@ -91,15 +103,18 @@ public final class FileStatisticsClass {
      * @param file input file
      * @return Map
      */
-    private static Map<String, String> computeFileMultipleChecksums(final Path file) {
+    private static Map<String, String> computeFileMultipleChecksums(final Path file, final BufferedWriter writer) {
         final Map<String, String> crtFileStats = new ConcurrentHashMap<>();
-        crtFileStats.put("Size", String.valueOf(file.toFile().getTotalSpace()));
-        crtFileStats.put("Last Modified Time", TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file));
         try(ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
             executor.submit(() -> {
                 for (final String algo : listAlgorithms) {
                     final String crtChecksum = computeSingleChecksum(file, algo);
-                    crtFileStats.put("Checksum " + algo, crtChecksum);
+                    try {
+                        writer.write(';' + crtChecksum);
+                    } catch (IOException ei) {
+                        final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, "*", file);
+                        LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+                    }
                 }
             });
             executor.shutdown();
@@ -117,32 +132,25 @@ public final class FileStatisticsClass {
      * performs statistics for all files within a given folder 
      * @param strFolderName input folder name
      */
-    private static void gatherFileStatisticsFromFolder(final String strFolderName) {
+    private static void gatherFileStatisticsFromFolder(final String strFolderName, final BufferedWriter writer) {
         final Path folder = Paths.get(strFolderName);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
             for (final Path file : stream) {
                 if (Files.isDirectory(file)) {
-                    gatherFileStatisticsFromFolder(file.toString());
+                    gatherFileStatisticsFromFolder(file.toString(), writer);
                 } else if (Files.isRegularFile(file)) {
-                    FILE_STAT_W_CHKSM.put(file.getParent() + File.separator + file.getFileName().toString(),
-                            computeFileMultipleChecksums(file));
+                    writer.write(file.getParent().toString()
+                            + ';' + file.getFileName().toString()
+                            + ';' + file.toFile().getTotalSpace()
+                            + ';' + TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file));
+                    computeFileMultipleChecksums(file, writer);
+                    writer.newLine();
                 }
             }
         } catch (IOException ei) {
             final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, "*", strFolderName);
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
-    }
-
-    /**
-     * Get statistics for all files within a given folder
-     * @param strFolderName input folder name
-     * @return Map with file statistics
-     */
-    public static Map<String, Map<String, String>> getFileStatisticsFromFolder(final String strFolderName) {
-        FILE_STAT_W_CHKSM.clear();
-        gatherFileStatisticsFromFolder(strFolderName);
-        return FILE_STAT_W_CHKSM;
     }
 
     /**

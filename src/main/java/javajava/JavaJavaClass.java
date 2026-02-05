@@ -1,4 +1,4 @@
-package interactive;
+package javajava;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -9,19 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import archive.ArchivingClass;
-import environment.EnvironmentCapturingAssembleClass;
-import file.FileDeletingClass;
-import file.FileOperationsClass;
-import file.FileStatisticsClass;
-import json.JsonOperationsClass;
-import log.LogExposureClass;
 import picocli.CommandLine;
-import project.ProjectClass;
-import shell.ShellingClass;
-import structure.ListAndMapClass;
-import structure.NumberClass;
-import time.TimingClass;
 
 /**
  * Main Command Line
@@ -29,12 +17,14 @@ import time.TimingClass;
 @CommandLine.Command(
     name = "top",
     subcommands = {
-            AnlyzePom.class,
+            AnalyzeColumnsFromCsvFile.class,
+            AnalyzePom.class,
             ArchiveFolders.class,
+            CaptureChecksumsOfFilesFromFolderWithinCsv.class,
             CaptureImportsFromJavaSourceFilesIntoCsv.class,
             CaptureWindowsApplicationsInstalledIntoCsv.class,
-            ChecksumsForFilesWithinFolder.class,
             CleanOlderFilesFromFolder.class,
+            ExperimentalFeature.class,
             GetSubFoldersFromFolder.class,
             JsonSplit.class,
             LogEnvironmentDetails.class
@@ -70,8 +60,19 @@ public final class JavaJavaClass {
 /**
  * Captures execution environment details into Log file
  */
-@CommandLine.Command(name = "AnalyzeColumnsFromCsvFile", description = "Analyze columns from CSV file")
+@CommandLine.Command(name = "AnalyzeColumnsFromCsvFile",
+                     description = "Analyze columns from CSV file")
 class AnalyzeColumnsFromCsvFile implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-fNm", "--fileName"},
+            description = "POM file(s) to analyze and expose information from",
+            arity = "1..*",
+            required = true)
+    private String[] strFileNames;
 
     /**
      *
@@ -88,10 +89,10 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
         final Map<List<String>, String> mergeRules = Map.of(
                 List.of("ARRAY", "OBJECT", "VARIANT"), "COMPOSITE__STRUCTURED",
                 List.of("FLOAT", "NUMBER"), "COMPOSITE__NUMERIC",
-                List.of("TIMESTAMP_LTZ", "TIMESTAMP_NTZ", "TIMESTAMP_TZ"), "COMPOSITE__TIMESTAMP",
+                List.of("DATETIME", "TIMESTAMP", "TIMESTAMP_LTZ", "TIMESTAMP_NTZ", "TIMESTAMP_TZ"), "COMPOSITE__TIMESTAMP",
                 List.of("BINARY", "TEXT", "VARCHAR"), "COMPOSITE__TEXT"
         );
-        final Map<String, List<String>> grpCols = ListAndMapClass.mergeKeys(groupedColumns, mergeRules);
+        final Map<String, List<String>> grpCols = BasicStructuresClass.ListAndMapClass.mergeKeys(groupedColumns, mergeRules);
         final String strFeedback = "=".repeat(20) + strFileName + "=".repeat(20);
         LogExposureClass.LOGGER.info(strFeedback);
         FileOperationsClass.ContentWritingClass.setCsvColumnSeparator(',');
@@ -103,16 +104,16 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
             FileOperationsClass.ContentWritingClass.writeStringListToCsvFile(strColFileName, "DataType,Column", valList);
             final String strFeedbackWrt = String.format("Writing file for %s which has %s values", keyDataType, valList.size());
             LogExposureClass.LOGGER.info(strFeedbackWrt);
-            final Map<String, Long> sorted = ListAndMapClass.getWordCounts(valList, "(_| )");
+            final Map<String, Long> sorted = BasicStructuresClass.ListAndMapClass.getWordCounts(valList, "(_| )");
             FileOperationsClass.ContentWritingClass.writeLinkedHashMapToCsvFile(strFileName.replace(".csv", "__words.csv"), "DataType,Word,Occurrences", sorted);
         });
     }
 
     @Override
     public void run() {
-        storeWordFrequencyIntoCsvFile("C:/www/fields_edw_dev.csv", 3, 4);
-        storeWordFrequencyIntoCsvFile("C:/www/fields_edw_qa.csv", 3, 4);
-        storeWordFrequencyIntoCsvFile("C:/www/fields_edw_prod.csv", 3, 4);
+        for (final String strFileName : strFileNames) {
+            storeWordFrequencyIntoCsvFile(strFileName, 3, 4);
+        }
     }
 
     /**
@@ -127,9 +128,9 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
 /**
  * Captures sub-folder from a Given Folder into Log file
  */
-@CommandLine.Command(name = "AnlyzePom",
+@CommandLine.Command(name = "AnalyzePom",
                      description = "Exposes information about a given POM")
-class AnlyzePom implements Runnable {
+class AnalyzePom implements Runnable {
 
     /**
      * String for FolderName
@@ -156,7 +157,7 @@ class AnlyzePom implements Runnable {
     /**
      * Private constructor to prevent instantiation
      */
-    public AnlyzePom() {
+    public AnalyzePom() {
         super();
     }
 
@@ -253,19 +254,47 @@ class ArchiveFolders implements Runnable {
 /**
  * clean files older than a given number of days
  */
-@CommandLine.Command(name = "CaptureWindowsApplicationsInstalledIntoCsv",
-                     description = "Run the experimental new feature")
-class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
+@CommandLine.Command(name = "CaptureChecksumsOfFilesFromFolderWithinCsv",
+                     description = "Get statistics for all files within a given folder")
+class CaptureChecksumsOfFilesFromFolderWithinCsv implements Runnable {
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
+            description = CommonInteractiveClass.FOLDER_DESC,
+            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
+            required = true)
+    private String[] strFolderNames;
+
+    /**
+     * String for FolderName
+     */
+    @CommandLine.Option(
+            names = {"-csv", "--csvFileName"},
+            description = "CSV file to store retrieved checksums info",
+            arity = "1",
+            required = true)
+    private String strCsvFileName;
 
     @Override
     public void run() {
-        ShellingClass.PowerShellExecutionClass.captureWindowsApplicationsIntoCsvFile();
+        final String[] inAlgorithms = {"SHA-256", "SHA3-256"};
+        FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
+        for (final String strFolder : strFolderNames) {
+            final LocalDateTime startComputeTime = LocalDateTime.now();
+            FileStatisticsClass.captureFileStatisticsFromFolder(strFolder, strCsvFileName);
+            final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
+            final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, strCsvFileName, objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+            LogExposureClass.LOGGER.info(strFeedback);
+        }
     }
 
     /**
      * Constructor
      */
-    protected CaptureWindowsApplicationsInstalledIntoCsv() {
+    protected CaptureChecksumsOfFilesFromFolderWithinCsv() {
         super();
     }
 }
@@ -315,37 +344,29 @@ class CaptureImportsFromJavaSourceFilesIntoCsv implements Runnable {
 /**
  * clean files older than a given number of days
  */
-@CommandLine.Command(name = "ChecksumsForFilesWithinFolder",
-                     description = "Get statistics for all files within a given folder")
-class ChecksumsForFilesWithinFolder implements Runnable {
+@CommandLine.Command(name = "CaptureWindowsApplicationsInstalledIntoCsv",
+                     description = "Run the experimental new feature")
+class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
 
     /**
      * String for FolderName
      */
     @CommandLine.Option(
-            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
-            description = CommonInteractiveClass.FOLDER_DESC,
-            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
+            names = {"-csv", "--csvFileName"},
+            description = "CSV file to store retrieved imports into",
+            arity = "1",
             required = true)
-    private String[] strFolderNames;
+    private String strCsvFileName;
 
     @Override
     public void run() {
-        final String[] inAlgorithms = {"SHA-256"};
-        FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
-        for (final String strFolder : strFolderNames) {
-            final LocalDateTime startComputeTime = LocalDateTime.now();
-            final Map<String, Map<String, String>> fileStats = FileStatisticsClass.getFileStatisticsFromFolder(strFolder);
-            final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
-            final String strFeedback = String.format("For the folder %s calculated checksums are %s operation completed in %s (which means %s | %s)", strFolder, fileStats.toString(), objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
-            LogExposureClass.LOGGER.info(strFeedback);
-        }
+        ShellingClass.PowerShellExecutionClass.captureWindowsApplicationsIntoCsvFile(strCsvFileName);
     }
 
     /**
      * Constructor
      */
-    protected ChecksumsForFilesWithinFolder() {
+    protected CaptureWindowsApplicationsInstalledIntoCsv() {
         super();
     }
 }
@@ -378,11 +399,11 @@ class CleanOlderFilesFromFolder implements Runnable {
 
     @Override
     public void run() {
-        FileDeletingClass.OlderClass.setCleanedFolderStatistics(true);
+        FileOperationsClass.DeletingClass.OlderClass.setCleanedFolderStatistics(true);
         for (final String strFolder : strFolderNames) {
-            FileDeletingClass.OlderClass.setOrResetCleanedFolderStatistics();
-            FileDeletingClass.OlderClass.deleteFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
-            final Map<String, Long> statsClndFldr = FileDeletingClass.OlderClass.getCleanedFolderStatistics();
+            FileOperationsClass.DeletingClass.OlderClass.setOrResetCleanedFolderStatistics();
+            FileOperationsClass.DeletingClass.OlderClass.deleteFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
+            final Map<String, Long> statsClndFldr = FileOperationsClass.DeletingClass.OlderClass.getCleanedFolderStatistics();
             final String strFeedback = String.format("Folder %s has been cleaned eliminating %s files and freeing %s bytes in terms of disk space...", strFolder, statsClndFldr.get("Files"), statsClndFldr.get("Size"));
             LogExposureClass.LOGGER.info(strFeedback);
         }
@@ -392,6 +413,26 @@ class CleanOlderFilesFromFolder implements Runnable {
      * Constructor
      */
     protected CleanOlderFilesFromFolder() {
+        super();
+    }
+}
+
+/**
+ * clean files older than a given number of days
+ */
+@CommandLine.Command(name = "ExperimentalFeature",
+                     description = "Run the experimental new feature")
+class ExperimentalFeature implements Runnable {
+
+    @Override
+    public void run() {
+        // no-op
+    }
+
+    /**
+     * Constructor
+     */
+    protected ExperimentalFeature() {
         super();
     }
 }
@@ -475,6 +516,15 @@ class JsonSplit implements Runnable {
             description = "Threshold size value beyound which split will be performed")
     private static long splitSize;
     /**
+     * String for file name
+     */
+    @CommandLine.Option(
+            names = {"-fld", "--field"},
+            description = "Field name to use for split and bucketing",
+            arity = "1",
+            required = true)
+    private static String strField;
+    /**
      * size of Split threshold (optional)
      */
     @CommandLine.Option(
@@ -506,12 +556,12 @@ class JsonSplit implements Runnable {
         LogExposureClass.LOGGER.info(strFeedback);
         JsonOperationsClass.JsonArrayClass.setInputJsonFile(strFileName);
         JsonOperationsClass.JsonArrayClass.setDestinationFolder(strDestFolder);
-        JsonOperationsClass.JsonArrayClass.setRelevantField("ProjectID");
+        JsonOperationsClass.JsonArrayClass.setRelevantField(strField);
         if (bucketLength != 0) {
             JsonOperationsClass.JsonArrayClass.setBucketLength(bucketLength);
         }
         final String destPattern = JsonOperationsClass.JsonArrayClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
-        FileDeletingClass.deleteFilesMatchingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
+        FileOperationsClass.DeletingClass.deleteFilesMatchingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
         JsonOperationsClass.JsonArrayClass.splitJsonIntoSmallerGrouped(); // actual logic
     }
 
@@ -526,7 +576,7 @@ class JsonSplit implements Runnable {
      * Setter for fileSize
      */
     public static void setFileSizeDifferenceCompareToThreshold() {
-        final float sizePercentage = NumberClass.computePercentageSafely(fileSize, sizeThreshold);
+        final float sizePercentage = BasicStructuresClass.computePercentageSafely(fileSize, sizeThreshold);
         sizeDifference = (float) new BigDecimal(Double.toString(100 - sizePercentage))
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();

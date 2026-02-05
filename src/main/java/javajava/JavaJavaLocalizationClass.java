@@ -1,4 +1,4 @@
-package localization;
+package javajava;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 import com.ibm.icu.text.PluralRules;
-
-import log.LogExposureClass;
 
 /**
  * Internationalization

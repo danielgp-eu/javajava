@@ -1,4 +1,4 @@
-package time;
+package javajava;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,13 +18,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-
 /**
  * Time methods
  */
 public final class TimingClass {
+    /**
+     * String constant
+     */
+    /* default */ private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
     /**
      * String for internal ETL
      */
@@ -250,6 +251,25 @@ public final class TimingClass {
                 Integer.parseInt(timeContinuous.substring(0, 2)),
                 Integer.parseInt(timeContinuous.substring(2, 4)),
                 Integer.parseInt(timeContinuous.substring(4, 6)));
+    }
+
+    /**
+     * Returns X days ago with milliseconds ago limit
+     * @param intDaysLimit number of days in the past
+     * @return milliseconds in the past
+     */
+    public static long getDaysAgoWithMilisecondsPrecision(final long intDaysLimit) {
+        final Instant now = Instant.now(); // For timestamps
+        return now.minusMillis(intDaysLimit * INT_1DAY_MILISECS).toEpochMilli();
+    }
+
+    /**
+     * Returns X days ago with milliseconds ago limit
+     * @param cutoff milliseconds in the past
+     * @return string corresponding to entry ponint
+     */
+    public static String getDaysAgoWithMilisecondsPrecisionAsString(final long cutoff) {
+        return Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim();
     }
 
     /**

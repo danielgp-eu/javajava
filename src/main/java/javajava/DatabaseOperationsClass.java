@@ -1,4 +1,4 @@
-package database;
+package javajava;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,12 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import structure.ListAndMapClass;
-import structure.StringManipulationClass;
-import time.TimingClass;
 
 /**
  * Database methods
@@ -135,13 +129,13 @@ public final class DatabaseOperationsClass {
         objValues.getFirst().forEach((strKey, _) -> valFields.add(strKey.toString()));
         final String strFeedbackPrmV = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields);
         LogExposureClass.LOGGER.debug(strFeedbackPrmV);
-        final List<String> listMatches = ListAndMapClass.extractMatches(strOriginalQ, StringManipulationClass.STR_PRMTR_RGX);
+        final List<String> listMatches = BasicStructuresClass.ListAndMapClass.extractMatches(strOriginalQ, BasicStructuresClass.STR_PRMTR_RGX);
         final String strFeedbackPrm = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches);
         LogExposureClass.LOGGER.debug(strFeedbackPrm);
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
         for (final String listMatch : listMatches) {
-            final String crtParameter = StringManipulationClass.CleaningClass.cleanStringFromCurlyBraces(listMatch);
+            final String crtParameter = BasicStructuresClass.StringCleaningClass.cleanStringFromCurlyBraces(listMatch);
             final int intPosition = valFields.indexOf(crtParameter);
             if (intPosition != -1) {
                 mapParameterOrder.add(crtParameter);
@@ -252,7 +246,7 @@ public final class DatabaseOperationsClass {
             final int intRows = objValues.size();
             final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
             final int intParameters = mapParameterOrder.size();
-            final String strFinalQ = StringManipulationClass.TransformingClass.convertPromptParametersIntoParameters(strQuery);
+            final String strFinalQ = BasicStructuresClass.StringTransformationClass.convertPromptParametersIntoParameters(strQuery);
             try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ)) {
                 final Properties properties = new Properties();
                 // cycle through each row

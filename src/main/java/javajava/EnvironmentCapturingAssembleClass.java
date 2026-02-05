@@ -1,13 +1,10 @@
-package environment;
+package javajava;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import json.JsonOperationsClass;
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
 import oshi.SystemInfo;
 import oshi.SystemInfoFFM;
 import oshi.hardware.*;
@@ -15,7 +12,6 @@ import oshi.software.os.FileSystem;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
-import project.ProjectClass;
 
 /**
  * Capturing current environment details
@@ -163,13 +159,6 @@ public final class EnvironmentCapturingAssembleClass {
                 "Vendor", System.getProperty("java.vendor"),
                 "VM", System.getProperty("java.vm.name")
             ));
-        }
-
-        /**
-         * Constructor empty
-         */
-        private EnvironmentSoftwareClass() {
-            // intentionally left blank
         }
 
     }
@@ -407,20 +396,6 @@ public final class EnvironmentCapturingAssembleClass {
                                 OshiUsageClass.STR_NAME, MEDIUM_TYPES.getOrDefault(intPhysMedType, "Unknown"))
                 );
             }
-
-            /**
-             * Constructor
-             */
-            private NetworkTypesClass() {
-                // intentionally left blank
-            }
-        }
-
-        /**
-         * Constructor empty
-         */
-        private EnvironmentHardwareClass() {
-            // intentionally left blank
         }
 
     }

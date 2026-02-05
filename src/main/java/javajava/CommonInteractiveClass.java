@@ -1,13 +1,8 @@
-package interactive;
+package javajava;
 
 import java.time.LocalDateTime;
 
 import org.apache.maven.model.Model;
-
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import project.ProjectClass;
-import time.TimingClass;
 
 /**
  * Common class for Interactive service

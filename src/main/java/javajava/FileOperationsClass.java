@@ -1,4 +1,4 @@
-package file;
+package javajava;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -7,15 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,13 +22,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
-import project.ProjectClass;
-import time.TimingClass;
 
 /**
  * File Operations
@@ -85,8 +80,8 @@ public final class FileOperationsClass {
         /**
          * Get file content into String
          * (either included in JAR or from Disk/Storage)
-         * @param strFileName
-         * @return
+         * @param strFileName file name in scope
+         * @return file content
          */
         public static String getFileContentIntoString(final String strFileName) {
             final String strOutput;
@@ -109,7 +104,7 @@ public final class FileOperationsClass {
             LogExposureClass.LOGGER.debug(strFeedback);
             String strReturn = "";
             try {
-                strReturn = new String(Files.readAllBytes(Paths.get(strFileName)));
+                strReturn = new String(Files.readAllBytes(Path.of(strFileName)));
             } catch (IOException e) {
                 final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -166,29 +161,6 @@ public final class FileOperationsClass {
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return grouped;
-        }
-
-        /**
-         * get variable
-         * @param strVariables variables to pick
-         * @return Properties
-         */
-        public static Properties getVariableFromProjectProperties(final String propFile, final String... strVariables) {
-            final Properties svProperties = new Properties();
-            try {
-                final PropertiesReaderClass reader = new PropertiesReaderClass(propFile);
-                final List<String> arrayVariables = Arrays.asList(strVariables);
-                arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, reader.getProperty(crtVariable)));
-                if (!propFile.startsWith("/META-INF/maven/")) {
-                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties);
-                    LogExposureClass.LOGGER.debug(strFeedback);
-                }
-            } catch (IOException ei) {
-                final Path ptPrjProps = Path.of(propFile);
-                final String strFeedback = String.format(I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
-                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-            }
-            return svProperties;
         }
 
         /**
@@ -264,8 +236,8 @@ public final class FileOperationsClass {
          * @param strFileName file name to write to
          */
         public static void writeListToTextFile(final String strFileName, final List<String> listStrings) {
-            FileDeletingClass.deleteFileIfExists(strFileName);
-            try (BufferedWriter bwr = Files.newBufferedWriter(Paths.get(strFileName), StandardCharsets.UTF_8)) {
+            DeletingClass.deleteFileIfExists(strFileName);
+            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
                 listStrings.forEach(strLine -> {
                     try {
                         bwr.write(strLine);
@@ -296,11 +268,11 @@ public final class FileOperationsClass {
                 allKeys.addAll(properties.stringPropertyNames());
             }
             final String strClmnSeparator = String.valueOf(chCsvColSeparator);
-            try (BufferedWriter bwr = Files.newBufferedWriter(Paths.get(strFileName), StandardCharsets.UTF_8)) {
+            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
                 // Write the header
                 bwr.write(String.join(strClmnSeparator, allKeys));
                 bwr.newLine();
-                final List<String> row = new ArrayList<>();
+                final Set<String> row = new LinkedHashSet<>();
                 // Write each row
                 for (final Properties properties : propertiesList) {
                     row.clear();
@@ -354,6 +326,161 @@ public final class FileOperationsClass {
     }
 
     /**
+     * File Deletion logic
+     */
+    public static final class DeletingClass {
+
+        /**
+         * Removes a files if already exists
+         *
+         * @param strFileName file name to search
+         */
+        public static void deleteFileIfExists(final String strFileName) {
+            try {
+                final Path filePath = Path.of(strFileName);
+                Files.deleteIfExists(filePath);
+            } catch (IOException e) {
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+        }
+
+        /**
+         * Deletes all files matching given pattern from folder
+         * @param strFolder input folder
+         * @param strPattern input pattern
+         */
+        public static void deleteFilesMatchingPatternFromFolder(final String strFolder, final String strPattern) {
+            try {
+                final String strFeedback = String.format("I will attempt to removed all matched files based on %s pattern from folder %s...", strPattern, strFolder);
+                LogExposureClass.LOGGER.info(strFeedback);
+                final Path dir = Path.of(strFolder);
+                Files.walkFileTree(dir, new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
+                        if (file.getFileName().toString().matches(strPattern)) {
+                            Files.delete(file);
+                            final String strFeedbackD = String.format("File %s has been deleted", file);
+                            LogExposureClass.LOGGER.info(strFeedbackD);
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException ei) {
+                final String strFeedbackErr = String.format("Inout/Output exception on... %s", Arrays.toString(ei.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+        }
+
+        /**
+         * File deleting logic
+         */
+        public static final class OlderClass {
+            /**
+             * Cleaned Folder Statistics
+             */
+            private static boolean bolClnFldrStats;
+            /**
+             * Counter for removed files
+             */
+            private static long lngFilesClnd;
+            /**
+             * Size in bytes for removed files
+             */
+            private static long lngByteSizeClnd;
+
+            /**
+             * Getter for Cleaned Folder Statistics
+             * @return Map with folder statistics
+             */
+            public static Map<String, Long> getCleanedFolderStatistics() {
+                final Map<String, Long> statsClndFldr = new ConcurrentHashMap<>();
+                statsClndFldr.put("Files", lngFilesClnd);
+                statsClndFldr.put("Size", lngByteSizeClnd);
+                return statsClndFldr;
+            }
+
+            /**
+             * Get list of sub-folders from a given folder
+             *
+             * @param strFolderName folder name to look into
+             * @param intOlderLimit older days limit
+             */
+            public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
+                final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(intOlderLimit);
+                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMilisecondsPrecisionAsString(cutoff), strFolderName);
+                LogExposureClass.LOGGER.debug(strFeedback);
+                final Path directory = Path.of(strFolderName);
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+                    for (final Path entry : stream) {
+                        if (Files.isDirectory(entry)) {
+                            deleteFilesOlderThanGivenDays(entry.toString(), intOlderLimit);
+                        } else if (Files.isRegularFile(entry)) {
+                            deleteFilesOlderThanGivenDaysWithoutChecks(entry, cutoff);
+                        }
+                    }
+                } catch (IOException ex) {
+                    final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
+                    LogExposureClass.LOGGER.error(strFeedbackErr);
+                }
+            }
+
+            /**
+             * Remove files older than given days without checks
+             * @param entry Path to file
+             * @param cutoff cutoff time in milliseconds
+             * @throws IOException check exception
+             */
+            private static void deleteFilesOlderThanGivenDaysWithoutChecks(final Path entry, final long cutoff) throws IOException {
+                final BasicFileAttributes attr = Files.readAttributes(entry, BasicFileAttributes.class);
+                final long modifTime = attr.lastModifiedTime().toMillis();
+                if (modifTime <= cutoff) {
+                    Files.delete(entry);
+                    if (bolClnFldrStats) {
+                        lngFilesClnd = lngFilesClnd + 1;
+                        lngByteSizeClnd = lngByteSizeClnd + attr.size();
+                    }
+                }
+            }
+
+            /**
+             * Setter for Cleaned Folder Statistics
+             * @param inStats boolean
+             */
+            public static void setCleanedFolderStatistics(final boolean inStats) {
+                if (bolClnFldrStats != inStats) {
+                    setOrResetCleanedFolderStatistics();
+                }
+                bolClnFldrStats = inStats;
+            }
+
+            /**
+             * Setter Resetter for Cleaned Folder Statistics
+             */
+            public static void setOrResetCleanedFolderStatistics() {
+                lngFilesClnd = 0;
+                lngByteSizeClnd = 0;
+            }
+
+            /**
+             * Constructor
+             */
+            private OlderClass() {
+                // intentionally blank
+            }
+
+        }
+
+        /**
+         * Constructor
+         */
+        private DeletingClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
      * File Mass Change logic
      */
     public static final class MassChangeClass {
@@ -392,7 +519,7 @@ public final class FileOperationsClass {
             try {
                 final String strFeedback = String.format("I will attempt to mass change all matched files based on %s pattern from folder %s...", strPattern, strFolder);
                 LogExposureClass.LOGGER.info(strFeedback);
-                final Path dir = Paths.get(strFolder);
+                final Path dir = Path.of(strFolder);
                 Files.walkFileTree(dir, new SimpleFileVisitor<>() {
                     @Override
                     public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) {

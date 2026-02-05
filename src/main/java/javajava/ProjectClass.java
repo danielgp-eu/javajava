@@ -1,4 +1,4 @@
-package project;
+package javajava;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,10 +21,6 @@ import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import json.JsonOperationsClass;
-import localization.JavaJavaLocalizationClass;
-import log.LogExposureClass;
 
 /**
  * Project related goodies
