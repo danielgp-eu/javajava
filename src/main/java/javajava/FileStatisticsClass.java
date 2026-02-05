@@ -23,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -52,7 +51,6 @@ public final class FileStatisticsClass {
     /**
      * Get statistics for all files within a given folder
      * @param strFolderName input folder name
-     * @return Map with file statistics
      */
     public static void captureFileStatisticsFromFolder(final String strFolderName, final String outCsvFile) {
         try (BufferedWriter writer = Files.newBufferedWriter(Path.of(outCsvFile), StandardCharsets.UTF_8)) {

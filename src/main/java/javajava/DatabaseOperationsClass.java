@@ -427,7 +427,6 @@ public final class DatabaseOperationsClass {
          * @param columnCount number of columns to iterate through
          * @param resultSetMetaData column names
          * @return Properties with current row value and their name
-         * @throws SQLException
          */
         private static Properties getCurrentRowIntoProperties(final ResultSet resultSet, final int columnCount, final ResultSetMetaData resultSetMetaData) throws SQLException {
             final Properties currentRow = new Properties();
