@@ -291,7 +291,7 @@ public final class FileStatisticsClass {
                 arrayFiles = stream
                     .filter(Files::isRegularFile)
                     .filter(path -> path.toString().endsWith(strExtension))
-                    .collect(Collectors.toList());
+                    .toList();
             } catch (IOException ei) {
                 final String strFeedbackErr = String.format(FileOperationsClass.I18N_FILE_FND_ERR, strExtension, inFolderName);
                 LogExposureClass.exposeInputOutputException(strFeedbackErr, Arrays.toString(ei.getStackTrace()));

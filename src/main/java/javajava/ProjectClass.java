@@ -58,6 +58,10 @@ public final class ProjectClass {
      * current Project Model
      */
     private static Model prjModel;
+    /**
+     * Dependencies value
+     */
+    private static final String STR_DEPENDENCIES = "Dependencies";
 
     /**
      * Getter for pomFile
@@ -221,7 +225,7 @@ public final class ProjectClass {
                     .append("\":\"")
                     .append(prjModel.getVersion())
                     .append('\"');
-            final Map<String, Object> projDependencies = Components.getProjectModelComponent("Dependencies");
+            final Map<String, Object> projDependencies = Components.getProjectModelComponent(STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 strJsonString.append(",\"Dependencies\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projDependencies));
@@ -280,7 +284,7 @@ public final class ProjectClass {
                         .append(mdlVersion)
                         .append('\"')
                         ;
-                final Map<String, Object> mdlDependencies = Components.getProjectModelComponent("Dependencies");
+                final Map<String, Object> mdlDependencies = Components.getProjectModelComponent(STR_DEPENDENCIES);
                 if (!mdlDependencies.isEmpty()) {
                     strJsonModule.append(",\"Dependencies\":")
                             .append(JsonOperationsClass.getMapIntoJsonString(mdlDependencies));
@@ -385,7 +389,7 @@ public final class ProjectClass {
                         mapToReturn = getBuildPlugins();
                     }
                     break;
-                case "Dependencies":
+                case STR_DEPENDENCIES:
                     if (prjModel.getDependencies() != null) {
                         mapToReturn = getDependencies();
                     }
