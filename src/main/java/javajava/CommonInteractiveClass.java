@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 
 import org.apache.maven.model.Model;
 
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+
 /**
  * Common class for Interactive service
  */
@@ -40,6 +44,7 @@ public final class CommonInteractiveClass {
      * Start Date Time
      */
     private static LocalDateTime startDateTime;
+
 
     /**
      * Starting sequence
@@ -111,6 +116,96 @@ public final class CommonInteractiveClass {
      */
     public static void setStartDateTime() {
         startDateTime = LocalDateTime.now();
+    }
+
+    /**
+     * Reusable File Name for Picocli logic
+     */
+    @Command(synopsisHeading      = "%nUsage:%n%n",
+             descriptionHeading   = "%nDescription:%n%n",
+             parameterListHeading = "%nParameters:%n%n",
+             optionListHeading    = "%nOptions:%n%n",
+             commandListHeading   = "%nCommands:%n%n")
+    /* default */ static class CsvFileNameOptionMixinClass {
+
+        /**
+         * String for FolderName
+         */
+        @CommandLine.Option(
+                names = {"-csv", "--csvFileName"},
+                description = "CSV file to store retrieved checksums info",
+                arity = "1",
+                required = true)
+        private String strCsvFileName;
+
+        /**
+         * Getter for strCsvFileName
+         * @return array of CSV File Name (only 1, required)
+         */
+        public String getCsvFileName() {
+            return strCsvFileName;
+        }
+
+    }
+
+    /**
+     * Reusable File Name for Picocli logic
+     */
+    @Command(synopsisHeading      = "%nUsage:%n%n",
+             descriptionHeading   = "%nDescription:%n%n",
+             parameterListHeading = "%nParameters:%n%n",
+             optionListHeading    = "%nOptions:%n%n",
+             commandListHeading   = "%nCommands:%n%n")
+    /* default */ static class FileNameOptionMixinClass {
+
+        /**
+         * String for FolderName
+         */
+        @CommandLine.Option(
+                names = {"-fNm", "--fileName"},
+                description = "POM file(s) to analyze and expose information from",
+                arity = "1..*",
+                required = true)
+        private String[] strFileNames;
+
+        /**
+         * Getter for strFileNames
+         * @return array of File Names (1 or many)
+         */
+        public String[] getFileNames() {
+            return strFileNames.clone();
+        }
+
+    }
+
+    /**
+     * Reusable Folder Name for Picocli logic
+     */
+    @Command(synopsisHeading      = "%nUsage:%n%n",
+             descriptionHeading   = "%nDescription:%n%n",
+             parameterListHeading = "%nParameters:%n%n",
+             optionListHeading    = "%nOptions:%n%n",
+             commandListHeading   = "%nCommands:%n%n")
+    /* default */ static class FolderNameOptionMixinClass {
+
+        /**
+         * String for FolderName
+         */
+        @Option(
+                names = {"-fldNm", "--folderName"},
+                description = "Folder Name in scope",
+                arity = ARITY_ONE_OR_MORE,
+                required = true)
+        private static String[] strFolderNames;
+
+        /**
+         * Getter for strFolderNames
+         * @return array of Folder Names (1 or many)
+         */
+        public String[] getFolderNames() {
+            return strFolderNames.clone();
+        }
+
     }
 
     /**

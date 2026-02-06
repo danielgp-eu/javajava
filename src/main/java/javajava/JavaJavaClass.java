@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import picocli.CommandLine;
+import picocli.CommandLine.Mixin;
 
 /**
  * Main Command Line
@@ -63,16 +64,12 @@ public final class JavaJavaClass {
 @CommandLine.Command(name = "AnalyzeColumnsFromCsvFile",
                      description = "Analyze columns from CSV file")
 class AnalyzeColumnsFromCsvFile implements Runnable {
-
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.FileNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-fNm", "--fileName"},
-            description = "POM file(s) to analyze and expose information from",
-            arity = "1..*",
-            required = true)
-    private String[] strFileNames;
+    @Mixin
+    private final CommonInteractiveClass.FileNameOptionMixinClass options = new CommonInteractiveClass.FileNameOptionMixinClass();
 
     /**
      *
@@ -111,7 +108,8 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
 
     @Override
     public void run() {
-        for (final String strFileName : strFileNames) {
+        final String[] inFiles = options.getFileNames();
+        for (final String strFileName : inFiles) {
             storeWordFrequencyIntoCsvFile(strFileName, 3, 4);
         }
     }
@@ -131,22 +129,19 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
 @CommandLine.Command(name = "AnalyzePom",
                      description = "Exposes information about a given POM")
 class AnalyzePom implements Runnable {
-
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.FileNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-fNm", "--fileName"},
-            description = "POM file(s) to analyze and expose information from",
-            arity = "1..*",
-            required = true)
-    private String[] strFileNames;
+    @Mixin
+    private final CommonInteractiveClass.FileNameOptionMixinClass options = new CommonInteractiveClass.FileNameOptionMixinClass();
 
     @Override
     public void run() {
         final String strFeedbackThis = String.format("For this project relevant POM information is: {%s}", ProjectClass.Application.getApplicationDetails());
         LogExposureClass.LOGGER.info(strFeedbackThis);
-        for (final String strFileName : strFileNames) {
+        final String[] inFiles = options.getFileNames();
+        for (final String strFileName : inFiles) {
             ProjectClass.setExternalPomFile(strFileName);
             ProjectClass.loadProjectModel();
             final String strFeedback = String.format("For given POM file %s relevant information is: {%s}", strFileName, ProjectClass.Application.getApplicationDetails());
@@ -179,14 +174,11 @@ class ArchiveFolders implements Runnable {
     private String strArchivingExec;
 
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.FolderNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
-            description = CommonInteractiveClass.FOLDER_DESC,
-            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
-            required = true)
-    private String[] strFolderNames;
+    @Mixin
+    private final CommonInteractiveClass.FolderNameOptionMixinClass options = new CommonInteractiveClass.FolderNameOptionMixinClass();
 
     /**
      * String for FolderName
@@ -233,7 +225,8 @@ class ArchiveFolders implements Runnable {
         if (strArchivePwd != null) {
             ArchivingClass.setArchivePwd(strArchivePwd);
         }
-        for (final String strFolder : strFolderNames) {
+        final String[] inFolders = options.getFolderNames();
+        for (final String strFolder : inFolders) {
             propFolder.clear();
             final Properties folderProps = FileStatisticsClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
@@ -259,34 +252,29 @@ class ArchiveFolders implements Runnable {
 class CaptureChecksumsOfFilesFromFolderWithinCsv implements Runnable {
 
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.FolderNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
-            description = CommonInteractiveClass.FOLDER_DESC,
-            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
-            required = true)
-    private String[] strFolderNames;
-
+    @Mixin
+    private final CommonInteractiveClass.FolderNameOptionMixinClass options = new CommonInteractiveClass.FolderNameOptionMixinClass();
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.CsvFileNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-csv", "--csvFileName"},
-            description = "CSV file to store retrieved checksums info",
-            arity = "1",
-            required = true)
-    private String strCsvFileName;
+    @Mixin
+    private final CommonInteractiveClass.CsvFileNameOptionMixinClass optionCsv = new CommonInteractiveClass.CsvFileNameOptionMixinClass();
 
     @Override
     public void run() {
         final String[] inAlgorithms = {"SHA-256", "SHA3-256"};
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
-        for (final String strFolder : strFolderNames) {
+        final String[] inFolders = options.getFolderNames();
+        final String outCsvFile = optionCsv.getCsvFileName();
+        for (final String strFolder : inFolders) {
             final LocalDateTime startComputeTime = LocalDateTime.now();
-            FileStatisticsClass.captureFileStatisticsFromFolder(strFolder, strCsvFileName);
+            FileStatisticsClass.captureFileStatisticsFromFolder(strFolder, outCsvFile);
             final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
-            final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, strCsvFileName, objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+            final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, outCsvFile, objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
             LogExposureClass.LOGGER.info(strFeedback);
         }
     }
@@ -307,29 +295,24 @@ class CaptureChecksumsOfFilesFromFolderWithinCsv implements Runnable {
 class CaptureImportsFromJavaSourceFilesIntoCsv implements Runnable {
 
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.FolderNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
-            description = CommonInteractiveClass.FOLDER_DESC,
-            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
-            required = true)
-    private String[] strFolderNames;
-
+    @Mixin
+    private final CommonInteractiveClass.FolderNameOptionMixinClass options = new CommonInteractiveClass.FolderNameOptionMixinClass();
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.CsvFileNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-csv", "--csvFileName"},
-            description = "CSV file to store retrieved imports into",
-            arity = "1",
-            required = true)
-    private String strCsvFileName;
+    @Mixin
+    private final CommonInteractiveClass.CsvFileNameOptionMixinClass optionCsv = new CommonInteractiveClass.CsvFileNameOptionMixinClass();
 
     @Override
     public void run() {
-        for (final String strFolder : strFolderNames) {
-            FileOperationsClass.ContentReadingClass.extractImportStatementsFromJavaSourceFilesIntoCsvFile(Path.of(strFolder), Path.of(strCsvFileName));
+        final String[] inFolders = options.getFolderNames();
+        final String outCsvFile = optionCsv.getCsvFileName();
+        for (final String strFolder : inFolders) {
+            FileOperationsClass.ContentReadingClass.extractImportStatementsFromJavaSourceFilesIntoCsvFile(Path.of(strFolder), Path.of(outCsvFile));
         }
     }
 
@@ -347,20 +330,17 @@ class CaptureImportsFromJavaSourceFilesIntoCsv implements Runnable {
 @CommandLine.Command(name = "CaptureWindowsApplicationsInstalledIntoCsv",
                      description = "Run the experimental new feature")
 class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
-
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.CsvFileNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-csv", "--csvFileName"},
-            description = "CSV file to store retrieved imports into",
-            arity = "1",
-            required = true)
-    private String strCsvFileName;
+    @Mixin
+    private final CommonInteractiveClass.CsvFileNameOptionMixinClass optionCsv = new CommonInteractiveClass.CsvFileNameOptionMixinClass();
 
     @Override
     public void run() {
-        ShellingClass.PowerShellExecutionClass.captureWindowsApplicationsIntoCsvFile(strCsvFileName);
+        final String outCsvFile = optionCsv.getCsvFileName();
+        ShellingClass.PowerShellExecutionClass.captureWindowsApplicationsIntoCsvFile(outCsvFile);
     }
 
     /**
@@ -379,14 +359,11 @@ class CaptureWindowsApplicationsInstalledIntoCsv implements Runnable {
 class CleanOlderFilesFromFolder implements Runnable {
 
     /**
-     * String for FolderName
+     * adds the options defined in 
+     * CommonInteractiveClass.FolderNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {CommonInteractiveClass.FOLDER_CMD_SHORT, CommonInteractiveClass.FOLDER_CMD_LONG},
-            description = CommonInteractiveClass.FOLDER_DESC,
-            arity = CommonInteractiveClass.ARITY_ONE_OR_MORE,
-            required = true)
-    private String[] strFolderNames;
+    @Mixin
+    private final CommonInteractiveClass.FolderNameOptionMixinClass options = new CommonInteractiveClass.FolderNameOptionMixinClass();
     /**
      * String for FileName
      */
@@ -400,7 +377,8 @@ class CleanOlderFilesFromFolder implements Runnable {
     @Override
     public void run() {
         FileOperationsClass.DeletingClass.OlderClass.setCleanedFolderStatistics(true);
-        for (final String strFolder : strFolderNames) {
+        final String[] inFolders = options.getFolderNames();
+        for (final String strFolder : inFolders) {
             FileOperationsClass.DeletingClass.OlderClass.setOrResetCleanedFolderStatistics();
             FileOperationsClass.DeletingClass.OlderClass.deleteFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
             final Map<String, Long> statsClndFldr = FileOperationsClass.DeletingClass.OlderClass.getCleanedFolderStatistics();
@@ -491,14 +469,11 @@ class JsonSplit implements Runnable {
      */
     private static long sizeThreshold;
     /**
-     * String for file name
+     * adds the options defined in 
+     * CommonInteractiveClass.FileNameOptionMixinClass to this command
      */
-    @CommandLine.Option(
-            names = {"-file", "--fileName"},
-            description = "File Name to be split",
-            arity = "1",
-            required = true)
-    private static String strFileName;
+    @Mixin
+    private final CommonInteractiveClass.FileNameOptionMixinClass options = new CommonInteractiveClass.FileNameOptionMixinClass();
     /**
      * String for folder name
      */
@@ -534,24 +509,27 @@ class JsonSplit implements Runnable {
 
     @Override
     public void run() {
-        setFileSize();
-        if (fileSize <= 0) {
-            final Properties propertiesReturn = FileStatisticsClass.RetrievingClass.checkFileExistanceAndReadability(fileSize, strFileName);
-            final String strFeedback = String.format("There is something not right with given file name... %s", propertiesReturn);
-            LogExposureClass.LOGGER.error(strFeedback);
-        } else {
-            setSplitSizeThreshold();
-            setFileSizeDifferenceCompareToThreshold();
-            if (fileSize <= sizeThreshold) {
-                final String strFeedback = String.format("File %s has a size of %s bytes which compare to split file threshold of %s bytes is %s%% smaller, hence split is NOT neccesary!", strFileName, fileSize, sizeThreshold, sizeDifference);
-                LogExposureClass.LOGGER.info(strFeedback);
+        final String[] inFiles = options.getFileNames();
+        for (final String strFileName : inFiles) {
+            setFileSize(strFileName);
+            if (fileSize <= 0) {
+                final Properties propertiesReturn = FileStatisticsClass.RetrievingClass.checkFileExistanceAndReadability(fileSize, strFileName);
+                final String strFeedback = String.format("There is something not right with given file name... %s", propertiesReturn);
+                LogExposureClass.LOGGER.error(strFeedback);
             } else {
-                performJsonSplit();
+                setSplitSizeThreshold();
+                setFileSizeDifferenceCompareToThreshold();
+                if (fileSize <= sizeThreshold) {
+                    final String strFeedback = String.format("File %s has a size of %s bytes which compare to split file threshold of %s bytes is %s%% smaller, hence split is NOT neccesary!", strFileName, fileSize, sizeThreshold, sizeDifference);
+                    LogExposureClass.LOGGER.info(strFeedback);
+                } else {
+                    performJsonSplit(strFileName);
+                }
             }
         }
     }
 
-    private static void performJsonSplit() {
+    private static void performJsonSplit(final String strFileName) {
         final String strFeedback = String.format("File %s has a size of %s bytes which compared to split file threshold of %s bytes is %s%% bigger, hence split IS required and will be performed!", strFileName, fileSize, sizeThreshold, Math.abs(sizeDifference));
         LogExposureClass.LOGGER.info(strFeedback);
         JsonOperationsClass.JsonArrayClass.setInputJsonFile(strFileName);
@@ -568,7 +546,7 @@ class JsonSplit implements Runnable {
     /**
      * Setter for fileSize
      */
-    public static void setFileSize() {
+    public static void setFileSize(final String strFileName) {
         fileSize = FileStatisticsClass.RetrievingClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
     }
 
