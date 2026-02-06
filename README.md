@@ -38,6 +38,7 @@ Various Java classes to be re-used
 ## Java
 
 * [JDK Releases](https://www.java.com/releases/matrix/)
+* [Java 25 is Here !!! Getting Started with the New LTS Release | Features and Installation Guide](https://dev.to/bsanju/java-25-is-here-getting-started-with-the-new-lts-release-features-and-installation-guide-eka)
 
 * [JDK Comparison](https://jdkcomparison.com/?versions=25)
 
@@ -60,6 +61,7 @@ Various Java classes to be re-used
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
 * [Java Best Practices That Every Java Developer Should Know in 2024](https://medium.com/@learnwithakshay/java-best-practices-that-every-java-developer-should-know-in-2024-ea84bc0b0fec)
+* [Java Maven OWASP Dependency-Check Example](https://www.javacodegeeks.com/java-maven-owasp-dependency-check-example.html)
 * [Java Secret: Loading and unloading static fields](https://www.javacodegeeks.com/2011/10/java-secret-loading-and-unloading.html)
 * [Java Secret: Using an enum to build a State machine](https://www.javacodegeeks.com/2011/07/java-secret-using-enum-to-build-state.html)
 * [Java Tutorial](https://howtodoinjava.com/java/basics/java-tutorial/)
