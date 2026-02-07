@@ -193,6 +193,22 @@ public final class DatabaseOperationsClass {
     }
 
     /**
+     * Package 3 String into Properties for result-set
+     * @param strWhich
+     * @param strQueryToUse relevant query
+     * @param strKind 
+     * @return Properties for result-set
+     */
+    private static Properties packageResultSetProperties(final String strWhich, final String strQueryToUse, final String strKind) {
+        final Properties rsProperties = new Properties();
+        rsProperties.put(
+"Which", strWhich);
+        rsProperties.put("QueryToUse", strQueryToUse);
+        rsProperties.put("Kind", strKind);
+        return rsProperties;
+    }
+
+    /**
      * Database connectivity
      */
     public static final class ConnectivityClass {
@@ -617,9 +633,9 @@ public final class DatabaseOperationsClass {
          */
         public static List<Properties> getResultSetStandardized(final Statement objStatement, final Properties rsProperties, final Properties queryProperties) {
             List<Properties> listReturn = null;
-            final String strWhich = rsProperties.get("strWhich").toString();
-            final String strQueryToUse = rsProperties.get("strQueryToUse").toString();
-            final String strKind = rsProperties.get("strKind").toString();
+            final String strWhich = rsProperties.get("Which").toString();
+            final String strQueryToUse = rsProperties.get("QueryToUse").toString();
+            final String strKind = rsProperties.get("Kind").toString();
             try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties)) {
                 switch (strKind) {
                     case "Structure":
@@ -723,11 +739,8 @@ public final class DatabaseOperationsClass {
          * @return List with Properties
          */
         public static List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
-            final String strQueryToUse = getPreDefinedQuery("MySQL", strWhich);
-            final Properties rsProperties = new Properties();
-            rsProperties.put("strWhich", strWhich);
-            rsProperties.put("strQueryToUse", strQueryToUse);
-            rsProperties.put("strKind", strKind);
+            final String strQueryToUse = getPreDefinedQuery(STR_DB_MYSQL, strWhich);
+            final Properties rsProperties = packageResultSetProperties(strWhich, strQueryToUse, strKind);
             final Properties queryProperties = new Properties();
             return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
         }
@@ -871,10 +884,7 @@ public final class DatabaseOperationsClass {
                 queryProperties.put("expectedExactNumberOfColumns", "1");
             }
             final String strQueryToUse = getPreDefinedQuery(STR_DB_SNOWFLAKE, strWhich);
-            final Properties rsProperties = new Properties();
-            rsProperties.put("strWhich", strWhich);
-            rsProperties.put("strQueryToUse", strQueryToUse);
-            rsProperties.put("strKind", strKind);
+            final Properties rsProperties = packageResultSetProperties(strWhich, strQueryToUse, strKind);
             return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
         }
 
