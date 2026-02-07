@@ -288,6 +288,23 @@ public final class FileOperationsClass {
         }
 
         /**
+         * Store small content into file
+         * @param strFileName destination file name
+         * @param strRawText content
+         */
+        public static void writeRawTextToFile(final String strFileName, final String strRawText) {
+            DeletingClass.deleteFileIfExists(strFileName);
+            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
+                bwr.write(strRawText);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName);
+                LogExposureClass.LOGGER.debug(strFeedback);
+            } catch (IOException ex) {
+                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+        }
+
+        /**
          * storing into a CSV file a LinkedHashMap
          * @param strFileName target file name to be written to
          * @param strHeader header values

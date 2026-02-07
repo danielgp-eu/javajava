@@ -119,66 +119,6 @@ public final class CommonInteractiveClass {
     }
 
     /**
-     * Reusable File Name for Picocli logic
-     */
-    @Command(synopsisHeading      = "%nUsage:%n%n",
-             descriptionHeading   = "%nDescription:%n%n",
-             parameterListHeading = "%nParameters:%n%n",
-             optionListHeading    = "%nOptions:%n%n",
-             commandListHeading   = "%nCommands:%n%n")
-    /* default */ static class CsvFileNameOptionMixinClass {
-
-        /**
-         * String for FolderName
-         */
-        @CommandLine.Option(
-                names = {"-csv", "--csvFileName"},
-                description = "CSV file to store retrieved checksums info",
-                arity = "1",
-                required = true)
-        private String strCsvFileName;
-
-        /**
-         * Getter for strCsvFileName
-         * @return array of CSV File Name (only 1, required)
-         */
-        public String getCsvFileName() {
-            return strCsvFileName;
-        }
-
-    }
-
-    /**
-     * Reusable File Name for Picocli logic
-     */
-    @Command(synopsisHeading      = "%nUsage:%n%n",
-             descriptionHeading   = "%nDescription:%n%n",
-             parameterListHeading = "%nParameters:%n%n",
-             optionListHeading    = "%nOptions:%n%n",
-             commandListHeading   = "%nCommands:%n%n")
-    /* default */ static class FileNameOptionMixinClass {
-
-        /**
-         * String for FolderName
-         */
-        @CommandLine.Option(
-                names = {"-fNm", "--fileName"},
-                description = "POM file(s) to analyze and expose information from",
-                arity = "1..*",
-                required = true)
-        private String[] strFileNames;
-
-        /**
-         * Getter for strFileNames
-         * @return array of File Names (1 or many)
-         */
-        public String[] getFileNames() {
-            return strFileNames.clone();
-        }
-
-    }
-
-    /**
      * Reusable Folder Name for Picocli logic
      */
     @Command(synopsisHeading      = "%nUsage:%n%n",
@@ -204,6 +144,66 @@ public final class CommonInteractiveClass {
          */
         public String[] getFolderNames() {
             return strFolderNames.clone();
+        }
+
+    }
+
+    /**
+     * Reusable input File Name for Picocli logic
+     */
+    @Command(synopsisHeading      = "%nUsage:%n%n",
+             descriptionHeading   = "%nDescription:%n%n",
+             parameterListHeading = "%nParameters:%n%n",
+             optionListHeading    = "%nOptions:%n%n",
+             commandListHeading   = "%nCommands:%n%n")
+    /* default */ static class InFileNameOptionMixinClass {
+
+        /**
+         * String for in FileNames
+         */
+        @CommandLine.Option(
+                names = {"-if", "--inFileName"},
+                description = "Input file(s) to consider",
+                arity = "1..*",
+                required = true)
+        private String[] strInFileNames;
+
+        /**
+         * Getter for strFileNames
+         * @return array of File Names (1 or many)
+         */
+        public String[] getInFileNames() {
+            return strInFileNames.clone();
+        }
+
+    }
+
+    /**
+     * Reusable output File Name for Picocli logic
+     */
+    @Command(synopsisHeading      = "%nUsage:%n%n",
+             descriptionHeading   = "%nDescription:%n%n",
+             parameterListHeading = "%nParameters:%n%n",
+             optionListHeading    = "%nOptions:%n%n",
+             commandListHeading   = "%nCommands:%n%n")
+    /* default */ static class OutFileNameOptionMixinClass {
+
+        /**
+         * String for out FileName
+         */
+        @CommandLine.Option(
+                names = {"-of", "--outFileName"},
+                description = "Destination file to write information into",
+                arity = "1",
+                required = true)
+        private String strOutFileName;
+
+        /**
+         * Getter for strCsvFileName
+         * @return array of CSV File Name (only 1, required)
+         */
+        public String getOutFileName() {
+            return strOutFileName;
         }
 
     }

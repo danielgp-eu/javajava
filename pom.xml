@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.7.4</version>
+    <version>1.7.5</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>

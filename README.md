@@ -158,28 +158,28 @@ To avoid a pesky warning at execution time a VM Attribute having the value `--en
 
 ## Features implemented
 
-* AnalyzeColumnsFromCsvFile                     --fileName (1..*)
-* AnalyzePom                                    --fileName (1..*)
+* AnalyzeColumnsFromCsvFile                     --inFileName (1..*)
+* AnalyzePomFile                                --inFileName (1..*)
 * ArchiveFolders                                --archivingExecutable (0..1)
                                                     --folderName (1..*)
                                                         --folderDestination  (1)
                                                             --archivePrefix (0..1)
                                                                 --archiveSuffix (0..1)
                                                                     --archivePassword (0..1)
-* CaptureChecksumsOfFilesFromFolderWithinCsv    --folderName (1..*)
-                                                    --csvFileName (1)
-* CaptureImportsFromJavaSourceFilesIntoCsv      --folderName (1..*)
-                                                    --csvFileName (1)
-* CaptureWindowsApplicationsInstalledIntoCsv    --csvFileName (1)
+* CaptureChecksumsOfFilesFromFolderIntoCsvFile  --folderName (1..*)
+                                                    --outFileName (1)
+* CaptureEnvironmentDetailsIntoJsonFile         --outFileName (1)
+* CaptureImportsFromJavaSourceFilesIntoCsvFile  --folderName (1..*)
+                                                    --outFileName (1)
+* CaptureWindowsApplicationsInstalledIntoCsvFile--outFileName (1)
 * CleanOlderFilesFromFolder                     --folderName (1..*)
                                                     --daysOlderLimit (1)
 * ExperimentalFeature
 * GetInformationFromDatabase                    --databaseType
                                                     --informationType
 * GetSubFoldersFromFolder                       --folderName (1)
-* JsonSplit                                     --fileName (1)
+* JsonSplit                                     --inFileName (1)
                                                     --folderDestination (1)
                                                         --splitSize (0..1)
                                                             --field (1)
                                                                 --bucketLength (0..1)
-* LogEnvironmentDetails
