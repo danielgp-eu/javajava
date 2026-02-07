@@ -33,7 +33,7 @@ public final class FileOperationsClass {
     /**
      * Localized String for File Finding error 
      */
-    public static final String I18N_FILE_FND_ERR = JavaJavaLocalizationClass.getMessage("i18nFileFindingError");
+    public static final String I18N_FILE_FND_ERR = LocalizationClass.getMessage("i18nFileFindingError");
 
     /**
      * File Content Reading
@@ -100,13 +100,13 @@ public final class FileOperationsClass {
          * @return String
          */
         private static String getDiskFileContentIntoString(final String strFileName) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
             LogExposureClass.LOGGER.debug(strFeedback);
             String strReturn = "";
             try {
                 strReturn = new String(Files.readAllBytes(Path.of(strFileName)));
             } catch (IOException e) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
             return strReturn;
@@ -114,22 +114,21 @@ public final class FileOperationsClass {
 
         /**
          * Get file content into InputStream
-         * 
          * @param strFileName file name
          * @return input stream
          */
         private static String getJarIncludedFileContentIntoString(final String strFileName) {
             String strContent = null;
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
             LogExposureClass.LOGGER.debug(strFeedback);
             try (InputStream iStream = ContentReadingClass.class.getResourceAsStream(strFileName);
                     InputStreamReader inputStreamReader = new InputStreamReader(iStream);
                     BufferedReader bReader = new BufferedReader(inputStreamReader)) {
                 strContent = bReader.readAllAsString();
-                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (IOException ex) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nError"), Arrays.toString(ex.getStackTrace()));
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nError"), Arrays.toString(ex.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
             return strContent;
@@ -243,11 +242,11 @@ public final class FileOperationsClass {
                         bwr.write(strLine);
                         bwr.newLine();
                     } catch (IOException er) {
-                        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
+                        final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(er.getStackTrace()));
                         LogExposureClass.LOGGER.error(strFeedback);
                     }
                 });
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName);
                 LogExposureClass.LOGGER.debug(strFeedback);
             } catch (IOException ex) {
                 final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
@@ -340,7 +339,7 @@ public final class FileOperationsClass {
                 final Path filePath = Path.of(strFileName);
                 Files.deleteIfExists(filePath);
             } catch (IOException e) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileWritingError"), strFileName, Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
             }
         }
@@ -408,7 +407,7 @@ public final class FileOperationsClass {
              */
             public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
                 final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(intOlderLimit);
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMilisecondsPrecisionAsString(cutoff), strFolderName);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMilisecondsPrecisionAsString(cutoff), strFolderName);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final Path directory = Path.of(strFolderName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
@@ -420,7 +419,7 @@ public final class FileOperationsClass {
                         }
                     }
                 } catch (IOException ex) {
-                    final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
+                    final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
                     LogExposureClass.LOGGER.error(strFeedbackErr);
                 }
             }
@@ -611,13 +610,13 @@ public final class FileOperationsClass {
          */
         public static void moveFileToNewLocation(final String strFileName, final String strDestFolder) {
             try {
-                final String strFeedbackBefore = String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder);
+                final String strFeedbackBefore = String.format(LocalizationClass.getMessage("i18nFileMoveAttempt"), strFileName, strDestFolder);
                 LogExposureClass.LOGGER.info(strFeedbackBefore);
                 Files.move(Path.of(strFileName), Path.of(strDestFolder), StandardCopyOption.REPLACE_EXISTING);
-                final String strFeedbackAfter = String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder);
+                final String strFeedbackAfter = String.format(LocalizationClass.getMessage("i18nFileMoveSuccess"), strFileName, strDestFolder);
                 LogExposureClass.LOGGER.info(strFeedbackAfter);
             } catch (IOException ex) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace()));
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileMoveError"), strFileName, strDestFolder, Arrays.toString(ex.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
             }
         }

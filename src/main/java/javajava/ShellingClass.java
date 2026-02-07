@@ -73,10 +73,10 @@ public final class ShellingClass {
             CompletableFuture.allOf(stdoutFuture, stderrFuture).join();
             setProcessResults(stdoutFuture, stderrFuture, exitCode);
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         } catch(InterruptedException ei) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.warn(strFeedback);
             /* Clean up whatever needs to be handled before interrupting  */
             Thread.currentThread().interrupt();
@@ -117,7 +117,7 @@ public final class ShellingClass {
         executeShellUtility("WHOAMI", "/UPN", "");
         String strUser = strProcOut;
         if (strUser.startsWith("ERROR:")) {
-            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nUserPrincipalNameError");
+            final String strFeedback = LocalizationClass.getMessage("i18nUserPrincipalNameError");
             LogExposureClass.LOGGER.error(strFeedback);
             executeShellUtility("WHOAMI", "", "");
             strUser = strProcOut;
@@ -157,7 +157,7 @@ public final class ShellingClass {
                 strProcOut = stdoutFuture.get();
                 strProcErr = stderrFuture.get();
             } catch (InterruptedException ei) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
                 /* Clean up whatever needs to be handled before interrupting  */
                 Thread.currentThread().interrupt();
@@ -171,7 +171,7 @@ public final class ShellingClass {
             strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
         }
         final String strFeedback = TimingClass.logDuration(startTimestamp,
-                String.format(JavaJavaLocalizationClass.getMessage(strCaptureMessage), exitCode));
+                String.format(LocalizationClass.getMessage(strCaptureMessage), exitCode));
         LogExposureClass.LOGGER.debug(strFeedback);
     }
 
@@ -299,7 +299,7 @@ public final class ShellingClass {
                 final List<String> arrayVariables = Arrays.asList(strVariables);
                 arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, inProperties.getProperty(crtVariable)));
                 if (!propertyFileName.startsWith("/META-INF/maven/")) {
-                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties);
+                    final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties);
                     LogExposureClass.LOGGER.debug(strFeedback);
                 }
             } catch (IOException ei) {

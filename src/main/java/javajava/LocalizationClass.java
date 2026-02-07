@@ -11,7 +11,7 @@ import com.ibm.icu.text.PluralRules;
 /**
  * Internationalization
  */
-public final class JavaJavaLocalizationClass {
+public final class LocalizationClass {
     /**
      * localization
      */
@@ -152,7 +152,7 @@ public final class JavaJavaLocalizationClass {
     /**
      * constructor
      */
-    private JavaJavaLocalizationClass() {
+    private LocalizationClass() {
         // intentionally blank
     }
 }

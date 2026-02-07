@@ -79,7 +79,7 @@ public final class ArchivingClass {
                 final long fileArchSize = fileA.length();
                 final long fileOrigSize = Long.parseLong(folderProps.getOrDefault("SIZE_BYTES", "0").toString());
                 final float percentage = BasicStructuresClass.computePercentageSafely(fileArchSize, fileOrigSize);
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
                 LogExposureClass.LOGGER.info(strFeedback);
             }
         }

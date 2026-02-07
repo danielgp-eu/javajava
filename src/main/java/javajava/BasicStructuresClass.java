@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -332,7 +333,7 @@ public final class BasicStructuresClass {
          * @return query with named parameters
          */
         private static String convertPromptParameters(final String strOriginalQ, final String type) {
-            final String strFeedbackStrt = JavaJavaLocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+            final String strFeedbackStrt = LocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
             LogExposureClass.LOGGER.debug(strFeedbackStrt);
             final List<String> listMatches = BasicStructuresClass.ListAndMapClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
             String strFinalQ = strOriginalQ;
@@ -345,7 +346,7 @@ public final class BasicStructuresClass {
                     strFinalQ = strFinalQ.replace(currentPrmtName, convertSinglePromptParameterIntoNamedParameter(currentPrmtName));
                 }
             }
-            final String strFeedbackEnd = JavaJavaLocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+            final String strFeedbackEnd = LocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
             return strFinalQ;
         }
@@ -407,6 +408,24 @@ public final class BasicStructuresClass {
                 strReturn = encloseStringWithCharacter(inString, inChar);
             }
             return strReturn;
+        }
+
+        /**
+         * Ensures no password exposure
+         * @param inProps input Properties
+         * @return Properties with certain things obfuscated
+         */
+        public static Properties obfuscateProperties(final Properties inProps) {
+            final Properties outProps = new Properties();
+            final String strKeyToObfuscate = "password";
+            inProps.forEach((strKey, strValue) -> {
+                if (strKey.equals(strKeyToObfuscate)) {
+                    outProps.put(strKey, "*U*N*D*I*S*C*L*O*S*E*D*");
+                } else {
+                    outProps.put(strKey, strValue);
+                }
+            });
+            return outProps;
         }
 
         // Private constructor to prevent instantiation

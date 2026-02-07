@@ -81,7 +81,7 @@ public final class ProjectClass {
         try {
             strAppFolder = directory.getCanonicalPath();
         } catch (IOException ex) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileFolderError"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return strAppFolder;
@@ -246,7 +246,7 @@ public final class ProjectClass {
             final Map<String, Object> projLibModules = getProjectModuleLibraries();
             strJsonString.append(",\"Libary Modules\":")
                     .append(JsonOperationsClass.getMapIntoJsonString(projLibModules));
-            final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
+            final String strFeedback = LocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
             LogExposureClass.LOGGER.debug(strFeedback);
             return strJsonString.append('}').toString();
         }

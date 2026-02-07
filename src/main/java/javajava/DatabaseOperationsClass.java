@@ -1,6 +1,11 @@
 package javajava;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -11,16 +16,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
+
+import tools.jackson.databind.JsonNode;
 
 /**
  * Database methods
  */
 public final class DatabaseOperationsClass {
-    /**
-     * Database MySQL
-     */
-    public static final String STR_DB_MYSQL = "MySQL";
     /**
      * NULL string
      */
@@ -73,18 +79,18 @@ public final class DatabaseOperationsClass {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
                 ResultSettingClass.digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
         return resultSet;
@@ -100,7 +106,7 @@ public final class DatabaseOperationsClass {
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
@@ -110,10 +116,10 @@ public final class DatabaseOperationsClass {
                 }
                 LogExposureClass.exposeSqlExecutionSuccessInfo(strQueryPurpose);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
     }
@@ -127,10 +133,10 @@ public final class DatabaseOperationsClass {
     public static List<String> getPromptParametersOrderWithinQuery(final String strOriginalQ, final List<Properties> objValues) {
         final List<String> valFields = new ArrayList<>();
         objValues.getFirst().forEach((strKey, _) -> valFields.add(strKey.toString()));
-        final String strFeedbackPrmV = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields);
+        final String strFeedbackPrmV = String.format(LocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields);
         LogExposureClass.LOGGER.debug(strFeedbackPrmV);
         final List<String> listMatches = BasicStructuresClass.ListAndMapClass.extractMatches(strOriginalQ, BasicStructuresClass.STR_PRMTR_RGX);
-        final String strFeedbackPrm = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches);
+        final String strFeedbackPrm = String.format(LocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches);
         LogExposureClass.LOGGER.debug(strFeedbackPrm);
         final List<String> mapParameterOrder = new ArrayList<>();
         final int intParameters = listMatches.size();
@@ -141,11 +147,11 @@ public final class DatabaseOperationsClass {
                 mapParameterOrder.add(crtParameter);
             }
         }
-        final String strFeedbackPrmM = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder);
+        final String strFeedbackPrmM = String.format(LocalizationClass.getMessage("i18nSQLparameterMappingAre"), mapParameterOrder);
         LogExposureClass.LOGGER.debug(strFeedbackPrmM);
         final int foundParameters = mapParameterOrder.size();
         if (foundParameters != intParameters) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterValueMissing")
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLparameterValueMissing")
                 , intParameters
                 , foundParameters
                 , mapParameterOrder + " vs. " + objValues.getFirst().toString()
@@ -153,6 +159,37 @@ public final class DatabaseOperationsClass {
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return mapParameterOrder;
+    }
+
+    /**
+     * Returns standard query
+     * @param strWhich Which kind of query is needed
+     * @return Query as String
+     */
+    public static String getPreDefinedQuery(final String strDatabaseType, final String strWhich) {
+        String strFilePath = String.format("/SQL/%s/%s.sql", strDatabaseType, strWhich);
+        long fileSizeActual = 0;
+        if (ProjectClass.isRunningFromJar()) {
+            try (InputStream inStream = Objects.requireNonNull(DatabaseOperationsClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
+                // transferTo returns the number of bytes transferred (Java 9+)
+                fileSizeActual = inStream.transferTo(OutputStream.nullOutputStream());
+            } catch (IOException ei) {
+                LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
+            }
+        } else {
+            strFilePath = ProjectClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
+            fileSizeActual = FileStatisticsClass.RetrievingClass.getFileSizeIfFileExistsAndIsReadable(strFilePath);
+        }
+        final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strFilePath, fileSizeActual);
+        LogExposureClass.LOGGER.debug(strFeedback);
+        final long fileSizeLimit = 20;
+        if (fileSizeActual < fileSizeLimit) {
+            final String strFeedbackErr = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
+                .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+            LogExposureClass.LOGGER.error(strFeedbackErr);
+            throw new UnsupportedOperationException(strFeedbackErr);
+        }
+        return FileOperationsClass.ContentReadingClass.getFileContentIntoString(strFilePath);
     }
 
     /**
@@ -167,14 +204,14 @@ public final class DatabaseOperationsClass {
          * @param givenConnection connection object
          */
         public static void closeConnection(final String strDatabaseType, final Connection givenConnection) {
-            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLconnectionCloseAttempt"), strDatabaseType);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 givenConnection.close();
-                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLconnectionCloseSuccess"), strDatabaseType);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCloseError"), strDatabaseType, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
         }
@@ -186,14 +223,14 @@ public final class DatabaseOperationsClass {
          * @param givenStatement statement
          */
         public static void closeStatement(final String strDatabaseType, final Statement givenStatement) {
-            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLstatementCloseAttempt"), strDatabaseType);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 givenStatement.close();
-                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLstatementCloseSuccess"), strDatabaseType);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLstatementCloseError"), strDatabaseType, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
         }
@@ -206,15 +243,15 @@ public final class DatabaseOperationsClass {
          * @return Statement
          */
         public static Statement createSqlStatement(final String strDatabaseType, final Connection connection) {
-            final String strFeedbackAtmpt = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLstatementCreationAttempt"), strDatabaseType);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             Statement objStatement = null;
             try {
                 objStatement = connection.createStatement();
-                final String strFeedbackOk = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLstatementCreationSuccess"), strDatabaseType);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLstatementCreationError"), e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
             return objStatement;
@@ -330,7 +367,7 @@ public final class DatabaseOperationsClass {
          * @param strQuery query
          */
         private static void setSqlParameterBindingError(final SQLException exptObj, final String strParameterName, final String strQuery) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLparameterBindingError")
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLparameterBindingError")
                     , exptObj.getLocalizedMessage()
                     , strParameterName
                     , strQuery);
@@ -353,7 +390,7 @@ public final class DatabaseOperationsClass {
         /**
          * standard SQL statement unable
          */
-        public static final String STR_I18N_STM_UNB = JavaJavaLocalizationClass.getMessage("i18nSQLstatementUnableToGetX");
+        public static final String STR_I18N_STM_UNB = LocalizationClass.getMessage("i18nSQLstatementUnableToGetX");
         /**
          * Rows counter
          */
@@ -377,22 +414,22 @@ public final class DatabaseOperationsClass {
             switch (key) {
                 case "expectedExactNumberOfColumns":
                     final int intColumnsShould = Integer.parseInt(objProperties.getProperty(key));
-                    final String strFeedbackC = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
+                    final String strFeedbackC = String.format(LocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingColumns"), strPurpose, intColumnsShould, intColumnsIs);
                     LogExposureClass.LOGGER.error(strFeedbackC);
                     break;
                 case "expectedExactNumberOfRows":
                     final int intExpectedRows = Integer.parseInt(objProperties.getProperty(key));
                     if (intResultSetRows != intExpectedRows) {
-                        final String strFeedbackExR = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
+                        final String strFeedbackExR = String.format(LocalizationClass.getMessage("i18nSQLqueryRuleUnmatchingRows"), strPurpose, intExpectedRows, intResultSetRows);
                         LogExposureClass.LOGGER.error(strFeedbackExR);
                     }
                     break;
                 case "exposeNumberOfColumns":
-                    final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
+                    final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryRuleExposingColumns"), intColumnsIs);
                     LogExposureClass.LOGGER.info(strFeedback);
                     break;
                 case "exposeNumberOfRows":
-                    final String strFeedbackN = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
+                    final String strFeedbackN = String.format(LocalizationClass.getMessage("i18nSQLqueryRuleExposingRows"), intResultSetRows);
                     LogExposureClass.LOGGER.info(strFeedbackN);
                     break;
                 default:
@@ -415,7 +452,7 @@ public final class DatabaseOperationsClass {
             intColumnsIs = getResultSetNumberOfColumns(resultSet);
             for (final Object obj : objProperties.keySet()) {
                 final String key = (String) obj;
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryRuleEvaluation"), key);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryRuleEvaluation"), key);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 captureToLogResultsetAttributes(key, strPurpose, objProperties);
             }
@@ -504,7 +541,7 @@ public final class DatabaseOperationsClass {
         public static List<Properties> getResultSetColumnValuesWithNullCheck(final ResultSet resultSet) {
             List<Properties> listResultSet = new ArrayList<>();
             if (resultSet == null) {
-                final String strFeedback = JavaJavaLocalizationClass.getMessage("i18nSQLresultSetNull");
+                final String strFeedback = LocalizationClass.getMessage("i18nSQLresultSetNull");
                 LogExposureClass.LOGGER.error(strFeedback);
             } else {
                 listResultSet = getResultSetColumnValues(resultSet);
@@ -597,7 +634,7 @@ public final class DatabaseOperationsClass {
                         break;
                 }
             } catch (SQLException e) {
-                final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return listReturn;
@@ -610,6 +647,319 @@ public final class DatabaseOperationsClass {
             // intentionally blank
         }
 
+    }
+
+    /**
+     * MySQL methods
+     */
+    public static final class SpecificMySql {
+        /**
+         * Database MySQL
+         */
+        public static final String STR_DB_MYSQL = "MySQL";
+
+        /**
+         * Getting Connection Properties For MySQL from Environment variable
+         * @return Properties
+         */
+        public static Properties getConnectionPropertiesForMySQL() {
+            final Properties properties = new Properties();
+            final String strEnv = "MYSQL";
+            final String strEnvMySql = System.getenv(strEnv);
+            if (strEnvMySql == null) {
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nEnvironmentVariableNotFound"), strEnv);
+                LogExposureClass.LOGGER.error(strFeedback);
+            } else {
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nEnvironmentVariableFound"), strEnv);
+                LogExposureClass.LOGGER.debug(strFeedback);
+                final InputStream inputStream = new ByteArrayInputStream(strEnvMySql.getBytes());
+                final JsonNode ndMySQL = JsonOperationsClass.getJsonFileNodes(inputStream);
+                properties.put("ServerName", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerName"));
+                properties.put("Port", JsonOperationsClass.getJsonValue(ndMySQL, "/Port"));
+                properties.put("Username", JsonOperationsClass.getJsonValue(ndMySQL, "/Username"));
+                properties.put("Password", JsonOperationsClass.getJsonValue(ndMySQL, "/Password"));
+                properties.put("ServerTimezone", JsonOperationsClass.getJsonValue(ndMySQL, "/ServerTimezone"));
+            }
+            return properties;
+        }
+
+        /**
+         * Initiate a MySQL connection with Instance properties and DB specified
+         *
+         * @param propInstance Properties for Instance
+         * @param strDatabase Database to connect to
+         * @return Connection
+         */
+        public static Connection getMySqlConnection(final Properties propInstance, final String strDatabase) {
+            Connection connection = null;
+            if (propInstance.isEmpty()) {
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionPropertiesEmpty"), STR_DB_MYSQL);
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            } else {
+                final String strServer = propInstance.get("ServerName").toString();
+                final int strPort = BasicStructuresClass.convertStringIntoInteger(propInstance.get("Port").toString());
+                try {
+                    final String strConnection = String.format("jdbc:mysql://%s:%s/%s", strServer, strPort, strDatabase);
+                    final Properties propConnection = getMySqlProperties(propInstance);
+                    final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), STR_DB_MYSQL, strDatabase, strConnection, BasicStructuresClass.StringTransformationClass.obfuscateProperties(propConnection));
+                    LogExposureClass.LOGGER.debug(strFeedback);
+                    connection = DriverManager.getConnection(strConnection, propConnection);
+                    final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationSuccess"), STR_DB_MYSQL, strServer, strPort, strDatabase);
+                    LogExposureClass.LOGGER.debug(strFeedbackOk);
+                } catch(SQLException e) {
+                    final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailed"), STR_DB_MYSQL, strServer, strPort, strDatabase, e.getLocalizedMessage());
+                    LogExposureClass.LOGGER.debug(strFeedbackErr);
+                }
+            }
+            return connection;
+        }
+
+        /**
+         * get standardized Information from MySQL
+         *
+         * @param objStatement Statement
+         * @param strWhich Which query is needed
+         * @param strKind which type of output would be needed
+         * @return List with Properties
+         */
+        public static List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+            final String strQueryToUse = getPreDefinedQuery("MySQL", strWhich);
+            final Properties rsProperties = new Properties();
+            rsProperties.put("strWhich", strWhich);
+            rsProperties.put("strQueryToUse", strQueryToUse);
+            rsProperties.put("strKind", strKind);
+            final Properties queryProperties = new Properties();
+            return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
+        }
+
+        /**
+         * get MySQL Properties
+         *
+         * @param propInstance Instance Properties
+         * @return Properties
+         */
+        private static Properties getMySqlProperties(final Properties propInstance) {
+            final Properties properties = new Properties();
+            properties.put("user", propInstance.get("Username").toString());
+            properties.put("password", propInstance.get("Password").toString());
+            properties.put("serverTimezone", propInstance.get("ServerTimezone").toString());
+            properties.put("autoReconnect", true);
+            properties.put("allowPublicKeyRetrieval", true);
+            properties.put("useSSL", false);
+            properties.put("useUnicode", true);
+            properties.put("useJDBCCompliantTimezoneShift", true);
+            properties.put("useLegacyDatetimeCode", false);
+            properties.put("characterEncoding", "UTF-8");
+            return properties;
+        }
+
+        /**
+         * Execute MySQL pre-defined actions
+         *
+         * @param strWhich Which kind of query is needed
+         * @param givenProperties Connection Properties
+         */
+        public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
+            try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
+                Statement objStatement = ConnectivityClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
+                final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
+                final String strFeedback = listProps.toString();
+                LogExposureClass.LOGGER.info(strFeedback);
+            } catch(SQLException e) {
+                final String strFeedbackErr = String.format("Error %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+        }
+
+        /**
+         * constructor
+         */
+        private SpecificMySql() {
+            // intentionally blank
+        }
+    }
+
+    /**
+     * Snowflake methods
+     */
+    public static final class SpecificSnowflakeClass {
+        /**
+         * Database Snowflake
+         */
+        public static final String STR_DB_SNOWFLAKE = "Snowflake";
+        /**
+         * standard String
+         */
+        public static final String STR_ROLES = "Roles";
+        /**
+         * Snowflake JDBC version
+         */
+        private static String jdbcVersion;
+
+        /**
+         * Snowflake Bootstrap
+         *
+         * @param objStatement statement
+         */
+        public static void executeSnowflakeBootstrapQuery(final Statement objStatement) {
+            final String strQueryToUse = "ALTER SESSION SET JDBC_QUERY_RESULT_FORMAT='JSON';";
+            executeQueryWithoutResultSet(objStatement, "Bootstrap", strQueryToUse);
+        }
+
+        /**
+         * Initiate a Snowflake connection with Instance properties and DB specified
+         *
+         * @param propInstance instance properties
+         * @param strDatabase database to connect to
+         * @return Connection
+         */
+        public static Connection getSnowflakeConnection(final Properties propInstance, final String strDatabase) {
+            loadSnowflakeDriver();
+            Connection connection = null;
+            final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
+            final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), STR_DB_SNOWFLAKE, strDatabase, strConnection, propConnection);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            try {
+                connection = DriverManager.getConnection(strConnection, propConnection);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationSuccessLight"), STR_DB_SNOWFLAKE, strDatabase);
+                LogExposureClass.LOGGER.debug(strFeedbackOk);
+            } catch(SQLException e) {
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), STR_DB_SNOWFLAKE, e.getLocalizedMessage());
+                LogExposureClass.LOGGER.debug(strFeedbackErr);
+            }
+            return connection;
+        }
+
+        /**
+         * Retrieving Snowflake JDBC driver version
+         * @return String
+         */
+        private static String getSnowflakeJdbcDriverVersion() {
+            final String vSnowflakeId = "snowflake.jdbc";
+            String vJdbcVersion = null;
+            String vFoundIn = null;
+            final Map<String, Object> moduleMap = ProjectClass.getProjectModuleLibraries();
+            if (moduleMap.containsKey(vSnowflakeId)) {
+                vJdbcVersion = moduleMap.get(vSnowflakeId).toString();
+                vFoundIn = "Modules";
+            } else {
+                ProjectClass.loadProjectModel();
+                ProjectClass.Loaders.loadComponents();
+                final Map<String, Object> projDependencies = ProjectClass.Components.getProjectModelComponent("Dependencies");
+                if (projDependencies.containsKey(vSnowflakeId)) {
+                    vJdbcVersion = projDependencies.get(vSnowflakeId).toString();
+                    vFoundIn = "Dependencies";
+                }
+            }
+            final String strFeedback = String.format("I have found Snowflake JDBC driver v.%s from %s", vJdbcVersion, vFoundIn);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            return vJdbcVersion;
+        }
+
+        /**
+         * get standardized Information from Snowflake
+         *
+         * @param objStatement statement
+         * @param strWhich which action
+         * @param strKind kind of output
+         * @return List of Properties
+         */
+        public static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+            final Properties queryProperties = new Properties();
+            if (STR_ROLES.equalsIgnoreCase(strWhich)) {
+                queryProperties.put("expectedExactNumberOfColumns", "1");
+            }
+            final String strQueryToUse = getPreDefinedQuery(STR_DB_SNOWFLAKE, strWhich);
+            final Properties rsProperties = new Properties();
+            rsProperties.put("strWhich", strWhich);
+            rsProperties.put("strQueryToUse", strQueryToUse);
+            rsProperties.put("strKind", strKind);
+            return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
+        }
+
+        /**
+         * build Snowflake Properties
+         *
+         * @param propInstance instance properties
+         * @return Properties
+         */
+        public static Properties getSnowflakeProperties(final Properties propInstance) {
+            final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
+            return getSnowflakeProperties(strDatabase, propInstance);
+        }
+
+
+        /**
+         * build Snowflake Properties
+         *
+         * @param strDatabase Database name to connect to
+         * @param propInstance instance properties
+         * @return Properties
+         */
+        private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
+            final Properties properties = new Properties();
+            String currentUser = ShellingClass.getCurrentUserAccount();
+            if (currentUser.isEmpty()) {
+                currentUser = "UNKNOWN_USER";
+            }
+            properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
+            properties.put("db", strDatabase);
+            String authValue = propInstance.get("Authenticator").toString().replace("\"", "");
+            if (jdbcVersion.startsWith("4.0")
+                    && "externalbrowser".equalsIgnoreCase(authValue)) {
+                authValue = "EXTERNAL_BROWSER";
+            }
+            properties.put("authenticator", authValue);
+            properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
+            properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
+            properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
+            properties.put("tracing", "SEVERE"); // to hide INFO and Warnings which are visible otherwise
+            return properties;
+        }
+
+        /**
+         * Loading Snowflake driver
+         * if (jdbcVersion.startsWith("4.")) {
+         *  strDriverName = "net.snowflake.client.api.driver.SnowflakeDriver";
+         */
+        private static void loadSnowflakeDriver() {
+            jdbcVersion = getSnowflakeJdbcDriverVersion();
+            final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_DB_SNOWFLAKE, strDriverName);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            try {
+                Class.forName(strDriverName);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), STR_DB_SNOWFLAKE, strDriverName + " v. " + jdbcVersion);
+                LogExposureClass.LOGGER.debug(strFeedbackOk);
+            } catch (ClassNotFoundException ex) {
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), STR_DB_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+        }
+
+        /**
+         * Execute Snowflake pre-defined actions
+         * @param strWhich which action to perform
+         * @param objProps object properties
+         */
+        public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
+            try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
+                Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(STR_DB_SNOWFLAKE, objConnection)) {
+                executeSnowflakeBootstrapQuery(objStatement);
+                getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
+            } catch(SQLException e) {
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+        }
+
+        /**
+         * Constructor
+         */
+        private SpecificSnowflakeClass() {
+            // intentionally blank
+        }
     }
 
     /**

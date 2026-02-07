@@ -19,11 +19,11 @@ public final class LogExposureClass {
     /**
      * standard Unknown feature
      */
-    public static final String STR_I18N_UNKN_FTS = JavaJavaLocalizationClass.getMessage("i18nUnknFtrs");
+    public static final String STR_I18N_UNKN_FTS = LocalizationClass.getMessage("i18nUnknFtrs");
     /**
      * standard Unknown
      */
-    public static final String STR_I18N_UNKN = JavaJavaLocalizationClass.getMessage("i18nUnknown");
+    public static final String STR_I18N_UNKN = LocalizationClass.getMessage("i18nUnknown");
 
     /**
      * Build message for I/O exception
@@ -50,7 +50,7 @@ public final class LogExposureClass {
      */
     public static void exposeProcessBuilder(final String strCommand) {
         if (getLogLevel().isLessSpecificThan(Level.INFO) && needProcExposure) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nProcessExecutionCommandIntention"), strCommand);
             LOGGER.debug(strFeedback);
         } 
     }
@@ -60,7 +60,7 @@ public final class LogExposureClass {
      * @param inStackTrace tracking back the Stack Trace
      */
     public static void exposeProjectModel(final String inStackTrace) {
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nErrorOnGettingProjectModel"), inStackTrace);
+        final String strFeedback = String.format(LocalizationClass.getMessage("i18nErrorOnGettingProjectModel"), inStackTrace);
         LOGGER.error(strFeedback);
     }
 
@@ -69,7 +69,7 @@ public final class LogExposureClass {
      * @param strQueryPurpose Query purpose
      */
     public static void exposeSqlExecutionSuccessInfo(final String strQueryPurpose) {
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+        final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
         LOGGER.info(strFeedback);
     }
 
@@ -80,7 +80,7 @@ public final class LogExposureClass {
      * @return message for file operation error
      */
     public static String getFileErrorMessage(final String strFileName, final String strStagTrace) {
-        return String.format(JavaJavaLocalizationClass.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
+        return String.format(LocalizationClass.getMessage("i18nFileWritingError"), strFileName, strStagTrace);
     }
 
     /**

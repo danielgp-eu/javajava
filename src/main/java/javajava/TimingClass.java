@@ -83,7 +83,7 @@ public final class TimingClass {
             final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
             lastModifTime = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace('T', ' ');
         } catch (IOException ei) {
-            final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nFileFindingError"), file.getParent(), file.getFileName());
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileFindingError"), file.getParent(), file.getFileName());
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return lastModifTime;
@@ -214,7 +214,7 @@ public final class TimingClass {
         }
         String strReturn;
         if (STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
-            strReturn = String.format(strFormats, lngNumber, JavaJavaLocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
+            strReturn = String.format(strFormats, lngNumber, LocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
         } else {
             strReturn = String.format(strFormats, lngNumber);
         }
@@ -293,7 +293,7 @@ public final class TimingClass {
      */
     public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
-        return String.format(JavaJavaLocalizationClass.getMessage("i18nWithDrtn")
+        return String.format(LocalizationClass.getMessage("i18nWithDrtn")
             , strPartial
             , objDuration.toString()
             , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")

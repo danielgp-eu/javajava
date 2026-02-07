@@ -51,10 +51,10 @@ public final class CommonInteractiveClass {
      */
     public static void initializeLocalization() {
         if (bolAutoLocale) {
-            final String userLocale = JavaJavaLocalizationClass.getUserLocale();
-            JavaJavaLocalizationClass.setLocaleByString(userLocale);
+            final String userLocale = LocalizationClass.getUserLocale();
+            LocalizationClass.setLocaleByString(userLocale);
         } else {
-            JavaJavaLocalizationClass.setLocaleByString(DEFAULT_LOCALE);
+            LocalizationClass.setLocaleByString(DEFAULT_LOCALE);
         }
     }
 
@@ -66,7 +66,7 @@ public final class CommonInteractiveClass {
         final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
         LogExposureClass.LOGGER.info(strFeedbackExit);
         final String strFeedbackEnd = TimingClass.logDuration(startDateTime,
-                String.format(JavaJavaLocalizationClass.getMessage("i18nEntOp"), inOperation));
+                String.format(LocalizationClass.getMessage("i18nEntOp"), inOperation));
         LogExposureClass.LOGGER.info(strFeedbackEnd);
     }
 
@@ -77,7 +77,7 @@ public final class CommonInteractiveClass {
         final String strFeedbackLines = "-".repeat(80);
         LogExposureClass.LOGGER.info(strFeedbackLines);
         final String[] prjProperties = getProjectProperties();
-        final String strFeedback = String.format(JavaJavaLocalizationClass.getMessage("i18nNewExec"), prjProperties[0], prjProperties[1], prjProperties[2]);
+        final String strFeedback = String.format(LocalizationClass.getMessage("i18nNewExec"), prjProperties[0], prjProperties[1], prjProperties[2]);
         LogExposureClass.LOGGER.info(strFeedback);
         LogExposureClass.LOGGER.info(strFeedbackLines);
     }
