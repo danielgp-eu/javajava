@@ -35,6 +35,10 @@ public final class DatabaseOperationsClass {
      * Regular Expression for Prompt Parameters within SQL Query
      */
     public static final String STR_QTD_STR_VL = "\"%s\"";
+    /**
+     * Values string
+     */
+    public static final String STR_VALUES = "Values";
 
     /**
      * Fill values into a dynamic query
@@ -641,7 +645,7 @@ public final class DatabaseOperationsClass {
                     case "Structure":
                         listReturn = getResultSetColumnStructure(rsStandard);
                         break;
-                    case "Values":
+                    case STR_VALUES:
                         listReturn = getResultSetColumnValuesWithNullCheck(rsStandard);
                         break;
                     default:
@@ -775,7 +779,7 @@ public final class DatabaseOperationsClass {
         public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
             try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
                 Statement objStatement = ConnectivityClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
-                final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "Values");
+                final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, STR_VALUES);
                 final String strFeedback = listProps.toString();
                 LogExposureClass.LOGGER.info(strFeedback);
             } catch(SQLException e) {
@@ -957,7 +961,7 @@ public final class DatabaseOperationsClass {
             try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
                 Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(STR_DB_SNOWFLAKE, objConnection)) {
                 executeSnowflakeBootstrapQuery(objStatement);
-                getSnowflakePreDefinedInformation(objStatement, strWhich, "Values");
+                getSnowflakePreDefinedInformation(objStatement, strWhich, STR_VALUES);
             } catch(SQLException e) {
                 final String strFeedback = String.format(LocalizationClass.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
