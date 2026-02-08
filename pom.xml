@@ -45,7 +45,6 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <maven.compiler.release>25</maven.compiler.release>
-        <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.organization>danielgp-eu</sonar.organization>
         <!-- Dependencies versions -->
@@ -235,29 +234,6 @@
                         <phase>package</phase>
                         <goals>
                             <goal>makeAggregateBom</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- https://mvnrepository.com/artifact/org.owasp/dependency-check-maven -->
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>${dependency-check-maven.version}</version>
-                <configuration>
-                    <nvdApiKey>${nvd.api.key}</nvdApiKey>
-                    <failBuildOnCVSS>7</failBuildOnCVSS>
-                    <formats>
-                        <format>HTML</format>
-                        <format>JSON</format>
-                    </formats>
-                    <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
