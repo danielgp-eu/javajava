@@ -45,8 +45,9 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <maven.compiler.release>25</maven.compiler.release>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <nvd.api.key>${env.NVD_API_KEY}</nvd.api.key>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.organization>danielgp-eu</sonar.organization>
         <!-- Dependencies versions -->
         <icu4j.version>78.2</icu4j.version>
         <jackson-databind.version>3.0.4</jackson-databind.version>
