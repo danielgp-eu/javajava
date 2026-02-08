@@ -33,6 +33,11 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Set up GPG trust
+        run: |
+          KEYID=$(gpg --list-secret-keys --keyid-format=long | grep sec | awk '{print $2}' | cut -d/ -f2 | head -n1)
+          echo "trusting KEYID: $KEYID"
+          echo -e "5\ny\n" | gpg --command-fd 0 --expert --edit-key $KEYID trust
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
