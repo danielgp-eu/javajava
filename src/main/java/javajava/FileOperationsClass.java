@@ -51,7 +51,7 @@ public final class FileOperationsClass {
                 writer.write("Path;File;Imported;Timestamp");
                 writer.newLine();
                 final List<Path> arrayFiles = FileStatisticsClass.RetrievingClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
-                arrayFiles.forEach((crtFileName) -> {
+                arrayFiles.forEach(crtFileName -> {
                     try (BufferedReader reader = Files.newBufferedReader(crtFileName, StandardCharsets.UTF_8)) {
                         String line = reader.readLine();  // Initialize the variable outside the loop
                         long lineCounter = 0;
