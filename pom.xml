@@ -251,76 +251,59 @@
                         </goals>
                         <configuration>
                             <target>
-                                <echo message="Running Ant Task to create Checksum files (MD5, SHA-1 and SHA-256 in scope)" />
                                 <property name="local_project_repository" value="${settings.localRepository}/io/github/danielgp-eu/${project.artifactId}/${project.version}"/>
                                 <!-- MD5 checksums -->
                                 <!-- Just project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="MD5" property="jar.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.md5">${jar.md5.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}.jar.md5 has checksum ${jar.md5.checksum}" />
                                 <!-- Project with all dependencies included -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" algorithm="MD5" property="jar.jwd.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.md5">${jar.jwd.md5.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.md5 has checksum ${jar.jwd.md5.checksum}" />
                                 <!-- Javadoc for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="MD5" property="jar.doc.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.md5">${jar.doc.md5.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-javadoc.jar.md5 has checksum ${jar.doc.md5.checksum}" />
                                 <!-- Sources for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="MD5" property="jar.src.md5.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.md5">${jar.src.md5.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-sources.jar.md5 has checksum ${jar.src.md5.checksum}" />
                                 <!-- SHA-1 checksums -->
                                 <!-- Just project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-1" property="jar.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.sha1">${jar.sha1.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}.jar.sha1 has checksum ${jar.sha1.checksum}" />
                                 <!-- Project with all dependencies included -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" algorithm="SHA-1" property="jar.jwd.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.sha1">${jar.jwd.sha1.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.sha1 has checksum ${jar.jwd.sha1.checksum}" />
                                 <!-- Javadoc for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-1" property="jar.doc.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.sha1">${jar.doc.sha1.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-javadoc.jar.sha1 has checksum ${jar.doc.sha1.checksum}" />
                                 <!-- Sources for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-1" property="jar.src.sha1.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha1">${jar.src.sha1.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-sources.jar.sha1 has checksum ${jar.src.sha1.checksum}" />
                                 <!-- SHA-256 checksums -->
                                 <!-- Just project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-256" property="jar.sha256.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.sha256">${jar.sha256.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}.jar.sha256 has checksum ${jar.sha256.checksum}" />
                                 <!-- Project with all dependencies included -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" algorithm="SHA-256" property="jar.jwd.sha256.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.sha256">${jar.jwd.sha256.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.sha256 has checksum ${jar.jwd.sha256.checksum}" />
                                 <!-- Javadoc for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-256" property="jar.doc.sha256.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.sha256">${jar.doc.sha256.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-javadoc.jar.sha256 has checksum ${jar.doc.sha256.checksum}" />
                                 <!-- Sources for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-256" property="jar.src.sha256.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha256">${jar.src.sha256.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-sources.jar.sha256 has checksum ${jar.src.sha256.checksum}" />
                                 <!-- SHA-512 checksums -->
                                 <!-- Just project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}.jar" algorithm="SHA-512" property="jar.sha512.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}.jar.sha512">${jar.sha512.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}.jar.sha512 has checksum ${jar.sha512.checksum}" />
                                 <!-- Project with all dependencies included -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar" algorithm="SHA-512" property="jar.jwd.sha512.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.sha512">${jar.jwd.sha512.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar.sha512 has checksum ${jar.jwd.sha512.checksum}" />
                                 <!-- Javadoc for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-javadoc.jar" algorithm="SHA-512" property="jar.doc.sha512.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-javadoc.jar.sha512">${jar.doc.sha512.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-javadoc.jar.sha512 has checksum ${jar.doc.sha512.checksum}" />
                                 <!-- Sources for the project -->
                                 <checksum file="${project.build.directory}/${project.build.finalName}-sources.jar" algorithm="SHA-512" property="jar.src.sha512.checksum"/>
                                 <echo file="${project.build.directory}/${project.build.finalName}-sources.jar.sha512">${jar.src.sha512.checksum}</echo>
-                                <echo message="File ${project.build.directory}/${project.build.finalName}-sources.jar.sha512 has checksum ${jar.src.sha512.checksum}" />
                                 <!-- GPG signed files -->
                                 <copy todir="${local_project_repository}">
                                     <fileset dir="${project.build.directory}" includes="${project.build.finalName}*.jar.md5" />
