@@ -16,10 +16,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -99,10 +97,9 @@ public final class FileStatisticsClass {
     /**
      * Compute all known checksums for a given file
      * @param file input file
-     * @return Map
+     * @param writer BufferedWriter to write the results
      */
-    private static Map<String, String> computeFileMultipleChecksums(final Path file, final BufferedWriter writer) {
-        final Map<String, String> crtFileStats = new ConcurrentHashMap<>();
+    private static void computeFileMultipleChecksums(final Path file, final BufferedWriter writer) {
         try(ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
             executor.submit(() -> {
                 for (final String algo : listAlgorithms) {
@@ -123,7 +120,6 @@ public final class FileStatisticsClass {
             /* Clean up whatever needs to be handled before interrupting  */
             Thread.currentThread().interrupt();
         }
-        return crtFileStats;
     }
 
     /**
