@@ -780,8 +780,10 @@ public final class DatabaseOperationsClass {
             try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
                 Statement objStatement = ConnectivityClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
                 final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, STR_VALUES);
-                final String strFeedback = listProps.toString();
-                LogExposureClass.LOGGER.info(strFeedback);
+                if (listProps != null) {
+                    final String strFeedback = listProps.toString();
+                    LogExposureClass.LOGGER.info(strFeedback);
+                }
             } catch(SQLException e) {
                 final String strFeedbackErr = String.format("Error %s", Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
