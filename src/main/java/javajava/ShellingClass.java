@@ -170,7 +170,9 @@ public final class ShellingClass {
         } else {
             strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
         }
+        final LocalDateTime finishTimeStamp = LocalDateTime.now();
         final String strFeedback = TimingClass.logDuration(startTimestamp,
+                finishTimeStamp,
                 String.format(LocalizationClass.getMessage(strCaptureMessage), exitCode));
         LogExposureClass.LOGGER.debug(strFeedback);
     }

@@ -25,7 +25,7 @@ public final class TimingClass {
     /**
      * String constant
      */
-    /* default */ private static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
+    /* default */ public static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
     /**
      * String for internal ETL
      */
@@ -245,9 +245,9 @@ public final class TimingClass {
      */
     public static LocalDateTime getLocalDateTimeFromStrings(final String strDateIso8601, final String timeContinuous) {
         return LocalDateTime.of(
-                Integer.parseInt(strDateIso8601.substring(1, 5)),
-                Integer.parseInt(strDateIso8601.substring(6, 8)),
-                Integer.parseInt(strDateIso8601.substring(9)),
+                Integer.parseInt(strDateIso8601.substring(0, 4)),
+                Integer.parseInt(strDateIso8601.substring(5, 7)),
+                Integer.parseInt(strDateIso8601.substring(8)),
                 Integer.parseInt(timeContinuous.substring(0, 2)),
                 Integer.parseInt(timeContinuous.substring(2, 4)),
                 Integer.parseInt(timeContinuous.substring(4, 6)));
@@ -258,9 +258,8 @@ public final class TimingClass {
      * @param intDaysLimit number of days in the past
      * @return milliseconds in the past
      */
-    public static long getDaysAgoWithMilisecondsPrecision(final long intDaysLimit) {
-        final Instant now = Instant.now(); // For timestamps
-        return now.minusMillis(intDaysLimit * INT_1DAY_MILISECS).toEpochMilli();
+    public static long getDaysAgoWithMilisecondsPrecision(final Instant refTimestamp, final long intDaysLimit) {
+        return refTimestamp.minusMillis(intDaysLimit * INT_1DAY_MILISECS).toEpochMilli();
     }
 
     /**
@@ -291,8 +290,8 @@ public final class TimingClass {
      * @param strPartial prefix for feedback
      * @return String
      */
-    public static String logDuration(final LocalDateTime startTimeStamp, final String strPartial) {
-        final Duration objDuration = Duration.between(startTimeStamp, LocalDateTime.now());
+    public static String logDuration(final LocalDateTime startTimeStamp, final LocalDateTime finishTimeStamp, final String strPartial) {
+        final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
         return String.format(LocalizationClass.getMessage("i18nWithDrtn")
             , strPartial
             , objDuration.toString()

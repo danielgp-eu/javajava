@@ -21,7 +21,7 @@ class BasicStructuresClassTests {
     /**
      * String for Original not equal to Expected
      */
-	/* default */ private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
+    /* default */ private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
 
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")

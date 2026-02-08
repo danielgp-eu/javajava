@@ -15,6 +15,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -423,7 +424,8 @@ public final class FileOperationsClass {
              * @param intOlderLimit older days limit
              */
             public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
-                final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(intOlderLimit);
+                final Instant now = Instant.now(); // For timestamps
+                final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(now, intOlderLimit);
                 final String strFeedback = String.format(LocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMilisecondsPrecisionAsString(cutoff), strFolderName);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final Path directory = Path.of(strFolderName);

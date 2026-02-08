@@ -94,7 +94,8 @@ public final class DatabaseOperationsClass {
                 final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
+            final LocalDateTime finishTimeStamp = LocalDateTime.now();
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
         return resultSet;
@@ -123,7 +124,8 @@ public final class DatabaseOperationsClass {
                 final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
+            final LocalDateTime finishTimeStamp = LocalDateTime.now();
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
     }

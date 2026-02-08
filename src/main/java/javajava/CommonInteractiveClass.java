@@ -65,7 +65,9 @@ public final class CommonInteractiveClass {
     public static void shutMeDown(final String inOperation) {
         final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
         LogExposureClass.LOGGER.info(strFeedbackExit);
+        final LocalDateTime finishTimeStamp = LocalDateTime.now();
         final String strFeedbackEnd = TimingClass.logDuration(startDateTime,
+                finishTimeStamp,
                 String.format(LocalizationClass.getMessage("i18nEntOp"), inOperation));
         LogExposureClass.LOGGER.info(strFeedbackEnd);
     }
