@@ -25,6 +25,9 @@ jobs:
         run: rm -rf ~/.dependency-check
       - name: Maven Clean Package
         run: mvn clean package
+      - name: Import GPG key
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -40,4 +43,5 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=danielgp-eu_javajava
