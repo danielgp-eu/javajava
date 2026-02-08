@@ -29,18 +29,6 @@ public final class CommonInteractiveClass {
      */
     private static int exitCode;
     /**
-     * Short command for Folder
-     */
-    public static final String FOLDER_CMD_SHORT = "-fldNm";
-    /**
-     * Long command for Folder
-     */
-    public static final String FOLDER_CMD_LONG = "--folderName";
-    /**
-     * Description for Folder
-     */
-    public static final String FOLDER_DESC = "Folder Name to be inspected";
-    /**
      * Start Date Time
      */
     private static LocalDateTime startDateTime;

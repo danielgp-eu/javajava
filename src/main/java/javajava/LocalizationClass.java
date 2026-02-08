@@ -122,15 +122,6 @@ public final class LocalizationClass {
 
     /**
      * setting Locale
-     * @param locale localization to use
-     */
-    public static void setLocale(final Locale locale) {
-        final String strLocale = locale.toString();
-        setLocaleByString(strLocale);
-    }
-
-    /**
-     * setting Locale
      * @param strLocale localization to use
      */
     public static void setLocaleByString(final String strLocale) {
