@@ -116,7 +116,7 @@ public final class CommonInteractiveClass {
              parameterListHeading = "%nParameters:%n%n",
              optionListHeading    = "%nOptions:%n%n",
              commandListHeading   = "%nCommands:%n%n")
-    /* default */ static class FolderNameOptionMixinClass {
+    /* default */ public static class FolderNameOptionMixinClass {
 
         /**
          * String for FolderName
@@ -146,7 +146,7 @@ public final class CommonInteractiveClass {
              parameterListHeading = "%nParameters:%n%n",
              optionListHeading    = "%nOptions:%n%n",
              commandListHeading   = "%nCommands:%n%n")
-    /* default */ static class InFileNameOptionMixinClass {
+    /* default */ public static class InFileNameOptionMixinClass {
 
         /**
          * String for in FileNames
@@ -176,7 +176,7 @@ public final class CommonInteractiveClass {
              parameterListHeading = "%nParameters:%n%n",
              optionListHeading    = "%nOptions:%n%n",
              commandListHeading   = "%nCommands:%n%n")
-    /* default */ static class OutFileNameOptionMixinClass {
+    /* default */ public static class OutFileNameOptionMixinClass {
 
         /**
          * String for out FileName

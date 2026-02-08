@@ -312,7 +312,7 @@ public final class JsonOperationsClass {
         private static Properties getValueAndRecord(final JsonParser jsonParser, final JsonFactory jsonFactory) {
             final Properties properties = new Properties();
             final ByteArrayOutputStream tempBuffer = new ByteArrayOutputStream();
-            final ObjectWriteContext writeContext = WriteContextSingletonClass.get();
+            final ObjectWriteContext writeContext = ObjectWriteContext.empty();
             try (JsonGenerator tempGen = jsonFactory.createGenerator(writeContext, tempBuffer)) {
                 int depth = 1;
                 tempGen.copyCurrentEvent(jsonParser);
