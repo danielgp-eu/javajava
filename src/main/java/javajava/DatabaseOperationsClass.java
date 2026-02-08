@@ -200,9 +200,9 @@ public final class DatabaseOperationsClass {
 
     /**
      * Package 3 String into Properties for result-set
-     * @param strWhich
+     * @param strWhich Which query is needed
      * @param strQueryToUse relevant query
-     * @param strKind 
+     * @param strKind type of output expected
      * @return Properties for result-set
      */
     private static Properties packageResultSetProperties(final String strWhich, final String strQueryToUse, final String strKind) {
