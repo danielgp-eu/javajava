@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,7 +21,7 @@ class BasicStructuresClassTests {
     /**
      * String for Original not equal to Expected
      */
-	/* default */ private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
+    /* default */ private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
 
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")
@@ -199,11 +200,23 @@ class BasicStructuresClassTests {
         }
 
         @Test
-        void testEencloseStringIfContainsSpacePartialStart() {
+        void testEncloseStringIfContainsSpacePartialStart() {
             final String strOriginal = "Original String\"";
             final String strExpected = '"' + strOriginal;
             final String handled = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(strOriginal, '\"');
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
+        }
+
+        @Test
+        void testObfuscateProperties() {
+            final Properties originalProps = new Properties();
+            originalProps.put("key", "value");
+            originalProps.put("password", "password");
+            final Properties expectedProps = new Properties();
+            expectedProps.put("key", "value");
+            expectedProps.put("password", "*U*N*D*I*S*C*L*O*S*E*D*");
+            final Properties handled = BasicStructuresClass.StringTransformationClass.obfuscateProperties(originalProps);
+            assertEquals(expectedProps, handled, String.format(ORIG_NQ_EXPCT, handled, expectedProps));
         }
 
         /**

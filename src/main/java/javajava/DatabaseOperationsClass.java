@@ -94,7 +94,8 @@ public final class DatabaseOperationsClass {
                 final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
+            final LocalDateTime finishTimeStamp = LocalDateTime.now();
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
         return resultSet;
@@ -123,7 +124,8 @@ public final class DatabaseOperationsClass {
                 final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
+            final LocalDateTime finishTimeStamp = LocalDateTime.now();
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
     }
@@ -198,9 +200,9 @@ public final class DatabaseOperationsClass {
 
     /**
      * Package 3 String into Properties for result-set
-     * @param strWhich
+     * @param strWhich Which query is needed
      * @param strQueryToUse relevant query
-     * @param strKind 
+     * @param strKind type of output expected
      * @return Properties for result-set
      */
     private static Properties packageResultSetProperties(final String strWhich, final String strQueryToUse, final String strKind) {
@@ -780,8 +782,10 @@ public final class DatabaseOperationsClass {
             try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
                 Statement objStatement = ConnectivityClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
                 final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, STR_VALUES);
-                final String strFeedback = listProps.toString();
-                LogExposureClass.LOGGER.info(strFeedback);
+                if (listProps != null) {
+                    final String strFeedback = listProps.toString();
+                    LogExposureClass.LOGGER.info(strFeedback);
+                }
             } catch(SQLException e) {
                 final String strFeedbackErr = String.format("Error %s", Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -801,9 +805,9 @@ public final class DatabaseOperationsClass {
      */
     public static final class SpecificSnowflakeClass {
         /**
-         * Database Snowflake
+         * String for Snowflake
          */
-        public static final String STR_DB_SNOWFLAKE = "Snowflake";
+        public static final String STR_SNOWFLAKE = "Snowflake";
         /**
          * standard String
          */
@@ -835,14 +839,14 @@ public final class DatabaseOperationsClass {
             Connection connection = null;
             final String strConnection = String.format("jdbc:snowflake://%s.snowflakecomputing.com/", propInstance.get("AccountName").toString().replace("\"", ""));
             final Properties propConnection = getSnowflakeProperties(strDatabase, propInstance);
-            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), STR_DB_SNOWFLAKE, strDatabase, strConnection, propConnection);
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationAttempt"), STR_SNOWFLAKE, strDatabase, strConnection, propConnection);
             LogExposureClass.LOGGER.debug(strFeedback);
             try {
                 connection = DriverManager.getConnection(strConnection, propConnection);
-                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationSuccessLight"), STR_DB_SNOWFLAKE, strDatabase);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationSuccessLight"), STR_SNOWFLAKE, strDatabase);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch(SQLException e) {
-                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), STR_DB_SNOWFLAKE, e.getLocalizedMessage());
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), STR_SNOWFLAKE, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
             return connection;
@@ -887,7 +891,7 @@ public final class DatabaseOperationsClass {
             if (STR_ROLES.equalsIgnoreCase(strWhich)) {
                 queryProperties.put("expectedExactNumberOfColumns", "1");
             }
-            final String strQueryToUse = getPreDefinedQuery(STR_DB_SNOWFLAKE, strWhich);
+            final String strQueryToUse = getPreDefinedQuery(STR_SNOWFLAKE, strWhich);
             final Properties rsProperties = packageResultSetProperties(strWhich, strQueryToUse, strKind);
             return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
         }
@@ -940,14 +944,14 @@ public final class DatabaseOperationsClass {
         private static void loadSnowflakeDriver() {
             jdbcVersion = getSnowflakeJdbcDriverVersion();
             final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
-            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_DB_SNOWFLAKE, strDriverName);
+            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_SNOWFLAKE, strDriverName);
             LogExposureClass.LOGGER.debug(strFeedback);
             try {
                 Class.forName(strDriverName);
-                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), STR_DB_SNOWFLAKE, strDriverName + " v. " + jdbcVersion);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingSuccess"), STR_SNOWFLAKE, strDriverName + " v. " + jdbcVersion);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (ClassNotFoundException ex) {
-                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), STR_DB_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingNotFound"), STR_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
         }
@@ -959,7 +963,7 @@ public final class DatabaseOperationsClass {
          */
         public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
             try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-                Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(STR_DB_SNOWFLAKE, objConnection)) {
+                Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
                 executeSnowflakeBootstrapQuery(objStatement);
                 getSnowflakePreDefinedInformation(objStatement, strWhich, STR_VALUES);
             } catch(SQLException e) {

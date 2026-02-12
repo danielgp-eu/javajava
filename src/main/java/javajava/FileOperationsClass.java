@@ -15,6 +15,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -51,7 +52,7 @@ public final class FileOperationsClass {
                 writer.write("Path;File;Imported;Timestamp");
                 writer.newLine();
                 final List<Path> arrayFiles = FileStatisticsClass.RetrievingClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
-                arrayFiles.forEach((crtFileName) -> {
+                arrayFiles.forEach(crtFileName -> {
                     try (BufferedReader reader = Files.newBufferedReader(crtFileName, StandardCharsets.UTF_8)) {
                         String line = reader.readLine();  // Initialize the variable outside the loop
                         long lineCounter = 0;
@@ -288,6 +289,23 @@ public final class FileOperationsClass {
         }
 
         /**
+         * Store small content into file
+         * @param strFileName destination file name
+         * @param strRawText content
+         */
+        public static void writeRawTextToFile(final String strFileName, final String strRawText) {
+            DeletingClass.deleteFileIfExists(strFileName);
+            try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
+                bwr.write(strRawText);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileWritingSuccess"), strFileName);
+                LogExposureClass.LOGGER.debug(strFeedback);
+            } catch (IOException ex) {
+                final String strFeedback = LogExposureClass.getFileErrorMessage(strFileName, Arrays.toString(ex.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+        }
+
+        /**
          * storing into a CSV file a LinkedHashMap
          * @param strFileName target file name to be written to
          * @param strHeader header values
@@ -406,7 +424,8 @@ public final class FileOperationsClass {
              * @param intOlderLimit older days limit
              */
             public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
-                final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(intOlderLimit);
+                final Instant now = Instant.now(); // For timestamps
+                final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(now, intOlderLimit);
                 final String strFeedback = String.format(LocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMilisecondsPrecisionAsString(cutoff), strFolderName);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final Path directory = Path.of(strFolderName);
