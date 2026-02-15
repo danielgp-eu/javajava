@@ -127,6 +127,7 @@ Various Java classes to be re-used
 * [Java LocalDateTime](https://howtodoinjava.com/java/date-time/java-localdatetime-class/)
 * [java.time.LocalDateTime Class in Java](https://www.geeksforgeeks.org/java-time-localdatetime-class-in-java/)
 
+
 ### Java Unit Testing
 
 * [Guide to JUnit 5 Parameterized Tests](https://www.baeldung.com/parameterized-tests-junit-5)
@@ -158,15 +159,15 @@ To avoid a pesky warning at execution time a VM Attribute having the value `--en
 
 ## Features implemented
 
-* AnalyzeColumnsFromCsvFile                     --inFileName (1..*)
-* AnalyzePomFile                                --inFileName (1..*)
+* AnalyzeColumnsFromCsvFiles                    --inFileName (1..*)
+* AnalyzePomFiles                               --inFileName (1..*)
 * ArchiveFolders                                --archivingExecutable (0..1)
-                                                    --folderName (1..*)
-                                                        --folderDestination  (1)
-                                                            --archivePrefix (0..1)
-                                                                --archiveSuffix (0..1)
-                                                                    --archivePassword (0..1)
-* CaptureChecksumsOfFilesFromFolderIntoCsvFile  --folderName (1..*)
+                                                    --archivePassword (0..1)
+                                                        --archivePrefix (0..1)
+                                                            --archiveSuffix (0..1)
+                                                                --folderName (1..*)
+                                                                    --folderDestination (1)
+* CaptureChecksumsOfFilesFromFoldersIntoCsvFile --folderName (1..*)
                                                     --outFileName (1)
 * CaptureEnvironmentDetailsIntoJsonFile         --outFileName (1)
 * CaptureImportsFromJavaSourceFilesIntoCsvFile  --folderName (1..*)
@@ -175,10 +176,10 @@ To avoid a pesky warning at execution time a VM Attribute having the value `--en
 * CleanOlderFilesFromFolder                     --folderName (1..*)
                                                     --daysOlderLimit (1)
 * ExperimentalFeature
-* GetInformationFromDatabase                    --databaseType
-                                                    --informationType
+* GetInformationFromDatabase                    --databaseType (1)
+                                                    --informationType (1..*)
 * GetSubFoldersFromFolder                       --folderName (1)
-* JsonSplit                                     --inFileName (1)
+* JsonSplit                                     --inFileName (1..*)
                                                     --folderDestination (1)
                                                         --splitSize (0..1)
                                                             --field (1)

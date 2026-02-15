@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.7.7</version>
+    <version>1.7.8</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -18,6 +18,7 @@
         <license>
             <name>Mozilla Public License Version 2.0</name>
             <url>https://opensource.org/license/mpl-2-0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
@@ -143,6 +144,14 @@
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>${jackson-dataformat-xml.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.jspecify/jspecify -->
+        <!-- JSpecify for null safety -->
+        <dependency>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
+            <version>${jspecify.version}</version>
             <scope>compile</scope>
         </dependency>
         <!-- Test dependencies -->

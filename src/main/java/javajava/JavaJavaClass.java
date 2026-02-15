@@ -20,10 +20,10 @@ import picocli.CommandLine.Mixin;
 @CommandLine.Command(
     name = "top",
     subcommands = {
-            AnalyzeColumnsFromCsvFile.class,
-            AnalyzePomFile.class,
+            AnalyzeColumnsFromCsvFiles.class,
+            AnalyzePomFiles.class,
             ArchiveFolders.class,
-            CaptureChecksumsOfFilesFromFolderIntoCsvFile.class,
+            CaptureChecksumsOfFilesFromFoldersIntoCsvFile.class,
             CaptureEnvironmentDetailsIntoJsonFile.class,
             CaptureImportsFromJavaSourceFilesIntoCsvFile.class,
             CaptureWindowsApplicationsInstalledIntoCsvFile.class,
@@ -64,9 +64,9 @@ public final class JavaJavaClass {
 /**
  * Captures execution environment details into Log file
  */
-@CommandLine.Command(name = "AnalyzeColumnsFromCsvFile",
+@CommandLine.Command(name = "AnalyzeColumnsFromCsvFiles",
                      description = "Analyze columns from CSV file")
-class AnalyzeColumnsFromCsvFile implements Runnable {
+class AnalyzeColumnsFromCsvFiles implements Runnable {
     /**
      * adds the options defined in 
      * CommonInteractiveClass.FileNameOptionMixinClass to this command
@@ -120,7 +120,7 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
     /**
      * Constructor
      */
-    protected AnalyzeColumnsFromCsvFile() {
+    protected AnalyzeColumnsFromCsvFiles() {
         // intentionally blank
     }
 
@@ -129,9 +129,9 @@ class AnalyzeColumnsFromCsvFile implements Runnable {
 /**
  * Captures sub-folder from a Given Folder into Log file
  */
-@CommandLine.Command(name = "AnalyzePomFile",
-                     description = "Exposes information about a given POM")
-class AnalyzePomFile implements Runnable {
+@CommandLine.Command(name = "AnalyzePomFiles",
+                     description = "Exposes information from one or multiple Project Object Model (Apache Maven configuration file)")
+class AnalyzePomFiles implements Runnable {
     /**
      * adds the options defined in 
      * CommonInteractiveClass.FileNameOptionMixinClass to this command
@@ -155,7 +155,7 @@ class AnalyzePomFile implements Runnable {
     /**
      * Private constructor to prevent instantiation
      */
-    public AnalyzePomFile() {
+    public AnalyzePomFiles() {
         super();
     }
 
@@ -252,7 +252,7 @@ class ArchiveFolders implements Runnable {
  */
 @CommandLine.Command(name = "CaptureChecksumsOfFilesFromFolderIntoCsvFile",
                      description = "Get statistics for all files within a given folder")
-class CaptureChecksumsOfFilesFromFolderIntoCsvFile implements Runnable {
+class CaptureChecksumsOfFilesFromFoldersIntoCsvFile implements Runnable {
 
     /**
      * adds the options defined in 
@@ -285,7 +285,7 @@ class CaptureChecksumsOfFilesFromFolderIntoCsvFile implements Runnable {
     /**
      * Constructor
      */
-    protected CaptureChecksumsOfFilesFromFolderIntoCsvFile() {
+    protected CaptureChecksumsOfFilesFromFoldersIntoCsvFile() {
         super();
     }
 }
