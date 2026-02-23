@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.7.8</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -54,6 +54,7 @@
         <jackson-dataformat-xml.version>3.0.4</jackson-dataformat-xml.version>
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
+        <jte.version>3.2.3</jte.version>
         <log4j-api.version>2.25.3</log4j-api.version>
         <log4j-core.version>2.25.3</log4j-core.version>
         <log4j-slf4j2-impl.version>2.25.3</log4j-slf4j2-impl.version>
@@ -61,7 +62,8 @@
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
         <oshi-core-java25.version>6.10.0</oshi-core-java25.version>
         <picocli.version>4.7.7</picocli.version>
-        <!-- Plugin versions -->
+        <undertow.version>2.3.23.Final</undertow.version>
+        <!-- Build Plugin versions -->
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
@@ -73,16 +75,16 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
-        <!-- International Components for Unicode for Java (ICU4J) is a mature, widely used Java library providing Unicode and Globalization support -->
+        <!-- Source: https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
+        <!-- Description: International Components for Unicode for Java (ICU4J) is a mature, widely used Java library providing Unicode and Globalization support -->
         <dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <version>${icu4j.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.github.oshi/oshi-core-java25 -->
-        <!-- A JNA-based (native) operating system information library for Java that aims to provide a cross-platform implementation to retrieve system information, such as version, memory, CPU, disk, battery, etc. -->
+        <!-- Source: https://mvnrepository.com/artifact/com.github.oshi/oshi-core-java25 -->
+        <!-- Description: A JNA-based (native) operating system information library for Java that aims to provide a cross-platform implementation to retrieve system information, such as version, memory, CPU, disk, battery, etc. -->
         <!-- oshi-core implementation using FFM -->
         <dependency>
             <groupId>com.github.oshi</groupId>
@@ -90,56 +92,72 @@
             <version>${oshi-core-java25.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/info.picocli/picocli -->
-        <!-- Java command line parser with both an annotations API and a programmatic API. Usage help with ANSI styles and colors. Autocomplete. Nested subcommands. Easily included as source to avoid adding a dependency. -->
+        <!-- Source: https://mvnrepository.com/artifact/gg.jte/jte -->
+        <!-- Description: Java Template Engine -->
+        <dependency>
+            <groupId>gg.jte</groupId>
+            <artifactId>jte</artifactId>
+            <version>${jte.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/info.picocli/picocli -->
+        <!-- Description: Java command line parser with both an annotations API and a programmatic API. Usage help with ANSI styles and colors. Autocomplete. Nested subcommands. Easily included as source to avoid adding a dependency. -->
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>${picocli.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-        <!-- API for Apache Log4J, a highly configurable logging tool that focuses on performance and low garbage generation. It has a plugin architecture that makes it extensible and supports asynchronous logging based on LMAX Disruptor. -->
+        <!-- Source: https://mvnrepository.com/artifact/io.undertow/undertow-core -->
+        <!-- Description: The core module of Undertow, a lightweight and high-performance web server for Java. -->
+        <dependency>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-core</artifactId>
+            <version>${undertow.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+        <!-- Description: API for Apache Log4J, a highly configurable logging tool that focuses on performance and low garbage generation. It has a plugin architecture that makes it extensible and supports asynchronous logging based on LMAX Disruptor. -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>${log4j-api.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-        <!-- Implementation for Apache Log4J, a highly configurable logging tool that focuses on performance and low garbage generation. It has a plugin architecture that makes it extensible and supports asynchronous logging based on LMAX Disruptor. -->
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+        <!-- Description: Implementation for Apache Log4J, a highly configurable logging tool that focuses on performance and low garbage generation. It has a plugin architecture that makes it extensible and supports asynchronous logging based on LMAX Disruptor. -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j-core.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
-        <!-- The Apache Log4j SLF4J 2.0 API binding to Log4j 2 Core -->
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
+        <!-- Description: The Apache Log4j SLF4J 2.0 API binding to Log4j 2 Core -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j2-impl</artifactId>
             <version>${log4j-slf4j2-impl.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder -->
-        <!-- Components completing Maven Resolver for utilizing Maven POM and repository metadata. -->
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder -->
+        <!-- Description: Components completing Maven Resolver for utilizing Maven POM and repository metadata. -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model-builder</artifactId>
             <version>${maven-model-builder.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
-        <!-- General data-binding functionality for Jackson: works on core streaming API -->
+        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
+        <!-- Description: General data-binding functionality for Jackson: works on core streaming API -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-databind.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/tools.jackson.dataformat/jackson-dataformat-xml -->
-        <!-- Data format extension for Jackson to offer alternative support for serializing POJOs as XML and deserializing XML as POJOs. -->
+        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.dataformat/jackson-dataformat-xml -->
+        <!-- Description: Data format extension for Jackson to offer alternative support for serializing POJOs as XML and deserializing XML as POJOs. -->
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
@@ -156,7 +174,7 @@
         </dependency>
         <!-- Test dependencies -->
         <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
-        <!-- Module "junit-jupiter" of JUnit -->
+        <!-- Description: Module "junit-jupiter" of JUnit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -164,6 +182,7 @@
             <scope>test</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.jacoco/org.jacoco.agent -->
+        <!-- Description: JaCoCo Agent (aka Java Code Coverage) -->
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
@@ -174,7 +193,7 @@
 
     <build>
         <plugins>
-            <!-- https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
             <plugin>
               <groupId>io.takari.maven.plugins</groupId>
               <artifactId>takari-lifecycle-plugin</artifactId>
@@ -195,7 +214,7 @@
                 <verbose>true</verbose>
               </configuration>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -215,7 +234,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -232,7 +251,7 @@
                     <doclint>none</doclint>
                 </configuration>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.cyclonedx/cyclonedx-maven-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/org.cyclonedx/cyclonedx-maven-plugin -->
             <plugin>
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
@@ -325,7 +344,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -343,7 +362,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -383,7 +402,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
