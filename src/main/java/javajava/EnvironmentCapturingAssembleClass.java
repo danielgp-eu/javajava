@@ -1,5 +1,6 @@
 package javajava;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +8,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import oshi.SystemInfo;
 import oshi.SystemInfoFFM;
-import oshi.hardware.*;
+import oshi.hardware.Baseboard;
+import oshi.hardware.CentralProcessor;
+import oshi.hardware.ComputerSystem;
+import oshi.hardware.Display;
+import oshi.hardware.Firmware;
+import oshi.hardware.GlobalMemory;
+import oshi.hardware.GraphicsCard;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.NetworkIF;
+import oshi.hardware.PhysicalMemory;
+import oshi.hardware.Sensors;
 import oshi.software.os.FileSystem;
+import oshi.software.os.NetworkParams;
 import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
@@ -54,7 +66,7 @@ public final class EnvironmentCapturingAssembleClass {
      * @return String
      */
     private static String getHardwareDetails() {
-        final String strDetails = String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"Storage\":{%s},\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s}", EnvironmentHardwareClass.getDetailsAboutCentralPowerUnit(), EnvironmentHardwareClass.getDetailsAboutRandomAccessMemory(), EnvironmentSoftwareClass.getDetailsAboutAvailableStoragePartitions(), EnvironmentHardwareClass.getDetailsAboutGraphicCards(), EnvironmentHardwareClass.getDetailsAboutMonitor(), EnvironmentHardwareClass.getDetailsAboutNetworkInterfaces());
+        final String strDetails = String.format("\"Hardware\":{\"CPU\":%s,\"RAM\":%s,\"GPU(s)\":%s,\"Monitors\":%s, \"Network Interfaces\":%s,\"Storage\":{%s},\"System\":%s}", EnvironmentHardwareClass.getDetailsAboutCentralPowerUnit(), EnvironmentHardwareClass.getDetailsAboutRandomAccessMemory(), EnvironmentHardwareClass.getDetailsAboutGraphicCards(), EnvironmentHardwareClass.getDetailsAboutMonitor(), EnvironmentHardwareClass.getDetailsAboutNetworkInterfaces(), EnvironmentSoftwareClass.getDetailsAboutAvailableStoragePartitions(), EnvironmentHardwareClass.getDetailsAboutComputerSystem());
         final String strFeedback = LocalizationClass.getMessage("i18nAppInformationHardwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);
         return strDetails;
@@ -65,7 +77,7 @@ public final class EnvironmentCapturingAssembleClass {
      * @return String
      */
     private static String getSoftwareDetails() {
-        final String strDetails = String.format("\"Software\":{\"OS\":%s,\"Java\":%s,\"User\":%s}", EnvironmentSoftwareClass.getDetailsAboutOperatingSystem(), EnvironmentSoftwareClass.getDetailsAboutSoftwarePlatformJava(), EnvironmentSoftwareClass.getDetailsAboutSoftwareUser());
+        final String strDetails = String.format("\"Software\":{\"OS\":%s,\"Java\":%s,\"Network\":%s,\"User\":%s}", EnvironmentSoftwareClass.getDetailsAboutOperatingSystem(), EnvironmentSoftwareClass.getDetailsAboutSoftwarePlatformJava(), EnvironmentSoftwareClass.getDetailsAboutNetworkParameters(), EnvironmentSoftwareClass.getDetailsAboutSoftwareUser());
         final String strFeedback = LocalizationClass.getMessage("i18nAppInformationSoftwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedback);
         return strDetails;
@@ -107,6 +119,21 @@ public final class EnvironmentCapturingAssembleClass {
             }
             strJsonString.append(']'); // from Disk(s)
             return strJsonString.toString();
+        }
+
+        /**
+         * Network parameters details
+         * 
+         * @return String
+         */
+        public static String getDetailsAboutNetworkParameters() {
+            final NetworkParams networkParams = OshiUsageClass.OshiSoftware.getOshiNetworkParameters();
+            return JsonOperationsClass.getMapIntoJsonString(Map.of(
+                    "DNS Servers", String.join(", ", networkParams.getDnsServers()),
+                    "Domain Name", networkParams.getDomainName(),
+                    "Host Name", networkParams.getHostName(),
+                    "IPv4 Gateway", networkParams.getIpv4DefaultGateway(),
+                    "IPv6 Gateway", networkParams.getIpv6DefaultGateway()));
         }
 
         /**
@@ -239,10 +266,11 @@ public final class EnvironmentCapturingAssembleClass {
                 "Feature Flags", processor.getFeatureFlags().toString().replace("[", "[\"").replace(", ", "\",\"").replace("]", "\"]"),
                 "Family", procIdentif.getFamily(),
                 "Identifier", procIdentif.getIdentifier(),
-                "Local Processors", processor.getLogicalProcessorCount(),
+                "Logical Processors", processor.getLogicalProcessorCount(),
                 "Model", procIdentif.getModel(),
                 OshiUsageClass.STR_NAME, procIdentif.getName(),
-                "Physical", processor.getPhysicalProcessorCount()
+                "Physical Processors", processor.getPhysicalProcessorCount(),
+                "Maximum Frequency", FormatUtil.formatHertz(processor.getMaxFreq())
             ));
         }
 
@@ -269,6 +297,54 @@ public final class EnvironmentCapturingAssembleClass {
                 intCounter++;
             }
             return String.format("[%s]", strJsonString);
+        }
+
+        /**
+         * Computer System
+         * 
+         * @return details on computer system as JSON
+         */
+        public static String getDetailsAboutComputerSystem() {
+            final StringBuilder strJsonString = new StringBuilder(50);
+            final ComputerSystem computerSystem = OshiUsageClass.OshiHardware.getOshiComputerSystem();
+            final Baseboard baseboard = computerSystem.getBaseboard();
+            strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
+                "Manufacturer", computerSystem.getManufacturer(),
+                "Model", computerSystem.getModel(),
+                "Serial Number", computerSystem.getSerialNumber(),
+                "Firmware", getDetailsAboutComputerSystemFirmware(computerSystem),
+                "Mainboard", getDetailsAboutComputerSystemMotherBoard(computerSystem)
+            )));
+            return strJsonString.toString();
+        }
+
+        /**
+         * Computer System Firmware
+         * 
+         * @return details on computer firmware as JSON
+         */
+        private static String getDetailsAboutComputerSystemFirmware(final ComputerSystem computerSystem) {
+            final Firmware firmware = computerSystem.getFirmware();
+            return JsonOperationsClass.getMapIntoJsonString(Map.of(
+                    "Manufacturer", firmware.getManufacturer(),
+                    "Name", firmware.getName(),
+                    "Description", firmware.getDescription(),
+                    "Version", firmware.getVersion(),
+                    "Release Date", (firmware.getReleaseDate() == null ? "unknown" : firmware.getReleaseDate())));
+        }
+
+        /**
+         * Computer System Mother-board
+         * 
+         * @return details on computer mother-board as JSON
+         */
+        private static String getDetailsAboutComputerSystemMotherBoard(final ComputerSystem computerSystem) {
+            final Baseboard baseboard = computerSystem.getBaseboard();
+            return JsonOperationsClass.getMapIntoJsonString(Map.of(
+                    "Manufacturer", baseboard.getManufacturer(),
+                    "Model", baseboard.getModel(),
+                    "Version", baseboard.getVersion(),
+                    "Serial Number", baseboard.getSerialNumber()));
         }
 
         /**
@@ -308,9 +384,10 @@ public final class EnvironmentCapturingAssembleClass {
                 strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
                     OshiUsageClass.STR_NAME, net.getName(),
                     "Display Name", net.getDisplayName(),
-                    "MAC Address", net.getMacaddr(),
                     "IPv4", String.join(", ", net.getIPv4addr()),
                     "IPv6", String.join(", ", net.getIPv6addr()),
+                    "MAC Address", net.getMacaddr(),
+                    "MTU", net.getMTU(),
                     "Status", net.getIfOperStatus(),
                     "Speed", FormatUtil.formatBytes(net.getSpeed()),
                     "NDIS Physical Medium Type", NetworkTypesClass.getNetworkPhysicalMediumType(net.getNdisPhysicalMediumType())
@@ -329,10 +406,12 @@ public final class EnvironmentCapturingAssembleClass {
         public static String getDetailsAboutRandomAccessMemory() {
             final GlobalMemory globalMemory = OshiUsageClass.OshiHardware.getOshiMemory();
             final StringBuilder strJsonString = new StringBuilder();
-            strJsonString.append(String.format("{\"Total\":{\"Total\":\"%s\",\"Available\":\"%s\",\"Page Size\":\"%s\"}"
+            strJsonString.append(String.format("{\"Total\":{\"Total\":\"%s\",\"Available\":\"%s\",\"Page Size\":\"%s\",\"Swap Used\":\"%s\",\"Swap Total\":\"%s\"}"
                 , FormatUtil.formatBytes(globalMemory.getTotal())
                 , FormatUtil.formatBytes(globalMemory.getAvailable())
-                , FormatUtil.formatBytes(globalMemory.getPageSize())));
+                , FormatUtil.formatBytes(globalMemory.getPageSize())
+                , FormatUtil.formatBytes(globalMemory.getVirtualMemory().getSwapUsed())
+                , FormatUtil.formatBytes(globalMemory.getVirtualMemory().getSwapTotal())));
             final List<PhysicalMemory> physicalMemories = globalMemory.getPhysicalMemory();
             strJsonString.append(",\"Banks\":[");
             int intCounter = 0;
@@ -430,6 +509,13 @@ public final class EnvironmentCapturingAssembleClass {
              */
             private static HardwareAbstractionLayer getOshiHardware() {
                 return SYSTEM_INFO.getHardware();
+            }
+
+            /**
+             * Computer System info
+             */
+            public static ComputerSystem getOshiComputerSystem() {
+                return getOshiHardware().getComputerSystem();
             }
 
             /**
@@ -534,6 +620,14 @@ public final class EnvironmentCapturingAssembleClass {
              */
             public static String getOshiManufacturer() {
                 return getOshiSoftware().getManufacturer();
+            }
+
+            /**
+             * get NetworkParameters
+             * @return Network parameters
+             */
+            public static NetworkParams getOshiNetworkParameters() {
+                return getOshiSoftware().getNetworkParams();
             }
 
             /**
