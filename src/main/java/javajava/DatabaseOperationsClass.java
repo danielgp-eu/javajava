@@ -924,10 +924,6 @@ public final class DatabaseOperationsClass {
             properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
             properties.put("db", strDatabase);
             String authValue = propInstance.get("Authenticator").toString().replace("\"", "");
-            if (jdbcVersion.startsWith("4.0")
-                    && "externalbrowser".equalsIgnoreCase(authValue)) {
-                authValue = "EXTERNAL_BROWSER";
-            }
             properties.put("authenticator", authValue);
             properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
             properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
