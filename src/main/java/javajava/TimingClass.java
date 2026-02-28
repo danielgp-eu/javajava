@@ -29,30 +29,6 @@ public final class TimingClass {
      */
     /* default */ public static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
     /**
-     * String for internal ETL
-     */
-    private static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
-    /**
-     * String for Second
-     */
-    private static final String STR_SECOND = "Second";
-    /**
-     * String for internal ETL
-     */
-    private static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
-    /**
-     * 
-     */
-    private static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
-    /**
-     * String for internal ETL
-     */
-    private static final String STR_TWO = "TwoDigitNumber";
-    /**
-     * String for internal ETL
-     */
-    private static final String STR_TWO_NON_ZERO = "TwoDigitNumberOnlyIfGreaterThanZero";
-    /**
      * Map with predefined network physical types
      */
     private static final Map<String, String> TIME_FORMATS;
@@ -61,11 +37,11 @@ public final class TimingClass {
         // Initialize the concurrent map
         final Map<String, String> tempMap = new ConcurrentHashMap<>();
         tempMap.put("DotAndNineDigitNumber", ".%09d");
-        tempMap.put(STR_DOT_THREE, ".%03d");
-        tempMap.put(STR_TM_FRM_SP, " %02d %s");
-        tempMap.put(STR_SLMN_TWO, ":%02d");
-        tempMap.put(STR_TWO, "%02d");
-        tempMap.put(STR_TWO_NON_ZERO, "%02d");
+        tempMap.put(BasicStructuresClass.STR_DOT_THREE, ".%03d");
+        tempMap.put(BasicStructuresClass.STR_TM_FRM_SP, " %02d %s");
+        tempMap.put(BasicStructuresClass.STR_SLMN_TWO, ":%02d");
+        tempMap.put(BasicStructuresClass.STR_TWO, "%02d");
+        tempMap.put(BasicStructuresClass.STR_TWO_NON_ZERO, "%02d");
         // Make the map unmodifiable
         TIME_FORMATS = Collections.unmodifiableMap(tempMap);
     }
@@ -106,15 +82,15 @@ public final class TimingClass {
         String strFinalOne = null;
         switch (strRule) {
             case "HumanReadableTime":
-                final String strFinalRule = STR_TM_FRM_SP;
+                final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
                 arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
                 strFinalOne = "Nanosecond";
                 break;
             case "TimeClockClassic":
-                arrayStrings = new String[] {STR_TWO_NON_ZERO, STR_TWO, STR_SLMN_TWO};
+                arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};
                 break;
             case "TimeClock":
-                arrayStrings = new String[] {STR_TWO_NON_ZERO, STR_TWO, STR_SLMN_TWO, STR_DOT_THREE};
+                arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO, BasicStructuresClass.STR_DOT_THREE};
                 strFinalOne = "Millisecond";
                 break;
             default:
@@ -129,7 +105,7 @@ public final class TimingClass {
         return strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
                 .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
                 .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
-                .append(getDurationWithCustomRules(duration, STR_SECOND, arrayStrings[2]))
+                .append(getDurationWithCustomRules(duration, BasicStructuresClass.STR_SECOND, arrayStrings[2]))
                 .append(strFinalPart)
                 .toString()
                 .trim();
@@ -195,7 +171,7 @@ public final class TimingClass {
             case "Millisecond" -> duration.toMillisPart();
             case "Minute" -> duration.toMinutesPart();
             case "Nanosecond" -> duration.toNanosPart();
-            case STR_SECOND -> duration.toSecondsPart();
+            case BasicStructuresClass.STR_SECOND -> duration.toSecondsPart();
             default -> {
                 final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
@@ -222,7 +198,7 @@ public final class TimingClass {
             throw new UnsupportedOperationException(strFeedback);
         }
         String strReturn;
-        if (STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
+        if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
             strReturn = String.format(strFormats, lngNumber, LocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
         } else {
             strReturn = String.format(strFormats, lngNumber);

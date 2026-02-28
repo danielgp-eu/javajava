@@ -1,7 +1,10 @@
 package javajava;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -21,9 +24,77 @@ import java.util.stream.Collectors;
  */
 public final class BasicStructuresClass {
     /**
+     * string constant
+     */
+    public static final String STR_ACTV_PXLS = "Active Pixels";
+    /**
+     * String for internal ETL
+     */
+    public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
+    /**
+     * Manufacturer string
+     */
+    public static final String STR_MANUFACTURER = "Manufacturer";
+    /**
+     * Model string constant
+     */
+    public static final String STR_MODEL = "Model";
+    /**
+     * string constant
+     */
+    public static final String STR_MONITOR_NAME = "Monitor Name";
+    /**
+     * standard String
+     */
+    public static final String STR_NAME = "Name";
+    /**
+     * Named Character
+     */
+    public static final String STR_NAMED_PARAM = "NamedParameter";
+    /**
+     * string constant
+     */
+    public static final String STR_PHYSC_DIM = "Physical Dimensions";
+    /**
+     * string constant
+     */
+    public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
+    /**
      * Regular Expression for Prompt Parameters within SQL Query
      */
     public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
+    /**
+     * string constant
+     */
+    public static final String STR_RANGE_LMTS = "Range Limits";
+    /**
+     * String for Second
+     */
+    public static final String STR_SECOND = "Second";
+    /**
+     * String for internal ETL
+     */
+    public static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
+    /**
+     * string constant
+     */
+    public static final String STR_SRL_NUM = "Serial Number";
+    /**
+     * 
+     */
+    public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+    /**
+     * String for internal ETL
+     */
+    public static final String STR_TWO = "TwoDigitNumber";
+    /**
+     * String for internal ETL
+     */
+    public static final String STR_TWO_NON_ZERO = "TwoDigitNumberOnlyIfGreaterThanZero";
+    /**
+     * Version string
+     */
+    public static final String STR_VERSION = "Version";
 
     /**
      * Safely computes percentage
@@ -225,6 +296,37 @@ public final class BasicStructuresClass {
     }
 
     /**
+     * Project Properties Reader
+     */
+    public static final class PropertiesReaderClass {
+
+        /**
+         * get variable
+         * @param strVariables variables to pick
+         * @return Properties
+         */
+        public static Properties getVariableFromProjectProperties(final String propertyFileName, final String... strVariables) {
+            final Properties svProperties = new Properties();
+            try(InputStream inputStream = PropertiesReaderClass.class.getResourceAsStream(propertyFileName)) {
+                final Properties inProperties = new Properties();
+                inProperties.load(inputStream);
+                final List<String> arrayVariables = Arrays.asList(strVariables);
+                arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, inProperties.getProperty(crtVariable)));
+                if (!propertyFileName.startsWith("/META-INF/maven/")) {
+                    final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties);
+                    LogExposureClass.LOGGER.debug(strFeedback);
+                }
+            } catch (IOException ei) {
+                final Path ptPrjProps = Path.of(propertyFileName);
+                final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
+                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            }
+            return svProperties;
+        }
+
+    }
+
+    /**
      * Cleaning things
      */
     public static final class StringCleaningClass {
@@ -322,10 +424,6 @@ public final class BasicStructuresClass {
          * Single Question Mark Character
          */
         private static final String Q_MARK_PARAM = "SingleQuestionMarkCharacterParameter";
-        /**
-         * Named Character
-         */
-        private static final String NAMED_PARAM = "NamedParameter";
 
         /**
          * Convert Prompt Parameters into Named Parameters
@@ -341,7 +439,7 @@ public final class BasicStructuresClass {
                 for (final String currentPrmtName : listMatches) {
                     strFinalQ = strFinalQ.replace(currentPrmtName, Character.toString(63));
                 }
-            } else if (NAMED_PARAM.equalsIgnoreCase(type)) {
+            } else if (STR_NAMED_PARAM.equalsIgnoreCase(type)) {
                 for (final String currentPrmtName : listMatches) {
                     strFinalQ = strFinalQ.replace(currentPrmtName, convertSinglePromptParameterIntoNamedParameter(currentPrmtName));
                 }
@@ -357,7 +455,7 @@ public final class BasicStructuresClass {
          * @return query with named parameters
          */
         public static String convertPromptParametersIntoNamedParameters(final String strOriginalQ) {
-            return convertPromptParameters(strOriginalQ, NAMED_PARAM);
+            return convertPromptParameters(strOriginalQ, STR_NAMED_PARAM);
         }
 
         /**

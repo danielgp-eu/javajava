@@ -3,8 +3,6 @@ package javajava;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -225,7 +223,7 @@ public final class ShellingClass {
             if (crtOperatingSys.startsWith("Windows")) {
                 try {
                     final String[] varsToPick = {"osWindowsSystem32Path", "powerShellBinary"};
-                    final Properties svProperties = PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
+                    final Properties svProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
                     setPowerShellFile(svProperties.get("powerShellBinary").toString());
                     validatePathEnvironmentVariable();
                     final String[] arrayCommand = buildWindowsApplicationCommandSafely(strFileName);
@@ -279,37 +277,6 @@ public final class ShellingClass {
          */
         private PowerShellExecutionClass() {
             // intentionally left blank
-        }
-
-    }
-
-    /**
-     * Project Properties Reader
-     */
-    private static final class PropertiesReaderClass {
-
-        /**
-         * get variable
-         * @param strVariables variables to pick
-         * @return Properties
-         */
-        public static Properties getVariableFromProjectProperties(final String propertyFileName, final String... strVariables) {
-            final Properties svProperties = new Properties();
-            try(InputStream inputStream = PropertiesReaderClass.class.getResourceAsStream(propertyFileName)) {
-                final Properties inProperties = new Properties();
-                inProperties.load(inputStream);
-                final List<String> arrayVariables = Arrays.asList(strVariables);
-                arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, inProperties.getProperty(crtVariable)));
-                if (!propertyFileName.startsWith("/META-INF/maven/")) {
-                    final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties);
-                    LogExposureClass.LOGGER.debug(strFeedback);
-                }
-            } catch (IOException ei) {
-                final Path ptPrjProps = Path.of(propertyFileName);
-                final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
-                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-            }
-            return svProperties;
         }
 
     }

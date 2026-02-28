@@ -105,7 +105,7 @@ public final class FileOperationsClass {
             LogExposureClass.LOGGER.debug(strFeedback);
             String strReturn = "";
             try {
-                strReturn = new String(Files.readAllBytes(Path.of(strFileName)));
+                strReturn = Files.readString(Path.of(strFileName));
             } catch (IOException e) {
                 final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nFileContentError"), strFileName, Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -123,7 +123,7 @@ public final class FileOperationsClass {
             final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoString"), strFileName);
             LogExposureClass.LOGGER.debug(strFeedback);
             try (InputStream iStream = ContentReadingClass.class.getResourceAsStream(strFileName);
-                    InputStreamReader inputStreamReader = new InputStreamReader(iStream);
+                    InputStreamReader inputStreamReader = new InputStreamReader(iStream, StandardCharsets.UTF_8);
                     BufferedReader bReader = new BufferedReader(inputStreamReader)) {
                 strContent = bReader.readAllAsString();
                 final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), strFileName);

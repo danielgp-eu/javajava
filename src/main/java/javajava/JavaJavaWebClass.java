@@ -1,6 +1,7 @@
 package javajava;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,14 +27,6 @@ import io.undertow.util.Headers;
  * Web interface class
  */
 public final class JavaJavaWebClass {
-    /**
-     * Listening Internet Protocol address
-     */
-    private static String listeningIp = "0.0.0.0";
-    /**
-     * Listening port number
-     */
-    private static int listeningPort = 8080;
     /**
      * Path for Web templates
      */
@@ -104,8 +97,11 @@ public final class JavaJavaWebClass {
                     .addPrefixPath("/" + pathStaticB, staticHandlerB)
                     .addPrefixPath("/" + pathStaticF, staticHandlerF)
                     .addPrefixPath("/", roottHandler);
+            final String[] varsToPick = {"webIp", "wepPort"};
+            final Properties webProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
             final Undertow.Builder builder = Undertow.builder()
-                    .addHttpListener(listeningPort, listeningIp)
+                    .addHttpListener(Integer.parseInt(webProperties.get("wepPort").toString()),
+                            webProperties.get("webIp").toString())
                     // Increase worker threads based on your CPU cores
                     //.setWorkerThreads(Runtime.getRuntime().availableProcessors() * 8)
                     .setHandler(routesHandler);

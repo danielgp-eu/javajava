@@ -812,10 +812,6 @@ public final class DatabaseOperationsClass {
          * standard String
          */
         public static final String STR_ROLES = "Roles";
-        /**
-         * Snowflake JDBC version
-         */
-        private static String jdbcVersion;
 
         /**
          * Snowflake Bootstrap
@@ -907,7 +903,6 @@ public final class DatabaseOperationsClass {
             return getSnowflakeProperties(strDatabase, propInstance);
         }
 
-
         /**
          * build Snowflake Properties
          *
@@ -923,8 +918,7 @@ public final class DatabaseOperationsClass {
             }
             properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
             properties.put("db", strDatabase);
-            String authValue = propInstance.get("Authenticator").toString().replace("\"", "");
-            properties.put("authenticator", authValue);
+            properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
             properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
             properties.put("schema", propInstance.get("Schema").toString().replace("\"", ""));
             properties.put("warehouse", propInstance.get("Warehouse").toString().replace("\"", ""));
@@ -938,7 +932,7 @@ public final class DatabaseOperationsClass {
          *  strDriverName = "net.snowflake.client.api.driver.SnowflakeDriver";
          */
         private static void loadSnowflakeDriver() {
-            jdbcVersion = getSnowflakeJdbcDriverVersion();
+            final String jdbcVersion = getSnowflakeJdbcDriverVersion();
             final String strDriverName = "net.snowflake.client.jdbc.SnowflakeDriver";
             final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLdriverLoadingAttempt"), STR_SNOWFLAKE, strDriverName);
             LogExposureClass.LOGGER.debug(strFeedback);
