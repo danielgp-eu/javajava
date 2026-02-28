@@ -50,7 +50,7 @@
         <sonar.organization>danielgp-eu</sonar.organization>
         <!-- Dependencies versions -->
         <icu4j.version>78.2</icu4j.version>
-        <jackson-databind.version>3.0.4</jackson-databind.version>
+        <jackson-databind.version>3.1.0</jackson-databind.version>
         <jackson-dataformat-xml.version>3.0.4</jackson-dataformat-xml.version>
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
