@@ -84,6 +84,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
     /**
+     * string constant
+     */
+    public static final String STR_TM_HUMAN = "HumanReadableTime";
+    /**
      * String for internal ETL
      */
     public static final String STR_TWO = "TwoDigitNumber";

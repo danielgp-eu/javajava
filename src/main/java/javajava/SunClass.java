@@ -36,49 +36,34 @@ public final class SunClass {
      * Zone Name variable
      */
     private static String internalZoneName;
+    /**
+     * Properties for output 
+     */
+    private static Properties outProperties = new Properties();
 
     /**
      * Calculates SunRize and SunSet for a given location
-     * @param inLatitude
-     * @param inLongitude
-     * @param inZoneName
+     * @param crtLocationDetail location detail as String
      * @return Properties
      */
     public static Properties getSunRiseAndSet(final String crtLocationDetail) {
-        final String[] arrayLocationPieces = crtLocationDetail.split(",");
-        final Properties outProperties = new Properties();
+        final String[] arrayLocPieces = crtLocationDetail.split(",");
         final ZonedDateTime nowZ = ZonedDateTime.now(internalZoneId);
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z");
-        outProperties.put("Location", arrayLocationPieces[0]);
-        outProperties.put("Country Name", arrayLocationPieces[3]);
-        outProperties.put("Division Name", arrayLocationPieces[2]);
-        outProperties.put("Place Name", arrayLocationPieces[1]);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS z");
+        outProperties.put("Location", arrayLocPieces[0]);
+        outProperties.put("Country Name", arrayLocPieces[3]);
+        outProperties.put("Division Name", arrayLocPieces[2]);
+        outProperties.put("Place Name", arrayLocPieces[1]);
         outProperties.put("Zone Name", internalZoneName);
         outProperties.put("Local Timestamp", nowZ.format(formatter));
-        final LocalDate dateOnly = nowZ.toLocalDate();
-        final ZonedDateTime sunrise = calculateSunSetOrRise(dateOnly, true);
-        final DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss z");
+        final ZonedDateTime sunrise = calculateSunSetOrRise(nowZ, true);
+        final DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSS z");
         outProperties.put("Sunrise", sunrise.format(formatterTime));
-        final ZonedDateTime sunset = calculateSunSetOrRise(dateOnly, false);
+        final ZonedDateTime sunset = calculateSunSetOrRise(nowZ, false);
         outProperties.put("Sunset", sunset.format(formatterTime));
         final Duration objDurationSun = Duration.between(sunrise, sunset);
-        outProperties.put("Daylight time", String.format("%s aka. %s", objDurationSun, TimingClass.convertNanosecondsIntoSomething(objDurationSun, "HumanReadableTime")));
-        if (nowZ.isBefore(sunrise)) {
-            outProperties.put("Sun situation", "DOWN");
-            outProperties.put("Current Situation", "Before sunrize");
-            final Duration objDuration = Duration.between(nowZ, sunrise);
-            outProperties.put("Time until next event", String.format("%s aka. %s", objDuration, TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")));
-        } else if (nowZ.isBefore(sunset)) {
-            outProperties.put("Sun situation", "UP");
-            outProperties.put("Current Situation", "In between sunrize and sunset");
-            final Duration objDuration = Duration.between(nowZ, sunset);
-            outProperties.put("Time until next event", String.format("%s aka. %s", objDuration, TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")));
-        } else {
-            outProperties.put("Sun situation", "DOWN");
-            outProperties.put("Current Situation", "After sunset");
-            final Duration objDuration = Duration.between(sunset, nowZ);
-            outProperties.put("Time since last event", String.format("%s aka. %s", objDuration, TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")));
-        }
+        outProperties.put("Daylight time", TimingClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
+        enhanceSunStatistics(nowZ, sunrise, sunset);
         return outProperties;
     }
 
@@ -88,7 +73,8 @@ public final class SunClass {
      * @param isSunrise boolean if Sunrise 
      * @return ZonedDateTime
      */
-    private static ZonedDateTime calculateSunSetOrRise(final LocalDate inLocalDate, final boolean isSunrise) {
+    private static ZonedDateTime calculateSunSetOrRise(final ZonedDateTime inNowZ, final boolean isSunrise) {
+        final LocalDate inLocalDate = inNowZ.toLocalDate();
         final int dayOfYear = inLocalDate.getDayOfYear();
         // 1. Convert longitude to hour value and estimate time
         final double lonHour = dblLongitude / 15.0;
@@ -126,6 +112,51 @@ public final class SunClass {
             outZonedDateTime = ZonedDateTime.of(inLocalDate, finalTime, ZoneOffset.UTC).withZoneSameInstant(internalZoneId);
         }
         return outZonedDateTime;
+    }
+
+    /**
+     * Enhances sun position details
+     * @param nowZ
+     * @param sunrise
+     * @param sunset
+     */
+    private static void enhanceSunStatistics(final ZonedDateTime nowZ, final ZonedDateTime sunrise, final ZonedDateTime sunset) {
+        final Duration objDurationPrior;
+        final Duration objDurationNext;
+        String strSunSituation = "DOWN";
+        String strCrtSituation = "After sunset";
+        String strPriorEvent = "Sunset since %s";
+        String strNextEvent = "Sunrise in %s";
+        final ZonedDateTime yesterdayZ = nowZ.minusDays(1);
+        final ZonedDateTime sunsetPrior = calculateSunSetOrRise(yesterdayZ, false);
+        final ZonedDateTime tomorrowZ = nowZ.plusDays(1);
+        final ZonedDateTime sunriseNext = calculateSunSetOrRise(tomorrowZ, true);
+        if (nowZ.isBefore(sunrise)) {
+            strSunSituation = "DOWN";
+            strCrtSituation = "Before sunrize";
+            strPriorEvent = "Sunset since %s";
+            strNextEvent = "Sunrise in %s";
+            objDurationPrior = Duration.between(sunsetPrior, nowZ);
+            objDurationNext = Duration.between(nowZ, sunrise);
+        } else if (nowZ.isBefore(sunset)) {
+            strSunSituation = "UP";
+            strCrtSituation = "In between sunrize and sunset";
+            strPriorEvent = "Sunrise since %s";
+            strNextEvent = "Sunset in %s";
+            objDurationPrior = Duration.between(sunrise, nowZ);
+            objDurationNext = Duration.between(nowZ, sunset);
+        } else {
+            objDurationPrior = Duration.between(sunset, nowZ);
+            objDurationNext = Duration.between(nowZ, sunriseNext);
+        }
+        outProperties.put("Sun situation", strSunSituation);
+        outProperties.put("Current Situation", strCrtSituation);
+        outProperties.put("Prior event", String.format(strPriorEvent, TimingClass.convertNanosecondsIntoSomething(objDurationPrior, BasicStructuresClass.STR_TM_HUMAN)));
+        outProperties.put("Next event", String.format(strNextEvent, TimingClass.convertNanosecondsIntoSomething(objDurationNext, BasicStructuresClass.STR_TM_HUMAN)));
+        final Duration objDurationPriorN = Duration.between(sunsetPrior, sunrise);
+        outProperties.put("Prior night", TimingClass.convertNanosecondsIntoSomething(objDurationPriorN, BasicStructuresClass.STR_TM_HUMAN));
+        final Duration objDurationNextN = Duration.between(sunset, sunriseNext);
+        outProperties.put("Next night", TimingClass.convertNanosecondsIntoSomething(objDurationNextN, BasicStructuresClass.STR_TM_HUMAN));
     }
 
     /**
