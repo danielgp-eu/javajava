@@ -324,6 +324,10 @@ public final class BasicStructuresClass {
             return svProperties;
         }
 
+        private PropertiesReaderClass() {
+            // intentionally left open
+        }
+
     }
 
     /**
