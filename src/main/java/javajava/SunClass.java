@@ -54,7 +54,6 @@ public final class SunClass {
         outProperties.put("Country Name", arrayLocPieces[3]);
         outProperties.put("Division Name", arrayLocPieces[2]);
         outProperties.put("Place Name", arrayLocPieces[1]);
-        outProperties.put("Zone Name", internalZoneName);
         outProperties.put("Local Timestamp", nowZ.format(formatter));
         final ZonedDateTime sunrise = calculateSunSetOrRise(nowZ, true);
         final DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSS z");
@@ -165,6 +164,7 @@ public final class SunClass {
      */
     public static void setLatitude(final double inLatitude) {
         dblLatitude = inLatitude;
+        outProperties.put("Latitude", dblLatitude);
     }
 
     /**
@@ -173,6 +173,7 @@ public final class SunClass {
      */
     public static void setLongitude(final double inLongitude) {
         dblLongitude = inLongitude;
+        outProperties.put("Longitude", dblLongitude);
     }
 
     /**
@@ -182,6 +183,7 @@ public final class SunClass {
     public static void setZoneId(final String inZoneName) {
         try {
             internalZoneName = inZoneName;
+            outProperties.put("Zone Name", inZoneName);
             // Pre-cache available IDs for high-performance lookup
             // private static final Set<String> AVAILABLE_IDS = ZoneId.getAvailableZoneIds();
             final ZoneId zoneId = ZoneId.of(inZoneName);
