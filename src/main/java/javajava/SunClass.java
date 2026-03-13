@@ -33,10 +33,6 @@ public final class SunClass {
      */
     private static ZoneId internalZoneId;
     /**
-     * Zone Name variable
-     */
-    private static String internalZoneName;
-    /**
      * Properties for output 
      */
     private static Properties outProperties = new Properties();
@@ -182,7 +178,6 @@ public final class SunClass {
      */
     public static void setZoneId(final String inZoneName) {
         try {
-            internalZoneName = inZoneName;
             outProperties.put("Zone Name", inZoneName);
             // Pre-cache available IDs for high-performance lookup
             // private static final Set<String> AVAILABLE_IDS = ZoneId.getAvailableZoneIds();
