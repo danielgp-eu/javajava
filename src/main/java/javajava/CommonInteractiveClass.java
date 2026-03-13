@@ -13,17 +13,9 @@ import picocli.CommandLine.Option;
  */
 public final class CommonInteractiveClass {
     /**
-     * arity one or more
-     */
-    /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
-    /**
      * boolean Auto Locale
      */
     private static boolean bolAutoLocale;
-    /**
-     * default Locale
-     */
-    public static final String DEFAULT_LOCALE = "en-US";
     /**
      * Exit Code
      */
@@ -42,7 +34,7 @@ public final class CommonInteractiveClass {
             final String userLocale = LocalizationClass.getUserLocale();
             LocalizationClass.setLocaleByString(userLocale);
         } else {
-            LocalizationClass.setLocaleByString(DEFAULT_LOCALE);
+            LocalizationClass.setLocaleByString(BasicStructuresClass.DEFAULT_LOCALE);
         }
     }
 
@@ -124,7 +116,7 @@ public final class CommonInteractiveClass {
         @Option(
                 names = {"-fldNm", "--folderName"},
                 description = "Folder Name in scope",
-                arity = ARITY_ONE_OR_MORE,
+                arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
                 required = true)
         private static String[] strFolderNames;
 
@@ -154,7 +146,7 @@ public final class CommonInteractiveClass {
         @CommandLine.Option(
                 names = {"-if", "--inFileName"},
                 description = "Input file(s) to consider",
-                arity = "1..*",
+                arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
                 required = true)
         private String[] strInFileNames;
 

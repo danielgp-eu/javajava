@@ -17,10 +17,6 @@ public final class LocalizationClass {
      */
     private static ResourceBundle bundle;
     /**
-     * locale file prefix
-     */
-    private static final String DEFAULT_LOCALE = "en-US";
-    /**
      * locale folder
      */
     private static final String MESSAGES_FOLDER = "Locale/JavaJavaBundle/";
@@ -132,8 +128,8 @@ public final class LocalizationClass {
             Locale.setDefault(lclRequested);
             strBuilder.append(String.format("Requested localization to %s is supported and has been successfully set!", strLocale));
         } else {
-            Locale.setDefault(Locale.forLanguageTag(DEFAULT_LOCALE));
-            strBuilder.append(String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, DEFAULT_LOCALE));
+            Locale.setDefault(Locale.forLanguageTag(BasicStructuresClass.DEFAULT_LOCALE));
+            strBuilder.append(String.format("Requested localization %s is NOT supported, hence default one (which is %s) has been successfully set!", strLocale, BasicStructuresClass.DEFAULT_LOCALE));
         }
         strBuilder.append(strLineSep);
         final String strFeedback = strBuilder.toString();

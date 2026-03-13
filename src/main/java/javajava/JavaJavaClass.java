@@ -261,7 +261,7 @@ class CalculateSunriseAndSunset implements Runnable {
     @CommandLine.Option(
             names = {"-lon", "--longitude"},
             description = "Longitude",
-            arity = "1..*",
+            arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
             required = true)
     private double[] dblLongitude;
 
@@ -271,7 +271,7 @@ class CalculateSunriseAndSunset implements Runnable {
     @CommandLine.Option(
             names = {"-lat", "--latitude"},
             description = "Latitude",
-            arity = "1..*",
+            arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
             required = true)
     private double[] dblLatitude;
 
@@ -281,7 +281,7 @@ class CalculateSunriseAndSunset implements Runnable {
     @CommandLine.Option(
             names = {"-zn", "--zoneName"},
             description = "Zone Name",
-            arity = "1..*",
+            arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
             required = true)
     private String[] strZoneName;
 
@@ -291,7 +291,7 @@ class CalculateSunriseAndSunset implements Runnable {
     @CommandLine.Option(
             names = {"-ld", "--locationDetail"},
             description = "Location details: name,country,division,town",
-            arity = "1..*",
+            arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
             required = true)
     private String[] strLocationDetail;
 
@@ -564,7 +564,7 @@ class GetInformationFromDatabase implements Runnable {
     @CommandLine.Option(
         names = { "-infTp", "--informationType" },
         description = "Type of Information",
-        arity = "1..*",
+        arity = BasicStructuresClass.ARITY_ONE_OR_MORE,
         required = true,
         completionCandidates = InfoTypes.class)
     private String strInfoType;

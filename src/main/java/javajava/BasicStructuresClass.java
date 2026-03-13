@@ -24,6 +24,14 @@ import java.util.stream.Collectors;
  */
 public final class BasicStructuresClass {
     /**
+     * arity one or more
+     */
+    /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
+    /**
+     * default Locale
+     */
+    public static final String DEFAULT_LOCALE = "en-US";
+    /**
      * string constant
      */
     public static final String STR_ACTV_PXLS = "Active Pixels";
