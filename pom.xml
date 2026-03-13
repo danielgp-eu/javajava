@@ -58,7 +58,7 @@
         <log4j-api.version>2.25.3</log4j-api.version>
         <log4j-core.version>2.25.3</log4j-core.version>
         <log4j-slf4j2-impl.version>2.25.3</log4j-slf4j2-impl.version>
-        <maven-model-builder.version>3.9.13</maven-model-builder.version>
+        <maven-model-builder.version>3.9.14</maven-model-builder.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
         <oshi-core-java25.version>6.10.0</oshi-core-java25.version>
         <picocli.version>4.7.7</picocli.version>
