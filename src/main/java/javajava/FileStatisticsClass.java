@@ -31,6 +31,10 @@ public final class FileStatisticsClass {
      * Checksum algorithms
      */
     private static String[] listAlgorithms = {"SHA-256", "SHA-512", "SHA3-256", "SHA3-512"};
+    /**
+     * file statistics
+     */
+    private static List<Properties> fileStatistics = new ArrayList<>();
 
     /**
      * A simple record to hold our results
@@ -57,7 +61,7 @@ public final class FileStatisticsClass {
                 writer.write(';' + crtAlgo);
             }
             writer.newLine();
-            gatherFileStatisticsFromFolder(strFolderName, writer);
+            gatherFileStatisticsFromFolderIntoFile(strFolderName, writer);
         } catch (IOException ei) {
             LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
         }
@@ -97,19 +101,14 @@ public final class FileStatisticsClass {
     /**
      * Compute all known checksums for a given file
      * @param file input file
-     * @param writer BufferedWriter to write the results
+     * @return Properties checksum values
      */
-    private static void computeFileMultipleChecksums(final Path file, final BufferedWriter writer) {
+    private static Properties computeFileMultipleChecksumsIntoProperties(final Path file) {
+        final Properties fileProperties = new Properties();
         try(ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
             executor.submit(() -> {
                 for (final String algo : listAlgorithms) {
-                    final String crtChecksum = computeSingleChecksum(file, algo);
-                    try {
-                        writer.write(';' + crtChecksum);
-                    } catch (IOException ei) {
-                        final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, "*", file);
-                        LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
-                    }
+                    fileProperties.put(algo, computeSingleChecksum(file, algo));
                 }
             });
             executor.shutdown();
@@ -120,31 +119,62 @@ public final class FileStatisticsClass {
             /* Clean up whatever needs to be handled before interrupting  */
             Thread.currentThread().interrupt();
         }
+        return fileProperties;
     }
 
     /**
      * performs statistics for all files within a given folder 
      * @param strFolderName input folder name
      */
-    private static void gatherFileStatisticsFromFolder(final String strFolderName, final BufferedWriter writer) {
+    private static void gatherFileStatisticsFromFolder(final String strFolderName) {
         final Path folder = Paths.get(strFolderName);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
             for (final Path file : stream) {
                 if (Files.isDirectory(file)) {
-                    gatherFileStatisticsFromFolder(file.toString(), writer);
+                    gatherFileStatisticsFromFolder(file.toString());
                 } else if (Files.isRegularFile(file)) {
-                    writer.write(file.getParent().toString()
-                            + ';' + file.getFileName().toString()
-                            + ';' + file.toFile().getTotalSpace()
-                            + ';' + TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file));
-                    computeFileMultipleChecksums(file, writer);
-                    writer.newLine();
+                    fileStatistics.add(getSingleFileStatistic(file));
                 }
             }
         } catch (IOException ei) {
             final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, "*", strFolderName);
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
+    }
+
+    /**
+     * performs statistics for all files within a given folder 
+     * @param strFolderName input folder name
+     */
+    private static void gatherFileStatisticsFromFolderIntoFile(final String strFolderName, final BufferedWriter writer) {
+        final List<Properties> crtFileStatistics = getFileStatisticsIntoMap(strFolderName);
+        crtFileStatistics.forEach(fileProperties -> {
+            try {
+                writer.write(fileProperties.get("Folder").toString()
+                        + ';' + fileProperties.get("File").toString()
+                        + ';' + fileProperties.get("Size").toString()
+                        + ';' + fileProperties.get("Last Modified Time").toString());
+                for (final String algo : listAlgorithms) {
+                    writer.write(';' + fileProperties.get(algo).toString());
+                }
+                writer.newLine();
+            } catch (IOException ei) {
+                final String strFeedback = "Error writing files statistics";
+                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            }
+        });
+    }
+
+    /**
+     * performs statistics for all files within a given folder 
+     * @param strFolderName input folder name
+     */
+    public static List<Properties> getFileStatisticsIntoMap(final String strFolderName) {
+        if (!fileStatistics.isEmpty()) {
+            fileStatistics.clear();
+        }
+        gatherFileStatisticsFromFolder(strFolderName);
+        return fileStatistics;
     }
 
     /**
@@ -183,6 +213,21 @@ public final class FileStatisticsClass {
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return pathProps;
+    }
+
+    /**
+     * Determining single file statistics
+     * @param file in scope
+     * @return Properties with relevant statistics
+     */
+    private static Properties getSingleFileStatistic(final Path file) {
+        final Properties fileProperties = new Properties();
+        fileProperties.put("Folder", file.getParent().toString());
+        fileProperties.put("File", file.getFileName().toString());
+        fileProperties.put("Size", file.toFile().length());
+        fileProperties.put("Last Modified Time", TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file));
+        fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
+        return fileProperties;
     }
 
     /**
