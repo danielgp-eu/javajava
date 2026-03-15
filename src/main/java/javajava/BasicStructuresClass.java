@@ -88,6 +88,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_SRL_NUM = "Serial Number";
     /**
+     * Database SQLite
+     */
+    public static final String STR_SQLITE = "SQLite";
+    /**
      * 
      */
     public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";

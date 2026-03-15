@@ -20,6 +20,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.sqlite.Function;
 
 import tools.jackson.databind.JsonNode;
 
@@ -798,6 +802,52 @@ public final class DatabaseOperationsClass {
         private SpecificMySql() {
             // intentionally blank
         }
+    }
+
+    /**
+     * SQLite methods
+     */
+    public static final class SpecificSqLiteClass {
+
+        /**
+         * Initiates a SQLite connection
+         * 
+         * @param strSqLiteFile file with SQLite database
+         * @return Connection
+         */
+        public static Connection getSqLiteConnection(final String strSqLiteFile) {
+            final String strConnection = "jdbc:sqlite:" + strSqLiteFile.replace("\\", "/");
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationAttemptLight"), BasicStructuresClass.STR_SQLITE, strSqLiteFile, strConnection);
+            LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
+            Connection connection = null;
+            try {
+                connection = DriverManager.getConnection(strConnection);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationSuccessLight"), BasicStructuresClass.STR_SQLITE, strSqLiteFile);
+                LogExposureClass.LOGGER.debug(strFeedbackOk);
+                Function.create(connection, "REGEXP_LIKE", new Function() {
+                    @Override
+                    protected void xFunc() throws SQLException {
+                        final String text = value_text(0);
+                        final String pattern = value_text(1);
+                        final Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+                        final Matcher matcher = regex.matcher(text);
+                        result(matcher.find() ? 1 : 0);
+                    }
+                });
+            } catch(SQLException e) {
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
+                LogExposureClass.LOGGER.debug(strFeedbackErr);
+            }
+            return connection;
+        }
+
+        /**
+         * constructor
+         */
+        private SpecificSqLiteClass() {
+            // empty constructor
+        }
+
     }
 
     /**
