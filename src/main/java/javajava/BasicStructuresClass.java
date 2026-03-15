@@ -60,6 +60,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_NAMED_PARAM = "NamedParameter";
     /**
+     * One as string
+     */
+    public static final String STR_ONE = "1";
+    /**
      * string constant
      */
     public static final String STR_PHYSC_DIM = "Physical Dimensions";
@@ -75,6 +79,10 @@ public final class BasicStructuresClass {
      * string constant
      */
     public static final String STR_RANGE_LMTS = "Range Limits";
+    /**
+     * string constant
+     */
+    public static final String STR_ROW_STYLE = "RowStyle";
     /**
      * String for Second
      */
