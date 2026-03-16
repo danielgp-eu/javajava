@@ -62,7 +62,7 @@
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
         <oshi-core-java25.version>6.10.0</oshi-core-java25.version>
         <picocli.version>4.7.7</picocli.version>
-        <sqlite-jdbc.version>3.51.2.0</sqlite-jdbc.version>
+        <sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
         <undertow.version>2.3.23.Final</undertow.version>
         <!-- Build Plugin versions -->
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
