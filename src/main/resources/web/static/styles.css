@@ -13,7 +13,7 @@ body {
     width: 100%;
 }
 
-footer, header, nav ul {
+footer, header {
     background: rgba(0, 227, 151, 0.75)!important;
 }
 
@@ -46,6 +46,7 @@ main {
 }
 
 nav ul {
+    background: rgba(0, 227, 151, 1)!important;
     height: 100%;
     list-style-type: none;
     margin: 0rem;

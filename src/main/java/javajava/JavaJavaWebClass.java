@@ -137,12 +137,17 @@ public final class JavaJavaWebClass {
          * @return String aging
          */
         private static String calculateAging(final String agingDays) {
-            return switch(agingDays) {
-                case "0" -> "TODAY";
-                case "1" -> "YESTERDAY";
-                case "2" -> "the day before yesterday";
-                default -> agingDays + " days ago";
-            };
+            String strAging = "";
+            if (!agingDays.isEmpty()) {
+                final int intAging = Integer.parseInt(agingDays);
+                strAging = switch(intAging) {
+                    case 0 -> "TODAY";
+                    case 1 -> "YESTERDAY";
+                    case 2 -> "the day before yesterday";
+                    default -> agingDays + " days ago";
+                };
+            }
+            return strAging;
         }
 
         /**
@@ -157,7 +162,7 @@ public final class JavaJavaWebClass {
                 newProperties.put("Organization", String.format("%s<div style=\"text-align:right;\">[%s]</div>", recordProperties.get("OrganizationName"), recordProperties.get("OrganizationId")));
                 newProperties.put("Product", String.format("<a href=\"%s\" target=\"_blank\"><span style=\"float:left;\">%s<br/>[%s]</span><span style=\"float:right;text-align:right;\">%s<br/>[%s]</span></a>", recordProperties.get("Releases"), recordProperties.get("ProductName"), recordProperties.get("ProductId"), recordProperties.get("BranchName"), recordProperties.get("BranchId")));
                 newProperties.put("Version", String.format("%s<div style=\"text-align:right;\">[%s]</div>", recordProperties.get("Latest release version"), recordProperties.get("VersionId")));
-                final String agingDays = recordProperties.get("Latest release aging").toString().replaceAll(".0", ""); 
+                final String agingDays = recordProperties.get("Latest release aging").toString().replaceAll("\\.0", ""); 
                 newProperties.put("Date", String.format("%s<br>==> %s", recordProperties.get("Latest release date"), calculateAging(agingDays)));
                 newProperties.put("Files", String.format("%s [%s]<br/>==> %s [%s]", recordProperties.get("File Kit Name"), recordProperties.get("File Kit Id"), recordProperties.get("File Installed Name"), recordProperties.get("File Installed Id")));
                 newProperties.put("Profile", recordProperties.get("Profile Name"));
