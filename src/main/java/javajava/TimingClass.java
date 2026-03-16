@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.TextStyle;
+import java.time.temporal.ChronoField;
 import java.time.temporal.WeekFields;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +62,8 @@ public final class TimingClass {
             final Instant instant = Instant.ofEpochMilli(modifTime);
             // Convert to LocalDateTime in system default zone
             final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-            lastModifTime = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME).replace('T', ' ');
+            DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+            lastModifTime = dateTime.format(fixedFormatter);
         } catch (IOException ei) {
             final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileFindingError"), file.getParent(), file.getFileName());
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));

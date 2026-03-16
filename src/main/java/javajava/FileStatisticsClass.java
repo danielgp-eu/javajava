@@ -224,7 +224,7 @@ public final class FileStatisticsClass {
         final Properties fileProperties = new Properties();
         fileProperties.put("Folder", file.getParent().toString());
         fileProperties.put("File", file.getFileName().toString());
-        fileProperties.put("Size", file.toFile().length());
+        fileProperties.put("Size [bytes]", file.toFile().length());
         fileProperties.put("Last Modified Time", TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file));
         fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
         return fileProperties;
