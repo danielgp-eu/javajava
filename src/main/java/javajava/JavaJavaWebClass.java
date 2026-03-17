@@ -143,20 +143,21 @@ public final class JavaJavaWebClass {
      */
     private static String getRememberKey(final Properties objFeatures) {
         String strRememberKey = "";
-        if (objFeatures.containsKey("New Tab and Table on column value change")) {
-            strRememberKey = objFeatures.get("New Tab and Table on column value change").toString();
+        if (objFeatures.containsKey(BasicStructuresClass.STR_NEW_TAB)) {
+            strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
         }
         return strRememberKey;
     }
 
     /**
-     * expose Software Release details from internal DB
-     * @return String software releases details
+     * Outputs file statistics into a HTML table
+     * @return String
      */
-    public static String getSoftwareReleasesIntoHtml() {
+    public static String getEnvironmentDetailsAsHtmlTable() {
         final Properties objFeatures = new Properties();
-        objFeatures.put("New Tab and Table on column value change", "Profile");
-        return HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(SoftwareReleasesClass.consolidateSoftwareReleases(), objFeatures);
+        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
+        final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
+        return HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(envDetails, objFeatures);
     }
 
     /**
@@ -168,6 +169,16 @@ public final class JavaJavaWebClass {
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
         final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoMap("C:/www/Downloads/");
         return HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(crtFileStatistics, new Properties());
+    }
+
+    /**
+     * expose Software Release details from internal DB
+     * @return String software releases details
+     */
+    public static String getSoftwareReleasesIntoHtml() {
+        final Properties objFeatures = new Properties();
+        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
+        return HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(SoftwareReleasesClass.consolidateSoftwareReleases(), objFeatures);
     }
 
     /**
@@ -188,9 +199,10 @@ public final class JavaJavaWebClass {
                 final String page = (pageParams != null) ? pageParams.getFirst() : "HOME";
                 final gg.jte.Content bodyContent = output -> {
                     output.writeContent(switch(page) {
-                        case "SoftwareReleases" -> getSoftwareReleasesIntoHtml();
-                        case "FilesHashing"     -> getFileHashingAsHtmlTable();
-                        default -> "Work In Progress";
+                        case "EnvironmentDetails"   -> getEnvironmentDetailsAsHtmlTable();
+                        case "FilesHashing"         -> getFileHashingAsHtmlTable();
+                        case "SoftwareReleases"     -> getSoftwareReleasesIntoHtml();
+                        default                     -> "Work In Progress";
                     });
                 };
                 final Utf8ByteOutput output = new Utf8ByteOutput();

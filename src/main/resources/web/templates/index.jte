@@ -41,6 +41,7 @@
             <li><a href="?page=home"><i class="fa-solid fa-house-user"></i>Home</a></li>
             <li><a href="?page=SoftwareReleases"><i class="fa-brands fa-dev"></i>Releases</a></li>
             <li><a href="?page=FilesHashing"><i class="fa-solid fa-hashtag"></i>Hashing</a></li>
+            <li><a href="?page=EnvironmentDetails"><i class="fa-solid fa-computer"></i>Environment</a></li>
         </ul>
     </nav>
     <main>${content}</main>

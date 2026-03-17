@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,14 @@ public final class BasicStructuresClass {
      */
     public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
     /**
+     * Firmware string
+     */
+    public static final String STR_FIRMWARE = "Firmware";
+    /**
+     * Mainboard constant
+     */
+    public static final String STR_MAINBOARD = "Mainboard";
+    /**
      * Manufacturer string
      */
     public static final String STR_MANUFACTURER = "Manufacturer";
@@ -59,6 +71,10 @@ public final class BasicStructuresClass {
      * Named Character
      */
     public static final String STR_NAMED_PARAM = "NamedParameter";
+    /**
+     * new tab and table feature
+     */
+    public static final String STR_NEW_TAB = "New Tab and Table on column value change";
     /**
      * One as string
      */
@@ -103,6 +119,10 @@ public final class BasicStructuresClass {
      * 
      */
     public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+    /**
+     * System constant
+     */
+    public static final String STR_SYSTEM = "System";
     /**
      * string constant
      */
@@ -217,7 +237,7 @@ public final class BasicStructuresClass {
          * @param inMap values as Map
          * @return List of Properties
          */
-        public static List<Properties> convertMapOfStringsIntoListOfProperties(final String strCategory, final Map<String, String> inMap) {
+        public static List<Properties> convertMapOfStringsIntoListOfProperties(final String strCategory, final Map<String, Object> inMap) {
             final List<Properties> resultReleases = new ArrayList<>();
             inMap.forEach((strKey, strValue) -> {
                 final Properties mProperties = new Properties();
@@ -226,6 +246,7 @@ public final class BasicStructuresClass {
                 mProperties.put("Value", strValue);
                 resultReleases.add(mProperties);
             });
+            resultReleases.sort(Comparator.comparing(p -> p.getProperty("Element")));
             return resultReleases;
         }
 
@@ -470,6 +491,28 @@ public final class BasicStructuresClass {
          * Single Question Mark Character
          */
         private static final String Q_MARK_PARAM = "SingleQuestionMarkCharacterParameter";
+
+        /**
+         * Compute String checksum
+         * @param inString input String
+         * @return String
+         */
+        public static String computeStringSignature(final String inString) {
+            String outString = "";
+            final String algorithm = "SHA-256";
+            try {
+                // 1. Get the SHA-256 instance
+                final MessageDigest digest = MessageDigest.getInstance(algorithm);
+                // 2. Perform the hashing
+                final byte[] encodedHash = digest.digest(inString.getBytes(StandardCharsets.UTF_8));
+                // 3. Convert to Hex String using HexFormat (introduced in Java 17+)
+                outString = HexFormat.of().formatHex(encodedHash);
+            } catch (NoSuchAlgorithmException e) {
+                final String strFeedbackErr = String.format("Checksum algorithm %s is not availble.... %s", algorithm, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+            return outString;
+        }
 
         /**
          * Convert Prompt Parameters into Named Parameters

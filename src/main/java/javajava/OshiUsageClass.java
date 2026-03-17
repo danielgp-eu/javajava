@@ -59,34 +59,26 @@ public final class OshiUsageClass {
     /**
      * List with all partitions
      *
-     * @return String
+     * @return Map
      */
-    public static String getDetailsAboutAvailableStoragePartitions() {
-        final StringBuilder strJsonString = new StringBuilder(50);
+    public static Map<String, Object> getDetailsAboutAvailableStoragePartitions() {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final FileSystem osFileSystem = OshiUsageClass.OshiSoftware.getOshiFileSystem();
         final List<OSFileStore> osFileStores = osFileSystem.getFileStores();
-        strJsonString.append("\"Partition(s)\":[");
-        int strCounterDisk = 0;
         for(final OSFileStore fileStore : osFileStores) {
-            if (strCounterDisk > 0) {
-                strJsonString.append(',');
-            }
-            strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
-                "Description", fileStore.getDescription(),
-                "Label", fileStore.getLabel(),
-                "Logical Volume", fileStore.getLogicalVolume(),
-                "Mount", fileStore.getMount().replace("\\", "\\\\"),
-                BasicStructuresClass.STR_NAME, fileStore.getName(),
-                "Options", fileStore.getOptions(),
-                "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
-                "Type", fileStore.getType(),
-                "UUID", fileStore.getUUID(),
-                "Usable Space", FormatUtil.formatBytes(fileStore.getUsableSpace())
-            )));
-            strCounterDisk++;
+            final String strIdentifier = "Partition UUID#" + fileStore.getUUID() + " ";
+            arrayAttributes.putAll(Map.of(
+                    strIdentifier + "Description", fileStore.getDescription(),
+                    strIdentifier + "Label", fileStore.getLabel(),
+                    strIdentifier + "Logical Volume", fileStore.getLogicalVolume(),
+                    strIdentifier + "Mount", fileStore.getMount().replace("\\", "\\\\"),
+                    strIdentifier + BasicStructuresClass.STR_NAME, fileStore.getName(),
+                    strIdentifier + "Options", fileStore.getOptions(),
+                    strIdentifier + "Total Space", FormatUtil.formatBytes(fileStore.getTotalSpace()),
+                    strIdentifier + "Type", fileStore.getType(),
+                    strIdentifier + "Usable Space", FormatUtil.formatBytes(fileStore.getUsableSpace())));
         }
-        strJsonString.append(']'); // from Disk(s)
-        return strJsonString.toString();
+        return arrayAttributes;
     }
 
     /**

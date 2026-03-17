@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Capturing current environment details
@@ -14,7 +15,7 @@ public final class EnvironmentCapturingAssembleClass {
      * Environment details gathered
      * @return Map
      */
-    private static Map<String, String> gatherEnvironmentDetails() {
+    private static Map<String, Object> gatherEnvironmentDetails() {
         return Map.of(
                 "Computer", System.getenv("COMPUTERNAME"),
                 "Username", System.getenv("USERNAME"),
@@ -33,12 +34,16 @@ public final class EnvironmentCapturingAssembleClass {
      */
     private static Map<String, Object> gatherJavaDetails() {
         return Map.of(
-                "Date", System.getProperty("java.version.date"),
                 "Release", System.getProperty("java.vendor.version"),
-                "Runtime", System.getProperty("java.runtime.name"),
-                BasicStructuresClass.STR_VERSION, System.getProperty("java.version"),
+                "Runtime Name", System.getProperty("java.runtime.name"),
+                "Runtime Version", System.getProperty("java.runtime.version"),
                 "Vendor", System.getProperty("java.vendor"),
-                "VM", System.getProperty("java.vm.name"));
+                BasicStructuresClass.STR_VERSION, System.getProperty("java.version"),
+                "Version Date", System.getProperty("java.version.date"),
+                "VM Name", System.getProperty("java.vm.name"),
+                "VM Version", System.getProperty("java.vm.version"),
+                "VM Specification Name", System.getProperty("java.vm.specification.name"),
+                "VM Specification Vendor", System.getProperty("java.vm.specification.vendor"));
     }
 
     /**
@@ -52,12 +57,11 @@ public final class EnvironmentCapturingAssembleClass {
         LogExposureClass.LOGGER.info(strFeedback);
         final String strHardware = "\"Hardware\":{"
                 + "\"CPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutCentralProcessorUnit())
-                + "\"RAM\":" + HardwareClass.getDetailsAboutRandomAccessMemory()
-                + "\"GPU\":" + HardwareClass.getDetailsAboutGraphicCards()
-                + "\"Monitor\":" + HardwareClass.getDetailsAboutMonitor()
-                + "\"Network Interface\":" + HardwareClass.getDetailsAboutNetworkInterfaces()
-                + "\"Storage\":" + OshiUsageClass.getDetailsAboutAvailableStoragePartitions()
-                + "\"System\"" + HardwareClass.getDetailsAboutComputerSystem()
+                + "\"GPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutGraphicCards())
+                + "\"Mainboard\"" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMainboard())
+                + "\"Monitor\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMonitor())
+                + "\"Network Interface\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetworkInterfaces())
+                + "\"RAM\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutRandomAccessMemory())
                 + "}";
         final String strFeedbackH = LocalizationClass.getMessage("i18nAppInformationHardwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackH);
@@ -65,6 +69,7 @@ public final class EnvironmentCapturingAssembleClass {
                 + "\"OS\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutOperatingSystem())
                 + "\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
                 + "\"Network\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork())
+                + "\"Storage\":" + JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions())
                 + "}";
         final String strFeedbackS = LocalizationClass.getMessage("i18nAppInformationSoftwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackS);
@@ -90,6 +95,16 @@ public final class EnvironmentCapturingAssembleClass {
     public static List<Properties> packageCurrentEnvironmentDetailsIntoListOfProperties() {
         final List<Properties> resultReleases = new ArrayList<>();
         resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Environment", gatherEnvironmentDetails()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - CPU", HardwareClass.getDetailsAboutCentralProcessorUnit()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - GPU", HardwareClass.getDetailsAboutGraphicCards()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - Mainboard", HardwareClass.getDetailsAboutMainboard()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - Monitors", HardwareClass.getDetailsAboutMonitor()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - Network Interaces", HardwareClass.getDetailsAboutNetworkInterfaces()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - RAM", HardwareClass.getDetailsAboutRandomAccessMemory()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Java", gatherJavaDetails()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - OS", HardwareClass.getDetailsAboutOperatingSystem()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Network", HardwareClass.getDetailsAboutNetwork()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Storage", OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
         return resultReleases;
     }
 

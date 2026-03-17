@@ -1,5 +1,6 @@
 package javajava;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +31,7 @@ final public class HardwareClass {
      * @param crtDisplay current Display object
      * @return String
      */
-    private static String digestSingleDisplayDetails(final Display crtDisplay) {
+    private static Map<String, Object> digestSingleDisplayDetails(final Display crtDisplay) {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final String[] arrayDetails = crtDisplay.toString().replaceAll("[^a-zA-Z0-9\\s]", "").split("\n");
         for (final String crtLine : arrayDetails) {
@@ -58,7 +59,7 @@ final public class HardwareClass {
                 arrayAttributes.put(BasicStructuresClass.STR_SRL_NUM, strSlimLine.replace(BasicStructuresClass.STR_SRL_NUM + " ", ""));
             }
         }
-        return JsonOperationsClass.getMapIntoJsonString(arrayAttributes);
+        return arrayAttributes;
     }
 
     /**
@@ -68,90 +69,86 @@ final public class HardwareClass {
     public static Map<String, Object> getDetailsAboutCentralProcessorUnit() {
         final CentralProcessor processor = OshiUsageClass.OshiHardware.getOshiProcessor();
         final CentralProcessor.ProcessorIdentifier procIdentif = OshiUsageClass.OshiHardware.getOshiProcessorIdentifier();
+        final List<String> featureFlags = processor.getFeatureFlags().stream()
+                .sorted()
+                .toList();
         return Map.of(
-                "Feature Flags", processor.getFeatureFlags().toString().replace("[", "[\"").replace(", ", "\",\"").replace("]", "\"]"),
+                "CPU Identifier", procIdentif.getIdentifier(),
                 "Family", procIdentif.getFamily(),
-                "Identifier", procIdentif.getIdentifier(),
+                "Feature Flags", featureFlags.toString().replace("[", "[\"").replace(", ", "\", \"").replace("]", "\"]"),
                 "Logical Processors", processor.getLogicalProcessorCount(),
+                "Maximum Frequency", FormatUtil.formatHertz(processor.getMaxFreq()),
                 BasicStructuresClass.STR_MODEL, procIdentif.getModel(),
                 BasicStructuresClass.STR_NAME, procIdentif.getName(),
+                "Processor ID", procIdentif.getProcessorID(),
                 "Physical Processors", processor.getPhysicalProcessorCount(),
-                "Maximum Frequency", FormatUtil.formatHertz(processor.getMaxFreq()));
+                "Vendor", procIdentif.getVendor());
     }
 
     /**
      * GPU info
      *
-     * @return String
+     * @return Map
      */
-    public static String getDetailsAboutGraphicCards() {
-        final StringBuilder strJsonString = new StringBuilder(50);
+    public static Map<String, Object> getDetailsAboutGraphicCards() {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final List<GraphicsCard> graphicCards = OshiUsageClass.OshiHardware.getOshiGraphicsCards();
-        int intCounter = 0;
         for (final GraphicsCard  graphicCard : graphicCards) {
-            if (intCounter > 0) {
-                strJsonString.append(',');
-            }
-            strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
-                "Device Id", graphicCard.getDeviceId(),
-                BasicStructuresClass.STR_NAME, graphicCard.getName(),
-                "Vendor", graphicCard.getVendor(),
-                "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
-                "Driver Version", graphicCard.getVersionInfo()
-            )));
-            intCounter++;
+            final String strIdentifier = "Video Card ID#" + BasicStructuresClass.StringTransformationClass.computeStringSignature(graphicCard.getName()) + " ";
+            arrayAttributes.putAll(Map.of(
+                    strIdentifier + BasicStructuresClass.STR_NAME, graphicCard.getName(),
+                    strIdentifier + "Vendor", graphicCard.getVendor(),
+                    strIdentifier + "VRAM", FormatUtil.formatBytes(graphicCard.getVRam()),
+                    strIdentifier + "Driver Version", graphicCard.getVersionInfo()
+            ));
         }
-        return String.format("[%s]", strJsonString);
+        return arrayAttributes;
     }
 
     /**
-     * Computer System
-     * 
-     * @return details on computer system as JSON
+     * Mainboard details gathered
+     * @return Map
      */
-    public static String getDetailsAboutComputerSystem() {
-        final StringBuilder strJsonString = new StringBuilder(50);
-        final ComputerSystem computerSystem = OshiUsageClass.OshiHardware.getOshiComputerSystem();
-        final Firmware firmware = OshiUsageClass.OshiHardware.getOshiFirmware();
-        final String strFirmware = JsonOperationsClass.getMapIntoJsonString(Map.of(
-                BasicStructuresClass.STR_MANUFACTURER, firmware.getManufacturer(),
-                "Name", firmware.getName(),
-                "Description", firmware.getDescription(),
-                BasicStructuresClass.STR_VERSION, firmware.getVersion(),
-                "Release Date", firmware.getReleaseDate() == null ? "unknown" : firmware.getReleaseDate()));
+    public static Map<String, Object> getDetailsAboutMainboard() {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final Baseboard baseboard = OshiUsageClass.OshiHardware.getOshiMotherboard();
-        final String strMotherBoard = JsonOperationsClass.getMapIntoJsonString(Map.of(
-                BasicStructuresClass.STR_MANUFACTURER, baseboard.getManufacturer(),
-                BasicStructuresClass.STR_MODEL, baseboard.getModel(),
-                BasicStructuresClass.STR_VERSION, baseboard.getVersion(),
-                BasicStructuresClass.STR_SRL_NUM, baseboard.getSerialNumber()));
-        strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
-                BasicStructuresClass.STR_MANUFACTURER, computerSystem.getManufacturer(),
-                BasicStructuresClass.STR_MODEL, computerSystem.getModel(),
-                BasicStructuresClass.STR_SRL_NUM, computerSystem.getSerialNumber(),
-                "Firmware", strFirmware,
-                "Mainboard", strMotherBoard
-        )));
-        return strJsonString.toString();
+        arrayAttributes.putAll(Map.of(
+                BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_MANUFACTURER, baseboard.getManufacturer(),
+                BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_MODEL, baseboard.getModel(),
+                BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_VERSION, baseboard.getVersion(),
+                BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_SRL_NUM, baseboard.getSerialNumber()));
+        final Firmware firmware = OshiUsageClass.OshiHardware.getOshiFirmware();
+        arrayAttributes.putAll(Map.of(
+                BasicStructuresClass.STR_FIRMWARE + " " + BasicStructuresClass.STR_MANUFACTURER, firmware.getManufacturer(),
+                BasicStructuresClass.STR_FIRMWARE + " " + "Name", firmware.getName(),
+                BasicStructuresClass.STR_FIRMWARE + " " + "Description", firmware.getDescription(),
+                BasicStructuresClass.STR_FIRMWARE + " " + BasicStructuresClass.STR_VERSION, firmware.getVersion(),
+                BasicStructuresClass.STR_FIRMWARE + " " + "Release Date", firmware.getReleaseDate() == null ? "unknown" : firmware.getReleaseDate()));
+        final ComputerSystem computerSystem = OshiUsageClass.OshiHardware.getOshiComputerSystem();
+        arrayAttributes.putAll(Map.of(
+                BasicStructuresClass.STR_SYSTEM + " " + BasicStructuresClass.STR_MANUFACTURER, computerSystem.getManufacturer(),
+                BasicStructuresClass.STR_SYSTEM + " " + BasicStructuresClass.STR_MODEL, computerSystem.getModel(),
+                BasicStructuresClass.STR_SYSTEM + " " + BasicStructuresClass.STR_SRL_NUM, computerSystem.getSerialNumber()));
+        return arrayAttributes;
     }
 
     /**
-     * GPU info
+     * Monitors info as Map
      *
-     * @return String
+     * @return Map
      */
-    public static String getDetailsAboutMonitor() {
-        final StringBuilder strJsonString = new StringBuilder();
+    public static Map<String, Object> getDetailsAboutMonitor() {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final List<Display> displays = OshiUsageClass.OshiHardware.getOshiMonitor();
-        int intCounter = 0;
-        for (final Display crtDisplay : displays) {
-            if (intCounter > 0) {
-                strJsonString.append(',');
-            }
-            strJsonString.append(digestSingleDisplayDetails(crtDisplay));
-            intCounter++;
+        for (final Display crtDisplay : displays) {// The EDID is the "fingerprint" of the monitor hardware
+            final byte[] edid = crtDisplay.getEdid();
+            final String uniqueId = "Monitor #" + BasicStructuresClass.StringTransformationClass.computeStringSignature(Base64.getEncoder().encodeToString(edid));
+            final Map<String, Object> crtMonitor = digestSingleDisplayDetails(crtDisplay);
+            crtMonitor.forEach((strKey, strValue) -> {
+                arrayAttributes.put(uniqueId + " " + strKey, strValue);
+            });
         }
-        return String.format("[%s]", strJsonString);
+        return arrayAttributes;
     }
 
     /**
@@ -171,33 +168,25 @@ final public class HardwareClass {
     /**
      * Sensors Information
      *
-     * @return String
+     * @return Map
      */
-    public static String getDetailsAboutNetworkInterfaces() {
+    public static Map<String, Object> getDetailsAboutNetworkInterfaces() {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final List<NetworkIF> networkIFs = OshiUsageClass.OshiHardware.getOshiNetworkInterfaces();
-        final StringBuilder strJsonString = new StringBuilder();
-        int intCounter = 0;
-        strJsonString.append('[');
         for (final NetworkIF net : networkIFs) {
             net.updateAttributes(); // Refresh interface stats
-            if (intCounter > 0) {
-                strJsonString.append(',');
-            }
-            strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
-                    BasicStructuresClass.STR_NAME, net.getName(),
-                    "Display Name", net.getDisplayName(),
-                    "IPv4", String.join(", ", net.getIPv4addr()),
-                    "IPv6", String.join(", ", net.getIPv6addr()),
-                    "MAC Address", net.getMacaddr(),
-                    "MTU", net.getMTU(),
-                    "Status", net.getIfOperStatus(),
-                    "Speed", FormatUtil.formatBytes(net.getSpeed()),
-                    "NDIS Physical Medium Type", OshiUsageClass.getNetworkPhysicalMediumType(net.getNdisPhysicalMediumType())
-            )));
-            intCounter++;
+            final String strIdentifier = "Memory MAC#" + net.getMacaddr() + " ";
+            arrayAttributes.putAll(Map.of(
+                    strIdentifier + BasicStructuresClass.STR_NAME, net.getName(),
+                    strIdentifier + "Display Name", net.getDisplayName(),
+                    strIdentifier + "IPv4", String.join(", ", net.getIPv4addr()),
+                    strIdentifier + "IPv6", String.join(", ", net.getIPv6addr()),
+                    strIdentifier + "MTU", net.getMTU(),
+                    strIdentifier + "NDIS Physical Medium Type", OshiUsageClass.getNetworkPhysicalMediumType(net.getNdisPhysicalMediumType()),
+                    strIdentifier + "Status", net.getIfOperStatus(),
+                    strIdentifier + "Speed", FormatUtil.formatBytes(net.getSpeed())));
         }
-        strJsonString.append(']');
-        return strJsonString.toString();
+        return arrayAttributes;
     }
 
     /**
@@ -220,38 +209,31 @@ final public class HardwareClass {
     /**
      * Capturing RAM information
      *
-     * @return String
+     * @return Map
      */
-    public static String getDetailsAboutRandomAccessMemory() {
+    public static Map<String, Object> getDetailsAboutRandomAccessMemory() {
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final GlobalMemory globalMemory = OshiUsageClass.OshiHardware.getOshiMemory();
         final VirtualMemory virtualMemory = OshiUsageClass.OshiHardware.getOshiVirtualMemory();
-        final StringBuilder strJsonString = new StringBuilder();
-        strJsonString.append(String.format("{\"Total\":{\"Total\":\"%s\",\"Available\":\"%s\",\"Page Size\":\"%s\",\"Swap Used\":\"%s\",\"Swap Total\":\"%s\"}"
-            , FormatUtil.formatBytes(globalMemory.getTotal())
-            , FormatUtil.formatBytes(globalMemory.getAvailable())
-            , FormatUtil.formatBytes(globalMemory.getPageSize())
-            , FormatUtil.formatBytes(virtualMemory.getSwapUsed())
-            , FormatUtil.formatBytes(virtualMemory.getSwapTotal())));
+        arrayAttributes.putAll(Map.of(
+                "Available", FormatUtil.formatBytes(globalMemory.getAvailable()),
+                "Page Size", FormatUtil.formatBytes(globalMemory.getPageSize()),
+                "Total", FormatUtil.formatBytes(globalMemory.getTotal()),
+                "Virtual Memory Swap In Use", FormatUtil.formatBytes(virtualMemory.getVirtualInUse()),
+                "Virtual Memory Swap Used", FormatUtil.formatBytes(virtualMemory.getSwapUsed()),
+                "Virtual Memory Swap Total", FormatUtil.formatBytes(virtualMemory.getSwapTotal())));
         final List<PhysicalMemory> physicalMemories = globalMemory.getPhysicalMemory();
-        strJsonString.append(",\"Banks\":[");
-        int intCounter = 0;
         for (final PhysicalMemory physicalMemory : physicalMemories) {
-            if (intCounter > 0) {
-                strJsonString.append(',');
-            }
-            strJsonString.append(JsonOperationsClass.getMapIntoJsonString(Map.of(
-                "Bank/Slot Label", physicalMemory.getBankLabel(),
-                "Capacity", FormatUtil.formatBytes(physicalMemory.getCapacity()),
-                "Clock Speed", FormatUtil.formatHertz(physicalMemory.getClockSpeed()),
-                BasicStructuresClass.STR_MANUFACTURER, physicalMemory.getManufacturer(),
-                "Type", physicalMemory.getMemoryType(),
-                "Part Number", physicalMemory.getPartNumber().trim(),
-                BasicStructuresClass.STR_SRL_NUM, physicalMemory.getSerialNumber()
-            )));
-            intCounter++;
+            final String strIdentifier = "Bank SN#" + physicalMemory.getSerialNumber() + " ";
+            arrayAttributes.putAll(Map.of(
+                    strIdentifier + "Bank/Slot Label", physicalMemory.getBankLabel(),
+                    strIdentifier + "Capacity", FormatUtil.formatBytes(physicalMemory.getCapacity()),
+                    strIdentifier + "Clock Speed", FormatUtil.formatHertz(physicalMemory.getClockSpeed()),
+                    strIdentifier + BasicStructuresClass.STR_MANUFACTURER, physicalMemory.getManufacturer(),
+                    strIdentifier + "Type", physicalMemory.getMemoryType(),
+                    strIdentifier + "Part Number", physicalMemory.getPartNumber().trim()));
         }
-        strJsonString.append("]}");
-        return strJsonString.toString();
+        return arrayAttributes;
     }
 
     /**
