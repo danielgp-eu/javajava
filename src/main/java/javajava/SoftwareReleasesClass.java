@@ -10,7 +10,7 @@ import java.util.Properties;
 /**
  * Handling Software releases logic
  */
-final public class SoftwareReleases {
+final public class SoftwareReleasesClass {
     /**
      * Internal database name
      */
@@ -100,7 +100,7 @@ final public class SoftwareReleases {
     }
 
     // Private constructor to prevent instantiation
-    private SoftwareReleases() {
+    private SoftwareReleasesClass() {
         // intentional empty
     }
 

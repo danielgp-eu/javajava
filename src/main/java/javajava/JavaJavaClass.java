@@ -376,7 +376,7 @@ class CaptureEnvironmentDetailsIntoJsonFile implements Runnable {
 
     @Override
     public void run() {
-        final String strEnvDetails = EnvironmentCapturingAssembleClass.getCurrentEnvironmentDetails();
+        final String strEnvDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoJson();
         final String strOutFileName = optionOut.getOutFileName();
         final String strFeedback = String.format("Environment details are %s and will intend to write it to %s file", strEnvDetails, strOutFileName);
         LogExposureClass.LOGGER.info(strFeedback);

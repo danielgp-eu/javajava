@@ -156,7 +156,7 @@ public final class JavaJavaWebClass {
     public static String getSoftwareReleasesIntoHtml() {
         final Properties objFeatures = new Properties();
         objFeatures.put("New Tab and Table on column value change", "Profile");
-        return HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(SoftwareReleases.consolidateSoftwareReleases(), objFeatures);
+        return HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(SoftwareReleasesClass.consolidateSoftwareReleases(), objFeatures);
     }
 
     /**

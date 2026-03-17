@@ -212,6 +212,24 @@ public final class BasicStructuresClass {
     public static final class ListAndMapClass {
 
         /**
+         * Map into List
+         * @param strCategory value for Category Property
+         * @param inMap values as Map
+         * @return List of Properties
+         */
+        public static List<Properties> convertMapOfStringsIntoListOfProperties(final String strCategory, final Map<String, String> inMap) {
+            final List<Properties> resultReleases = new ArrayList<>();
+            inMap.forEach((strKey, strValue) -> {
+                final Properties mProperties = new Properties();
+                mProperties.put("Category", strCategory);
+                mProperties.put("Element", strKey);
+                mProperties.put("Value", strValue);
+                resultReleases.add(mProperties);
+            });
+            return resultReleases;
+        }
+
+        /**
          * Extracts all occurrences of a given regex pattern from a text.
          * @param text The input string to search within.
          * @param regex The regular expression pattern.
