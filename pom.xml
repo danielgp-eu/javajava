@@ -49,7 +49,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.organization>danielgp-eu</sonar.organization>
         <!-- Dependencies versions -->
-        <icu4j.version>78.2</icu4j.version>
+        <icu4j.version>78.3</icu4j.version>
         <jackson-databind.version>3.1.0</jackson-databind.version>
         <jackson-dataformat-xml.version>3.1.0</jackson-dataformat-xml.version>
         <jspecify.version>1.0.0</jspecify.version>
