@@ -1,11 +1,13 @@
 @import gg.jte.Content
 @param String page
+@param String title
+@param Content menu
 @param Content content
 
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-    <title>JavaJava 25 Undertow</title>
+    <title>${title}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="Author" content="Daniel Popiniuc">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,23 +28,10 @@
 <body>
     <style type="text/css">.tabber{display:none;}</style>
     <header id="TitleContainer">
-        <h1 id="PageTitle">
-@if(page.equals("SoftwareReleases"))
-    Software Releases
-@elseif(page.equals("FilesHashing"))
-    File Hashes
-@else
-    Welcome!
-@endif
-        </h1>
+        <h1 id="PageTitle">${title}</h1>
     </header>
     <nav>
-        <ul>
-            <li><a href="?page=home"><i class="fa-solid fa-house-user"></i>Home</a></li>
-            <li><a href="?page=SoftwareReleases"><i class="fa-brands fa-dev"></i>Releases</a></li>
-            <li><a href="?page=FilesHashing"><i class="fa-solid fa-hashtag"></i>Hashing</a></li>
-            <li><a href="?page=EnvironmentDetails"><i class="fa-solid fa-computer"></i>Environment</a></li>
-        </ul>
+        <ul>${menu}</ul>
     </nav>
     <main>${content}</main>
     <footer>&#169; Copyright by Daniel Popiniuc - 2026</footer>

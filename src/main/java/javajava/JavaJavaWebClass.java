@@ -36,6 +36,35 @@ public final class JavaJavaWebClass {
      * Path for static Web components
      */
     private static String pathStatic = "web/static";
+    /**
+     * Menu
+     */
+    private final static Map<String, Map<String, String>> mapMenu = Map.of(
+            "home", Map.of("icon", "fa-solid fa-house-user",
+                    "menu", "Home",
+                    "title", "Home Page"),
+            "SoftwareReleases", Map.of("icon", "fa-brands fa-dev",
+                    "menu", "Releases",
+                    "title", "Software Releases"),
+            "FilesHashing", Map.of("icon", "fa-solid fa-hashtag",
+                    "menu", "Hashing",
+                    "title", "Downloads File Hashing"),
+            "EnvironmentDetails", Map.of("icon", "fa-solid fa-computer",
+                    "menu", "Environment",
+                    "title", "Environment Details")
+            );
+
+    /**
+     * Building HTML menu
+     * @return String
+     */
+    private static String buildMenuContent() {
+        final StringBuilder strMenuContent = new StringBuilder(1000);
+        mapMenu.forEach((strKey, mapValue) -> {
+            strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get("icon"), mapValue.get("menu")));
+        });
+        return strMenuContent.toString();
+    }
 
     /**
      * Initiating Template Engine
@@ -197,6 +226,9 @@ public final class JavaJavaWebClass {
                 final Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
                 final Deque<String> pageParams = queryParams.get("page");
                 final String page = (pageParams != null) ? pageParams.getFirst() : "HOME";
+                final gg.jte.Content menuContent = output -> {
+                    output.writeContent(buildMenuContent());
+                };
                 final gg.jte.Content bodyContent = output -> {
                     output.writeContent(switch(page) {
                         case "EnvironmentDetails"   -> getEnvironmentDetailsAsHtmlTable();
@@ -209,6 +241,8 @@ public final class JavaJavaWebClass {
                 TemplateRendering.setOutput(output);
                 TemplateRendering.setServerExchange(exchange);
                 TemplateRendering.packParameter("page", page);
+                TemplateRendering.packParameter("title", mapMenu.get(page).get("title"));
+                TemplateRendering.packParameter("menu", menuContent);
                 TemplateRendering.packParameter("content", bodyContent);
                 TemplateRendering.renderTemplate(templateEngine, "index.jte");
             }

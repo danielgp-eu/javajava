@@ -40,6 +40,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_ACTV_PXLS = "Active Pixels";
     /**
+     * Dependencies value
+     */
+    public static final String STR_DEPENDENCIES = "Dependencies";
+    /**
      * String for internal ETL
      */
     public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
