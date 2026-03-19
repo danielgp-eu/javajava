@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SequencedMap;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -365,6 +366,27 @@ public final class BasicStructuresClass {
                             (e1, _) -> e1, // merge function (not used here)
                             LinkedHashMap::new // preserve sorted order
                     ));
+        }
+
+        /**
+         * produce a Sequenced Map from Properties
+         * @param prop Properties
+         * @param order order as List of String
+         * @return
+         */
+        public static SequencedMap<Object, Object> sortProperties(final Properties prop, final List<String> order) {
+            return prop.entrySet().stream()
+                .sorted(Comparator.comparingInt(e -> {
+                    final int index = order.indexOf(e.getKey().toString());
+                    // If a key isn't in our list, put it at the end
+                    return index == -1 ? Integer.MAX_VALUE : index;
+                }))
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue,
+                    (oldValue, _) -> oldValue,
+                    LinkedHashMap::new // Maintains the sorted insertion order
+                ));
         }
 
         // Private constructor to prevent instantiation

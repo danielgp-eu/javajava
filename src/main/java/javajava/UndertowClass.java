@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import gg.jte.ContentType;
@@ -81,7 +82,9 @@ public final class UndertowClass {
     private static void readWebConfigurationFromProjectProperties() {
         final String[] varsToPick = {"webIp", "wepPort"};
         final Properties webProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
-        webPort = webProperties.get("wepPort").toString();
+        if (webPort == null) {
+            webPort = webProperties.get("wepPort").toString();
+        }
         webIp = webProperties.get("webIp").toString();
     }
 
@@ -122,6 +125,14 @@ public final class UndertowClass {
     }
 
     /**
+     * setter for webPort
+     * @param inWebPort web port to use
+     */
+    public static void setWebPort(final String inWebPort) {
+        webPort = inWebPort;
+    }
+
+    /**
      * setter for Menu Content 
      * @param inMapMenu map with menu content
      */
@@ -139,7 +150,7 @@ public final class UndertowClass {
          * @param recordProperties
          * @return String
          */
-        private static String buildTableBodyRow(final String strRememberKey, final Properties recordProperties) {
+        private static String buildTableBodyRow(final String strRememberKey, final SequencedMap<Object, Object> recordProperties) {
             final StringBuilder strHtmlTable = new StringBuilder(1000);
             strHtmlTable.append("<tr>");
             recordProperties.forEach((strKey, strValue) -> {
@@ -168,7 +179,7 @@ public final class UndertowClass {
          * @param inList values stored as a list
          * @return String
          */
-        public static String getListOfPropertiesIntoHtmlTable(final List<Properties> inList, final Properties objFeatures) {
+        public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
             final StringBuilder strHeaderTable = new StringBuilder(100);
             final StringBuilder strHtmlTable = new StringBuilder(1000);
             final String strRememberKey = getRememberKey(objFeatures);

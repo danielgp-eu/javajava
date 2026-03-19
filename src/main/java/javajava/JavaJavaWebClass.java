@@ -2,6 +2,7 @@ package javajava;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.SequencedMap;
 
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
@@ -41,7 +42,11 @@ public final class JavaJavaWebClass {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
         final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
-        return UndertowClass.HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(envDetails, objFeatures);
+        final List<String> desiredOrder = List.of("Category", "Element", "Value");
+        final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return UndertowClass.HyperTextMarkupLanguageTable.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
     }
 
     /**
@@ -52,7 +57,11 @@ public final class JavaJavaWebClass {
         final String[] inAlgorithms = {"SHA-256"};
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
         final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoMap("C:/www/Downloads/");
-        return UndertowClass.HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(crtFileStatistics, new Properties());
+        final List<String> desiredOrder = List.of("Folder", "File", "Size [bytes]", "Last Modified Time", "SHA-256");
+        final List<SequencedMap<Object, Object>> orderedList = crtFileStatistics.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return UndertowClass.HyperTextMarkupLanguageTable.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
     }
 
     /**
@@ -62,7 +71,12 @@ public final class JavaJavaWebClass {
     public static String getSoftwareReleasesIntoHtml() {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
-        return UndertowClass.HyperTextMarkupLanguageTable.getListOfPropertiesIntoHtmlTable(SoftwareReleasesClass.consolidateSoftwareReleases(), objFeatures);
+        final List<Properties> softwareReleases = SoftwareReleasesClass.consolidateSoftwareReleases();
+        final List<String> desiredOrder = List.of("Organization", "Product", "Version", "Date", "Files");
+        final List<SequencedMap<Object, Object>> orderedList = softwareReleases.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return UndertowClass.HyperTextMarkupLanguageTable.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
     }
 
     /**
@@ -107,7 +121,7 @@ public final class JavaJavaWebClass {
      * Execution
      * @param args
      */
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         UndertowClass.setMapMenu(mapMenu);
         SoftwareReleasesClass.setReleasesDatabase(args[0]);
         UndertowClass.setRootHandler(handleWebContent());
