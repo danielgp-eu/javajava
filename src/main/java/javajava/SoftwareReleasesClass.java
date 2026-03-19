@@ -14,7 +14,7 @@ final public class SoftwareReleasesClass {
     /**
      * Internal database name
      */
-    private static final String RELEASES_DATABASE = "C:\\www\\Data\\GitRepositories\\GitHub\\danielgp\\PHP\\control_center\\source\\SoftwareReleases\\config\\configuration.sqlite";
+    private static String releasesDatabase;
 
     /**
      * friendly Aging logic
@@ -84,7 +84,7 @@ final public class SoftwareReleasesClass {
      */
     private static List<Properties> getSoftwareReleasesFromDatabase() {
         List<Properties> resultReleases = new ArrayList<>();
-        try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteConnection(RELEASES_DATABASE);
+        try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
                 Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);) {
             final Properties rsProperties = new Properties();
             rsProperties.put("Which", "Software Releases"); // purpose
@@ -97,6 +97,13 @@ final public class SoftwareReleasesClass {
             LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
         return resultReleases;
+    }
+
+    /**
+     * Setter for releasesDatabase
+     */
+    public static void setReleasesDatabase(final String inDatabase) {
+        releasesDatabase = inDatabase;
     }
 
     // Private constructor to prevent instantiation

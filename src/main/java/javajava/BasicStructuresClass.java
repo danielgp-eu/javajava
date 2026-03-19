@@ -52,6 +52,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_FIRMWARE = "Firmware";
     /**
+     * Icon string
+     */
+    public static final String STR_ICON = "icon";
+    /**
      * Mainboard constant
      */
     public static final String STR_MAINBOARD = "Mainboard";
@@ -59,6 +63,10 @@ public final class BasicStructuresClass {
      * Manufacturer string
      */
     public static final String STR_MANUFACTURER = "Manufacturer";
+    /**
+     * Menu string
+     */
+    public static final String STR_MENU = "menu";
     /**
      * Model string constant
      */
@@ -127,6 +135,10 @@ public final class BasicStructuresClass {
      * System constant
      */
     public static final String STR_SYSTEM = "System";
+    /**
+     * Title constant
+     */
+    public static final String STR_TITLE = "title";
     /**
      * string constant
      */
