@@ -1,16 +1,10 @@
 package javajava;
 
-import java.util.Map;
-import java.util.Properties;
-import java.util.SequencedMap;
+import java.util.*;
 
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
-
-import java.util.Deque;
-import java.util.List;
 
 /**
  * Web interface class
@@ -19,7 +13,7 @@ public final class JavaJavaWebClass {
     /**
      * Menu
      */
-    private final static Map<String, Map<String, String>> mapMenu = Map.of(
+    private static final LinkedHashMap<String, Map<String, String>> mapMenu = new LinkedHashMap<>(Map.of(
             "home", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
                     BasicStructuresClass.STR_MENU, "Home",
                     BasicStructuresClass.STR_TITLE, "Home Page"),
@@ -32,7 +26,7 @@ public final class JavaJavaWebClass {
             "EnvironmentDetails", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
                     BasicStructuresClass.STR_MENU, "Environment",
                     BasicStructuresClass.STR_TITLE, "Environment Details")
-            );
+            ));
 
     /**
      * Outputs file statistics into a HTML table
@@ -81,45 +75,37 @@ public final class JavaJavaWebClass {
 
     /**
      * Handle web content
-     * @param resourceManager resource manager
      * @return PathHandler web content
      */
     private static HttpHandler handleWebContent() {
-        return new HttpHandler() {
-            @Override
-            public void handleRequest(final HttpServerExchange exchange) throws Exception {
-                // Get the 'page' query parameter (Deques are used for multi-value parameters)
-                final Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-                final Deque<String> pageParams = queryParams.get("page");
-                final String page = (pageParams != null) ? pageParams.getFirst() : "home";
-                final String strTitle = mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
-                final gg.jte.Content menuContent = output -> {
-                    output.writeContent(UndertowClass.buildMenuContent());
-                };
-                final gg.jte.Content bodyContent = output -> {
-                    output.writeContent(switch(page) {
-                        case "EnvironmentDetails"   -> getEnvironmentDetailsAsHtmlTable();
-                        case "FilesHashing"         -> getFileHashingAsHtmlTable();
-                        case "SoftwareReleases"     -> getSoftwareReleasesIntoHtml();
-                        default                     -> String.format("Welcome %s", System.getProperty("user.name"));
-                    });
-                };
-                final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
-                final Utf8ByteOutput output = new Utf8ByteOutput();
-                UndertowClass.TemplateRendering.setOutput(output);
-                UndertowClass.TemplateRendering.setServerExchange(exchange);
-                UndertowClass.TemplateRendering.packParameter("page", page);
-                UndertowClass.TemplateRendering.packParameter("title", strTitle);
-                UndertowClass.TemplateRendering.packParameter("menu", menuContent);
-                UndertowClass.TemplateRendering.packParameter("content", bodyContent);
-                UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
-            }
+        return exchange -> {
+            // Get the 'page' query parameter (Deques are used for multi-value parameters)
+            final Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
+            final Deque<String> pageParams = queryParams.get("page");
+            final String page = (pageParams != null) ? pageParams.getFirst() : "home";
+            final String strTitle = mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
+            final gg.jte.Content menuContent = output -> output.writeContent(UndertowClass.buildMenuContent());
+            final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
+                case "EnvironmentDetails"   -> getEnvironmentDetailsAsHtmlTable();
+                case "FilesHashing"         -> getFileHashingAsHtmlTable();
+                case "SoftwareReleases"     -> getSoftwareReleasesIntoHtml();
+                default                     -> String.format("Welcome %s", System.getProperty("user.name"));
+            });
+            final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
+            final Utf8ByteOutput output = new Utf8ByteOutput();
+            UndertowClass.TemplateRendering.setOutput(output);
+            UndertowClass.TemplateRendering.setServerExchange(exchange);
+            UndertowClass.TemplateRendering.packParameter("page", page);
+            UndertowClass.TemplateRendering.packParameter("title", strTitle);
+            UndertowClass.TemplateRendering.packParameter("menu", menuContent);
+            UndertowClass.TemplateRendering.packParameter("content", bodyContent);
+            UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
         };
     }
 
     /**
      * Execution
-     * @param args
+     * @param args input arguments
      */
     public static void main(final String[] args) {
         UndertowClass.setMapMenu(mapMenu);

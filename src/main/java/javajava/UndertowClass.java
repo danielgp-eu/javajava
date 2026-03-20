@@ -3,6 +3,7 @@ package javajava;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -31,15 +32,7 @@ public final class UndertowClass {
     /**
      * Menu
      */
-    private static Map<String, Map<String, String>> mapMenu;
-    /**
-     * Path for Web templates
-     */
-    private static String pathTemplates = "web/templates";
-    /**
-     * Path for static Web components
-     */
-    private static String pathStatic = "web/static";
+    private static LinkedHashMap<String, Map<String, String>> mapMenu;
     /**
      * Root handle variable
      */
@@ -59,9 +52,7 @@ public final class UndertowClass {
      */
     public static String buildMenuContent() {
         final StringBuilder strMenuContent = new StringBuilder(1000);
-        mapMenu.forEach((strKey, mapValue) -> {
-            strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU)));
-        });
+        mapMenu.forEach((strKey, mapValue) -> strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU))));
         return strMenuContent.toString();
     }
 
@@ -70,7 +61,7 @@ public final class UndertowClass {
      * @return TemplateEngine
      */
     public static TemplateEngine createTemplateEngine() {
-        final ResourceCodeResolver resolver = new ResourceCodeResolver(pathTemplates);
+        final ResourceCodeResolver resolver = new ResourceCodeResolver("web/templates");
         final TemplateEngine templateEngine = TemplateEngine.create(resolver, ContentType.Html);
         templateEngine.setBinaryStaticContent(true);
         return templateEngine;
@@ -93,6 +84,7 @@ public final class UndertowClass {
      */
     public static void runWebServer() {
         readWebConfigurationFromProjectProperties();
+        final String pathStatic = "web/static";
         try (ClassPathResourceManager resourceManager = new ClassPathResourceManager(
                 Thread.currentThread().getContextClassLoader(),
                 pathStatic)) {
@@ -117,8 +109,8 @@ public final class UndertowClass {
     }
 
     /**
-     * setter for Menu Content 
-     * @param inMapMenu map with menu content
+     * setter for Root Handler
+     * @param inRootHandler map with root handler
      */
     public static void setRootHandler(final HttpHandler inRootHandler) {
         rootHandler = inRootHandler;
@@ -136,7 +128,7 @@ public final class UndertowClass {
      * setter for Menu Content 
      * @param inMapMenu map with menu content
      */
-    public static void setMapMenu(final Map<String, Map<String, String>> inMapMenu) {
+    public static void setMapMenu(final LinkedHashMap<String, Map<String, String>> inMapMenu) {
         mapMenu = inMapMenu;
     }
 
@@ -147,7 +139,8 @@ public final class UndertowClass {
 
         /**
          * Table Body row logic
-         * @param recordProperties
+         * @param strRememberKey value of Key remembered
+         * @param recordProperties properties of the record to be transformed into HTML row
          * @return String
          */
         private static String buildTableBodyRow(final String strRememberKey, final SequencedMap<Object, Object> recordProperties) {
@@ -207,7 +200,7 @@ public final class UndertowClass {
                         } else {
                             strHtmlTable.append(String.format("</tbody></table></div><!-- %s -->", crtValueForTab));
                         }
-                        strHtmlTable.append(String.format("<div class=\"tabbertab\" title=\"%s\">" + strHeaderTable, crtValueForTab));
+                        strHtmlTable.append(String.format("<div class=\"tabbertab\" title=\"%s\">%s", crtValueForTab, strHeaderTable));
                         strRememberValue[0] = crtValueForTab;
                     }
                 }
@@ -251,7 +244,7 @@ public final class UndertowClass {
         /**
          * page parameters
          */
-        final private static Map<String, Object> params = new ConcurrentHashMap<>();
+        private static final Map<String, Object> params = new ConcurrentHashMap<>();
         /**
          * output handler
          */

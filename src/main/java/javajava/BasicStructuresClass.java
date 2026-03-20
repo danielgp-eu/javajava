@@ -137,6 +137,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_SYSTEM = "System";
     /**
+     * Table constant
+     */
+    public static final String STR_TABLE = "Table";
+    /**
      * Title constant
      */
     public static final String STR_TITLE = "title";
