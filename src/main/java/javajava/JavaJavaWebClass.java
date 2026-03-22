@@ -108,6 +108,7 @@ public final class JavaJavaWebClass {
      * @param args input arguments
      */
     public static void main(final String[] args) {
+        UndertowClass.setWebPort("8075");
         UndertowClass.setMapMenu(mapMenu);
         SoftwareReleasesClass.setReleasesDatabase(args[0]);
         UndertowClass.setRootHandler(handleWebContent());
