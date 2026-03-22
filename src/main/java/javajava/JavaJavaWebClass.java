@@ -35,21 +35,6 @@ public final class JavaJavaWebClass {
      * Outputs file statistics into an HTML table
      * @return String
      */
-    private static String getEnvironmentDetailsAsHtmlTable() {
-        final Properties objFeatures = new Properties();
-        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
-        final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
-        final List<String> desiredOrder = List.of("Category", "Element", "Value");
-        final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
-                .toList();
-        return HtmlClass.Table.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
-    }
-
-    /**
-     * Outputs file statistics into an HTML table
-     * @return String
-     */
     private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
@@ -89,7 +74,7 @@ public final class JavaJavaWebClass {
             final String strTitle = mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
             final gg.jte.Content menuContent = output -> output.writeContent(UndertowClass.buildMenuContent());
             final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
-                case "EnvironmentDetails"        -> getEnvironmentDetailsAsHtmlTable();
+                case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
                 case "FilesHashing"              -> getFileHashingAsHtmlTable();
                 case "SoftwareReleases"          -> getSoftwareReleasesIntoHtml();
                 case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
