@@ -33,16 +33,57 @@ public final class HtmlClass {
     }
 
     /**
-     * establishing the Key to Remember if relevant
-     * @param objFeatures optional HTML Table features
+     * Outputs table statistics into a HTML table
      * @return String
      */
-    private static String getRememberKey(final Properties objFeatures) {
-        String strRememberKey = "";
-        if (objFeatures.containsKey(BasicStructuresClass.STR_NEW_TAB)) {
-            strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
-        }
-        return strRememberKey;
+    public static String getTableStatisticsAsHtmlTable() {
+        final StringBuilder strQueryRaw = new StringBuilder(1000);
+        final String strQuery = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "TableAndTheirSequence");
+        final List<Properties> resultTables = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table list and their sequence", strQuery);
+        resultTables.forEach(objProperty -> {
+            if (!strQueryRaw.isEmpty()) {
+                strQueryRaw.append(" UNION ALL ");
+            }
+            strQueryRaw.append(String.format("""
+        SELECT
+              '%s'                                                              AS "Table"
+            , COUNT(*)                                                          AS "Records"
+            , %s                                                                AS "Index"
+        FROM
+            "%s"
+""", objProperty.get(BasicStructuresClass.STR_TABLE), objProperty.get("Index"), objProperty.get(BasicStructuresClass.STR_TABLE)));
+        });
+        final String strFinalQuery = String.format("""
+WITH
+    "CTE__Raw"                                                                  AS (
+        %s
+    )
+SELECT
+      ROW_NUMBER () OVER (ORDER BY "Table")                                     AS "#"
+    , "Table"                                                                   AS "Table"
+    , "Records"                                                                 AS "Records"
+    , "Index"                                                                   AS "Index"
+    , '<div style="text-align:right;color:'
+        || CASE
+            WHEN "Index" = "Records"    THEN
+                'green'
+            WHEN "Index" = 0            THEN
+                'blue'
+            ELSE
+                'red'
+            END
+        || '">'
+        || ("Index" - "Records")
+        || '</div>'                                                             AS "Gap"
+FROM
+    "CTE__Raw";
+""", strQueryRaw);
+        final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
+        final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Index", "Gap");
+        final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return Table.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());
     }
 
     /**
@@ -138,6 +179,19 @@ public final class HtmlClass {
                 strHtmlTable.append(String.format("</div><!-- %s --></div><!-- tabStandard -->", strRememberValue[0]));
             }
             return strHtmlTable.toString();
+        }
+
+        /**
+         * establishing the Key to Remember if relevant
+         * @param objFeatures optional HTML Table features
+         * @return String
+         */
+        private static String getRememberKey(final Properties objFeatures) {
+            String strRememberKey = "";
+            if (objFeatures.containsKey(BasicStructuresClass.STR_NEW_TAB)) {
+                strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
+            }
+            return strRememberKey;
         }
 
         /**

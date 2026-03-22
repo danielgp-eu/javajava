@@ -149,6 +149,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_TM_HUMAN = "HumanReadableTime";
     /**
+     * Table Statistics constant
+     */
+    public static final String STR_TS = "TableStatistics";
+    /**
      * String for internal ETL
      */
     public static final String STR_TWO = "TwoDigitNumber";

@@ -808,6 +808,18 @@ public final class DatabaseOperationsClass {
      * SQLite methods
      */
     public static final class SpecificSqLiteClass {
+        /**
+         * Internal database variable
+         */
+        private static String internalDatabase;
+
+        /**
+         * Initiates a SQLite connection
+         * @return Connection
+         */
+        public static Connection getSqLiteConnection() {
+            return getSqLiteConnection(internalDatabase);
+        }
 
         /**
          * Initiates a SQLite connection
@@ -839,6 +851,33 @@ public final class DatabaseOperationsClass {
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
             return connection;
+        }
+
+        /**
+         * Get result-set from SQLite
+         * @param strQueryPurpose Query purpose
+         * @param strQuery Query to execute
+         * @return List of Values
+         */
+        public static List<Properties> getSqLiteResultSetValues(final String strQueryPurpose, final String strQuery) {
+            final Properties objProperties = new Properties();
+            List<Properties> listReturn = new ArrayList<>();
+            try (Connection objConnection = getSqLiteConnection(internalDatabase);
+                 Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);
+                 ResultSet rsCols = executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
+                listReturn = DatabaseOperationsClass.ResultSettingClass.getResultSetColumnValues(rsCols);
+            } catch(SQLException e){
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), BasicStructuresClass.STR_SQLITE, Arrays.toString(e.getStackTrace()), StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            return listReturn;
+        }
+
+        /**
+         * Setter for internalDatabase
+         */
+        public static void setInternalDatabase(final String inDatabase) {
+            internalDatabase = inDatabase;
         }
 
         /**

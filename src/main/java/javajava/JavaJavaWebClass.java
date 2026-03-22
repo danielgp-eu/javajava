@@ -20,6 +20,9 @@ public final class JavaJavaWebClass {
             "SoftwareReleases", Map.of(BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
                     BasicStructuresClass.STR_MENU, "Releases",
                     BasicStructuresClass.STR_TITLE, "Software Releases"),
+            BasicStructuresClass.STR_TS, Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
+                    BasicStructuresClass.STR_MENU, "TStatistics",
+                    BasicStructuresClass.STR_TITLE, "Table Statistics"),
             "FilesHashing", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
                     BasicStructuresClass.STR_MENU, "Hashing",
                     BasicStructuresClass.STR_TITLE, "Downloads File Hashing"),
@@ -86,10 +89,11 @@ public final class JavaJavaWebClass {
             final String strTitle = mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
             final gg.jte.Content menuContent = output -> output.writeContent(UndertowClass.buildMenuContent());
             final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
-                case "EnvironmentDetails"   -> getEnvironmentDetailsAsHtmlTable();
-                case "FilesHashing"         -> getFileHashingAsHtmlTable();
-                case "SoftwareReleases"     -> getSoftwareReleasesIntoHtml();
-                default                     -> String.format("Welcome %s", System.getProperty("user.name"));
+                case "EnvironmentDetails"        -> getEnvironmentDetailsAsHtmlTable();
+                case "FilesHashing"              -> getFileHashingAsHtmlTable();
+                case "SoftwareReleases"          -> getSoftwareReleasesIntoHtml();
+                case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
+                default                          -> String.format("Welcome %s", System.getProperty("user.name"));
             });
             final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
             final Utf8ByteOutput output = new Utf8ByteOutput();
@@ -111,6 +115,7 @@ public final class JavaJavaWebClass {
     public static void main(final String[] args) {
         UndertowClass.setWebPort("8075");
         UndertowClass.setMapMenu(mapMenu);
+        DatabaseOperationsClass.SpecificSqLiteClass.setInternalDatabase(args[0]);
         SoftwareReleasesClass.setReleasesDatabase(args[0]);
         UndertowClass.setRootHandler(handleWebContent());
         UndertowClass.runWebServer();
