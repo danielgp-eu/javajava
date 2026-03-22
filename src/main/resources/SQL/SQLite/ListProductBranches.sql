@@ -25,6 +25,7 @@ WITH
         SELECT
               o.OrganizationName                                                AS "OrganizationName"
             , p.ProductName                                                     AS "ProductName"
+            , p.ProfileId                                                       AS "ProfileId"
             , pb.BranchName                                                     AS "BranchName"
             , o.OrganizationId                                                  AS "OrganizationId"
             , pb.ProductId                                                      AS "ProductId"
@@ -56,6 +57,7 @@ WITH
         GROUP BY
               o.OrganizationName
             , p.ProductName
+            , p.ProfileId
             , pb.ProductId
             , pb.BranchName
             , pb.BranchId
@@ -97,10 +99,8 @@ WITH
                 AND ci."Latest VersionId"      = bv.VersionId
             INNER JOIN CTE__Constants                                           AS cc   ON
                     1 = 1
-            LEFT JOIN product_profile                                           AS pp   ON
-                ci.ProductId                    = pp.ProductId
             LEFT JOIN profile_list                                              AS pl   ON
-                pp.ProfileId                    = pl.ProfileId
+                ci.ProfileId                    = pl.ProfileId
     ),
     CTE__Files                                                                  AS (
         SELECT
