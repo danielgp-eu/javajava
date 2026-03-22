@@ -23,7 +23,7 @@ import oshi.util.FormatUtil;
 /**
  * Hardware class
  */
-final public class HardwareClass {
+public final class HardwareClass {
 
     /**
      * Display details

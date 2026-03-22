@@ -10,7 +10,7 @@ import java.util.Properties;
 /**
  * Handling Software releases logic
  */
-final public class SoftwareReleasesClass {
+public final class SoftwareReleasesClass {
     /**
      * Internal database name
      */
