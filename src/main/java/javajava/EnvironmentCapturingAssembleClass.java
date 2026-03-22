@@ -56,23 +56,23 @@ public final class EnvironmentCapturingAssembleClass {
         LogExposureClass.LOGGER.info(strFeedback);
         final String strHardware = "\"Hardware\":{"
                 + "\"CPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutCentralProcessorUnit())
-                + "\"GPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutGraphicCards())
-                + "\"Mainboard\"" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMainboard())
-                + "\"Monitor\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMonitor())
-                + "\"Network Interface\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetworkInterfaces())
-                + "\"RAM\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutRandomAccessMemory())
+                + ",\"GPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutGraphicCards())
+                + ",\"Mainboard\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMainboard())
+                + ",\"Monitor\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMonitor())
+                + ",\"Network Interface\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetworkInterfaces())
+                + ",\"RAM\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutRandomAccessMemory())
                 + "}";
         final String strFeedbackH = LocalizationClass.getMessage("i18nAppInformationHardwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackH);
         final String strSoftware = "\"Software\":{"
                 + "\"OS\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutOperatingSystem())
-                + "\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
-                + "\"Network\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork())
-                + "\"Storage\":" + JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions())
+                + ",\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
+                + ",\"Network\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork())
+                + ",\"Storage\":" + JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions())
                 + "}";
         final String strFeedbackS = LocalizationClass.getMessage("i18nAppInformationSoftwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackS);
-        final String strEnvironment = "\"Environment\":{" + gatherEnvironmentDetails() + "}";
+        final String strEnvironment = "\"Environment\":" + JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
         final String strFeedbackEnv = LocalizationClass.getMessage("i18nAppInformationEnvironmentCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
         return strJsonString.append('{')
