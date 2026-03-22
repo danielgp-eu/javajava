@@ -13,7 +13,7 @@ public final class JavaJavaWebClass {
     /**
      * Menu
      */
-    private static final LinkedHashMap<String, Map<String, String>> mapMenu = new LinkedHashMap<>(Map.of(
+    private static final Map<String, Map<String, String>> mapMenu = Map.of(
             "home", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
                     BasicStructuresClass.STR_MENU, "Home",
                     BasicStructuresClass.STR_TITLE, "Home Page"),
@@ -26,13 +26,13 @@ public final class JavaJavaWebClass {
             "EnvironmentDetails", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
                     BasicStructuresClass.STR_MENU, "Environment",
                     BasicStructuresClass.STR_TITLE, "Environment Details")
-            ));
+            );
 
     /**
-     * Outputs file statistics into a HTML table
+     * Outputs file statistics into an HTML table
      * @return String
      */
-    public static String getEnvironmentDetailsAsHtmlTable() {
+    private static String getEnvironmentDetailsAsHtmlTable() {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
         final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
@@ -40,14 +40,14 @@ public final class JavaJavaWebClass {
         final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
                 .toList();
-        return UndertowClass.HyperTextMarkupLanguageTable.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+        return HtmlClass.Table.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
     }
 
     /**
-     * Outputs file statistics into a HTML table
+     * Outputs file statistics into an HTML table
      * @return String
      */
-    public static String getFileHashingAsHtmlTable() {
+    private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
         final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoMap("C:/www/Downloads/");
@@ -55,14 +55,14 @@ public final class JavaJavaWebClass {
         final List<SequencedMap<Object, Object>> orderedList = crtFileStatistics.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
                 .toList();
-        return UndertowClass.HyperTextMarkupLanguageTable.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
+        return HtmlClass.Table.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
     }
 
     /**
      * expose Software Release details from internal DB
      * @return String software releases details
      */
-    public static String getSoftwareReleasesIntoHtml() {
+    private static String getSoftwareReleasesIntoHtml() {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
         final List<Properties> softwareReleases = SoftwareReleasesClass.consolidateSoftwareReleases();
@@ -70,7 +70,7 @@ public final class JavaJavaWebClass {
         final List<SequencedMap<Object, Object>> orderedList = softwareReleases.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
                 .toList();
-        return UndertowClass.HyperTextMarkupLanguageTable.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+        return HtmlClass.Table.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
     }
 
     /**
@@ -99,6 +99,7 @@ public final class JavaJavaWebClass {
             UndertowClass.TemplateRendering.packParameter("title", strTitle);
             UndertowClass.TemplateRendering.packParameter("menu", menuContent);
             UndertowClass.TemplateRendering.packParameter("content", bodyContent);
+            UndertowClass.TemplateRendering.packParameter("timeNow", TimingClass.getCurrentTimestamp("EEEE, dd MMMM yyyy HH:mm:ss.SSS"));
             UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
         };
     }
@@ -108,6 +109,7 @@ public final class JavaJavaWebClass {
      * @param args input arguments
      */
     public static void main(final String[] args) {
+        UndertowClass.setWebPort("8075");
         UndertowClass.setMapMenu(mapMenu);
         SoftwareReleasesClass.setReleasesDatabase(args[0]);
         UndertowClass.setRootHandler(handleWebContent());

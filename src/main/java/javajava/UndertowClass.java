@@ -3,11 +3,8 @@ package javajava;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import gg.jte.ContentType;
@@ -32,7 +29,7 @@ public final class UndertowClass {
     /**
      * Menu
      */
-    private static LinkedHashMap<String, Map<String, String>> mapMenu;
+    private static Map<String, Map<String, String>> mapMenu;
     /**
      * Root handle variable
      */
@@ -71,11 +68,8 @@ public final class UndertowClass {
      * Reading Project Properties
      */
     private static void readWebConfigurationFromProjectProperties() {
-        final String[] varsToPick = {"webIp", "wepPort"};
+        final String[] varsToPick = {"webIp"};
         final Properties webProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
-        if (webPort == null) {
-            webPort = webProperties.get("wepPort").toString();
-        }
         webIp = webProperties.get("webIp").toString();
     }
 
@@ -109,6 +103,14 @@ public final class UndertowClass {
     }
 
     /**
+     * setter for Menu Content 
+     * @param inMapMenu map with menu content
+     */
+    public static void setMapMenu(final Map<String, Map<String, String>> inMapMenu) {
+        mapMenu = inMapMenu;
+    }
+
+    /**
      * setter for Root Handler
      * @param inRootHandler map with root handler
      */
@@ -122,115 +124,6 @@ public final class UndertowClass {
      */
     public static void setWebPort(final String inWebPort) {
         webPort = inWebPort;
-    }
-
-    /**
-     * setter for Menu Content 
-     * @param inMapMenu map with menu content
-     */
-    public static void setMapMenu(final LinkedHashMap<String, Map<String, String>> inMapMenu) {
-        mapMenu = inMapMenu;
-    }
-
-    /**
-     * HTML Table logic
-     */
-    public static final class HyperTextMarkupLanguageTable {
-
-        /**
-         * Table Body row logic
-         * @param strRememberKey value of Key remembered
-         * @param recordProperties properties of the record to be transformed into HTML row
-         * @return String
-         */
-        private static String buildTableBodyRow(final String strRememberKey, final SequencedMap<Object, Object> recordProperties) {
-            final StringBuilder strHtmlTable = new StringBuilder(1000);
-            strHtmlTable.append("<tr>");
-            recordProperties.forEach((strKey, strValue) -> {
-                if (!strRememberKey.equalsIgnoreCase(strKey.toString())
-                        && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                    String cellStyle = "";
-                    if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
-                        cellStyle = recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString();
-                    }
-                    if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue.toString())) {
-                        cellStyle = cellStyle + "text-align:right;";
-                    }
-                    if (cellStyle.isEmpty()) {
-                        strHtmlTable.append(String.format("<td>%s</td>", strValue));
-                    } else {
-                        strHtmlTable.append(String.format("<td style=\"%s\">%s</td>", cellStyle, strValue));
-                    }
-                }
-            });
-            strHtmlTable.append("</tr>");
-            return strHtmlTable.toString();
-        }
-
-        /**
-         * Generate HTML from a Map of values
-         * @param inList values stored as a list
-         * @return String
-         */
-        public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
-            final StringBuilder strHeaderTable = new StringBuilder(100);
-            final StringBuilder strHtmlTable = new StringBuilder(1000);
-            final String strRememberKey = getRememberKey(objFeatures);
-            String[] strRememberValue = { "None" };
-            inList.forEach( recordProperties -> {
-                if (strHeaderTable.isEmpty()) {
-                    strHeaderTable.append("<table><thead>");
-                    recordProperties.forEach((strKey, _) -> {
-                        if (!strRememberKey.equalsIgnoreCase(strKey.toString())
-                                && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                            strHeaderTable.append(String.format("<th>%s</th>", strKey));
-                        }
-                    });
-                    strHeaderTable.append("</thead><tbody>");
-                }
-                if (strRememberKey.isEmpty()) {
-                    if (strHtmlTable.isEmpty()) {
-                        strHtmlTable.append(strHeaderTable);
-                    }
-                } else {
-                    final String crtValueForTab = recordProperties.get(strRememberKey).toString();
-                    if (!strRememberValue[0].equalsIgnoreCase(crtValueForTab)) {
-                        if (strHtmlTable.isEmpty()) {
-                            strHtmlTable.append("<div id=\"tabStandard\" class=\"tabber\">");
-                        } else {
-                            strHtmlTable.append(String.format("</tbody></table></div><!-- %s -->", crtValueForTab));
-                        }
-                        strHtmlTable.append(String.format("<div class=\"tabbertab\" title=\"%s\">%s", crtValueForTab, strHeaderTable));
-                        strRememberValue[0] = crtValueForTab;
-                    }
-                }
-                strHtmlTable.append(buildTableBodyRow(strRememberKey, recordProperties));
-            });
-            strHtmlTable.append("</tbody></table>");
-            if (!strRememberKey.isEmpty()) {
-                strHtmlTable.append(String.format("</div><!-- %s --></div><!-- tabStandard -->", strRememberValue[0]));
-            }
-            return strHtmlTable.toString();
-        }
-
-        /**
-         * establishing the Key to Remember if relevant
-         * @param objFeatures optional HTML Table features
-         * @return String
-         */
-        private static String getRememberKey(final Properties objFeatures) {
-            String strRememberKey = "";
-            if (objFeatures.containsKey(BasicStructuresClass.STR_NEW_TAB)) {
-                strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
-            }
-            return strRememberKey;
-        }
-
-        // Private constructor to prevent instantiation
-        private HyperTextMarkupLanguageTable() {
-            // intentional empty
-        }
-
     }
 
     /**

@@ -3,6 +3,7 @@
 @param String title
 @param Content menu
 @param Content content
+@param String timeNow
 
 <!DOCTYPE html>
 <html lang="en-US">
@@ -35,6 +36,6 @@
         <ul>${menu}</ul>
     </nav>
     <main>${content}</main>
-    <footer>&#169; Copyright by Daniel Popiniuc - 2026</footer>
+    <footer>&#169; Copyright by Daniel Popiniuc 2026, now is ${timeNow}</footer>
 </body>
 </html>
