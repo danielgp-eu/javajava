@@ -99,6 +99,7 @@ public final class JavaJavaWebClass {
             UndertowClass.TemplateRendering.packParameter("title", strTitle);
             UndertowClass.TemplateRendering.packParameter("menu", menuContent);
             UndertowClass.TemplateRendering.packParameter("content", bodyContent);
+            UndertowClass.TemplateRendering.packParameter("timeNow", TimingClass.getCurrentTimestamp("EEEE, dd MMMM yyyy HH:mm:ss.SSS"));
             UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
         };
     }
