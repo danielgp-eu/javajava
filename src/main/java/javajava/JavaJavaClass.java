@@ -32,6 +32,7 @@ import picocli.CommandLine.Mixin;
             ExperimentalFeature.class,
             GetInformationFromDatabase.class,
             GetSubFoldersFromFolder.class,
+            JavaJavaWebUserInterface.class,
             JsonSplit.class
     }
 )
@@ -665,6 +666,54 @@ class GetSubFoldersFromFolder implements Runnable {
         super();
     }
 
+}
+
+/**
+ * Supports web interface
+ */
+@CommandLine.Command(
+    name = "JavaJavaWebUserInterface", 
+    description = "Initiate JavaJava web user interface")
+class JavaJavaWebUserInterface implements Runnable {
+
+    /**
+     * String for Database
+     */
+    @CommandLine.Option(
+        names = {"-dbr", "--databaseReleases"},
+        description = "Database Name with Releases",
+        arity = BasicStructuresClass.STR_ONE,
+        required = true
+    )
+    private static String strDbReleases;
+
+    /**
+     * String for Database
+     */
+    @CommandLine.Option(
+        names = {"-p", "--port"},
+        description = "Port Number for web user interface",
+        arity = BasicStructuresClass.STR_ONE,
+        required = true
+    )
+    private static long portNumber;
+
+    @Override
+    public void run() {
+        UndertowClass.setWebPort(String.valueOf(portNumber));
+        UndertowClass.setMapMenu(JavaJavaWebClass.getMapMenu());
+        DatabaseOperationsClass.SpecificSqLiteClass.setInternalDatabase(strDbReleases);
+        SoftwareReleasesClass.setReleasesDatabase(strDbReleases);
+        UndertowClass.setRootHandler(JavaJavaWebClass.handleWebContent());
+        UndertowClass.runWebServer();
+    }
+
+    /**
+     * Constructor
+     */
+    protected JavaJavaWebUserInterface() {
+        // intentionally blank
+    }
 }
 
 /**

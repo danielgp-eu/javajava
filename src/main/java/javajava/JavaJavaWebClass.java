@@ -5,6 +5,10 @@ import java.util.*;
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.session.Session;
+import io.undertow.util.Headers;
+import io.undertow.util.Sessions;
+import io.undertow.util.StatusCodes;
 
 /**
  * Web interface class
@@ -47,6 +51,14 @@ public final class JavaJavaWebClass {
     }
 
     /**
+     * Getter for Map Menu
+     * @return menu
+     */
+    public static Map<String, Map<String, String>> getMapMenu() {
+        return mapMenu;
+    }
+
+    /**
      * expose Software Release details from internal DB
      * @return String software releases details
      */
@@ -65,13 +77,50 @@ public final class JavaJavaWebClass {
      * Handle web content
      * @return PathHandler web content
      */
-    private static HttpHandler handleWebContent() {
+    public static HttpHandler handleWebContent() {
         return exchange -> {
+            // initialize session
+            Session session = Sessions.getSession(exchange);
+            // Create a new session if one doesn't exist
+            if (session == null) {
+                session = Sessions.getOrCreateSession(exchange);
+            }
             // Get the 'page' query parameter (Deques are used for multi-value parameters)
             final Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
             final Deque<String> pageParams = queryParams.get("page");
             final String page = (pageParams != null) ? pageParams.getFirst() : "home";
-            final String strTitle = mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
+            final String strTitle = BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
+            if (BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page)) {
+                if (queryParams.get("TZ") != null) {
+                    session.setAttribute("TZ", queryParams.get("TZ").getFirst());
+                }
+                if (queryParams.get(BasicStructuresClass.STR_LOCALE) != null) {
+                    session.setAttribute(BasicStructuresClass.STR_LOCALE, queryParams.get(BasicStructuresClass.STR_LOCALE).getFirst());
+                }
+                if (queryParams.get("redirectAction") != null) {
+                    exchange.setStatusCode(StatusCodes.SEE_OTHER); // 303 Redirect
+                    exchange.getResponseHeaders().put(Headers.LOCATION, "/?" + queryParams.get("redirectAction").getFirst());
+                    exchange.endExchange();
+                }
+            }
+            if (session.getAttribute("TZ") == null) {
+                session.setAttribute("TZ", System.getProperty("user.timezone"));
+            }
+            final String sessionTimeZone = session.getAttribute("TZ").toString();
+            HtmlClass.Table.setTimeZone(sessionTimeZone);
+            switch(page) {
+                case "FilesHashing":
+                    // intentionally blank
+                case "SoftwareReleases":
+                    // intentionally blank
+                case BasicStructuresClass.STR_TS:
+                    TimingClass.Localization.setInputTimeZone("UTC");
+                    break;
+                default:
+                    // intentionally blank
+                    break;
+            }
+            HtmlClass.Table.setTimeZone(sessionTimeZone);
             final gg.jte.Content menuContent = output -> output.writeContent(UndertowClass.buildMenuContent());
             final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
                 case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
@@ -80,6 +129,7 @@ public final class JavaJavaWebClass {
                 case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
                 default                          -> String.format("Welcome %s", System.getProperty("user.name"));
             });
+            final gg.jte.Content tzContent = output -> output.writeContent(UndertowClass.buildTimeZoneSelect(sessionTimeZone));
             final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
             final Utf8ByteOutput output = new Utf8ByteOutput();
             UndertowClass.TemplateRendering.setOutput(output);
@@ -88,22 +138,13 @@ public final class JavaJavaWebClass {
             UndertowClass.TemplateRendering.packParameter("title", strTitle);
             UndertowClass.TemplateRendering.packParameter("menu", menuContent);
             UndertowClass.TemplateRendering.packParameter("content", bodyContent);
-            UndertowClass.TemplateRendering.packParameter("timeNow", TimingClass.getCurrentTimestamp("EEEE, dd MMMM yyyy HH:mm:ss.SSS"));
+            UndertowClass.TemplateRendering.packParameter("timeZoneSelect", tzContent);
+            UndertowClass.TemplateRendering.packParameter("currentPageQuery", exchange.getQueryString());
+            final ZoneInfo zInfo = TimingClass.ZoneDataService.get(sessionTimeZone);
+            UndertowClass.TemplateRendering.packParameter("geoCoordinates", zInfo.latitude() + "," + zInfo.longitude());
+            UndertowClass.TemplateRendering.packParameter("timeNow", TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone));
             UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
         };
-    }
-
-    /**
-     * Execution
-     * @param args input arguments
-     */
-    public static void main(final String[] args) {
-        UndertowClass.setWebPort("8075");
-        UndertowClass.setMapMenu(mapMenu);
-        DatabaseOperationsClass.SpecificSqLiteClass.setInternalDatabase(args[0]);
-        SoftwareReleasesClass.setReleasesDatabase(args[0]);
-        UndertowClass.setRootHandler(handleWebContent());
-        UndertowClass.runWebServer();
     }
 
     private JavaJavaWebClass() {

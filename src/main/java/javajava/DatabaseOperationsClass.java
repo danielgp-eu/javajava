@@ -192,7 +192,7 @@ public final class DatabaseOperationsClass {
         }
         final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strFilePath, fileSizeActual);
         LogExposureClass.LOGGER.debug(strFeedback);
-        final long fileSizeLimit = 20;
+        final long fileSizeLimit = 10;
         if (fileSizeActual < fileSizeLimit) {
             final String strFeedbackErr = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
                 .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));

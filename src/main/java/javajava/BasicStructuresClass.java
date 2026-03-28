@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,32 @@ import java.util.stream.Collectors;
  * Handling basic structures: numbers, lists, maps, strings
  */
 public final class BasicStructuresClass {
+    /**
+     * Patterns Map
+     */
+    public static final Map<String, Map<String, String>> mapPatterns = Map.of(
+            BasicStructuresClass.STR_AGING_DATE, Map.of(BasicStructuresClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
+            BasicStructuresClass.STR_AGING_TS, Map.of(BasicStructuresClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
+            BasicStructuresClass.STR_AGING_TIME, Map.of(BasicStructuresClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
+            "integer", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d{1,10}-?"),
+            BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd",
+                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
+                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
+                    BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}\\d{1})"),
+            "numeric", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
+            "timestamp", Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
+                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
+                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss",
+                    BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}[0-9]{1})\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}"),
+            "timestampWithMiliseconds", Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss.SSS",
+                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss.SSS",
+                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss.SSS",
+                    BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}[0-9]{1})\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
+            );
+    /**
+     * Constant for non or single/one
+     */
+	/* default */ public static final String ARITY_NONE_OR_ONE = "0..1";
     /**
      * arity one or more
      */
@@ -40,6 +67,18 @@ public final class BasicStructuresClass {
      * string constant
      */
     public static final String STR_ACTV_PXLS = "Active Pixels";
+    /**
+     * string constant
+     */
+    public static final String STR_AGING_DATE = "agingDate";
+    /**
+     * string constant
+     */
+    public static final String STR_AGING_TS = "agingTimestamp";
+    /**
+     * string constant
+     */
+    public static final String STR_AGING_TIME = "agingTime";
     /**
      * Dependencies value
      */
@@ -56,6 +95,22 @@ public final class BasicStructuresClass {
      * Icon string
      */
     public static final String STR_ICON = "icon";
+    /**
+     * Input string
+     */
+    public static final String STR_INPUT = "Input";
+    /**
+     * Just Date string
+     */
+    public static final String STR_JUST_DATE = "justDate";
+    /**
+     * Locale constant
+     */
+    public static final String STR_LOCALE = "Locale";
+    /**
+     * Localization constant
+     */
+    public static final String STR_LOCALIZATION = "Localization";
     /**
      * Mainboard constant
      */
@@ -81,6 +136,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_NAME = "Name";
     /**
+     * standard String
+     */
+    public static final String STR_NULL = "NULL";
+    /**
      * Named Character
      */
     public static final String STR_NAMED_PARAM = "NamedParameter";
@@ -92,6 +151,14 @@ public final class BasicStructuresClass {
      * One as string
      */
     public static final String STR_ONE = "1";
+    /**
+     * Output string
+     */
+    public static final String STR_OUTPUT_LONG = "Output Long";
+    /**
+     * Output string
+     */
+    public static final String STR_OUTPUT_SHORT = "Output Short";
     /**
      * string constant
      */
@@ -108,6 +175,10 @@ public final class BasicStructuresClass {
      * string constant
      */
     public static final String STR_RANGE_LMTS = "Range Limits";
+    /**
+     * Regular Expression string
+     */
+    public static final String STR_REG_EXP = "Regular Expression";
     /**
      * string constant
      */
@@ -140,6 +211,14 @@ public final class BasicStructuresClass {
      * Table constant
      */
     public static final String STR_TABLE = "Table";
+    /**
+     * Time-stamp constant
+     */
+    public static final String STR_TIMESTAMP = "timestamp";
+    /**
+     * Time-stamp constant
+     */
+    public static final String STR_TS_MSEC = "timestampWithMiliseconds";
     /**
      * Title constant
      */
@@ -493,18 +572,23 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * Check if String is actually Date
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Date
+         */
+        public static boolean isStringActuallyDate(final String inputString) {
+            return isStringActuallySomething(inputString, "justDate");
+        }
+
+        /**
          * Check if String is actually Numeric
          *
          * @param inputString string to evaluate
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyInteger(final String inputString) {
-            boolean bolReturn = false;
-            if (inputString != null) {
-                final Pattern pattern = Pattern.compile("-?\\d{1,10}-?");
-                bolReturn = pattern.matcher(inputString).matches();
-            }
-            return bolReturn;
+            return isStringActuallySomething(inputString, "integer");
         }
 
         /**
@@ -514,12 +598,42 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Numeric
          */
         public static boolean isStringActuallyNumeric(final String inputString) {
+            return isStringActuallySomething(inputString, "numeric");
+        }
+
+        /**
+         * Check if String is actually Date
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Date
+         */
+        public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
             boolean bolReturn = false;
             if (inputString != null) {
-                final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?-?");
+                final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
                 bolReturn = pattern.matcher(inputString).matches();
             }
             return bolReturn;
+        }
+
+        /**
+         * Check if String is actually Time-stamp
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Time-stamp
+         */
+        public static boolean isStringActuallyTimestamp(final String inputString) {
+            return isStringActuallySomething(inputString, "timestamp");
+        }
+
+        /**
+         * Check if String is actually Time-stamp w. milli-seconds
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Time-stamp w. milli-seconds
+         */
+        public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
+            return isStringActuallySomething(inputString, "timestampWithMiliseconds");
         }
 
         // Private constructor to prevent instantiation
@@ -558,6 +672,64 @@ public final class BasicStructuresClass {
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
             return outString;
+        }
+
+        /**
+         * Convert aging Date into human readable String
+         * @param ageString
+         * @param groupSuffix
+         * @return
+         */
+        public static String convertAgingDateIntoHumanReadableString(final String ageString) {
+            final Pattern AGE_PATTERN = Pattern.compile(mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP));
+            final Matcher matcher = AGE_PATTERN.matcher(ageString);
+            final StringJoiner result = new StringJoiner(", ");
+            if (matcher.matches()) {
+                final int years = Integer.parseInt(matcher.group("years"));
+                if (years > 0) {
+                    result.add(years + (years == 1 ? " year" : " years"));
+                }
+                final int months = Integer.parseInt(matcher.group("months"));
+                if (months > 0) {
+                    result.add(months + (months == 1 ? " month" : " months"));
+                }
+                final int days = Integer.parseInt(matcher.group("days"));
+                if (days > 0) {
+                    result.add(days + (days == 1 ? " day" : " days"));
+                }
+            } else {
+                result.add(ageString);
+            }
+            return result.toString();
+        }
+
+        /**
+         * Convert aging Time into human readable String
+         * @param ageString
+         * @param groupSuffix
+         * @return
+         */
+        public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
+            final Pattern AGE_PATTERN = Pattern.compile(mapPatterns.get(STR_AGING_TIME).get(STR_REG_EXP));
+            final Matcher matcher = AGE_PATTERN.matcher(ageString);
+            final StringJoiner result = new StringJoiner(", ");
+            if (matcher.matches()) {
+                final int hours = Integer.parseInt(matcher.group("hours"));
+                if (hours > 0) {
+                    result.add(hours + (hours == 1 ? " hour" : " hours"));
+                }
+                final int minutes = Integer.parseInt(matcher.group("minutes"));
+                if (minutes > 0) {
+                    result.add(minutes + (minutes == 1 ? " minute" : " minutes"));
+                }
+                final int seconds = Integer.parseInt(matcher.group("seconds"));
+                if (seconds > 0) {
+                    result.add(seconds + (seconds == 1 ? " second" : " seconds"));
+                }
+            } else {
+                result.add(ageString);
+            }
+            return result.toString();
         }
 
         /**

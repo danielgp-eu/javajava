@@ -3,8 +3,10 @@
 @param String title
 @param Content menu
 @param Content content
+@param Content timeZoneSelect
+@param String currentPageQuery
+@param String geoCoordinates
 @param String timeNow
-
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
@@ -36,6 +38,18 @@
         <ul>${menu}</ul>
     </nav>
     <main>${content}</main>
-    <footer>&#169; Copyright by Daniel Popiniuc 2026, now is ${timeNow}</footer>
+    <footer>
+        <form action="/cc/indexSnowflake.php " method="get" id="TZform" style="float:left;margin:0rem 0.5rem;">
+            ${timeZoneSelect}
+            <input type="hidden" name="page" value="Localization">
+            <button class="btn btn-outline-primary" onclick="javascript:document.TZform.submit();" style="padding:0 var(--bs-btn-padding-x)!important;">Set</button>
+            <input type="hidden" name="redirectAction" value="${currentPageQuery}">
+        </form>
+        <a href="https://maps.google.com/maps?q=${geoCoordinates}" target="_blank" style="float:left;margin:0rem 0.5rem;">
+            <i class="fa-solid fa-map-location"></i>
+        </a>
+        <span id="copyright" style="float:right;margin:0rem 0.5rem;">&#169; Copyright by Daniel Popiniuc 2026</span>
+        <span id="now" style="float:right;margin:0rem 0.5rem;">TS: ${timeNow}</span>
+    </footer>
 </body>
 </html>

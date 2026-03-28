@@ -18,8 +18,12 @@ public final class HtmlClass {
      */
     public static String buildSelectInput(final Map<String, String> mapValues, final Properties objFeatures) {
         final List<String> outHtml = new ArrayList<>();
-        outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label")));
-        outHtml.add("<br/>");
+        if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
+            outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label")));
+            if (objFeatures.getOrDefault("SameLineLabel", "").toString().isEmpty()) {
+                outHtml.add("<br/>");
+            }
+        }
         outHtml.add(String.format("<select name=\"%s\" id=\"%s\">", objFeatures.get("Name"), objFeatures.get("Id")));
         mapValues.forEach((strValue, strText) -> {
             String strSelected = "";
@@ -106,9 +110,21 @@ FROM
      */
     public static final class Table {
         /**
+         * Time Zone variable
+         */
+        private static long LARGE_STRING = 25;
+        /**
+         * CSS to align text to right
+         */
+        private static String CSS_TEXT_RIGHT = "text-align:right;";
+        /**
+         * Time Zone variable
+         */
+        private static String strTimeZone;
+        /**
          * Row Counter variable
          */
-        /* default */ static int rowCounter;
+        private static int rowCounter;
 
         /**
          * Table Body row logic
@@ -122,12 +138,31 @@ FROM
             recordProperties.forEach((strKey, strValue) -> {
                 if (!strRememberKey.equalsIgnoreCase(strKey.toString())
                         && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                    String cellStyle = "";
-                    if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
-                        cellStyle = recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString();
-                    }
-                    if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue.toString())) {
-                        cellStyle = cellStyle + "text-align:right;";
+                    final StringBuilder cellStyle = new StringBuilder(100);
+                    if (BasicStructuresClass.STR_NULL.equalsIgnoreCase(strValue.toString())) {
+                        cellStyle.append("color:LightGrey;font-style:italic;");
+                        strValue = "&lt;NULL&gt;";
+                    } else if (strValue.toString().isBlank()) {
+                        cellStyle.append("color:Grey;font-style:italic;");
+                        strValue = "&lt;blank&gt;";
+                    } else {
+                        if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
+                            cellStyle.append(recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString());
+                        }
+                        if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue.toString())) {
+                            cellStyle.append(CSS_TEXT_RIGHT);
+                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDate(strValue.toString())) {
+                            cellStyle.append(CSS_TEXT_RIGHT);
+                            strValue = TimingClass.Localization.formatDateFriendly(strValue.toString(), "yyyy-MM-dd", "EEE, dd MMM yyyy");
+                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestamp(strValue.toString())) {
+                            cellStyle.append(CSS_TEXT_RIGHT);
+                            strValue = TimingClass.Localization.convertTimestampFriendly(strValue.toString(), "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
+                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestampWithMilliseconds(strValue.toString())) {
+                            cellStyle.append("text-align:right;");
+                            strValue = TimingClass.Localization.convertTimestampFriendly(strValue.toString(), "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
+                        } else if (strValue.toString().length() >= LARGE_STRING) {
+                            strValue = TimingClass.Localization.replacePatterns(strValue.toString());
+                        }
                     }
                     if (cellStyle.isEmpty()) {
                         strHtmlTable.append(String.format("<td>%s</td>", strValue));
@@ -148,6 +183,9 @@ FROM
         public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
             final StringBuilder strHeaderTable = new StringBuilder(100);
             final StringBuilder strHtmlTable = new StringBuilder(1000);
+            if (strTimeZone == null) {
+                setTimeZone(System.getProperty("user.timezone"));
+            }
             final String strRememberKey = getRememberKey(objFeatures);
             final boolean bolCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
             final String[] strRememberValue = { "None" };
@@ -207,6 +245,15 @@ FROM
                 strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
             }
             return strRememberKey;
+        }
+
+        /**
+         * Setter for strTimeZone
+         * @param inTimeZone input time zone
+         */
+        public static void setTimeZone(final String inTimeZone) {
+            strTimeZone = inTimeZone;
+            TimingClass.Localization.setOutputTimeZone(inTimeZone);
         }
 
         /**

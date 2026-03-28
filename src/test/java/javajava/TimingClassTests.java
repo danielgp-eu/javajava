@@ -62,6 +62,20 @@ class TimingClassTests {
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }
 
+    @Test
+    void testReplacePatterns() {
+        final String largeContent = """
+Started on 2026-03-25. 
+Standard log at 2026-03-25 10:00:00. 
+High precision at 2026-12-25 14:30:05.123.""";
+        final String handled = TimingClass.Localization.replacePatterns(largeContent);
+        final String strExpected = """
+Started on mie., 25 mar. 2026. 
+Standard log at mie., 25 mar. 2026 10:00:00. 
+High precision at vin., 25 dec. 2026 14:30:05.123.""";
+        assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
+    }
+
     /**
      * Constructor
      */

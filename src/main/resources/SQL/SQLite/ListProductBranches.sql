@@ -1,134 +1,91 @@
 WITH
-    CTE__Constants                                                              AS (
+    "CTE__INITIAL"                                                              AS (
         SELECT
-            '{"01":"Jan",
-                "02":"Feb",
-                "03":"Mar",
-                "04":"Apr",
-                "05":"May",
-                "06":"Jun",
-                "07":"Jul",
-                "08":"Aug",
-                "09":"Sep",
-                "10":"Oct",
-                "11":"Nov",
-                "12":"Dec"}'                                                    AS "JSON_MonthNames_Short"
-            , '{"0":"Sun",
-                "1":"Mon",
-                "2":"Tue",
-                "3":"Wed",
-                "4":"Thu",
-                "5":"Fri",
-                "6":"Sat"}'                                                     AS "JSON_WeekDays_Short"
-    ),
-    CTE__INITIAL                                                                AS (
-        SELECT
-              o.OrganizationName                                                AS "OrganizationName"
-            , p.ProductName                                                     AS "ProductName"
-            , p.ProfileId                                                       AS "ProfileId"
-            , pb.BranchName                                                     AS "BranchName"
-            , o.OrganizationId                                                  AS "OrganizationId"
-            , pb.ProductId                                                      AS "ProductId"
-            , pb.BranchId                                                       AS "BranchId"
-            , JSON_EXTRACT(
-                  pb.BranchURLs
-                , '$.Releases')                                                 AS "Releases"
-            , MAX(bv.ReleaseDate)                                               AS "MaxReleaseDate"
-            , MAX(bv.VersionId) OVER
+              "o"."OrganizationName"                                            AS "OrganizationName"
+            , "p"."ProductName"                                                 AS "ProductName"
+            , "p"."ProfileId"                                                   AS "ProfileId"
+            , "pb"."BranchName"                                                 AS "BranchName"
+            , "o"."OrganizationId"                                              AS "OrganizationId"
+            , "pb"."ProductId"                                                  AS "ProductId"
+            , "pb"."BranchId"                                                   AS "BranchId"
+            , JSON_EXTRACT("pb"."BranchURLs", '$.Releases')                     AS "Releases"
+            , MAX("bv"."ReleaseDate")                                           AS "MaxReleaseDate"
+            , MAX("bv"."VersionId") OVER
                 (PARTITION BY
-                      o.OrganizationName
-                    , p.ProductName
-                    , pb.BranchName
+                      "o"."OrganizationName"
+                    , "p"."ProductName"
+                    , "pb"."BranchName"
                 ORDER BY
-                    bv.ReleaseDate DESC
-                    , bv.VersionId DESC)                                        AS "Latest VersionId"
+                      "bv"."ReleaseDate" DESC
+                    , "bv"."VersionId" DESC)                                    AS "Latest VersionId"
         FROM
-            organization                                                        AS o
-            LEFT JOIN organization_product                                      AS op   ON
-                o.OrganizationId    = op.OrganizationId
-            LEFT JOIN product                                                   AS p    ON
-                op.ProductId        = p.ProductId
-            LEFT JOIN product_branch                                            AS pb   ON
-                p.ProductId         = pb.ProductId
-            LEFT JOIN branch_versions                                           AS bv   ON
-                pb.BranchId         = bv.BranchId
+            "organization"                                                      AS "o"
+            LEFT JOIN "organization_product"                                    AS "op"   ON
+                "o"."OrganizationId"  = "op"."OrganizationId"
+            LEFT JOIN "product"                                                 AS "p"    ON
+                "op"."ProductId"      = "p"."ProductId"
+            LEFT JOIN "product_branch"                                          AS "pb"   ON
+                "p"."ProductId"       = "pb"."ProductId"
+            LEFT JOIN "branch_versions"                                         AS "bv"   ON
+                "pb"."BranchId"       = "bv"."BranchId"
         WHERE
-            pb.BranchStatus IN ('Active', 'Innovation', 'LTS')
+            "pb"."BranchStatus" IN ('Active', 'Innovation', 'LTS')
         GROUP BY
-              o.OrganizationName
-            , p.ProductName
-            , p.ProfileId
-            , pb.ProductId
-            , pb.BranchName
-            , pb.BranchId
-            , pb.BranchURLs
+              "o"."OrganizationName"
+            , "p"."ProductName"
+            , "p"."ProfileId"
+            , "pb"."ProductId"
+            , "pb"."BranchName"
+            , "pb"."BranchId"
+            , "pb"."BranchURLs"
     ),
-    CTE__FINAL                                                                  AS (
+    "CTE__FINAL"                                                                AS (
         SELECT
-              ci.OrganizationName                                               AS "OrganizationName"
-            , ci.ProductName                                                    AS "ProductName"
-            , ci.BranchName                                                     AS "BranchName"
-            , ci.OrganizationId                                                 AS "OrganizationId"
-            , ci.ProductId                                                      AS "ProductId"
-            , ci.BranchId                                                       AS "BranchId"
-            , ci.Releases                                                       AS "Releases"
-            , bv.VersionCode                                                    AS "Latest release version"
-            , JSON_EXTRACT(cc."JSON_WeekDays_Short"
-                    , '$."'
-                        || STRFTIME('%w', bv.ReleaseDate)
-                        || '"') || ', '
-                || STRFTIME('%d', bv.ReleaseDate) || ' '
-                || JSON_EXTRACT(cc."JSON_MonthNames_Short"
-                    , '$."'
-                        || STRFTIME('%m', bv.ReleaseDate)
-                        || '"') || ' '
-                || STRFTIME('%Y', bv.ReleaseDate)                               AS "Latest release date"
-            , (JulianDay(date())
-                - JulianDay(bv.ReleaseDate))                                    AS "Latest release aging"
-            , MAX(bv.VersionId)
+              "ci"."OrganizationName"                                           AS "OrganizationName"
+            , "ci"."ProductName"                                                AS "ProductName"
+            , "ci"."BranchName"                                                 AS "BranchName"
+            , "ci"."OrganizationId"                                             AS "OrganizationId"
+            , "ci"."ProductId"                                                  AS "ProductId"
+            , "ci"."BranchId"                                                   AS "BranchId"
+            , "ci"."Releases"                                                   AS "Releases"
+            , "bv"."VersionCode"                                                AS "Latest release version"
+            , "bv"."ReleaseDate"                                                AS "Latest release date"
+            , SUBSTR(TIMEDIFF('now', "bv"."ReleaseDate"), 0, 12)                AS "Latest release aging full"
+            , (JulianDay(date()) - JulianDay("bv"."ReleaseDate"))               AS "Latest release aging days"
+            , MAX("bv"."VersionId")
                 OVER (PARTITION BY
-                    bv.BranchId
+                        "bv"."BranchId"
                     ORDER BY
-                        bv.VersionId DESC)                                      AS "VersionId"
-            , IFNULL(pl.ProfileName, '#')                                       AS "Profile Name"
-            , IFNULL(pl.ProfileId, 999)                                         AS "ProfileId"
+                        "bv"."VersionId" DESC)                                  AS "VersionId"
+            , IFNULL("pl"."ProfileName", '#')                                   AS "Profile Name"
+            , IFNULL("pl"."ProfileId", 999)                                     AS "ProfileId"
         FROM
-            CTE__INITIAL                                                        AS ci
-            INNER JOIN branch_versions                                          AS bv   ON
-                    ci.BranchId                = bv.BranchId
-                AND ci."Latest VersionId"      = bv.VersionId
-            INNER JOIN CTE__Constants                                           AS cc   ON
-                    1 = 1
-            LEFT JOIN profile_list                                              AS pl   ON
-                ci.ProfileId                    = pl.ProfileId
+            "CTE__INITIAL"                                                      AS "ci"
+            INNER JOIN "branch_versions"                                        AS "bv"   ON
+                    "ci"."BranchId"              = "bv"."BranchId"
+                AND "ci"."Latest VersionId"      = "bv"."VersionId"
+            LEFT JOIN "profile_list"                                            AS "pl"   ON
+                "ci"."ProfileId"                 = pl."ProfileId"
     ),
-    CTE__Files                                                                  AS (
+    "CTE__Files"                                                                AS (
         SELECT
               "fv"."VersionId"                                                  AS "VersionId"
-            , TRIM(GROUP_CONCAT(CASE
-                WHEN "fv"."FileType" = 'InstalledIdentifier' THEN
-                    "fl"."FileName"
-                ELSE
-                    ''
-                END), ',')                                                      AS "File Installed Name"
-            , TRIM(GROUP_CONCAT(CASE
-                WHEN "fv"."FileType" = 'Kit' THEN
-                    "fl"."FileName"
-                ELSE
-                    ''
-                END), ',')                                                      AS "File Kit Name"
-            , TRIM(GROUP_CONCAT(CASE
-                WHEN "fv"."FileType" = 'InstalledIdentifier' THEN
-                    "fl"."FileId"
-                ELSE
-                    ''
-                END), ',')                                                      AS "File Installed Id"
-            , TRIM(GROUP_CONCAT(CASE
-                WHEN "fv"."FileType" = 'Kit' THEN
-                    "fl"."FileId"
-                ELSE
-                    ''
-                END), ',')                                                      AS "File Kit Id"
+            , TRIM(
+                GROUP_CONCAT(
+                    IIF("fv"."FileType" = 'InstalledIdentifier'
+                        , "fl"."FileName", '')), ',')                           AS "File Installed Name"
+            , TRIM(
+                GROUP_CONCAT(
+                    IIF("fv"."FileType" = 'Kit'
+                        , "fl"."FileName", '')), ',')                           AS "File Kit Name"
+            , TRIM(
+                GROUP_CONCAT(
+                    IIF("fv"."FileType" = 'InstalledIdentifier'
+                        , "fl"."FileId", '')), ',')                             AS "File Installed Id"
+            , TRIM(
+                GROUP_CONCAT(
+                    IIF("fv"."FileType" = 'Kit'
+                        , "fl"."FileId", '')), ',')                             AS "File Kit Id"
         FROM
             "file_version"                                                      AS "fv"
             INNER JOIN "file_list"                                              AS "fl"    ON
@@ -148,7 +105,8 @@ SELECT
     , "cf"."Releases"
     , "cf"."Latest release version"
     , "cf"."Latest release date"
-    , "cf"."Latest release aging"
+    , "cf"."Latest release aging days"
+    , "cf"."Latest release aging full"
     , "cf"."ProfileId"
     , "cf"."Profile Name"
     , "cf"."VersionId"

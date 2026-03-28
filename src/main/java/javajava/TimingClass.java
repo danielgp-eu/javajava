@@ -1,6 +1,10 @@
 package javajava;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -8,17 +12,24 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NonNull;
+
 
 /**
  * Time methods
@@ -164,7 +175,6 @@ public final class TimingClass {
      * @param strWhich which part of Date or Time to use for conversion
      * @return final part of Date or Time
      */
-    @NonNull
     private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhich) {
         return switch (strWhich) {
             case "Day" -> duration.toDaysPart();
@@ -212,6 +222,30 @@ public final class TimingClass {
     }
 
     /**
+     * Zone Friendly logic
+     * @param zoneId zone identifier
+     * @return String
+     */
+    public static String getFriendlyOffset(final String zoneId) {
+        // 1. Get the current offset for the zone
+        final ZonedDateTime now = ZonedDateTime.now(ZoneId.of(zoneId));
+        final ZoneOffset offset = now.getOffset();
+        // 2. Get total seconds and convert to hours/minutes
+        final int totalSeconds = offset.getTotalSeconds();
+        final int absSeconds = Math.abs(totalSeconds);
+        final int hours = absSeconds / 3600;
+        final int minutes = absSeconds % 3600 / 60;
+        // 3. Determine the sign
+        final String sign = totalSeconds >= 0 ? "+" : "-";
+        // 4. Return formatted string
+        // If minutes are 0, just show the hour (e.g., UTC+5)
+        // Otherwise, show hour and minutes (e.g., UTC+05:30)
+        return (minutes == 0) 
+            ? "UTC%s%02d:00".formatted(sign, hours) 
+            : "UTC%s%02d:%02d".formatted(sign, hours, minutes);
+    }
+
+    /**
      * Converts a string with ISO 8601 date as input into String w. year
      * and week string + 2 digits week #
      * @param strDateIso8601 date as yyyy-MM-dd (a.k.a. ISO 8601 format type)
@@ -246,8 +280,7 @@ public final class TimingClass {
      * @param intDaysLimit number of days in the past
      * @return milliseconds in the past
      */
-    @NonNull
-    public static long getDaysAgoWithMilisecondsPrecision(@NonNull final Instant refTimestamp, @NonNull final long intDaysLimit) {
+    public static long getDaysAgoWithMilisecondsPrecision(@NonNull final Instant refTimestamp, final long intDaysLimit) {
         return refTimestamp.minusMillis(intDaysLimit * INT_1DAY_MILISECS).toEpochMilli();
     }
 
@@ -257,7 +290,7 @@ public final class TimingClass {
      * @return string corresponding to entry ponint
      */
     @NonNull
-    public static String getDaysAgoWithMilisecondsPrecisionAsString(@NonNull final long cutoff) {
+    public static String getDaysAgoWithMilisecondsPrecisionAsString(final long cutoff) {
         return Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim();
     }
 
@@ -289,6 +322,267 @@ public final class TimingClass {
             , objDuration.toString()
             , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
             , convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+    }
+
+    /**
+     * Time Zones and associated coordinates handler
+     */
+    public static final class Localization {
+        /**
+         * Input time zone variable
+         */
+        private static String inputTimeZone = System.getProperty("user.timezone");
+        /**
+         * Output time zone variable
+         */
+        private static String outputTimeZone = System.getProperty("user.timezone");
+
+        /**
+         * Convert time-stamp
+         * @param strTimeStamp input Time-stamp
+         * @return String converted time-stamp and formated
+         */
+        public static String convertTimestampFriendly(final String strTimeStamp, final String inputFormat, final String outputFormat) {
+            final ZonedDateTime inTimeStamp = convertStringIntoZonedDateTime(strTimeStamp, inputFormat);
+            ZonedDateTime outTime = inTimeStamp;
+            if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {
+                final ZoneId outZone = ZoneId.of(outputTimeZone);
+                outTime = inTimeStamp.withZoneSameInstant(outZone);
+            }
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat);
+            return outTime.format(formatter);
+        }
+
+        /**
+         * Convert String into Zoned Date Time
+         * @param strTimeStamp input time-stamp as String
+         * @return ZonedDateTime
+         */
+        private static ZonedDateTime convertStringIntoZonedDateTime(final String strTimeStamp, final String inputFormat) {
+            final LocalDateTime localTime = LocalDateTime.parse(strTimeStamp, 
+                    DateTimeFormatter.ofPattern(inputFormat));
+            return localTime.atZone(ZoneId.of(inputTimeZone));
+        }
+
+        /**
+         * format date
+         * @param strDate input date
+         * @return String formated date
+         */
+        public static String formatDateFriendly(final String strDate, final String inputFormat, final String outputFormat) {
+            final LocalDate outDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern(inputFormat));
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat);
+            return outDate.format(formatter);
+        }
+
+        /**
+         * Replace patterns within large Text
+         * @param inString original text
+         * @return replaced text
+         */
+        public static String replacePatterns(final String inString) {
+            final String strRegExp = "(?<agingTimestamp>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_AGING_TS).get(BasicStructuresClass.STR_REG_EXP) + ")"
+                    + "|" + "(?<agingDate>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_AGING_DATE).get(BasicStructuresClass.STR_REG_EXP) + ")"
+                    + "|" + "(?<timestampWithMiliseconds>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_TS_MSEC).get(BasicStructuresClass.STR_REG_EXP) + ")"
+                    + "|" + "(?<timestamp>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_TIMESTAMP).get(BasicStructuresClass.STR_REG_EXP) + ")"
+                    + "|" + "(?<justDate>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_JUST_DATE).get(BasicStructuresClass.STR_REG_EXP) + ")";
+            final Pattern pattern = Pattern.compile(strRegExp);
+            final Matcher matcher = pattern.matcher(inString);
+            return matcher.replaceAll(matchResult -> {
+                try {
+                    // Determine which group matched
+                    final String matchedGroup = getActiveGroup(matchResult);
+                    final String text = matchResult.group(matchedGroup);
+                    if (BasicStructuresClass.STR_AGING_TS.equals(matchedGroup)) {
+                        final String strDate = text.substring(0, 11);
+                        final String strTime = text.substring(12, 20);
+                        final String outString = BasicStructuresClass.StringTransformationClass.convertAgingDateIntoHumanReadableString(strDate)
+                                + "<br/>" + BasicStructuresClass.StringTransformationClass.convertAgingTimeIntoHumanReadableString(strTime);
+                        return outString.isEmpty() ? "NOW" : outString;
+                    } else if (BasicStructuresClass.STR_AGING_DATE.equals(matchedGroup)) {
+                        final String outString = BasicStructuresClass.StringTransformationClass.convertAgingDateIntoHumanReadableString(text);
+                        return outString.isEmpty() ? "TODAY" : outString;
+                    } else {
+                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(BasicStructuresClass.mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_INPUT));
+                        // Convert based on the specific group rules
+                        final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
+                            LocalDate.parse(text, inputFormat).atStartOfDay(ZoneId.of(inputTimeZone))
+                            : LocalDateTime.parse(text, inputFormat).atZone(ZoneId.of(inputTimeZone));
+                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(BasicStructuresClass.mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT));
+                        final ZonedDateTime targetTime = sourceTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
+                        return targetTime.format(outputFormat);
+                    }
+                } catch (IllegalStateException _) {
+                    return matchResult.group(); // Fallback if parsing fails
+                }
+            });
+        }
+
+        /**
+         * Helper to find which named group was actually hit by the regex
+         * @param result match result group
+         * @return name of the active group
+         */
+        private static String getActiveGroup(final MatchResult result) {
+            String outGroup;
+            if (result.group(BasicStructuresClass.STR_AGING_TS) != null) {
+                outGroup = BasicStructuresClass.STR_AGING_TS;
+            } else if (result.group(BasicStructuresClass.STR_AGING_DATE) != null) {
+                outGroup = BasicStructuresClass.STR_AGING_DATE;
+            } else if (result.group(BasicStructuresClass.STR_TS_MSEC) != null) {
+                outGroup = BasicStructuresClass.STR_TS_MSEC;
+            } else if (result.group(BasicStructuresClass.STR_TIMESTAMP) != null) {
+                outGroup = BasicStructuresClass.STR_TIMESTAMP;
+            } else if (result.group(BasicStructuresClass.STR_JUST_DATE) != null) {
+                outGroup = BasicStructuresClass.STR_JUST_DATE;
+            } else {
+                throw new IllegalStateException("No group matched");
+            }
+            return outGroup;
+        }
+
+        /**
+         * Setter for inputTimeZone
+         * @param strTimeZone desired time zone for input
+         */
+        public static void setInputTimeZone(final String strTimeZone) {
+            inputTimeZone = strTimeZone;
+        }
+
+        /**
+         * Setter for outputTimeZone
+         * @param strTimeZone desired time zone for output
+         */
+        public static void setOutputTimeZone(final String strTimeZone) {
+            outputTimeZone = strTimeZone;
+        }
+
+        /**
+         * Constructor
+         */
+        private Localization() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Time Zones and associated coordinates handler
+     */
+    public static final class ZoneDataService {
+        /**
+         * Regex for Latitude: Sign, 2 digits (deg), 2 digits (min), 
+         * optional 2 digits (sec)
+         */
+        private static final Pattern LAT_REGEX = Pattern.compile("([+-])(\\d{2})(\\d{2})(\\d{2})?");
+        /**
+         * Regex for Longitude: Sign, 3 digits (deg), 2 digits (min), 
+         * optional 2 digits (sec)
+         */
+        private static final Pattern LON_REGEX = Pattern.compile("([+-])(\\d{3})(\\d{2})(\\d{2})?");
+        /**
+         * Number of elements where coordinates are present
+         */
+        private static final int LINE_W_COORDINATE = 3;
+        /**
+         * Cached zones
+         */
+        private static final Map<String, ZoneInfo> CACHE = new ConcurrentHashMap<>();
+
+        static {
+            loadIanaZones();
+        }
+
+        /**
+         * IANA zone logic
+         */
+        private static void loadIanaZones() {
+            final String propertyFileName = "/data/zone1970.tab";
+            try (InputStream inputStream = ZoneDataService.class.getResourceAsStream("/data/zone1970.tab");
+                    InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                    BufferedReader bReader = new BufferedReader(inputStreamReader)) {
+                bReader.lines()
+                    .filter(line -> !line.startsWith("#") && !line.isBlank())
+                    .forEach(line -> {
+                        final String[] parts = line.split("\t");
+                        if (parts.length >= LINE_W_COORDINATE) {
+                            processLine(parts[0], parts[1], parts[2]);
+                        }
+                    });
+            } catch (IOException ei) {
+                final Path ptPrjProps = Path.of(propertyFileName);
+                final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
+                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            }
+        }
+
+        /**
+         * Coordinates parser
+         * @param countries countries list as single string separated by comma
+         * @param coords coordinates raw
+         * @param zoneId IANA zone identifier
+         */
+        private static void processLine(final String countries, final String coords, final String zoneId) {
+            // Parse Countries (Java 25 Locale.of)
+            final List<String> codes = Arrays.asList(countries.split(","));
+            final List<String> names = codes.stream()
+                    .map(code -> Locale.of("", code).getDisplayCountry(Locale.ENGLISH))
+                    .toList();
+            // 2. Parse Coordinates (ISO 6709)
+            int splitIdx = coords.indexOf('-', 1);
+            if (splitIdx == -1) {
+                splitIdx = coords.indexOf('+', 1);
+            }
+            final double lat = dmsToDecimal(coords.substring(0, splitIdx), false);
+            final double lon = dmsToDecimal(coords.substring(splitIdx), true);
+            // 3. Get Current Offset String
+            final String offsetStr = "UTC" + ZonedDateTime.now(ZoneId.of(zoneId)).getOffset().getId();
+            CACHE.put(zoneId, new ZoneInfo(zoneId, lat, lon, codes, names, offsetStr));
+        }
+
+        /**
+         * Converts Degrees, Minutes, Seconds to Decimal logic
+         * @param part degrees+minutes+seconds in
+         * @param isLon is Longitude
+         * @return double numeric value
+         */
+        private static double dmsToDecimal(final String part, final boolean isLon) {
+            final Matcher matched = (isLon ? LON_REGEX : LAT_REGEX).matcher(part);
+            double decToReturn = 0.0;
+            if (matched.matches()) {
+                final double sign = "-".equals(matched.group(1)) ? -1.0 : 1.0;
+                final double deg = Double.parseDouble(matched.group(2));
+                final double min = Double.parseDouble(matched.group(3));
+                final double sec = (matched.group(4) != null) ? Double.parseDouble(matched.group(4)) : 0.0;
+                decToReturn = sign * (deg + (min / 60.0) + (sec / 3600.0));
+            }
+            return decToReturn;
+        }
+
+        /**
+         * Getter for ZoneInfo
+         * @param zoneId string with IANA location
+         * @return ZoneInfo
+         */
+        public static ZoneInfo get(final String zoneId) {
+            return CACHE.get(zoneId);
+        }
+
+        /**
+         * Getter for ZoneInfo
+         * @return Collection of ZoneInfo
+         */
+        public static Collection<ZoneInfo> getAll() {
+            return CACHE.values();
+        }
+
+        /**
+         * Constructor
+         */
+        private ZoneDataService() {
+            // intentionally blank
+        }
+
     }
 
     /**

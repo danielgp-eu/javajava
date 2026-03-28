@@ -48,7 +48,7 @@ public final class JsonOperationsClass {
      * @param jsonFile file with expected JSON content
      * @return JsonNode
      */
-    public static JsonNode getJsonFileNodes(final File jsonFile) {
+    public static JsonNode getJsonFileNodes(final Path jsonFile) {
         final JsonNode jsonRootNode;
         final ObjectMapper objectMapper = new ObjectMapper();
         jsonRootNode = objectMapper.readTree(jsonFile);

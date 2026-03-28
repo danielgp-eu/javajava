@@ -17,14 +17,15 @@ public final class EnvironmentCapturingAssembleClass {
     private static Map<String, Object> gatherEnvironmentDetails() {
         return Map.of(
                 "Computer", System.getenv("COMPUTERNAME"),
-                "Username", System.getenv("USERNAME"),
                 "Country", System.getProperty("user.country"),
                 "Country.Format", System.getProperty("user.country.format"),
                 "Language", System.getProperty("user.language"),
                 "Language.Format", System.getProperty("user.language.format"),
                 "Home", System.getProperty("user.home").replace("\\", "\\\\"),
                 "Name", System.getProperty("user.name"),
-                "Timezone", System.getProperty("user.timezone"));
+                "Timezone", System.getProperty("user.timezone"),
+                "Username", System.getenv("USERNAME"),
+                "User Account", ShellingClass.getCurrentUserAccount());
     }
 
     /**
