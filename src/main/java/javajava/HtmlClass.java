@@ -67,10 +67,10 @@ public final class HtmlClass {
         SELECT
               '%s'                                                              AS "Table"
             , COUNT(*)                                                          AS "Records"
-            , %s                                                                AS "Index"
+            , %s                                                                AS "Sequence"
         FROM
             "%s"
-""", objProperty.get(BasicStructuresClass.STR_TABLE), objProperty.get("Index"), objProperty.get(BasicStructuresClass.STR_TABLE)));
+""", objProperty.get(BasicStructuresClass.STR_TABLE), objProperty.get("Sequence"), objProperty.get(BasicStructuresClass.STR_TABLE)));
         });
         final String strFinalQuery = String.format("""
 WITH
@@ -81,24 +81,24 @@ SELECT
       ROW_NUMBER () OVER (ORDER BY "Table")                                     AS "#"
     , "Table"                                                                   AS "Table"
     , "Records"                                                                 AS "Records"
-    , "Index"                                                                   AS "Index"
+    , "Sequence"                                                                AS "Sequence"
     , '<div style="text-align:right;color:'
         || CASE
-            WHEN "Index" = "Records"    THEN
+            WHEN "Sequence" = "Records" THEN
                 'green'
-            WHEN "Index" = 0            THEN
+            WHEN "Sequence" = 0         THEN
                 'blue'
             ELSE
                 'red'
             END
         || '">'
-        || ("Index" - "Records")
+        || ("Sequence" - "Records")
         || '</div>'                                                             AS "Gap"
 FROM
     "CTE__Raw";
 """, strQueryRaw);
         final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
-        final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Index", "Gap");
+        final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Sequence", "Gap");
         final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
                 .toList();

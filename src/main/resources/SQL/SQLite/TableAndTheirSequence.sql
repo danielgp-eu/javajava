@@ -1,6 +1,6 @@
 SELECT
       "m"."name"                                                                AS "Table"
-    , IFNULL("q"."seq", 0)                                                      AS "Index" 
+    , IFNULL("q"."seq", 0)                                                      AS "Sequence" 
 FROM
     "sqlite_master"                                                             AS "m" 
     LEFT JOIN "sqlite_sequence"                                                 AS "q"  ON

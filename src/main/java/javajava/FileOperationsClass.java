@@ -425,8 +425,8 @@ public final class FileOperationsClass {
              */
             public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
                 final Instant now = Instant.now(); // For timestamps
-                final long cutoff = TimingClass.getDaysAgoWithMilisecondsPrecision(now, intOlderLimit);
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMilisecondsPrecisionAsString(cutoff), strFolderName);
+                final long cutoff = TimingClass.getDaysAgoWithMillisecondsPrecision(now, intOlderLimit);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nRemovingModifiedFilesOlderFromFolder"), TimingClass.getDaysAgoWithMillisecondsPrecisionAsString(cutoff), strFolderName);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final Path directory = Path.of(strFolderName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {

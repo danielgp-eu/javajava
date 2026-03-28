@@ -26,7 +26,7 @@ class BasicStructuresClassTests {
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")
     void testComputePercentageSafelySimple() {
-        final long original = 51;
+        final float original = 51.0f;
         final float handled = BasicStructuresClass.computePercentageSafely(51, 100);
         assertEquals(original, handled, String.format(ORIG_NQ_EXPCT, handled, original));
     }
@@ -34,7 +34,7 @@ class BasicStructuresClassTests {
     @Test
     @DisplayName("Simple test to verify that 0 is same as 51 divided by 0")
     void testComputePercentageSafelyZeroDivision() {
-        final long original = 55;
+        final float original = 55.0f;
         final float handled = BasicStructuresClass.computePercentageSafely(55, 0);
         assertEquals(original, handled, String.format(ORIG_NQ_EXPCT, handled, original));
     }
@@ -78,14 +78,14 @@ class BasicStructuresClassTests {
     }
 
     @Test
-    @DisplayName("Counting 3 named parameters within a dymmy query")
+    @DisplayName("Counting 3 named parameters within a dummy query")
     void testCountNamedParametersWithinQuery() {
         final String strHystack = "SELECT {Field1} FROM table WHERE {Field 2} = {Value_to_filter};";
         assertNotEquals(3, BasicStructuresClass.countNamedParametersWithinQuery(strHystack));
     }
 
     @Test
-    @DisplayName("Counting 3 positional type parameters within a dymmy query")
+    @DisplayName("Counting 3 positional type parameters within a dummy query")
     void testCountPositionalTypeParametersWithinQuery() {
         final String strHystack = "SELECT %s FROM table WHERE %s = %d;";
         assertNotEquals(3, BasicStructuresClass.countPositionalTypeParametersWithinQuery(strHystack));
@@ -154,11 +154,11 @@ class BasicStructuresClassTests {
     }
 
     /**
-     * Test for StringEvaluationClass
+     * Test for StringConversionClass
      */
     @Nested
-    /* default */ @DisplayName("StringTransformationClass testing...")
-    class TestStringTransformationClass {
+    /* default */ @DisplayName("StringConversionClass testing...")
+    class TestStringConversionClass {
 
         @Test
         void testConvertAgingDateIntoHumanReadableString() {
@@ -191,6 +191,15 @@ class BasicStructuresClassTests {
             final String handled = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strOriginal);
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
+
+    }
+
+    /**
+     * Test for StringEvaluationClass
+     */
+    @Nested
+    /* default */ @DisplayName("StringTransformationClass testing...")
+    class TestStringTransformationClass {
 
         @Test
         void testEncloseStringIfContainsSpace() {

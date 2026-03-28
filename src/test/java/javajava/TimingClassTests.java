@@ -10,12 +10,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Testing for TimingClassTests
+ * Unit tests for {@link TimingClass}, covering ISO year/week formatting, date/time
+ * conversions, duration logging, and localized time-stamp pattern replacement.
  */
 @DisplayName("TimingClassTests testing")
 class TimingClassTests {
     /**
-     * String for Original not equal to Expected
+     * String format for assertion when actual/original is not equal to expected
      */
     /* default */ private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
 
@@ -28,10 +29,10 @@ class TimingClassTests {
     }
 
     @Test
-    void testGetDaysAgoWithMilisecondsPrecision() {
+    void testGetDaysAgoWithMillisecondsPrecision() {
         final Instant startNow = Instant.now();
-        final long expected = startNow.minusMillis(TimingClass.INT_1DAY_MILISECS).toEpochMilli();
-        final long handled = TimingClass.getDaysAgoWithMilisecondsPrecision(startNow, 1);
+        final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECS).toEpochMilli();
+        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 1);
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
 
@@ -75,13 +76,6 @@ Started on Wed, 25 Mar 2026.
 Standard log at Wed, 25 Mar 2026 10:00:00. 
 High precision at Fri, 25 Dec 2026 14:30:05.123.""";
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
-    }
-
-    /**
-     * Constructor
-     */
-    public TimingClassTests() {
-        // intentionally blank
     }
 
 }

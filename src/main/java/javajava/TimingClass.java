@@ -39,7 +39,7 @@ public final class TimingClass {
     /**
      * String constant
      */
-    /* default */ public static final int INT_1DAY_MILISECS = 24 * 60 * 60 * 1000;
+    /* default */ public static final int DAY_MILLISECS = 24 * 60 * 60 * 1000;
     /**
      * Map with predefined network physical types
      */
@@ -204,7 +204,7 @@ public final class TimingClass {
     private static String getDurationWithCustomRules(@NonNull final Duration duration, @NonNull final String strWhich, @NonNull final String strHow) {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
         final String strFormats = TIME_FORMATS.get(strHow);
-        if (strFormats.isEmpty()) {
+        if ((strFormats == null) || strFormats.isEmpty()) {
             final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
             LogExposureClass.LOGGER.error(strFeedback);
             throw new UnsupportedOperationException(strFeedback);
@@ -281,17 +281,17 @@ public final class TimingClass {
      * @param intDaysLimit number of days in the past
      * @return milliseconds in the past
      */
-    public static long getDaysAgoWithMilisecondsPrecision(@NonNull final Instant refTimestamp, final long intDaysLimit) {
-        return refTimestamp.minusMillis(intDaysLimit * INT_1DAY_MILISECS).toEpochMilli();
+    public static long getDaysAgoWithMillisecondsPrecision(@NonNull final Instant refTimestamp, final long intDaysLimit) {
+        return refTimestamp.minusMillis(intDaysLimit * DAY_MILLISECS).toEpochMilli();
     }
 
     /**
      * Returns X days ago with milliseconds ago limit
      * @param cutoff milliseconds in the past
-     * @return string corresponding to entry ponint
+     * @return string corresponding to entry point
      */
     @NonNull
-    public static String getDaysAgoWithMilisecondsPrecisionAsString(final long cutoff) {
+    public static String getDaysAgoWithMillisecondsPrecisionAsString(final long cutoff) {
         return Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim();
     }
 
