@@ -42,11 +42,11 @@ public final class BasicStructuresClass {
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
                     BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}\\d{1})"),
             "numeric", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
-            "timestamp", Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
+            BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss",
                     BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}[0-9]{1})\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}"),
-            "timestampWithMiliseconds", Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss.SSS",
+            BasicStructuresClass.STR_TS_MSEC, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss.SSS",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss.SSS",
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss.SSS",
                     BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}[0-9]{1})\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
@@ -557,179 +557,50 @@ public final class BasicStructuresClass {
     }
 
     /**
-     * Evaluating things
+     * Conversion things
      */
-    public static final class StringEvaluationClass {
-
-        /**
-         * Checks if given string is included in a given List of Strings
-         * @param str String to search into
-         * @param substrings Strings to search for
-         * @return boolean true if found, false otherwise
-         */
-        public static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
-            return substrings.stream().anyMatch(str::contains);
-        }
-
-        /**
-         * Check if String is actually Date
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Date
-         */
-        public static boolean isStringActuallyDate(final String inputString) {
-            return isStringActuallySomething(inputString, "justDate");
-        }
-
-        /**
-         * Check if String is actually Numeric
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Integer
-         */
-        public static boolean isStringActuallyInteger(final String inputString) {
-            return isStringActuallySomething(inputString, "integer");
-        }
-
-        /**
-         * Check if String is actually Numeric
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Numeric
-         */
-        public static boolean isStringActuallyNumeric(final String inputString) {
-            return isStringActuallySomething(inputString, "numeric");
-        }
-
-        /**
-         * Check if String is actually Date
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Date
-         */
-        public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
-            boolean bolReturn = false;
-            if (inputString != null) {
-                final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
-                bolReturn = pattern.matcher(inputString).matches();
-            }
-            return bolReturn;
-        }
-
-        /**
-         * Check if String is actually Time-stamp
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Time-stamp
-         */
-        public static boolean isStringActuallyTimestamp(final String inputString) {
-            return isStringActuallySomething(inputString, "timestamp");
-        }
-
-        /**
-         * Check if String is actually Time-stamp w. milli-seconds
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Time-stamp w. milli-seconds
-         */
-        public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
-            return isStringActuallySomething(inputString, "timestampWithMiliseconds");
-        }
-
-        // Private constructor to prevent instantiation
-        private StringEvaluationClass() {
-            // intentionally blank
-        }
-
-    }
-
-    /**
-     * Transforming things
-     */
-    public static final class StringTransformationClass {
+    public static final class StringConversionClass {
         /**
          * Single Question Mark Character
          */
         private static final String Q_MARK_PARAM = "SingleQuestionMarkCharacterParameter";
 
         /**
-         * Compute String checksum
-         * @param inString input String
-         * @return String
-         */
-        public static String computeStringSignature(final String inString) {
-            String outString = "";
-            final String algorithm = "SHA-256";
-            try {
-                // 1. Get the SHA-256 instance
-                final MessageDigest digest = MessageDigest.getInstance(algorithm);
-                // 2. Perform the hashing
-                final byte[] encodedHash = digest.digest(inString.getBytes(StandardCharsets.UTF_8));
-                // 3. Convert to Hex String using HexFormat (introduced in Java 17+)
-                outString = HexFormat.of().formatHex(encodedHash);
-            } catch (NoSuchAlgorithmException e) {
-                final String strFeedbackErr = String.format("Checksum algorithm %s is not availble.... %s", algorithm, Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedbackErr);
-            }
-            return outString;
-        }
-
-        /**
          * Convert aging Date into human readable String
-         * @param ageString
-         * @param groupSuffix
-         * @return
+         * @param ageString input String
+         * @return String in human readable format
          */
         public static String convertAgingDateIntoHumanReadableString(final String ageString) {
-            final Pattern AGE_PATTERN = Pattern.compile(mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP));
-            final Matcher matcher = AGE_PATTERN.matcher(ageString);
+            final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP));
+            final Matcher matcher = agePattern.matcher(ageString);
             final StringJoiner result = new StringJoiner(", ");
             if (matcher.matches()) {
-                final int years = Integer.parseInt(matcher.group("years"));
-                if (years > 0) {
-                    result.add(years + (years == 1 ? " year" : " years"));
-                }
-                final int months = Integer.parseInt(matcher.group("months"));
-                if (months > 0) {
-                    result.add(months + (months == 1 ? " month" : " months"));
-                }
-                final int days = Integer.parseInt(matcher.group("days"));
-                if (days > 0) {
-                    result.add(days + (days == 1 ? " day" : " days"));
-                }
+                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("years")), "year", "years"));
+                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("months")), "month", "months"));
+                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("days")), "day", "days"));
             } else {
                 result.add(ageString);
             }
-            return result.toString();
+            return result.toString().replaceAll("^[,\\s]+", "");
         }
 
         /**
          * Convert aging Time into human readable String
-         * @param ageString
-         * @param groupSuffix
-         * @return
+         * @param ageString input String
+         * @return String in human readable format
          */
         public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
-            final Pattern AGE_PATTERN = Pattern.compile(mapPatterns.get(STR_AGING_TIME).get(STR_REG_EXP));
-            final Matcher matcher = AGE_PATTERN.matcher(ageString);
+            final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_TIME).get(STR_REG_EXP));
+            final Matcher matcher = agePattern.matcher(ageString);
             final StringJoiner result = new StringJoiner(", ");
             if (matcher.matches()) {
-                final int hours = Integer.parseInt(matcher.group("hours"));
-                if (hours > 0) {
-                    result.add(hours + (hours == 1 ? " hour" : " hours"));
-                }
-                final int minutes = Integer.parseInt(matcher.group("minutes"));
-                if (minutes > 0) {
-                    result.add(minutes + (minutes == 1 ? " minute" : " minutes"));
-                }
-                final int seconds = Integer.parseInt(matcher.group("seconds"));
-                if (seconds > 0) {
-                    result.add(seconds + (seconds == 1 ? " second" : " seconds"));
-                }
+                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("hours")), "hour", "hours"));
+                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("minutes")), "minute", "minutes"));
+                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("seconds")), "second", "seconds"));
             } else {
                 result.add(ageString);
             }
-            return result.toString();
+            return result.toString().replaceAll("^[,\\s]+", "");
         }
 
         /**
@@ -781,6 +652,142 @@ public final class BasicStructuresClass {
          */
         private static String convertSinglePromptParameterIntoNamedParameter(final String strOriginal) {
             return ":" + StringCleaningClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
+        }
+
+        /**
+         * Number with Suffix If Non-Zero
+         * @param inNumber number to evaluate
+         * @param strSingular singular suffix
+         * @param strPlural plural suffix
+         * @return number with suffix or empty if number is zero
+         */
+        private static String numberWithSuffixIfNonZero(final int inNumber, final String strSingular, final String strPlural) {
+            return switch(inNumber) {
+                case 0  -> "";
+                case 1  -> inNumber + " " + strSingular;
+                default -> inNumber + " " +  strPlural;
+            };
+        }
+
+        // Private constructor to prevent instantiation
+        private StringConversionClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Evaluating things
+     */
+    public static final class StringEvaluationClass {
+
+        /**
+         * Checks if given string is included in a given List of Strings
+         * @param str String to search into
+         * @param substrings Strings to search for
+         * @return boolean true if found, false otherwise
+         */
+        public static boolean hasMatchingSubstring(final String str, final List<String> substrings) {
+            return substrings.stream().anyMatch(str::contains);
+        }
+
+        /**
+         * Check if String is actually Date
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Date
+         */
+        public static boolean isStringActuallyDate(final String inputString) {
+            return isStringActuallySomething(inputString, STR_JUST_DATE);
+        }
+
+        /**
+         * Check if String is actually Numeric
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Integer
+         */
+        public static boolean isStringActuallyInteger(final String inputString) {
+            return isStringActuallySomething(inputString, "integer");
+        }
+
+        /**
+         * Check if String is actually Numeric
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Numeric
+         */
+        public static boolean isStringActuallyNumeric(final String inputString) {
+            return isStringActuallySomething(inputString, "numeric");
+        }
+
+        /**
+         * Check if String is actually Date
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Date
+         */
+        public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
+            boolean bolReturn = false;
+            if (inputString != null) {
+                final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
+                bolReturn = pattern.matcher(inputString).matches();
+            }
+            return bolReturn;
+        }
+
+        /**
+         * Check if String is actually Time-stamp
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Time-stamp
+         */
+        public static boolean isStringActuallyTimestamp(final String inputString) {
+            return isStringActuallySomething(inputString, STR_TIMESTAMP);
+        }
+
+        /**
+         * Check if String is actually Time-stamp w. milli-seconds
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Time-stamp w. milli-seconds
+         */
+        public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
+            return isStringActuallySomething(inputString, STR_TS_MSEC);
+        }
+
+        // Private constructor to prevent instantiation
+        private StringEvaluationClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Transforming things
+     */
+    public static final class StringTransformationClass {
+
+        /**
+         * Compute String checksum
+         * @param inString input String
+         * @return String
+         */
+        public static String computeStringSignature(final String inString) {
+            String outString = "";
+            final String algorithm = "SHA-256";
+            try {
+                // 1. Get the SHA-256 instance
+                final MessageDigest digest = MessageDigest.getInstance(algorithm);
+                // 2. Perform the hashing
+                final byte[] encodedHash = digest.digest(inString.getBytes(StandardCharsets.UTF_8));
+                // 3. Convert to Hex String using HexFormat (introduced in Java 17+)
+                outString = HexFormat.of().formatHex(encodedHash);
+            } catch (NoSuchAlgorithmException e) {
+                final String strFeedbackErr = String.format("Checksum algorithm %s is not availble.... %s", algorithm, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+            return outString;
         }
 
         /**

@@ -309,7 +309,7 @@ public final class DatabaseOperationsClass {
             final int intRows = objValues.size();
             final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
             final int intParameters = mapParameterOrder.size();
-            final String strFinalQ = BasicStructuresClass.StringTransformationClass.convertPromptParametersIntoParameters(strQuery);
+            final String strFinalQ = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strQuery);
             try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ)) {
                 final Properties properties = new Properties();
                 // cycle through each row

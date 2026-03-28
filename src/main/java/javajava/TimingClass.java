@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 
 /**
@@ -62,7 +63,7 @@ public final class TimingClass {
      * @param file given file
      * @return String
      */
-    @NonNull
+    @Nullable
     public static String getFileLastModifiedTimeAsHumanReadableFormat(@NonNull final Path file) {
         String lastModifTime = null;
         try {
@@ -396,11 +397,10 @@ public final class TimingClass {
                     if (BasicStructuresClass.STR_AGING_TS.equals(matchedGroup)) {
                         final String strDate = text.substring(0, 11);
                         final String strTime = text.substring(12, 20);
-                        final String outString = BasicStructuresClass.StringTransformationClass.convertAgingDateIntoHumanReadableString(strDate)
-                                + "<br/>" + BasicStructuresClass.StringTransformationClass.convertAgingTimeIntoHumanReadableString(strTime);
-                        return outString.isEmpty() ? "NOW" : outString;
+                        return BasicStructuresClass.StringConversionClass.convertAgingDateIntoHumanReadableString(strDate)
+                                + "<br/>" + BasicStructuresClass.StringConversionClass.convertAgingTimeIntoHumanReadableString(strTime);
                     } else if (BasicStructuresClass.STR_AGING_DATE.equals(matchedGroup)) {
-                        final String outString = BasicStructuresClass.StringTransformationClass.convertAgingDateIntoHumanReadableString(text);
+                        final String outString = BasicStructuresClass.StringConversionClass.convertAgingDateIntoHumanReadableString(text);
                         return outString.isEmpty() ? "TODAY" : outString;
                     } else {
                         final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(BasicStructuresClass.mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_INPUT));
