@@ -240,7 +240,7 @@ public final class ProjectClass {
                 strJsonString.append(getComponentModulesDetailsIfProjectModulesArePresent(prjModel));
             }
             final Map<String, Object> projLibModules = getProjectModuleLibraries();
-            strJsonString.append(",\"Libary Modules\":")
+            strJsonString.append(",\"Library Modules\":")
                     .append(JsonOperationsClass.getMapIntoJsonString(projLibModules));
             final String strFeedback = LocalizationClass.getMessage("i18nAppInformationApplicationCaptured");
             LogExposureClass.LOGGER.debug(strFeedback);

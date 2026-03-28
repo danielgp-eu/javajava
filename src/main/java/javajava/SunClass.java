@@ -64,7 +64,7 @@ public final class SunClass {
 
     /**
      * Calculate Sunrise/Sunset
-     * @param inLocalDate input date
+     * @param inNowZ input time-stamp
      * @param isSunrise boolean if Sunrise 
      * @return ZonedDateTime
      */

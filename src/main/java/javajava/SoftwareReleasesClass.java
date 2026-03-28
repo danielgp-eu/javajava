@@ -69,7 +69,7 @@ public final class SoftwareReleasesClass {
                 Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);) {
             final Properties rsProperties = new Properties();
             rsProperties.put("Which", "Software Releases"); // purpose
-            rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ListProductBranches"));
+            rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
             rsProperties.put("Kind", "Values");
             final Properties queryProperties = new Properties();
             resultReleases = DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);

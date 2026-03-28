@@ -1,7 +1,9 @@
 package javajava;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
@@ -57,7 +59,18 @@ public final class HtmlClass {
      */
     public static String getTableStatisticsAsHtmlTable() {
         final StringBuilder strQueryRaw = new StringBuilder(1000);
-        final String strQuery = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "TableAndTheirSequence");
+        final String strQuery = """
+SELECT
+      "m"."name"                                                                AS "Table"
+    , IFNULL("q"."seq", 0)                                                      AS "Sequence" 
+FROM
+    "sqlite_master"                                                             AS "m" 
+    LEFT JOIN "sqlite_sequence"                                                 AS "q"  ON
+        "m"."name" = "q"."name" 
+WHERE
+        "m"."type" = 'table' 
+    AND "m"."name" NOT LIKE 'sqlite_%';
+""";
         final List<Properties> resultTables = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table list and their sequence", strQuery);
         resultTables.forEach(objProperty -> {
             if (!strQueryRaw.isEmpty()) {
@@ -149,8 +162,12 @@ FROM
                         if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
                             cellStyle.append(recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString());
                         }
-                        if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue.toString())) {
+                        if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDecimal(strValue.toString())) {
                             cellStyle.append(CSS_TEXT_RIGHT);
+                            strValue = String.format(Locale.US, "%,.2f", new BigDecimal(strValue.toString()));
+                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue.toString())) {
+                            cellStyle.append(CSS_TEXT_RIGHT);
+                            strValue = String.format(Locale.US, "%,d", Integer.parseInt(strValue.toString()));
                         } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDate(strValue.toString())) {
                             cellStyle.append(CSS_TEXT_RIGHT);
                             strValue = TimingClass.Localization.formatDateFriendly(strValue.toString(), "yyyy-MM-dd", "EEE, dd MMM yyyy");

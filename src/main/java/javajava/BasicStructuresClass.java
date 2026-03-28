@@ -36,6 +36,7 @@ public final class BasicStructuresClass {
             BasicStructuresClass.STR_AGING_DATE, Map.of(BasicStructuresClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
             BasicStructuresClass.STR_AGING_TS, Map.of(BasicStructuresClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
             BasicStructuresClass.STR_AGING_TIME, Map.of(BasicStructuresClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
+            "decimal", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d+\\.\\d+-?"),
             "integer", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d{1,10}-?"),
             BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
@@ -699,6 +700,16 @@ public final class BasicStructuresClass {
          */
         public static boolean isStringActuallyDate(final String inputString) {
             return isStringActuallySomething(inputString, STR_JUST_DATE);
+        }
+
+        /**
+         * Check if String is actually Decimal
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Integer
+         */
+        public static boolean isStringActuallyDecimal(final String inputString) {
+            return isStringActuallySomething(inputString, "decimal");
         }
 
         /**

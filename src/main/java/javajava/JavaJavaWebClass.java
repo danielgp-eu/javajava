@@ -1,6 +1,8 @@
 package javajava;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
@@ -17,23 +19,29 @@ public final class JavaJavaWebClass {
     /**
      * Menu
      */
-    private static final Map<String, Map<String, String>> mapMenu = Map.of(
-            "home", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
+    private static final SequencedMap<String, Map<String, String>> mapMenu = Stream.of(
+            Map.entry("home", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
                     BasicStructuresClass.STR_MENU, "Home",
-                    BasicStructuresClass.STR_TITLE, "Home Page"),
-            "SoftwareReleases", Map.of(BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
+                    BasicStructuresClass.STR_TITLE, "Home Page")),
+            Map.entry("SoftwareReleases", Map.of(BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
                     BasicStructuresClass.STR_MENU, "Releases",
-                    BasicStructuresClass.STR_TITLE, "Software Releases"),
-            BasicStructuresClass.STR_TS, Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
+                    BasicStructuresClass.STR_TITLE, "Software Releases")),
+            Map.entry(BasicStructuresClass.STR_TS, Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
                     BasicStructuresClass.STR_MENU, "TStatistics",
-                    BasicStructuresClass.STR_TITLE, "Table Statistics"),
-            "FilesHashing", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
+                    BasicStructuresClass.STR_TITLE, "Table Statistics")),
+            Map.entry("FilesHashing", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
                     BasicStructuresClass.STR_MENU, "Hashing",
-                    BasicStructuresClass.STR_TITLE, "Downloads File Hashing"),
-            "EnvironmentDetails", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
+                    BasicStructuresClass.STR_TITLE, "Downloads File Hashing")),
+            Map.entry("EnvironmentDetails", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
                     BasicStructuresClass.STR_MENU, "Environment",
-                    BasicStructuresClass.STR_TITLE, "Environment Details")
-            );
+                    BasicStructuresClass.STR_TITLE, "Environment Details"))
+    ).collect(
+            Collectors.toMap(
+                    Map.Entry::getKey, 
+                    Map.Entry::getValue, 
+                    (v1, _) -> v1, 
+                    LinkedHashMap::new  // Ensures it returns a SequencedMap
+            ));
 
     /**
      * Outputs file statistics into an HTML table
@@ -54,7 +62,7 @@ public final class JavaJavaWebClass {
      * Getter for Map Menu
      * @return menu
      */
-    public static Map<String, Map<String, String>> getMapMenu() {
+    public static SequencedMap<String, Map<String, String>> getMapMenu() {
         return mapMenu;
     }
 
@@ -93,9 +101,6 @@ public final class JavaJavaWebClass {
             if (BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page)) {
                 if (queryParams.get("TZ") != null) {
                     session.setAttribute("TZ", queryParams.get("TZ").getFirst());
-                }
-                if (queryParams.get(BasicStructuresClass.STR_LOCALE) != null) {
-                    session.setAttribute(BasicStructuresClass.STR_LOCALE, queryParams.get(BasicStructuresClass.STR_LOCALE).getFirst());
                 }
                 if (queryParams.get("redirectAction") != null) {
                     exchange.setStatusCode(StatusCodes.SEE_OTHER); // 303 Redirect
