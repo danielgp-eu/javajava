@@ -95,7 +95,7 @@ SELECT
     , "Table"                                                                   AS "Table"
     , "Records"                                                                 AS "Records"
     , "Sequence"                                                                AS "Sequence"
-    , '<div style="text-align:right;color:'
+    , 'color:' 
         || CASE
             WHEN "Sequence" = "Records" THEN
                 'green'
@@ -103,10 +103,8 @@ SELECT
                 'blue'
             ELSE
                 'red'
-            END
-        || '">'
-        || ("Sequence" - "Records")
-        || '</div>'                                                             AS "Gap"
+            END || ';'                                                          AS "RowStyle"
+    , "Sequence" - "Records"                                                    AS "Gap"
 FROM
     "CTE__Raw";
 """, strQueryRaw);
