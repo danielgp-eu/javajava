@@ -146,38 +146,17 @@ FROM
         private static String buildTableBodyRow(final String strRememberKey, final SequencedMap<Object, Object> recordProperties) {
             final StringBuilder strHtmlTable = new StringBuilder(1000);
             strHtmlTable.append("<tr>");
-            recordProperties.forEach((strKey, strValue) -> {
+            recordProperties.forEach((strKey, objValue) -> {
                 if (!strRememberKey.equalsIgnoreCase(strKey.toString())
                         && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
                     final StringBuilder cellStyle = new StringBuilder(100);
-                    if (BasicStructuresClass.STR_NULL.equalsIgnoreCase(strValue.toString())) {
-                        cellStyle.append("color:LightGrey;font-style:italic;");
-                        strValue = "&lt;NULL&gt;";
-                    } else if (strValue.toString().isBlank()) {
-                        cellStyle.append("color:Grey;font-style:italic;");
-                        strValue = "&lt;blank&gt;";
-                    } else {
-                        if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
-                            cellStyle.append(recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString());
-                        }
-                        if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDecimal(strValue.toString())) {
-                            cellStyle.append(CSS_TEXT_RIGHT);
-                            strValue = String.format(Locale.US, "%,.2f", new BigDecimal(strValue.toString()));
-                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue.toString())) {
-                            cellStyle.append(CSS_TEXT_RIGHT);
-                            strValue = String.format(Locale.US, "%,d", Integer.parseInt(strValue.toString()));
-                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDate(strValue.toString())) {
-                            cellStyle.append(CSS_TEXT_RIGHT);
-                            strValue = TimingClass.Localization.formatDateFriendly(strValue.toString(), "yyyy-MM-dd", "EEE, dd MMM yyyy");
-                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestamp(strValue.toString())) {
-                            cellStyle.append(CSS_TEXT_RIGHT);
-                            strValue = TimingClass.Localization.convertTimestampFriendly(strValue.toString(), "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
-                        } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestampWithMilliseconds(strValue.toString())) {
-                            cellStyle.append(CSS_TEXT_RIGHT);
-                            strValue = TimingClass.Localization.convertTimestampFriendly(strValue.toString(), "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
-                        } else if (strValue.toString().length() >= LARGE_STRING) {
-                            strValue = TimingClass.Localization.replacePatterns(strValue.toString());
-                        }
+                    if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
+                        cellStyle.append(recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString());
+                    }
+                    final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
+                    final String strValue = mapSmartLogic.get("value");
+                    if (!mapSmartLogic.get("style").isEmpty()) {
+                        cellStyle.append(mapSmartLogic.get("style"));
                     }
                     if (cellStyle.isEmpty()) {
                         strHtmlTable.append(String.format("<td>%s</td>", strValue));
@@ -260,6 +239,43 @@ FROM
                 strRememberKey = objFeatures.get(BasicStructuresClass.STR_NEW_TAB).toString();
             }
             return strRememberKey;
+        }
+
+        /**
+         * Manage Cell Style and Value
+         * @param strValue
+         * @return
+         */
+        private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
+            String cellStyle = "";
+            String strValue = inValue.toString();
+            if (BasicStructuresClass.STR_NULL.equalsIgnoreCase(strValue)) {
+                cellStyle = "color:LightGrey;font-style:italic;";
+                strValue = "&lt;NULL&gt;";
+            } else if (strValue.isBlank()) {
+                cellStyle = "color:Grey;font-style:italic;";
+                strValue = "&lt;blank&gt;";
+            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDecimal(strValue)) {
+                cellStyle = CSS_TEXT_RIGHT;
+                strValue = String.format(Locale.US, "%,.2f", new BigDecimal(strValue));
+            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue)) {
+                cellStyle = CSS_TEXT_RIGHT;
+                strValue = String.format(Locale.US, "%,d", Integer.parseInt(strValue));
+            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDate(strValue)) {
+                cellStyle = CSS_TEXT_RIGHT;
+                strValue = TimingClass.Localization.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");
+            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestamp(strValue)) {
+                cellStyle = CSS_TEXT_RIGHT;
+                strValue = TimingClass.Localization.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
+            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestampWithMilliseconds(strValue)) {
+                cellStyle = CSS_TEXT_RIGHT;
+                strValue = TimingClass.Localization.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
+            } else if (strValue.length() >= LARGE_STRING) {
+                strValue = TimingClass.Localization.replacePatterns(strValue);
+            }
+            return Map.of(
+                    "style", cellStyle,
+                    "value", strValue);
         }
 
         /**
