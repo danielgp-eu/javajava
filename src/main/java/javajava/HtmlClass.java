@@ -123,11 +123,11 @@ FROM
         /**
          * Time Zone variable
          */
-        private static long LARGE_STRING = 25;
+        private static final long LARGE_STRING = 25;
         /**
          * CSS to align text to right
          */
-        private static String CSS_TEXT_RIGHT = "text-align:right;";
+        private static final String CSS_TEXT_RIGHT = "text-align:right;";
         /**
          * Time Zone variable
          */
