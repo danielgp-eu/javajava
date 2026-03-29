@@ -38,7 +38,7 @@ public final class SunClass {
     private static Properties outProperties = new Properties();
 
     /**
-     * Calculates SunRize and SunSet for a given location
+     * Calculates Sunrise and Sunset for a given location
      * @param crtLocationDetail location detail as String
      * @return Properties
      */
@@ -129,14 +129,14 @@ public final class SunClass {
         final ZonedDateTime sunriseNext = calculateSunSetOrRise(tomorrowZ, true);
         if (nowZ.isBefore(sunrise)) {
             strSunSituation = "DOWN";
-            strCrtSituation = "Before sunrize";
+            strCrtSituation = "Before sunrise";
             strPriorEvent = "Sunset since %s";
             strNextEvent = "Sunrise in %s";
             objDurationPrior = Duration.between(sunsetPrior, nowZ);
             objDurationNext = Duration.between(nowZ, sunrise);
         } else if (nowZ.isBefore(sunset)) {
             strSunSituation = "UP";
-            strCrtSituation = "In between sunrize and sunset";
+            strCrtSituation = "In between sunrise and sunset";
             strPriorEvent = "Sunrise since %s";
             strNextEvent = "Sunset in %s";
             objDurationPrior = Duration.between(sunrise, nowZ);

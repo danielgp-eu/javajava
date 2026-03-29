@@ -384,7 +384,7 @@ public final class TimingClass {
         public static String replacePatterns(final String inString) {
             final String strRegExp = "(?<agingTimestamp>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_AGING_TS).get(BasicStructuresClass.STR_REG_EXP) + ")"
                     + "|" + "(?<agingDate>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_AGING_DATE).get(BasicStructuresClass.STR_REG_EXP) + ")"
-                    + "|" + "(?<timestampWithMiliseconds>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_TS_MSEC).get(BasicStructuresClass.STR_REG_EXP) + ")"
+                    + "|" + "(?<timestampWithMilliseconds>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_TS_MSEC).get(BasicStructuresClass.STR_REG_EXP) + ")"
                     + "|" + "(?<timestamp>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_TIMESTAMP).get(BasicStructuresClass.STR_REG_EXP) + ")"
                     + "|" + "(?<justDate>" + BasicStructuresClass.mapPatterns.get(BasicStructuresClass.STR_JUST_DATE).get(BasicStructuresClass.STR_REG_EXP) + ")";
             final Pattern pattern = Pattern.compile(strRegExp);

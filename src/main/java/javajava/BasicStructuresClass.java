@@ -219,7 +219,7 @@ public final class BasicStructuresClass {
     /**
      * Time-stamp constant
      */
-    public static final String STR_TS_MSEC = "timestampWithMiliseconds";
+    public static final String STR_TS_MSEC = "timestampWithMilliseconds";
     /**
      * Title constant
      */
@@ -795,7 +795,7 @@ public final class BasicStructuresClass {
                 // 3. Convert to Hex String using HexFormat (introduced in Java 17+)
                 outString = HexFormat.of().formatHex(encodedHash);
             } catch (NoSuchAlgorithmException e) {
-                final String strFeedbackErr = String.format("Checksum algorithm %s is not availble.... %s", algorithm, Arrays.toString(e.getStackTrace()));
+                final String strFeedbackErr = String.format("Checksum algorithm %s is not available.... %s", algorithm, Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
             return outString;
