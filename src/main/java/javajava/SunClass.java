@@ -96,7 +96,8 @@ public final class SunClass {
         final double cosH = (cos(toRadians(ZENITH))
                 - (sinDec * sin(toRadians(dblLatitude)))) / (cosDec * cos(toRadians(dblLatitude)));
         ZonedDateTime outZonedDateTime = null;
-        if ((cosH >= -1) || (cosH <= 1)) { // only if Sun rises/sets
+        if (cosH >= -1
+                && cosH <= 1) { // only if Sun rises/sets
             // 7. Local mean time
             final double localMeanHour = (isSunrise ? (360 - toDegrees(acos(cosH))) : toDegrees(acos(cosH))) / 15.0;
             final double localMeanTime = localMeanHour + sunRightAscension - (0.065_71 * estimatedTime) - 6.622;

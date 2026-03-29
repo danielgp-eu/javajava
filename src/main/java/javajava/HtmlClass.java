@@ -175,7 +175,7 @@ FROM
                             cellStyle.append(CSS_TEXT_RIGHT);
                             strValue = TimingClass.Localization.convertTimestampFriendly(strValue.toString(), "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
                         } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestampWithMilliseconds(strValue.toString())) {
-                            cellStyle.append("text-align:right;");
+                            cellStyle.append(CSS_TEXT_RIGHT);
                             strValue = TimingClass.Localization.convertTimestampFriendly(strValue.toString(), "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
                         } else if (strValue.toString().length() >= LARGE_STRING) {
                             strValue = TimingClass.Localization.replacePatterns(strValue.toString());

@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test;
  * Unit tests for {@link TimingClass}, covering ISO year/week formatting, date/time
  * conversions, duration logging, and localized time-stamp pattern replacement.
  */
-@DisplayName("TimingClassTests testing")
+@DisplayName("TimingClass unit testing")
 class TimingClassTests {
     /**
      * String format for assertion when actual/original is not equal to expected
      */
-    /* default */ private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
+    private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
 
     @Test
     void testGetIsoYearWeek() {
