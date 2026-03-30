@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,7 @@ public final class UndertowClass {
     /**
      * Session Config handle
      */
-    private static final String[] SUPPORTED_TZ = {"America/Los_Angeles", "America/Phoenix", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"};
+    private static final String[] SUPPORTED_TZ = {"America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"};
     /**
      * Menu
      */
@@ -84,7 +85,7 @@ public final class UndertowClass {
         if (!mapValues.containsKey(crtUserTimeZone)) {
             mapValues.put(crtUserTimeZone, TimingClass.getFriendlyOffset(crtUserTimeZone) + " " + crtUserTimeZone);
         }
-        final Map<String, String> sortedTimeZones = mapValues.entrySet().stream()
+        final SequencedMap<String, String> sortedTimeZones = mapValues.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,

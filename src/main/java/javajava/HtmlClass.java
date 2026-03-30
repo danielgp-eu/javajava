@@ -18,7 +18,7 @@ public final class HtmlClass {
      * @param objFeatures optional HTML Table features
      * @return String
      */
-    public static String buildSelectInput(final Map<String, String> mapValues, final Properties objFeatures) {
+    public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
         final List<String> outHtml = new ArrayList<>();
         if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
             outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label")));

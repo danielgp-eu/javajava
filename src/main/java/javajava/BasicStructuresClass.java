@@ -377,14 +377,24 @@ public final class BasicStructuresClass {
          * @param regexSep separators for words detection
          * @return LinkedHashMap of Strings with counted occurrences
          */
-        public static Map<String, Long> getWordCounts(final List<String> valList, final String regexSep) {
+        public static SequencedMap<String, Long> getWordCounts(final List<String> valList, final String regexSep) {
             final Map<String, Long> wordCounts = valList.stream()
                     .flatMap(s -> Arrays.stream(s.split(regexSep)))
                     .collect(Collectors.groupingBy(
                             word -> word,
                             Collectors.counting()
                     ));
-            return sortMapByValueReversedAndKey(wordCounts);
+            return wordCounts.entrySet().stream()
+                    .sorted(
+                            Comparator.comparing(Map.Entry<String, Long>::getValue).reversed()
+                                    .thenComparing(Map.Entry::getKey)
+                    )
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, _) -> e1, // merge function (not used here)
+                            LinkedHashMap::new // preserve sorted order
+                    ));
         }
 
         /**
@@ -419,41 +429,6 @@ public final class BasicStructuresClass {
                 }
             }
             return result;
-        }
-
-        /**
-         * Sort Map by Key
-         * @param origMap original Map
-         * @return Map of String and Object
-         */
-        public static Map<String, Object> sortMapByKey(final Map<String, Object> origMap) {
-            return origMap.entrySet().stream()
-                    .sorted(Map.Entry.comparingByKey())
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (oldValue, _) -> oldValue,
-                            LinkedHashMap::new // preserve sorted order
-                    ));
-        }
-
-        /**
-         * Sort Map by Value reversed then by Key
-         * @param origMap original Map
-         * @return Map of String and Long
-         */
-        private static Map<String, Long> sortMapByValueReversedAndKey(final Map<String, Long> origMap) {
-            return origMap.entrySet().stream()
-                    .sorted(
-                            Comparator.comparing(Map.Entry<String, Long>::getValue).reversed()
-                                    .thenComparing(Map.Entry::getKey)
-                    )
-                    .collect(Collectors.toMap(
-                            Map.Entry::getKey,
-                            Map.Entry::getValue,
-                            (e1, _) -> e1, // merge function (not used here)
-                            LinkedHashMap::new // preserve sorted order
-                    ));
         }
 
         /**

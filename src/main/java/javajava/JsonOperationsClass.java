@@ -8,9 +8,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SequencedMap;
+import java.util.stream.Collectors;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
@@ -178,7 +181,14 @@ public final class JsonOperationsClass {
      */
     public static String getMapIntoJsonString(final Map<String, Object> arrayAttrib) {
         final StringBuilder strJsonSubString = new StringBuilder(100);
-        final Map<String, Object> sortedMap = BasicStructuresClass.ListAndMapClass.sortMapByKey(arrayAttrib);
+        final SequencedMap<String, Object> sortedMap = arrayAttrib.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, _) -> oldValue,
+                        LinkedHashMap::new // preserve sorted order
+                ));
         sortedMap.forEach((strKey, objValue) -> {
             if (!strJsonSubString.isEmpty()) {
                 strJsonSubString.append(',');
