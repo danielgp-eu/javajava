@@ -50,14 +50,14 @@
         <sonar.organization>danielgp-eu</sonar.organization>
         <!-- Dependencies versions -->
         <icu4j.version>78.3</icu4j.version>
-        <jackson-databind.version>3.1.0</jackson-databind.version>
-        <jackson-dataformat-xml.version>3.1.0</jackson-dataformat-xml.version>
+        <jackson-databind.version>3.1.1</jackson-databind.version>
+        <jackson-dataformat-xml.version>3.1.1</jackson-dataformat-xml.version>
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
         <jte.version>3.2.3</jte.version>
-        <log4j-api.version>2.25.3</log4j-api.version>
+        <log4j-api.version>2.25.4</log4j-api.version>
         <log4j-core.version>2.25.4</log4j-core.version>
-        <log4j-slf4j2-impl.version>2.25.3</log4j-slf4j2-impl.version>
+        <log4j-slf4j2-impl.version>2.25.4</log4j-slf4j2-impl.version>
         <maven-model-builder.version>3.9.14</maven-model-builder.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
         <oshi-core-java25.version>6.10.0</oshi-core-java25.version>

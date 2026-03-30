@@ -424,21 +424,16 @@ public final class TimingClass {
          * @return name of the active group
          */
         private static String getActiveGroup(final MatchResult result) {
-            String outGroup;
-            if (result.group(BasicStructuresClass.STR_AGING_TS) != null) {
-                outGroup = BasicStructuresClass.STR_AGING_TS;
-            } else if (result.group(BasicStructuresClass.STR_AGING_DATE) != null) {
-                outGroup = BasicStructuresClass.STR_AGING_DATE;
-            } else if (result.group(BasicStructuresClass.STR_TS_MSEC) != null) {
-                outGroup = BasicStructuresClass.STR_TS_MSEC;
-            } else if (result.group(BasicStructuresClass.STR_TIMESTAMP) != null) {
-                outGroup = BasicStructuresClass.STR_TIMESTAMP;
-            } else if (result.group(BasicStructuresClass.STR_JUST_DATE) != null) {
-                outGroup = BasicStructuresClass.STR_JUST_DATE;
-            } else {
-                throw new IllegalStateException("No group matched");
-            }
-            return outGroup;
+            final List<String> CAPTURE_GROUPS = List.of(
+                    BasicStructuresClass.STR_AGING_TS,
+                    BasicStructuresClass.STR_AGING_DATE,
+                    BasicStructuresClass.STR_TS_MSEC,
+                    BasicStructuresClass.STR_TIMESTAMP,
+                    BasicStructuresClass.STR_JUST_DATE);
+            return CAPTURE_GROUPS.stream()
+                    .filter(groupName -> result.group(groupName) != null)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("No group matched"));
         }
 
         /**
