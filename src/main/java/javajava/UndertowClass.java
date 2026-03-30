@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
@@ -43,7 +44,7 @@ public final class UndertowClass {
     /**
      * Session Config handle
      */
-    private static final String[] SUPPORTED_TZ = {"America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"};
+    private static final List<String> SUPPORTED_TZ = List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne");
     /**
      * Menu
      */
@@ -76,23 +77,39 @@ public final class UndertowClass {
      * @return String
      */
     public static String buildTimeZoneSelect(final String inTimeZone) {
-        final Map<String, String> mapValues = new ConcurrentHashMap<>();
-        for (final String crtTimeZone : SUPPORTED_TZ) {
-            mapValues.put(crtTimeZone, TimingClass.getFriendlyOffset(crtTimeZone) + " " + crtTimeZone);
-        }
         // ensure current user time-zone is also populated
         final String crtUserTimeZone = System.getProperty("user.timezone");
-        if (!mapValues.containsKey(crtUserTimeZone)) {
-            mapValues.put(crtUserTimeZone, TimingClass.getFriendlyOffset(crtUserTimeZone) + " " + crtUserTimeZone);
+        if (!SUPPORTED_TZ.contains(crtUserTimeZone)) {
+            SUPPORTED_TZ.add(crtUserTimeZone);
         }
-        final SequencedMap<String, String> sortedTimeZones = mapValues.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
+        final Map<String, String> mapBeforeUtc = new ConcurrentHashMap<>();
+        final Map<String, String> mapAfterUtc = new ConcurrentHashMap<>();
+        for (final String crtTimeZone : SUPPORTED_TZ) {
+            final String friendlyTimeZone = TimingClass.getFriendlyOffset(crtTimeZone);
+            if (friendlyTimeZone.startsWith("UTC-")) {
+                mapBeforeUtc.put(crtTimeZone, friendlyTimeZone + " " + crtTimeZone);
+            }
+            if (friendlyTimeZone.startsWith("UTC+")) {
+                mapAfterUtc.put(crtTimeZone, friendlyTimeZone + " " + crtTimeZone);
+            }
+        }
+        // building final TimeZone list
+        final SequencedMap<String, String> sortedTimeZones = mapBeforeUtc.entrySet().stream()
+                .sorted(Map.Entry.<String, String>comparingByValue().reversed())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (oldValue, _) -> oldValue,
                         LinkedHashMap::new // preserve sorted order
                 ));
+        sortedTimeZones.putAll(mapAfterUtc.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, _) -> oldValue,
+                        LinkedHashMap::new // preserve sorted order
+                )));
         final Properties selectProps = new Properties();
         selectProps.put("Name", "TZ");
         selectProps.put("Id", "TZ");
