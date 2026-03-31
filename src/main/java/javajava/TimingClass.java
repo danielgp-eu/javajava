@@ -82,7 +82,7 @@ public final class TimingClass {
     }
 
     /**
-     * Convert Nanoseconds to a more digest-able string
+     * Convert Nanoseconds to a more digestible string
      * 
      * @param duration actual duration in nano-seconds
      * @param strRule rule to use for conversion
