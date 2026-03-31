@@ -21,8 +21,12 @@ public final class HtmlClass {
     public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
         final List<String> outHtml = new ArrayList<>();
         if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
-            outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label")));
-            if (objFeatures.getOrDefault("SameLineLabel", "").toString().isEmpty()) {
+            if (objFeatures.getOrDefault("Label Style", "").toString().isEmpty()) {
+                outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label")));
+            } else {
+                outHtml.add(String.format("<label for=\"%s\" style=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label Style").toString(), objFeatures.get("Label")));
+            }
+            if (objFeatures.getOrDefault("Label on Same Line", "").toString().isEmpty()) {
                 outHtml.add("<br/>");
             }
         }
