@@ -48,7 +48,7 @@ public final class UndertowClass {
     /**
      * Menu
      */
-    private static Map<String, Map<String, String>> mapMenu;
+    private static SequencedMap<String, Map<String, String>> mapMenu;
     /**
      * Root handle variable
      */
@@ -192,7 +192,7 @@ public final class UndertowClass {
      * setter for Menu Content 
      * @param inMapMenu map with menu content
      */
-    public static void setMapMenu(final Map<String, Map<String, String>> inMapMenu) {
+    public static void setMapMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
         mapMenu = inMapMenu;
     }
 
