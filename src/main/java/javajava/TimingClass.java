@@ -210,15 +210,9 @@ public final class TimingClass {
             LogExposureClass.LOGGER.error(strFeedback);
             throw new UnsupportedOperationException(strFeedback);
         }
-        String strReturn;
+        String strReturn = String.format(strFormats, lngNumber);
         if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
             strReturn = String.format(strFormats, lngNumber, LocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
-        } else {
-            strReturn = String.format(strFormats, lngNumber);
-        }
-        if (strHow.endsWith("IfGreaterThanZero")
-            && (lngNumber <= 0)) {
-            strReturn = "";
         }
         return strReturn;
     }
