@@ -39,7 +39,7 @@ public final class TimingClass {
     /**
      * String constant
      */
-    /* default */ public static final int DAY_MILLISECS = 24 * 60 * 60 * 1000;
+    public static final int DAY_MILLISECS = 24 * 60 * 60 * 1000;
     /**
      * Map with predefined network physical types
      */
