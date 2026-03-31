@@ -41,7 +41,8 @@ public final class TimingClass {
      */
     public static final int DAY_MILLISECS = 24 * 60 * 60 * 1000;
     /**
-     * Map with predefined network physical types
+     * Map with predefined time format patterns
+     * used for duration and timestamp formatting.
      */
     private static final Map<String, String> TIME_FORMATS;
 
