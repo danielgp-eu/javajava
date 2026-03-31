@@ -102,14 +102,15 @@ public final class UndertowClass {
                         (oldValue, _) -> oldValue,
                         LinkedHashMap::new // preserve sorted order
                 ));
-        sortedTimeZones.putAll(mapAfterUtc.entrySet().stream()
+        final SequencedMap<String, String> sortedAfterUtc = mapAfterUtc.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (oldValue, _) -> oldValue,
                         LinkedHashMap::new // preserve sorted order
-                )));
+                ));
+        sortedTimeZones.putAll(sortedAfterUtc);
         final Properties selectProps = new Properties();
         selectProps.put("Name", "TZ");
         selectProps.put("Id", "TZ");
