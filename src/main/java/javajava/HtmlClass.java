@@ -243,8 +243,8 @@ FROM
 
         /**
          * Manage Cell Style and Value
-         * @param strValue
-         * @return
+         * @param inValue input value
+         * @return Map
          */
         private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
             String cellStyle = "";
