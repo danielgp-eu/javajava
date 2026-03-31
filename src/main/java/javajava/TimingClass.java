@@ -51,7 +51,7 @@ public final class TimingClass {
         final Map<String, String> tempMap = new ConcurrentHashMap<>();
         tempMap.put("DotAndNineDigitNumber", ".%09d");
         tempMap.put(BasicStructuresClass.STR_DOT_THREE, ".%03d");
-        tempMap.put(BasicStructuresClass.STR_TM_FRM_SP, " %02d %s");
+        tempMap.put(BasicStructuresClass.STR_TM_FRM_SP, " %d %s");
         tempMap.put(BasicStructuresClass.STR_SLMN_TWO, ":%02d");
         tempMap.put(BasicStructuresClass.STR_TWO, "%02d");
         tempMap.put(BasicStructuresClass.STR_TWO_NON_ZERO, "%02d");
@@ -204,15 +204,20 @@ public final class TimingClass {
     @NonNull
     private static String getDurationWithCustomRules(@NonNull final Duration duration, @NonNull final String strWhich, @NonNull final String strHow) {
         final long lngNumber = getDurationPartNumber(duration, strWhich);
-        final String strFormats = TIME_FORMATS.get(strHow);
-        if ((strFormats == null) || strFormats.isEmpty()) {
-            final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-            LogExposureClass.LOGGER.error(strFeedback);
-            throw new UnsupportedOperationException(strFeedback);
-        }
-        String strReturn = String.format(strFormats, lngNumber);
-        if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
-            strReturn = String.format(strFormats, lngNumber, LocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
+        String strReturn = "";
+        if (lngNumber > 0
+                || !strHow.endsWith("IfGreaterThanZero")) {
+            final String strFormats = TIME_FORMATS.get(strHow);
+            if ((strFormats == null) || strFormats.isEmpty()) {
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nUnknFtrs"), strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                LogExposureClass.LOGGER.error(strFeedback);
+                throw new UnsupportedOperationException(strFeedback);
+            }
+            if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
+                strReturn = String.format(strFormats, lngNumber, LocalizationClass.getMessageWithPlural("i18nTimePart" + strWhich, lngNumber));
+            } else {
+                strReturn = String.format(strFormats, lngNumber);
+            }
         }
         return strReturn;
     }
