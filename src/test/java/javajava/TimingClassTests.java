@@ -64,6 +64,16 @@ class TimingClassTests {
     }
 
     @Test
+    void testLogDuration2() {
+        final Instant startNow = Instant.now();
+        final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(60 * 60).minusSeconds(33), ZoneOffset.systemDefault());
+        final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
+        final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT1H33S", "1 Hour 33 Seconds", "01:00:33.000");
+        final String handled = TimingClass.logDuration(startTimeStamp, finishTimeStamp, "Finished");
+        assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
+    }
+
+    @Test
     void testReplacePatterns() {
         LocalizationClass.setLocaleByString(BasicStructuresClass.DEFAULT_LOCALE);
         final String largeContent = """
