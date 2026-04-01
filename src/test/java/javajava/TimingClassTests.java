@@ -48,7 +48,7 @@ class TimingClassTests {
     void testGetDaysAgoWithMillisecondsPrecision_negativeDays() {
         final Instant startNow = Instant.now();
         final int intDaysLimit = -1;
-        final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
+        final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
         final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
@@ -57,7 +57,7 @@ class TimingClassTests {
     void testGetDaysAgoWithMillisecondsPrecision_largeDays() {
         final Instant startNow = Instant.now();
         final int intDaysLimit = 30;
-        final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
+        final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
         final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
