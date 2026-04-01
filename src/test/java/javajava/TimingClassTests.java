@@ -101,7 +101,7 @@ class TimingClassTests {
 
     @Test
     void testReplacePatterns() {
-        final String previousLocale = LocalizationClass.getCurrentLocale();
+        final String previousLocale = LocalizationClass.getLocale();
         try {
             LocalizationClass.setLocaleByString(BasicStructuresClass.DEFAULT_LOCALE);
             final String largeContent = """
