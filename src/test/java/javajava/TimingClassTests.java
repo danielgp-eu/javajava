@@ -75,17 +75,22 @@ class TimingClassTests {
 
     @Test
     void testReplacePatterns() {
-        LocalizationClass.setLocaleByString(BasicStructuresClass.DEFAULT_LOCALE);
-        final String largeContent = """
+        final String previousLocale = LocalizationClass.getCurrentLocale();
+        try {
+            LocalizationClass.setLocaleByString(BasicStructuresClass.DEFAULT_LOCALE);
+            final String largeContent = """
 Started on 2026-03-25. 
 Standard log at 2026-03-25 10:00:00. 
 High precision at 2026-12-25 14:30:05.123.""";
-        final String handled = TimingClass.Localization.replacePatterns(largeContent);
-        final String strExpected = """
+            final String handled = TimingClass.Localization.replacePatterns(largeContent);
+            final String strExpected = """
 Started on Wed, 25 Mar 2026. 
 Standard log at Wed, 25 Mar 2026 10:00:00. 
 High precision at Fri, 25 Dec 2026 14:30:05.123.""";
-        assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
+            assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
+        } finally {
+            LocalizationClass.setLocaleByString(previousLocale);
+        }
     }
 
 }
