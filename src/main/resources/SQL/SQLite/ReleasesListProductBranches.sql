@@ -65,7 +65,7 @@ WITH
                     "ci"."BranchId"              = "bv"."BranchId"
                 AND "ci"."Latest VersionId"      = "bv"."VersionId"
             LEFT JOIN "profile_list"                                            AS "pl"   ON
-                "ci"."ProfileId"                 = pl."ProfileId"
+                "ci"."ProfileId"                 = "pl"."ProfileId"
     ),
     "CTE__Files"                                                                AS (
         SELECT
