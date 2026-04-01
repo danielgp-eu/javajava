@@ -37,6 +37,32 @@ class TimingClassTests {
     }
 
     @Test
+    void testGetDaysAgoWithMillisecondsPrecision_zeroDays() {
+        final Instant startNow = Instant.now();
+        final long expected = startNow.toEpochMilli();
+        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 0);
+        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+    }
+
+    @Test
+    void testGetDaysAgoWithMillisecondsPrecision_negativeDays() {
+        final Instant startNow = Instant.now();
+        final int intDaysLimit = -1;
+        final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
+        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
+        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+    }
+
+    @Test
+    void testGetDaysAgoWithMillisecondsPrecision_largeDays() {
+        final Instant startNow = Instant.now();
+        final int intDaysLimit = 30;
+        final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
+        final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
+        assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
+    }
+
+    @Test
     void testGetLocalDateTimeFromStrings() {
         final String strDateIso8601 = "2026-02-08";
         final String timeContinuous = "150934";
