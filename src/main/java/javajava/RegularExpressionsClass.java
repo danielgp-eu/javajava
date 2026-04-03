@@ -72,7 +72,7 @@ public final class RegularExpressionsClass {
      * @param ageString input String
      * @return String in human readable format
      */
-    private static String convertAgingDateIntoHumanReadableString(final String ageString) {
+    public static String convertAgingDateIntoHumanReadableString(final String ageString) {
         final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP));
         final Matcher matcher = agePattern.matcher(ageString);
         final StringJoiner result = new StringJoiner(", ");
@@ -91,7 +91,7 @@ public final class RegularExpressionsClass {
      * @param ageString input String
      * @return String in human readable format
      */
-    private static String convertAgingTimeIntoHumanReadableString(final String ageString) {
+    public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
         final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_TIME).get(STR_REG_EXP));
         final Matcher matcher = agePattern.matcher(ageString);
         final StringJoiner result = new StringJoiner(", ");
