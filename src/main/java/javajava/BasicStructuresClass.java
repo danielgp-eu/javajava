@@ -19,39 +19,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
  * Handling basic structures: numbers, lists, maps, strings
  */
 public final class BasicStructuresClass {
-    /**
-     * Patterns Map
-     */
-    public static final Map<String, Map<String, String>> mapPatterns = Map.of(
-            BasicStructuresClass.STR_AGING_DATE, Map.of(BasicStructuresClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
-            BasicStructuresClass.STR_AGING_TS, Map.of(BasicStructuresClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
-            BasicStructuresClass.STR_AGING_TIME, Map.of(BasicStructuresClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
-            "decimal", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d+\\.\\d+-?"),
-            "integer", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d{1,10}-?"),
-            BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd",
-                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
-                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
-                    BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}\\d{1})"),
-            "numeric", Map.of(BasicStructuresClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
-            BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
-                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
-                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss",
-                    BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}[0-9]{1})\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}"),
-            BasicStructuresClass.STR_TS_MSEC, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss.SSS",
-                    BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss.SSS",
-                    BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss.SSS",
-                    BasicStructuresClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}[0-9]{1})\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
-            );
     /**
      * Constant for non or single/one
      */
@@ -68,18 +42,6 @@ public final class BasicStructuresClass {
      * string constant
      */
     public static final String STR_ACTV_PXLS = "Active Pixels";
-    /**
-     * string constant
-     */
-    public static final String STR_AGING_DATE = "agingDate";
-    /**
-     * string constant
-     */
-    public static final String STR_AGING_TS = "agingTimestamp";
-    /**
-     * string constant
-     */
-    public static final String STR_AGING_TIME = "agingTime";
     /**
      * Dependencies value
      */
@@ -176,10 +138,6 @@ public final class BasicStructuresClass {
      * string constant
      */
     public static final String STR_RANGE_LMTS = "Range Limits";
-    /**
-     * Regular Expression string
-     */
-    public static final String STR_REG_EXP = "Regular Expression";
     /**
      * string constant
      */
@@ -298,28 +256,7 @@ public final class BasicStructuresClass {
      * @return A List of strings, where each string is a full match found.
      */
     public static int countNamedParametersWithinQuery(final String inputString) {
-        return countOccurrences(inputString, "NamedParameters");
-    }
-
-    /**
-     * Count occurrences with String
-     * @param hystack string to count in
-     * @param needleType type of pattern search
-     * @return number of occurrences
-     */
-    private static int countOccurrences(final String hystack, final String needleType) {
-        final Pattern pattern = switch(needleType) {
-            case "NamedParameters" -> Pattern.compile(STR_PRMTR_RGX);
-            case "ComplexPositionalTypeParameters" -> Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
-            case "PositionalTypeParameters" -> Pattern.compile("%[ACEGHSTXacdefghostx]");
-            default -> Pattern.compile(".*");
-        };
-        final Matcher matcher = pattern.matcher(hystack);
-        int count = 0;
-        while (matcher.find()) {
-            count = count + matcher.groupCount();
-        }
-        return count;
+        return RegularExpressionsClass.countOccurrences(inputString, "NamedParameters");
     }
 
     /**
@@ -328,7 +265,7 @@ public final class BasicStructuresClass {
      * @return number of parameters within given string
      */
     public static int countPositionalTypeParametersWithinQuery(final String inputString) {
-        return countOccurrences(inputString, "PositionalTypeParameters");
+        return RegularExpressionsClass.countOccurrences(inputString, "PositionalTypeParameters");
     }
 
     /**
@@ -353,22 +290,6 @@ public final class BasicStructuresClass {
             });
             resultReleases.sort(Comparator.comparing(p -> p.getProperty("Element")));
             return resultReleases;
-        }
-
-        /**
-         * Extracts all occurrences of a given regex pattern from a text.
-         * @param text The input string to search within.
-         * @param regex The regular expression pattern.
-         * @return A List of strings, where each string is a full match found.
-         */
-        public static List<String> extractMatches(final String text, final String regex) {
-            final List<String> matches = new ArrayList<>();
-            final Pattern pattern = Pattern.compile(regex);
-            final Matcher matcher = pattern.matcher(text);
-            while (matcher.find()) {
-                matches.add(matcher.group()); // group() or group(0) returns the entire matched sequence
-            }
-            return matches;
         }
 
         /**
@@ -542,44 +463,6 @@ public final class BasicStructuresClass {
         private static final String Q_MARK_PARAM = "SingleQuestionMarkCharacterParameter";
 
         /**
-         * Convert aging Date into human readable String
-         * @param ageString input String
-         * @return String in human readable format
-         */
-        public static String convertAgingDateIntoHumanReadableString(final String ageString) {
-            final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP));
-            final Matcher matcher = agePattern.matcher(ageString);
-            final StringJoiner result = new StringJoiner(", ");
-            if (matcher.matches()) {
-                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("years")), "year", "years"));
-                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("months")), "month", "months"));
-                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("days")), "day", "days"));
-            } else {
-                result.add(ageString);
-            }
-            return result.toString().replaceAll("^[,\\s]+", "");
-        }
-
-        /**
-         * Convert aging Time into human readable String
-         * @param ageString input String
-         * @return String in human readable format
-         */
-        public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
-            final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_TIME).get(STR_REG_EXP));
-            final Matcher matcher = agePattern.matcher(ageString);
-            final StringJoiner result = new StringJoiner(", ");
-            if (matcher.matches()) {
-                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("hours")), "hour", "hours"));
-                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("minutes")), "minute", "minutes"));
-                result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("seconds")), "second", "seconds"));
-            } else {
-                result.add(ageString);
-            }
-            return result.toString().replaceAll("^[,\\s]+", "");
-        }
-
-        /**
          * Convert Prompt Parameters into Named Parameters
          * @param strOriginalQ query with prompt parameter
          * @return query with named parameters
@@ -587,7 +470,7 @@ public final class BasicStructuresClass {
         private static String convertPromptParameters(final String strOriginalQ, final String type) {
             final String strFeedbackStrt = LocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
             LogExposureClass.LOGGER.debug(strFeedbackStrt);
-            final List<String> listMatches = BasicStructuresClass.ListAndMapClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
+            final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
             String strFinalQ = strOriginalQ;
             if (Q_MARK_PARAM.equalsIgnoreCase(type)) {
                 for (final String currentPrmtName : listMatches) {
@@ -630,21 +513,6 @@ public final class BasicStructuresClass {
             return ":" + StringCleaningClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
         }
 
-        /**
-         * Number with Suffix If Non-Zero
-         * @param inNumber number to evaluate
-         * @param strSingular singular suffix
-         * @param strPlural plural suffix
-         * @return number with suffix or empty if number is zero
-         */
-        private static String numberWithSuffixIfNonZero(final int inNumber, final String strSingular, final String strPlural) {
-            return switch(inNumber) {
-                case 0  -> "";
-                case 1  -> inNumber + " " + strSingular;
-                default -> inNumber + " " +  strPlural;
-            };
-        }
-
         // Private constructor to prevent instantiation
         private StringConversionClass() {
             // intentionally blank
@@ -674,7 +542,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Date
          */
         public static boolean isStringActuallyDate(final String inputString) {
-            return isStringActuallySomething(inputString, STR_JUST_DATE);
+            return RegularExpressionsClass.isStringActuallySomething(inputString, STR_JUST_DATE);
         }
 
         /**
@@ -684,7 +552,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyDecimal(final String inputString) {
-            return isStringActuallySomething(inputString, "decimal");
+            return RegularExpressionsClass.isStringActuallySomething(inputString, "decimal");
         }
 
         /**
@@ -694,7 +562,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyInteger(final String inputString) {
-            return isStringActuallySomething(inputString, "integer");
+            return RegularExpressionsClass.isStringActuallySomething(inputString, "integer");
         }
 
         /**
@@ -704,22 +572,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Numeric
          */
         public static boolean isStringActuallyNumeric(final String inputString) {
-            return isStringActuallySomething(inputString, "numeric");
-        }
-
-        /**
-         * Check if String is actually Date
-         *
-         * @param inputString string to evaluate
-         * @return True if given String is actually Date
-         */
-        public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
-            boolean bolReturn = false;
-            if (inputString != null) {
-                final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
-                bolReturn = pattern.matcher(inputString).matches();
-            }
-            return bolReturn;
+            return RegularExpressionsClass.isStringActuallySomething(inputString, "numeric");
         }
 
         /**
@@ -729,7 +582,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp
          */
         public static boolean isStringActuallyTimestamp(final String inputString) {
-            return isStringActuallySomething(inputString, STR_TIMESTAMP);
+            return RegularExpressionsClass.isStringActuallySomething(inputString, STR_TIMESTAMP);
         }
 
         /**
@@ -739,7 +592,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp w. milli-seconds
          */
         public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
-            return isStringActuallySomething(inputString, STR_TS_MSEC);
+            return RegularExpressionsClass.isStringActuallySomething(inputString, STR_TS_MSEC);
         }
 
         // Private constructor to prevent instantiation

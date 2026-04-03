@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -280,6 +280,21 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>${maven-antrun-plugin.version}</version>
                 <executions>
+                    <execution>
+                        <id>download-iana-data</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <mkdir dir="${project.basedir}/src/main/resources/data" />
+                                <get src="https://data.iana.org/time-zones/data/zone1970.tab"
+                                     dest="${project.basedir}/src/main/resources/data/zone1970.tab"
+                                     skipexisting="true" />
+                            </target>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>generate-checksums-build</id>
                         <phase>package</phase>

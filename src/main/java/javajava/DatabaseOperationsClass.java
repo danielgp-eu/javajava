@@ -20,8 +20,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.sqlite.Function;
 
@@ -145,7 +143,7 @@ public final class DatabaseOperationsClass {
         objValues.getFirst().forEach((strKey, _) -> valFields.add(strKey.toString()));
         final String strFeedbackPrmV = String.format(LocalizationClass.getMessage("i18nSQLparameterValuesAre"), valFields);
         LogExposureClass.LOGGER.debug(strFeedbackPrmV);
-        final List<String> listMatches = BasicStructuresClass.ListAndMapClass.extractMatches(strOriginalQ, BasicStructuresClass.STR_PRMTR_RGX);
+        final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, BasicStructuresClass.STR_PRMTR_RGX);
         final String strFeedbackPrm = String.format(LocalizationClass.getMessage("i18nSQLparameterForQueryAre"), listMatches);
         LogExposureClass.LOGGER.debug(strFeedbackPrm);
         final List<String> mapParameterOrder = new ArrayList<>();
@@ -841,9 +839,7 @@ public final class DatabaseOperationsClass {
                     protected void xFunc() throws SQLException {
                         final String text = value_text(0);
                         final String pattern = value_text(1);
-                        final Pattern regex = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
-                        final Matcher matcher = regex.matcher(text);
-                        result(matcher.find() ? 1 : 0);
+                        result(RegularExpressionsClass.doesExist(text, pattern));
                     }
                 });
             } catch(SQLException e) {
