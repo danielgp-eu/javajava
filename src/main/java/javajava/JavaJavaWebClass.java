@@ -111,7 +111,7 @@ public final class JavaJavaWebClass {
             if (session.getAttribute("TZ") == null) {
                 final Collection<ZoneInfo> allTimeZones = ZoneDataServiceClass.getAll();
                 final String crtUserTimeZone = System.getProperty("user.timezone");
-                if (allTimeZones.contains((Object) crtUserTimeZone)) {
+                if (allTimeZones.stream().anyMatch(z -> z.zoneId().equals(crtUserTimeZone))) {
                     session.setAttribute("TZ", System.getProperty("user.timezone"));
                 } else {
                     session.setAttribute("TZ", "Europe/Bucharest");

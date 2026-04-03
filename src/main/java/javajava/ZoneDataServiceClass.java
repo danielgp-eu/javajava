@@ -29,7 +29,7 @@ public final class ZoneDataServiceClass {
     /**
      * Session Config handle
      */
-    private static final List<String> SUPPORTED_TZ = List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne");
+    private static final List<String> SUPPORTED_TZ = new java.util.ArrayList<>(List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"));
     /**
      * Cached zones
      */
@@ -74,7 +74,7 @@ public final class ZoneDataServiceClass {
         LogExposureClass.LOGGER.info(strFeedback);
         if (crtUserTimeZone != null
                 && !SUPPORTED_TZ.contains(crtUserTimeZone)
-                && allTimeZones.contains((Object) crtUserTimeZone)) {
+                && allTimeZones.stream().anyMatch(z -> z.zoneId().equals(crtUserTimeZone))) {
             SUPPORTED_TZ.add(crtUserTimeZone);
         }
         final Map<String, String> mapBeforeUtc = new ConcurrentHashMap<>();
