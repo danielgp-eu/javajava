@@ -1013,8 +1013,6 @@ public final class DatabaseOperationsClass {
 
         /**
          * Loading Snowflake driver
-         * if (jdbcVersion.startsWith("4.")) {
-         *  strDriverName = "net.snowflake.client.api.driver.SnowflakeDriver";
          */
         private static void loadSnowflakeDriver() {
             final String jdbcVersion = getSnowflakeJdbcDriverVersion();

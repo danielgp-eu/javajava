@@ -128,8 +128,8 @@ public final class RegularExpressionsClass {
 
     /**
      * check if pattern exists into text
-     * @param text
-     * @param pattern
+     * @param text to search within
+     * @param pattern to search for
      * @return int
      */
     public static int doesExist(final String text, final String pattern) {

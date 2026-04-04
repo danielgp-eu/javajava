@@ -40,7 +40,7 @@ public final class SoftwareReleasesClass {
 
     /**
      * Row Style logic
-     * @param agingDays 
+     * @param agingDays number of days
      * @return String row style
      */
     private static String establishRowStyle(final String agingDays) {
@@ -66,7 +66,7 @@ public final class SoftwareReleasesClass {
     private static List<Properties> getSoftwareReleasesFromDatabase() {
         List<Properties> resultReleases = new ArrayList<>();
         try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
-                Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);) {
+                Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
             final Properties rsProperties = new Properties();
             rsProperties.put("Which", "Software Releases"); // purpose
             rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));

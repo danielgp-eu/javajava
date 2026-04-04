@@ -82,7 +82,7 @@ public final class ArchivingClass {
                 long fileOrigSize;
                 try {
                     fileOrigSize = Long.parseLong(sizeBytesStr);
-                } catch (NumberFormatException nfe) {
+                } catch (NumberFormatException _) {
                     LogExposureClass.LOGGER.warn("Invalid SIZE_BYTES value '{}', defaulting to 0.", sizeBytesStr);
                     fileOrigSize = 0L;
                 }

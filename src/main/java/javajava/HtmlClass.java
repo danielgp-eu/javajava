@@ -58,7 +58,7 @@ public final class HtmlClass {
     }
 
     /**
-     * Outputs table statistics into a HTML table
+     * Outputs table statistics into an HTML table
      * @return String
      */
     public static String getTableStatisticsAsHtmlTable() {
@@ -66,13 +66,13 @@ public final class HtmlClass {
         final String strQuery = """
 SELECT
       "m"."name"                                                                AS "Table"
-    , IFNULL("q"."seq", 0)                                                      AS "Sequence" 
+    , IFNULL("q"."seq", 0)                                                      AS "Sequence"
 FROM
-    "sqlite_master"                                                             AS "m" 
+    "sqlite_master"                                                             AS "m"
     LEFT JOIN "sqlite_sequence"                                                 AS "q"  ON
-        "m"."name" = "q"."name" 
+        "m"."name" = "q"."name"
 WHERE
-        "m"."type" = 'table' 
+        "m"."type" = 'table'
     AND "m"."name" NOT LIKE 'sqlite_%';
 """;
         final List<Properties> resultTables = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table list and their sequence", strQuery);
@@ -99,7 +99,7 @@ SELECT
     , "Table"                                                                   AS "Table"
     , "Records"                                                                 AS "Records"
     , "Sequence"                                                                AS "Sequence"
-    , 'color:' 
+    , 'color:'
         || CASE
             WHEN "Sequence" = "Records" THEN
                 'green'

@@ -110,9 +110,8 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutMainboard() {
-        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final Baseboard baseboard = OshiUsageClass.OshiHardware.getOshiMotherboard();
-        arrayAttributes.putAll(Map.of(
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>(Map.of(
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_MANUFACTURER, baseboard.getManufacturer(),
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_MODEL, baseboard.getModel(),
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_VERSION, baseboard.getVersion(),
@@ -144,9 +143,7 @@ public final class HardwareClass {
             final byte[] edid = crtDisplay.getEdid();
             final String uniqueId = "Monitor #" + BasicStructuresClass.StringTransformationClass.computeStringSignature(Base64.getEncoder().encodeToString(edid));
             final Map<String, Object> crtMonitor = digestSingleDisplayDetails(crtDisplay);
-            crtMonitor.forEach((strKey, strValue) -> {
-                arrayAttributes.put(uniqueId + " " + strKey, strValue);
-            });
+            crtMonitor.forEach((strKey, strValue) -> arrayAttributes.put(uniqueId + " " + strKey, strValue));
         }
         return arrayAttributes;
     }
@@ -212,10 +209,9 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutRandomAccessMemory() {
-        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
         final GlobalMemory globalMemory = OshiUsageClass.OshiHardware.getOshiMemory();
         final VirtualMemory virtualMemory = OshiUsageClass.OshiHardware.getOshiVirtualMemory();
-        arrayAttributes.putAll(Map.of(
+        final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>(Map.of(
                 "Available", FormatUtil.formatBytes(globalMemory.getAvailable()),
                 "Page Size", FormatUtil.formatBytes(globalMemory.getPageSize()),
                 "Total", FormatUtil.formatBytes(globalMemory.getTotal()),

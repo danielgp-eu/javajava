@@ -356,7 +356,7 @@ public final class BasicStructuresClass {
          * produce a Sequenced Map from Properties
          * @param prop Properties
          * @param order order as List of String
-         * @return
+         * @return SequencedMap with sorted properties
          */
         public static SequencedMap<Object, Object> sortProperties(final Properties prop, final List<String> order) {
             return prop.entrySet().stream()
@@ -586,10 +586,10 @@ public final class BasicStructuresClass {
         }
 
         /**
-         * Check if String is actually Time-stamp w. milli-seconds
+         * Check if String is actually Time-stamp w. milliseconds
          *
          * @param inputString string to evaluate
-         * @return True if given String is actually Time-stamp w. milli-seconds
+         * @return True if given String is actually Time-stamp w. milliseconds
          */
         public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
             return RegularExpressionsClass.isStringActuallySomething(inputString, STR_TS_MSEC);

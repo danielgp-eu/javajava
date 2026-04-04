@@ -253,7 +253,7 @@ class ArchiveFolders implements Runnable {
  * clean files older than a given number of days
  */
 @CommandLine.Command(name = "CalculateSunriseAndSunset",
-                     description = "Calculates Sunrise and Suntset for one or more location")
+                     description = "Calculates Sunrise and Sunset for one or more location")
 class CalculateSunriseAndSunset implements Runnable {
 
     /**
@@ -596,7 +596,7 @@ class GetInformationFromDatabase implements Runnable {
      * @param strDatabaseType type of Database (predefined values)
      */
     private static void performAction(final String strDatabaseType, final String strLclInfoType) {
-        Properties properties = null;
+        Properties properties = new Properties();
         switch (strDatabaseType) {
             case "MySQL":
                 properties = DatabaseOperationsClass.SpecificMySql.getConnectionPropertiesForMySQL();
@@ -749,7 +749,7 @@ class JsonSplit implements Runnable {
      */
     @CommandLine.Option(
             names = {"-fDst", "--folderDestination"},
-            description = "Destination Folder where splited files will be created",
+            description = "Destination Folder where split files will be created",
             arity = "1",
             required = true)
     private static String strDestFolder;
@@ -758,7 +758,7 @@ class JsonSplit implements Runnable {
      */
     @CommandLine.Option(
             names = {"-sz", "--splitSize"},
-            description = "Threshold size value beyound which split will be performed")
+            description = "Threshold size value beyond which split will be performed")
     private static long splitSize;
     /**
      * String for file name
@@ -790,7 +790,7 @@ class JsonSplit implements Runnable {
                 setSplitSizeThreshold();
                 setFileSizeDifferenceCompareToThreshold();
                 if (fileSize <= sizeThreshold) {
-                    final String strFeedback = String.format("File %s has a size of %s bytes which compare to split file threshold of %s bytes is %s%% smaller, hence split is NOT neccesary!", strFileName, fileSize, sizeThreshold, sizeDifference);
+                    final String strFeedback = String.format("File %s has a size of %s bytes which compare to split file threshold of %s bytes is %s%% smaller, hence split is NOT necessary!", strFileName, fileSize, sizeThreshold, sizeDifference);
                     LogExposureClass.LOGGER.info(strFeedback);
                 } else {
                     performJsonSplit(strFileName);

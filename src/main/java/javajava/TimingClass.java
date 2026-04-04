@@ -76,7 +76,7 @@ public final class TimingClass {
     /**
      * Convert Nanoseconds to a more digestible string
      * 
-     * @param duration actual duration in nano-seconds
+     * @param duration actual duration in nanoseconds
      * @param strRule rule to use for conversion
      * @return String
      */
@@ -164,7 +164,7 @@ public final class TimingClass {
     /**
      * get number for Duration
      * 
-     * @param duration actual duration in nano-seconds
+     * @param duration actual duration in nanoseconds
      * @param strWhich which part of Date or Time to use for conversion
      * @return final part of Date or Time
      */
@@ -187,7 +187,7 @@ public final class TimingClass {
     /**
      * outputs partial duration
      * 
-     * @param duration actual duration in nano-seconds
+     * @param duration actual duration in nanoseconds
      * @param strWhich which time part to compute
      * @param strHow controls output format
      * @return String

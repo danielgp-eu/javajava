@@ -35,7 +35,7 @@ public final class SunClass {
     /**
      * Properties for output 
      */
-    private static Properties outProperties = new Properties();
+    private static final Properties outProperties = new Properties();
 
     /**
      * Calculates Sunrise and Sunset for a given location
@@ -112,9 +112,9 @@ public final class SunClass {
 
     /**
      * Enhances sun position details
-     * @param nowZ
-     * @param sunrise
-     * @param sunset
+     * @param nowZ now with Time Zone
+     * @param sunrise sun rise time
+     * @param sunset sun set time
      */
     private static void enhanceSunStatistics(final ZonedDateTime nowZ, final ZonedDateTime sunrise, final ZonedDateTime sunset) {
         final Duration objDurationPrior;
@@ -157,7 +157,7 @@ public final class SunClass {
 
     /**
      * Setter for dblLatitude
-     * @param inLatitude
+     * @param inLatitude input Latitude
      */
     public static void setLatitude(final double inLatitude) {
         dblLatitude = inLatitude;
@@ -166,7 +166,7 @@ public final class SunClass {
 
     /**
      * Setter for dblLongitude
-     * @param inLongitude
+     * @param inLongitude input Longitude
      */
     public static void setLongitude(final double inLongitude) {
         dblLongitude = inLongitude;
@@ -175,13 +175,12 @@ public final class SunClass {
 
     /**
      * Setter for strZoneName
-     * @param inZoneName
+     * @param inZoneName input Zone Name
      */
     public static void setZoneId(final String inZoneName) {
         try {
             outProperties.put("Zone Name", inZoneName);
             // Pre-cache available IDs for high-performance lookup
-            // private static final Set<String> AVAILABLE_IDS = ZoneId.getAvailableZoneIds();
             final ZoneId zoneId = ZoneId.of(inZoneName);
             final String strFeedback = String.format("Given zone name %s has the corresponding ZoneId %s", inZoneName, zoneId);
             LogExposureClass.LOGGER.debug(strFeedback);

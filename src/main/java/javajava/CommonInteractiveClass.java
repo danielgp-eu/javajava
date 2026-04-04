@@ -13,7 +13,7 @@ import picocli.CommandLine.Option;
  */
 public final class CommonInteractiveClass {
     /**
-     * boolean Auto Locale
+     * Boolean Auto Locale
      */
     private static boolean bolAutoLocale;
     /**

@@ -34,7 +34,7 @@ public final class FileStatisticsClass {
     /**
      * file statistics
      */
-    private static List<Properties> fileStatistics = new ArrayList<>();
+    private static final List<Properties> fileStatistics = new ArrayList<>();
 
     /**
      * A simple record to hold our results
@@ -78,7 +78,7 @@ public final class FileStatisticsClass {
         try {
             digest = MessageDigest.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
-            final String strFeedbackErr = String.format("Checksum algorithm %s is not availble.... %s", algorithm, Arrays.toString(e.getStackTrace()));
+            final String strFeedbackErr = String.format("Checksum algorithm %s is not available.... %s", algorithm, Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         final StringBuilder sbChecksumValue = new StringBuilder();

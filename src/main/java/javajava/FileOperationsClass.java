@@ -473,7 +473,7 @@ public final class FileOperationsClass {
             }
 
             /**
-             * Setter Resetter for Cleaned Folder Statistics
+             * Setter/Resetter for Cleaned Folder Statistics
              */
             public static void setOrResetCleanedFolderStatistics() {
                 lngFilesClnd = 0;
