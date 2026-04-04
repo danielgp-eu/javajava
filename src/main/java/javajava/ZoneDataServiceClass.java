@@ -116,7 +116,7 @@ public final class ZoneDataServiceClass {
      * @param zoneId IANA zone identifier
      */
     private static void processLine(final String countries, final String coords, final String zoneId) {
-        // Parse Countries (Java 25 Locale.of)
+        // Parse Countries (Java 19 Locale.of)
         final List<String> codes = Arrays.asList(countries.split(","));
         final List<String> names = codes.stream()
                 .map(code -> Locale.of("", code).getDisplayCountry(Locale.ENGLISH))
