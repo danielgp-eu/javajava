@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.11.6</version>
+    <version>1.11.7</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -67,6 +67,7 @@
         <undertow.version>2.4.0.RC4</undertow.version>
         <!-- Build Plugin versions -->
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
+        <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
@@ -212,6 +213,7 @@
     <build>
         <plugins>
             <!-- Source: https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
+            <!-- Description: Takari Lifecycle Plugin -->
             <plugin>
               <groupId>io.takari.maven.plugins</groupId>
               <artifactId>takari-lifecycle-plugin</artifactId>
@@ -233,6 +235,7 @@
               </configuration>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+            <!-- Description: A Maven plugin to create archives of your project's sources, classes, dependencies etc. from flexible assembly descriptors. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -253,6 +256,7 @@
                 </executions>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+            <!-- Description: The Apache Maven Javadoc Plugin is a plugin that uses the javadoc tool for generating javadocs for the specified project. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -270,6 +274,7 @@
                 </configuration>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.cyclonedx/cyclonedx-maven-plugin -->
+            <!-- Description: The CycloneDX Maven plugin generates CycloneDX Software Bill of Materials (SBOM) containing the aggregate of all direct and transitive dependencies of a project. -->
             <plugin>
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
@@ -284,6 +289,7 @@
                 </executions>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
+            <!-- Description: Runs Ant scripts embedded in the POM -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -378,6 +384,7 @@
                 </executions>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+            <!-- Description: Signs the project artifacts with GnuPG. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -396,6 +403,7 @@
                 </executions>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+            <!-- Description: he JaCoCo Maven Plugin provides the JaCoCo runtime agent to your tests and allows basic report creation. -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -436,6 +444,7 @@
                 </executions>
             </plugin>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+            <!-- Description: Maven Surefire MOJO in maven-surefire-plugin. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

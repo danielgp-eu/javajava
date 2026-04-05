@@ -33,7 +33,7 @@ public final class ZoneDataServiceClass {
     /**
      * Cached zones
      */
-    private static final Map<String, ZoneInfo> CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, ZoneInfoRecord> CACHE = new ConcurrentHashMap<>();
 
     static {
         loadIanaZones();
@@ -67,7 +67,7 @@ public final class ZoneDataServiceClass {
      * @return SequencedMap
      */
     public static SequencedMap<String, String> loadSupportedTimeZones() {
-        final Collection<ZoneInfo> allTimeZones = getAll();
+        final Collection<ZoneInfoRecord> allTimeZones = getAll();
         // ensure current user time-zone is also populated
         final String crtUserTimeZone = System.getProperty("user.timezone");
         final String strFeedback = String.format("Your time zone is %s", crtUserTimeZone);
@@ -130,7 +130,7 @@ public final class ZoneDataServiceClass {
         final double lon = RegularExpressionsClass.dmsToDecimal(coords.substring(splitIdx), true);
         // 3. Get Current Offset String
         final String offsetStr = "UTC" + ZonedDateTime.now(ZoneId.of(zoneId)).getOffset().getId();
-        CACHE.put(zoneId, new ZoneInfo(zoneId, lat, lon, codes, names, offsetStr));
+        CACHE.put(zoneId, new ZoneInfoRecord(zoneId, lat, lon, codes, names, offsetStr));
     }
 
     /**
@@ -138,7 +138,7 @@ public final class ZoneDataServiceClass {
      * @param zoneId string with IANA location
      * @return ZoneInfo
      */
-    public static ZoneInfo get(final String zoneId) {
+    public static ZoneInfoRecord get(final String zoneId) {
         return CACHE.get(zoneId);
     }
 
@@ -146,7 +146,7 @@ public final class ZoneDataServiceClass {
      * Getter for ZoneInfo
      * @return Collection of ZoneInfo
      */
-    public static Collection<ZoneInfo> getAll() {
+    public static Collection<ZoneInfoRecord> getAll() {
         return CACHE.values();
     }
 

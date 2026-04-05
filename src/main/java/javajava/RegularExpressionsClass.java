@@ -30,6 +30,8 @@ public final class RegularExpressionsClass {
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}\\d{1})"),
+            RegularExpressionsClass.STR_MAVEN_PKG, Map.of(RegularExpressionsClass.STR_REG_EXP, "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+",
+                    "URL", "<a href=\"https://mvnrepository.com/artifact/%s/\" target=\"_blank\">%s</a>"),
             "numeric", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
             BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
@@ -66,6 +68,10 @@ public final class RegularExpressionsClass {
      * string constant
      */
     public static final String STR_AGING_TS = "agingTimestamp";
+    /**
+     * string constant
+     */
+    public static final String STR_MAVEN_PKG = "MavenPackage";
 
     /**
      * Convert aging Date into human readable String
@@ -180,6 +186,7 @@ public final class RegularExpressionsClass {
      */
     public static String getActiveGroup(final MatchResult result) {
         final List<String> CAPTURE_GROUPS = List.of(
+                STR_MAVEN_PKG,
                 STR_AGING_TS,
                 STR_AGING_DATE,
                 BasicStructuresClass.STR_TS_MSEC,
@@ -227,7 +234,8 @@ public final class RegularExpressionsClass {
      * @return replaced text
      */
     public static String replacePatternsWithTimeZones(final String inString, final String inputTimeZone, final String outputTimeZone) {
-        final String strRegExp = "(?<agingTimestamp>" + mapPatterns.get(STR_AGING_TS).get(STR_REG_EXP) + ")"
+        final String strRegExp = "(?<MavenPackage>" + mapPatterns.get(STR_MAVEN_PKG).get(STR_REG_EXP) + ")"
+                + "|" + "(?<agingTimestamp>" + mapPatterns.get(STR_AGING_TS).get(STR_REG_EXP) + ")"
                 + "|" + "(?<agingDate>" + mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP) + ")"
                 + "|" + "(?<timestampWithMilliseconds>" + mapPatterns.get(BasicStructuresClass.STR_TS_MSEC).get(STR_REG_EXP) + ")"
                 + "|" + "(?<timestamp>" + mapPatterns.get(BasicStructuresClass.STR_TIMESTAMP).get(STR_REG_EXP) + ")"
@@ -239,7 +247,14 @@ public final class RegularExpressionsClass {
                 // Determine which group matched
                 final String matchedGroup = getActiveGroup(matchResult);
                 final String text = matchResult.group(matchedGroup);
-                if (STR_AGING_TS.equals(matchedGroup)) {
+                if (STR_MAVEN_PKG.equals(matchedGroup)) {
+                    if (text.contains("compliance-snowflake")
+                            || text.contains("danielgp-eu")) {
+                        return text;
+                    } else {
+                        return String.format(mapPatterns.get(STR_MAVEN_PKG).get("URL"), text.replace(':', '/'), text);
+                    }
+                } else if (STR_AGING_TS.equals(matchedGroup)) {
                     final String strDate = text.substring(0, 11);
                     final String strTime = text.substring(12, 20);
                     return convertAgingDateIntoHumanReadableString(strDate)

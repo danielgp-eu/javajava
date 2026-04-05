@@ -66,8 +66,8 @@ public final class EnvironmentCapturingAssembleClass {
         final String strFeedbackH = LocalizationClass.getMessage("i18nAppInformationHardwareCaptured");
         LogExposureClass.LOGGER.debug(strFeedbackH);
         final String strSoftware = "\"Software\":{"
-                + "\"OS\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutOperatingSystem())
-                + ",\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
+                + "\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
+                + ",\"OS\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutOperatingSystem())
                 + ",\"Network\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork())
                 + ",\"Storage\":" + JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions())
                 + "}";
@@ -105,6 +105,7 @@ public final class EnvironmentCapturingAssembleClass {
         resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - OS", HardwareClass.getDetailsAboutOperatingSystem()));
         resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Network", HardwareClass.getDetailsAboutNetwork()));
         resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Storage", OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Application", ProjectClass.Application.getApplicationDetailsIntoMap()));
         return resultReleases;
     }
 

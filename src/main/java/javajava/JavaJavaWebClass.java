@@ -109,7 +109,7 @@ public final class JavaJavaWebClass {
                 }
             }
             if (session.getAttribute("TZ") == null) {
-                final Collection<ZoneInfo> allTimeZones = ZoneDataServiceClass.getAll();
+                final Collection<ZoneInfoRecord> allTimeZones = ZoneDataServiceClass.getAll();
                 final String crtUserTimeZone = System.getProperty("user.timezone");
                 if (allTimeZones.stream().anyMatch(z -> z.zoneId().equals(crtUserTimeZone))) {
                     session.setAttribute("TZ", System.getProperty("user.timezone"));
@@ -151,7 +151,7 @@ public final class JavaJavaWebClass {
             UndertowClass.TemplateRendering.packParameter("content", bodyContent);
             UndertowClass.TemplateRendering.packParameter("timeZoneSelect", tzContent);
             UndertowClass.TemplateRendering.packParameter("currentPageQuery", exchange.getQueryString());
-            final ZoneInfo zInfo = ZoneDataServiceClass.get(sessionTimeZone);
+            final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
             UndertowClass.TemplateRendering.packParameter("geoCoordinates", zInfo.latitude() + "," + zInfo.longitude());
             UndertowClass.TemplateRendering.packParameter("timeNow", TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone));
             UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");

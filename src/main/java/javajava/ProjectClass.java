@@ -248,6 +248,34 @@ public final class ProjectClass {
         }
 
         /**
+         * Application Details into Map
+         *
+         * @return Map
+         */
+        public static Map<String, Object> getApplicationDetailsIntoMap() {
+            final Map<String, Object> appDetails = new ConcurrentHashMap<>();
+            final Model prjModel = getProjectModel();
+            appDetails.put("Application - " + prjModel.getGroupId() + ":" + prjModel.getArtifactId(), prjModel.getVersion());
+            final Map<String, Object> projDependencies = Components.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+            if (!projDependencies.isEmpty()) {
+                projDependencies.forEach((strKey, objValue) -> appDetails.put("Direct Dependency - " + strKey, objValue));
+            }
+            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent("BuildPlugins");
+            if (!projBuildPlugins.isEmpty()) {
+                projBuildPlugins.forEach((strKey, objValue) -> appDetails.put("Build Plugins - " + strKey, objValue));
+            }
+            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent("ProfilePlugins");
+            if (!projPrflPlugins.isEmpty()) {
+                projPrflPlugins.forEach((strKey, objValue) -> appDetails.put("Profile Plugins - " + strKey, objValue));
+            }
+            final Map<String, Object> projLibModules = getProjectModuleLibraries();
+            if (!projLibModules.isEmpty()) {
+                projLibModules.forEach((strKey, objValue) -> appDetails.put("Library Module - " + strKey, objValue));
+            }
+            return appDetails;
+        }
+
+        /**
          * expose Project Modules (if defined)
          * @param prjModel current project model
          * @return JSON String with module details

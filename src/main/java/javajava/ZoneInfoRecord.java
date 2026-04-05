@@ -2,7 +2,7 @@ package javajava;
 
 import java.util.List;
 
-public record ZoneInfo(
+public record ZoneInfoRecord(
         String zoneId,
         double latitude,
         double longitude,
