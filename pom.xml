@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.11.4</version>
+    <version>1.11.5</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -58,10 +58,11 @@
         <log4j-api.version>2.25.4</log4j-api.version>
         <log4j-core.version>2.25.4</log4j-core.version>
         <log4j-slf4j2-impl.version>2.25.4</log4j-slf4j2-impl.version>
-        <maven-core.version>3.9.14</maven-core.version>
+        <maven-model.version>3.9.14</maven-model.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
         <oshi-core-java25.version>6.10.0</oshi-core-java25.version>
         <picocli.version>4.7.7</picocli.version>
+        <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.51.3.0</sqlite-jdbc.version>
         <undertow.version>2.4.0.RC4</undertow.version>
         <!-- Build Plugin versions -->
@@ -145,8 +146,16 @@
         <!-- Description: Core classes of Apache Maven to manage the building process. -->
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>${maven-core.version}</version>
+            <artifactId>maven-model</artifactId>
+            <version>${maven-model.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
+        <!-- Description: A collection of various utility classes to ease working with strings, files, command lines and more. -->
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-interpolation</artifactId>
+            <version>${plexus-interpolation.version}</version>
             <scope>compile</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.jspecify/jspecify -->
