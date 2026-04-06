@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.11.7</version>
+    <version>1.11.8</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -55,8 +55,6 @@
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
         <jte.version>3.2.3</jte.version>
-        <log4j-api.version>2.25.4</log4j-api.version>
-        <log4j-core.version>2.25.4</log4j-core.version>
         <log4j-slf4j2-impl.version>2.25.4</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.14</maven-model.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
@@ -74,7 +72,7 @@
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
-        <takari-lifecycle-plugin.version>2.3.2</takari-lifecycle-plugin.version>
+        <takari-lifecycle-plugin.version>2.3.3</takari-lifecycle-plugin.version>
     </properties>
 
     <dependencies>
@@ -117,22 +115,6 @@
             <groupId>io.undertow</groupId>
             <artifactId>undertow-core</artifactId>
             <version>${undertow.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
-        <!-- Description: API for Apache Log4J, a highly configurable logging tool that focuses on performance and low garbage generation. It has a plugin architecture that makes it extensible and supports asynchronous logging based on LMAX Disruptor. -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j-api.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-        <!-- Description: Implementation for Apache Log4J, a highly configurable logging tool that focuses on performance and low garbage generation. It has a plugin architecture that makes it extensible and supports asynchronous logging based on LMAX Disruptor. -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j-core.version}</version>
             <scope>compile</scope>
         </dependency>
         <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
