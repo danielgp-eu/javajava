@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import oshi.SystemInfo;
+import oshi.PlatformEnum;
 import oshi.hardware.Baseboard;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
@@ -199,7 +199,7 @@ public final class HardwareClass {
                 "Family", OshiUsageClass.OshiSoftware.getOshiFamily(),
                 BasicStructuresClass.STR_MANUFACTURER, OshiUsageClass.OshiSoftware.getOshiManufacturer(),
                 BasicStructuresClass.STR_NAME, System.getProperty("os.name"),
-                "Platform", SystemInfo.getCurrentPlatform().toString(),
+                "Platform", PlatformEnum.getCurrentPlatform().toString(),
                 BasicStructuresClass.STR_VERSION, version.getVersion());
     }
 

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import oshi.SystemInfoFFM;
+import oshi.SystemInfo;
 import oshi.hardware.Baseboard;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
@@ -29,7 +29,7 @@ public final class OshiUsageClass {
     /**
      * Hardware info
      */
-    public static final SystemInfoFFM SYSTEM_INFO = new SystemInfoFFM();
+    public static final SystemInfo SYSTEM_INFO = new SystemInfo();
     /**
      * Map with predefined network physical types
      */
