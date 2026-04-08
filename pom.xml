@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>1.11.8</version>
+    <version>1.11.9</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -24,7 +24,7 @@
 
     <developers>
         <developer>
-            <name>Daniel Popiniuc-Gheorghe</name>
+            <name>Daniel-Gheorghe Popiniuc</name>
             <email>danielpopiniuc@gmail.com</email>
             <roles>
                 <role>Developer</role>

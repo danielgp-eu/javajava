@@ -18,9 +18,9 @@ public final class EnvironmentCapturingAssembleClass {
         return Map.of(
                 "Computer", System.getenv("COMPUTERNAME"),
                 "Country", System.getProperty("user.country"),
-                "Country.Format", System.getProperty("user.country.format"),
+                "Country.Format", System.getProperty("user.country.format", "---"),
                 "Language", System.getProperty("user.language"),
-                "Language.Format", System.getProperty("user.language.format"),
+                "Language.Format", System.getProperty("user.language.format", "---"),
                 "Home", System.getProperty("user.home").replace("\\", "\\\\"),
                 "Name", System.getProperty("user.name"),
                 "Timezone", System.getProperty("user.timezone"),

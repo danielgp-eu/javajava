@@ -701,7 +701,6 @@ class JavaJavaWebUserInterface implements Runnable {
     @Override
     public void run() {
         UndertowClass.setWebPort(String.valueOf(portNumber));
-        UndertowClass.setMapMenu(JavaJavaWebClass.getMapMenu());
         DatabaseOperationsClass.SpecificSqLiteClass.setInternalDatabase(strDbReleases);
         SoftwareReleasesClass.setReleasesDatabase(strDbReleases);
         UndertowClass.setRootHandler(JavaJavaWebClass.handleWebContent());

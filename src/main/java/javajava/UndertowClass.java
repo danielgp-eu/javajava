@@ -3,6 +3,7 @@ package javajava;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
@@ -21,6 +22,7 @@ import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.handlers.resource.ClassPathResourceManager;
 import io.undertow.server.handlers.resource.ResourceHandler;
 import io.undertow.server.session.InMemorySessionManager;
+import io.undertow.server.session.Session;
 import io.undertow.server.session.SessionAttachmentHandler;
 import io.undertow.server.session.SessionCookieConfig;
 import io.undertow.util.HeaderMap;
@@ -39,10 +41,6 @@ public final class UndertowClass {
      */
     private static final SessionCookieConfig SESSION_CONFIG = new SessionCookieConfig();
     /**
-     * Menu
-     */
-    private static SequencedMap<String, Map<String, String>> mapMenu;
-    /**
      * Root handle variable
      */
     private static HttpHandler rootHandler;
@@ -54,29 +52,6 @@ public final class UndertowClass {
      * Web port variable
      */
     private static String webPort;
-
-    /**
-     * Building HTML menu
-     * @return String
-     */
-    public static String buildMenuContent() {
-        final StringBuilder strMenuContent = new StringBuilder(1000);
-        mapMenu.forEach((strKey, mapValue) -> strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU))));
-        return strMenuContent.toString();
-    }
-
-    /**
-     * Building Time-Zone form
-     * @return String
-     */
-    public static String buildTimeZoneSelect(final String inTimeZone) {
-        final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        final Properties selectProps = new Properties();
-        selectProps.put("Name", "TZ");
-        selectProps.put("Id", "TZ");
-        selectProps.put("Default", inTimeZone);
-        return HtmlClass.buildSelectInput(sortedTimeZones, selectProps);
-    }
 
     /**
      * Initiating Template Engine
@@ -103,6 +78,28 @@ public final class UndertowClass {
      */
     public static InMemorySessionManager getSessionManager() {
         return SESSION_MANAGER;
+    }
+
+    /**
+     * Time Zone set logic
+     * @param page
+     * @param queryParams
+     * @param session
+     */
+    public static void handleTimeZoneSession(final Map<String, Deque<String>> queryParams, final Session session) {
+        if (queryParams.get("TZ") != null) {
+            session.setAttribute("TZ", queryParams.get("TZ").getFirst());
+        }
+        if (session.getAttribute("TZ") == null) {
+            final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            final String crtUserTimeZone = System.getProperty("user.timezone");
+            if (crtUserTimeZone != null
+                    && !sortedTimeZones.getOrDefault(crtUserTimeZone, "").isEmpty()) {
+                session.setAttribute("TZ", crtUserTimeZone);
+            } else {
+                session.setAttribute("TZ", "Asia/Kolkata");
+            }
+        }
     }
 
     /**
@@ -147,14 +144,6 @@ public final class UndertowClass {
             final String strFeedbackErr = String.format("Error on getting static resources... %s", Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
-    }
-
-    /**
-     * setter for Menu Content 
-     * @param inMapMenu map with menu content
-     */
-    public static void setMapMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
-        mapMenu = inMapMenu;
     }
 
     /**

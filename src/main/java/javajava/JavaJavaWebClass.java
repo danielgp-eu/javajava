@@ -59,14 +59,6 @@ public final class JavaJavaWebClass {
     }
 
     /**
-     * Getter for Map Menu
-     * @return menu
-     */
-    public static SequencedMap<String, Map<String, String>> getMapMenu() {
-        return mapMenu;
-    }
-
-    /**
      * expose Software Release details from internal DB
      * @return String software releases details
      */
@@ -98,24 +90,12 @@ public final class JavaJavaWebClass {
             final Deque<String> pageParams = queryParams.get("page");
             final String page = (pageParams != null) ? pageParams.getFirst() : "home";
             final String strTitle = BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
-            if (BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page)) {
-                if (queryParams.get("TZ") != null) {
-                    session.setAttribute("TZ", queryParams.get("TZ").getFirst());
-                }
-                if (queryParams.get("redirectAction") != null) {
-                    exchange.setStatusCode(StatusCodes.SEE_OTHER); // 303 Redirect
-                    exchange.getResponseHeaders().put(Headers.LOCATION, "/?" + queryParams.get("redirectAction").getFirst());
-                    exchange.endExchange();
-                }
-            }
-            if (session.getAttribute("TZ") == null) {
-                final Collection<ZoneInfoRecord> allTimeZones = ZoneDataServiceClass.getAll();
-                final String crtUserTimeZone = System.getProperty("user.timezone");
-                if (allTimeZones.stream().anyMatch(z -> z.zoneId().equals(crtUserTimeZone))) {
-                    session.setAttribute("TZ", System.getProperty("user.timezone"));
-                } else {
-                    session.setAttribute("TZ", "Europe/Bucharest");
-                }
+            UndertowClass.handleTimeZoneSession(queryParams, session);
+            if (queryParams.get("redirectAction") != null) {
+                exchange.setStatusCode(StatusCodes.SEE_OTHER); // 303 Redirect
+                exchange.getResponseHeaders().put(Headers.LOCATION, "/?"
+                        + queryParams.get("redirectAction").getFirst());
+                exchange.endExchange();
             }
             final String sessionTimeZone = session.getAttribute("TZ").toString();
             HtmlClass.Table.setTimeZone(sessionTimeZone);
@@ -132,7 +112,6 @@ public final class JavaJavaWebClass {
                     break;
             }
             HtmlClass.Table.setTimeZone(sessionTimeZone);
-            final gg.jte.Content menuContent = output -> output.writeContent(UndertowClass.buildMenuContent());
             final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
                 case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
                 case "FilesHashing"              -> getFileHashingAsHtmlTable();
@@ -140,20 +119,18 @@ public final class JavaJavaWebClass {
                 case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
                 default                          -> String.format("Welcome %s", System.getProperty("user.name"));
             });
-            final gg.jte.Content tzContent = output -> output.writeContent(UndertowClass.buildTimeZoneSelect(sessionTimeZone));
             final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
             final Utf8ByteOutput output = new Utf8ByteOutput();
             UndertowClass.TemplateRendering.setOutput(output);
             UndertowClass.TemplateRendering.setServerExchange(exchange);
             UndertowClass.TemplateRendering.packParameter("page", page);
             UndertowClass.TemplateRendering.packParameter("title", strTitle);
-            UndertowClass.TemplateRendering.packParameter("menu", menuContent);
+            UndertowClass.TemplateRendering.packParameter("menu", HtmlClass.CommonWebElements.buildMenu(mapMenu));
             UndertowClass.TemplateRendering.packParameter("content", bodyContent);
-            UndertowClass.TemplateRendering.packParameter("timeZoneSelect", tzContent);
+            UndertowClass.TemplateRendering.packParameter("timeZoneSelect", HtmlClass.CommonWebElements.buildTimeZoneSelect(sessionTimeZone));
             UndertowClass.TemplateRendering.packParameter("currentPageQuery", exchange.getQueryString());
-            final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
-            UndertowClass.TemplateRendering.packParameter("geoCoordinates", zInfo.latitude() + "," + zInfo.longitude());
-            UndertowClass.TemplateRendering.packParameter("timeNow", TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone));
+            UndertowClass.TemplateRendering.packParameter("geoCoordinates", HtmlClass.CommonWebElements.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
+            UndertowClass.TemplateRendering.packParameter("timeNow", HtmlClass.CommonWebElements.buildCurrentTimestamp(sessionTimeZone));
             UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
         };
     }

@@ -6,6 +6,7 @@
 @param Content timeZoneSelect
 @param String currentPageQuery
 @param String geoCoordinates
+@param Content appDetails
 @param String timeNow
 <!DOCTYPE html>
 <html lang="en-US">
@@ -48,7 +49,7 @@
         <a href="https://maps.google.com/maps?q=${geoCoordinates}" target="_blank" style="float:left;margin:0rem 0.5rem;">
             <i class="fa-solid fa-map-location"></i>
         </a>
-        <span id="copyright" style="float:right;margin:0rem 0.5rem;">&#169; Copyright by Daniel Popiniuc 2026</span>
+        <span id="app" style="float:right;margin:0rem 0.5rem;">${appDetails}</span>
         <span id="now" style="float:right;margin:0rem 0.5rem;">TS: ${timeNow}</span>
     </footer>
 </body>

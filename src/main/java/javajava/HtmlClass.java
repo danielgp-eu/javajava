@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SequencedMap;
 
+import org.apache.maven.model.Model;
+
 /**
  * HTML generating logic
  */
@@ -118,6 +120,70 @@ FROM
                 .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
                 .toList();
         return Table.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());
+    }
+
+    /**
+     * Common Web Elements
+     */
+    public static final class CommonWebElements {
+
+        /**
+         * Application Details
+         * @return Content
+         */
+        public static gg.jte.Content buildApplicationDetail() {
+            final Model prjModel = ProjectClass.getProjectModel();
+            final gg.jte.Content appContent = output -> output.writeContent(String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjModel.getVersion(), prjModel.getDevelopers().getFirst().getName()));
+            final String strFeedback = String.format("I have just build application details: %s", appContent.toString());
+            LogExposureClass.LOGGER.info(strFeedback);
+            return appContent;
+        }
+
+        /**
+         * Current Time-stamp from TZ
+         * @return String
+         */
+        public static String buildCurrentTimestamp(final String sessionTimeZone) {
+            return TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone);
+        }
+
+        /**
+         * Geographical Coordinates from TZ
+         * @return String
+         */
+        public static String buildGeographicalCoordinatesFromTimeZone(final String sessionTimeZone) {
+            final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
+            return zInfo.latitude() + "," + zInfo.longitude();
+        }
+
+        /**
+         * Building Time-Zone select
+         * @return Content
+         */
+        public static gg.jte.Content buildMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
+            final StringBuilder strMenuContent = new StringBuilder(1000);
+            inMapMenu.forEach((strKey, mapValue) -> strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU))));
+            return output -> output.writeContent(strMenuContent.toString());
+        }
+
+        /**
+         * Building Time-Zone select
+         * @return Content
+         */
+        public static gg.jte.Content buildTimeZoneSelect(final String inTimeZone) {
+            final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            final Properties selectProps = new Properties();
+            selectProps.put("Name", "TZ");
+            selectProps.put("Id", "TZ");
+            selectProps.put("Default", inTimeZone);
+            return output -> output.writeContent(buildSelectInput(sortedTimeZones, selectProps));
+        }
+
+        // Private constructor to prevent instantiation
+        private CommonWebElements() {
+            // intentional empty
+        }
+
     }
 
     /**
