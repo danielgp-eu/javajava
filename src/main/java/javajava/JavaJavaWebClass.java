@@ -111,7 +111,6 @@ public final class JavaJavaWebClass {
                     // intentionally blank
                     break;
             }
-            HtmlClass.Table.setTimeZone(sessionTimeZone);
             final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
                 case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
                 case "FilesHashing"              -> getFileHashingAsHtmlTable();
@@ -130,6 +129,7 @@ public final class JavaJavaWebClass {
             UndertowClass.TemplateRendering.packParameter("timeZoneSelect", HtmlClass.CommonWebElements.buildTimeZoneSelect(sessionTimeZone));
             UndertowClass.TemplateRendering.packParameter("currentPageQuery", exchange.getQueryString());
             UndertowClass.TemplateRendering.packParameter("geoCoordinates", HtmlClass.CommonWebElements.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
+            UndertowClass.TemplateRendering.packParameter("appDetails", HtmlClass.CommonWebElements.buildApplicationDetail());
             UndertowClass.TemplateRendering.packParameter("timeNow", HtmlClass.CommonWebElements.buildCurrentTimestamp(sessionTimeZone));
             UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
         };
