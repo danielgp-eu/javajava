@@ -82,7 +82,6 @@ public final class UndertowClass {
 
     /**
      * Time Zone set logic
-     * @param page
      * @param queryParams
      * @param session
      */
