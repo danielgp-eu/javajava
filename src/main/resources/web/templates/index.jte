@@ -37,20 +37,20 @@
     </header>
     <nav>
         <ul>${menu}</ul>
+        <span id="now" style="top:0rem;font-size:0.6rem;margin:0.25rem;position:fixed;">${timeNow}</span>
     </nav>
     <main>${content}</main>
     <footer>
-        <form action="/cc/indexSnowflake.php " method="get" id="TZform" style="float:left;margin:0rem 0.5rem;">
+        <form action="/cc/indexSnowflake.php " method="get" id="TZform" style="float:left;margin:0rem 0.5rem;font-size:0.8rem;">
+            <a href="https://maps.google.com/maps?q=${geoCoordinates}" target="_blank" style="margin-right:5px;">
+                <i class="fa-solid fa-map-location"></i>
+            </a>
             ${timeZoneSelect}
             <input type="hidden" name="page" value="Localization">
             <button class="btn btn-outline-primary" onclick="javascript:document.TZform.submit();" style="padding:0 var(--bs-btn-padding-x)!important;">Set</button>
             <input type="hidden" name="redirectAction" value="${currentPageQuery}">
         </form>
-        <a href="https://maps.google.com/maps?q=${geoCoordinates}" target="_blank" style="float:left;margin:0rem 0.5rem;">
-            <i class="fa-solid fa-map-location"></i>
-        </a>
         <span id="app" style="float:right;margin:0rem 0.5rem;">${appDetails}</span>
-        <span id="now" style="float:right;margin:0rem 0.5rem;">TS: ${timeNow}</span>
     </footer>
 </body>
 </html>
