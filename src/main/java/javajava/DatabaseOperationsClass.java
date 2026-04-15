@@ -76,28 +76,28 @@ public final class DatabaseOperationsClass {
     /**
      * Execute a custom query with result-set expected
      * @param objStatement statement
-     * @param strQueryPurpose query purpose
+     * @param strPurpose query purpose
      * @param strQueryToUse query to use
      * @param objProperties properties (with features to apply)
      * @return ResultSet
      */
-    public static ResultSet executeCustomQuery(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse, final Properties objProperties) {
+    public static ResultSet executeCustomQuery(final Statement objStatement, final String strPurpose, final String strQueryToUse, final Properties objProperties) {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strQueryPurpose, strQueryToUse);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionAttemptPurpose"), strPurpose, strQueryToUse);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose);
+                final String strFeedbackOk = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strPurpose);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
-                ResultSettingClass.digestCustomQueryProperties(strQueryPurpose, resultSet, objProperties);
+                ResultSettingClass.digestCustomQueryProperties(strPurpose, resultSet, objProperties);
             } catch (SQLException e) {
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strQueryPurpose, e.getLocalizedMessage());
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strPurpose, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             final LocalDateTime finishTimeStamp = LocalDateTime.now();
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strQueryPurpose));
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinishedDuration"), strPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
         return resultSet;
@@ -107,13 +107,13 @@ public final class DatabaseOperationsClass {
      * Execute a custom query w/o any result-set
      *
      * @param objStatement statement
-     * @param strQueryPurpose purpose of query
+     * @param strPurpose purpose of query
      * @param strQueryToUse query to use
      */
-    public static void executeQueryWithoutResultSet(final Statement objStatement, final String strQueryPurpose, final String strQueryToUse) {
+    public static void executeQueryWithoutResultSet(final Statement objStatement, final String strPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
             final LocalDateTime startTimeStamp = LocalDateTime.now();
-            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strQueryPurpose);
+            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionAttempt"), strPurpose);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 if (strQueryToUse.startsWith("INSERT INTO")) {
@@ -121,13 +121,13 @@ public final class DatabaseOperationsClass {
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                LogExposureClass.exposeSqlExecutionSuccessInfo(strQueryPurpose);
+                LogExposureClass.exposeSqlExecutionSuccessInfo(strPurpose);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionError"), strQueryPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
+                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionError"), strPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
             final LocalDateTime finishTimeStamp = LocalDateTime.now();
-            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strQueryPurpose));
+            final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionFinished"), strPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
     }
@@ -171,11 +171,11 @@ public final class DatabaseOperationsClass {
 
     /**
      * Returns standard query
-     * @param strWhich Which kind of query is needed
+     * @param strFileName query file name needed
      * @return Query as String
      */
-    public static String getPreDefinedQuery(final String strDatabaseType, final String strWhich) {
-        String strFilePath = String.format("/SQL/%s/%s.sql", strDatabaseType, strWhich);
+    public static String getPreDefinedQuery(final String strDatabaseType, final String strFileName) {
+        String strFilePath = String.format("/SQL/%s/%s.sql", strDatabaseType, strFileName);
         long fileSizeActual = 0;
         if (ProjectClass.isRunningFromJar()) {
             try (InputStream inStream = Objects.requireNonNull(DatabaseOperationsClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
@@ -192,9 +192,7 @@ public final class DatabaseOperationsClass {
         LogExposureClass.LOGGER.debug(strFeedback);
         final long fileSizeLimit = 10;
         if (fileSizeActual < fileSizeLimit) {
-            final String strFeedbackErr = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strWhich, StackWalker.getInstance()
-                .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-            LogExposureClass.LOGGER.error(strFeedbackErr);
+            final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strFileName, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
             throw new UnsupportedOperationException(strFeedbackErr);
         }
         return FileOperationsClass.ContentReadingClass.getFileContentIntoString(strFilePath);
@@ -202,17 +200,16 @@ public final class DatabaseOperationsClass {
 
     /**
      * Package 3 String into Properties for result-set
-     * @param strWhich Which query is needed
+     * @param strPurpose Which query is needed
      * @param strQueryToUse relevant query
-     * @param strKind type of output expected
+     * @param strFetchType type of output expected
      * @return Properties for result-set
      */
-    private static Properties packageResultSetProperties(final String strWhich, final String strQueryToUse, final String strKind) {
+    public static Properties packageResultSetProperties(final String strPurpose, final String strQueryToUse, final String strFetchType) {
         final Properties rsProperties = new Properties();
-        rsProperties.put(
-"Which", strWhich);
+        rsProperties.put("Purpose", strPurpose);
         rsProperties.put("QueryToUse", strQueryToUse);
-        rsProperties.put("Kind", strKind);
+        rsProperties.put("FetchType", strFetchType);
         return rsProperties;
     }
 
@@ -307,8 +304,8 @@ public final class DatabaseOperationsClass {
             final int intRows = objValues.size();
             final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
             final int intParameters = mapParameterOrder.size();
-            final String strFinalQ = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strQuery);
-            try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQ)) {
+            final String strFinalQuery = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strQuery);
+            try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQuery)) {
                 final Properties properties = new Properties();
                 // cycle through each row
                 for (int crtRow = 1; crtRow <= intRows; crtRow++) {
@@ -457,10 +454,8 @@ public final class DatabaseOperationsClass {
                     LogExposureClass.LOGGER.info(strFeedbackN);
                     break;
                 default:
-                    final String strFeedbackD = String.format(LogExposureClass.STR_I18N_UNKN_FTS, key, StackWalker.getInstance()
-                            .walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                    LogExposureClass.LOGGER.error(strFeedbackD);
-                    throw new UnsupportedOperationException(strFeedbackD);
+                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(key, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
             }
         }
 
@@ -641,24 +636,20 @@ public final class DatabaseOperationsClass {
          */
         public static List<Properties> getResultSetStandardized(final Statement objStatement, final Properties rsProperties, final Properties queryProperties) {
             List<Properties> listReturn = null;
-            final String strWhich = rsProperties.get("Which").toString();
+            final String strPurpose = rsProperties.get("Purpose").toString();
             final String strQueryToUse = rsProperties.get("QueryToUse").toString();
-            final String strKind = rsProperties.get("Kind").toString();
-            try (ResultSet rsStandard = executeCustomQuery(objStatement, strWhich, strQueryToUse, queryProperties)) {
-                switch (strKind) {
-                    case "Structure":
-                        listReturn = getResultSetColumnStructure(rsStandard);
-                        break;
-                    case STR_VALUES:
-                        listReturn = getResultSetColumnValuesWithNullCheck(rsStandard);
-                        break;
-                    default:
-                        final String strFeedback = String.format(LogExposureClass.STR_I18N_UNKN_FTS, strKind, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                        LogExposureClass.LOGGER.error(strFeedback);
-                        break;
-                }
+            final String strFetchType = rsProperties.get("FetchType").toString();
+            try (ResultSet rsStandard = executeCustomQuery(objStatement, strPurpose, strQueryToUse, queryProperties)) {
+                listReturn = switch (strFetchType) {
+                    case "Structure" -> getResultSetColumnStructure(rsStandard);
+                    case STR_VALUES -> getResultSetColumnValuesWithNullCheck(rsStandard);
+                    default -> {
+                        final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strFetchType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                        throw new UnsupportedOperationException(strFeedbackErr);
+                    }
+                };
             } catch (SQLException e) {
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strWhich, e.getLocalizedMessage());
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLstatementExecutionError"), strPurpose, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return listReturn;
@@ -743,14 +734,13 @@ public final class DatabaseOperationsClass {
          *
          * @param objStatement Statement
          * @param strWhich Which query is needed
-         * @param strKind which type of output would be needed
+         * @param strFetchType which type of output would be needed
          * @return List with Properties
          */
-        public static List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+        public static List<Properties> getMySqlPreDefinedInformation(final Statement objStatement, final String strWhich, final String strPurpose, final String strFetchType) {
             final String strQueryToUse = getPreDefinedQuery(STR_DB_MYSQL, strWhich);
-            final Properties rsProperties = packageResultSetProperties(strWhich, strQueryToUse, strKind);
-            final Properties queryProperties = new Properties();
-            return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
+            final Properties rsProperties = packageResultSetProperties(strPurpose, strQueryToUse, strFetchType);
+            return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
         }
 
         /**
@@ -783,7 +773,7 @@ public final class DatabaseOperationsClass {
         public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
             try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
                 Statement objStatement = ConnectivityClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
-                final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, STR_VALUES);
+                final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "purpose " + strWhich, STR_VALUES);
                 if (listProps != null) {
                     final String strFeedback = listProps.toString();
                     LogExposureClass.LOGGER.info(strFeedback);
@@ -963,29 +953,18 @@ public final class DatabaseOperationsClass {
          * get standardized Information from Snowflake
          *
          * @param objStatement statement
-         * @param strWhich which action
-         * @param strKind kind of output
+         * @param strAction which action
+         * @param strFetchType kind of output
          * @return List of Properties
          */
-        public static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strWhich, final String strKind) {
+        public static List<Properties> getSnowflakePreDefinedInformation(final Statement objStatement, final String strAction, final String strFetchType) {
             final Properties queryProperties = new Properties();
-            if (STR_ROLES.equalsIgnoreCase(strWhich)) {
+            if (STR_ROLES.equalsIgnoreCase(strAction)) {
                 queryProperties.put("expectedExactNumberOfColumns", "1");
             }
-            final String strQueryToUse = getPreDefinedQuery(STR_SNOWFLAKE, strWhich);
-            final Properties rsProperties = packageResultSetProperties(strWhich, strQueryToUse, strKind);
+            final String strQueryToUse = getPreDefinedQuery(STR_SNOWFLAKE, strAction);
+            final Properties rsProperties = packageResultSetProperties("purpose: " + strAction, strQueryToUse, strFetchType);
             return ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
-        }
-
-        /**
-         * build Snowflake Properties
-         *
-         * @param propInstance instance properties
-         * @return Properties
-         */
-        public static Properties getSnowflakeProperties(final Properties propInstance) {
-            final String strDatabase = propInstance.get("Default Database").toString().replace("\"", "");
-            return getSnowflakeProperties(strDatabase, propInstance);
         }
 
         /**
@@ -1031,14 +1010,14 @@ public final class DatabaseOperationsClass {
 
         /**
          * Execute Snowflake pre-defined actions
-         * @param strWhich which action to perform
+         * @param strAction which action to perform
          * @param objProps object properties
          */
-        public static void performSnowflakePreDefinedAction(final String strWhich, final Properties objProps) {
+        public static void performSnowflakePreDefinedAction(final String strAction, final Properties objProps) {
             try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
                 Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
                 executeSnowflakeBootstrapQuery(objStatement);
-                getSnowflakePreDefinedInformation(objStatement, strWhich, STR_VALUES);
+                getSnowflakePreDefinedInformation(objStatement, strAction, STR_VALUES);
             } catch(SQLException e) {
                 final String strFeedback = String.format(LocalizationClass.getMessage("i18nError"), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);

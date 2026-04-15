@@ -68,11 +68,10 @@ public final class SoftwareReleasesClass {
         try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
                 Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
             final Properties rsProperties = new Properties();
-            rsProperties.put("Which", "Software Releases"); // purpose
+            rsProperties.put("Purpose", "Software Releases");
             rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
-            rsProperties.put("Kind", "Values");
-            final Properties queryProperties = new Properties();
-            resultReleases = DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, queryProperties);
+            rsProperties.put("FetchType", "Values");
+            resultReleases = DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
         } catch (SQLException e) {
             final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
             LogExposureClass.LOGGER.debug(strFeedbackErr);

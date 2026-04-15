@@ -92,6 +92,18 @@ public final class LogExposureClass {
     }
 
     /**
+     * get Unsupported Feature
+     * @param strDecision decision evaluated
+     * @param strWhere which function this is called from
+     * @return String with localized feedback
+     */
+    public static String getUnsupportedFeatures(final String strDecision, final String strWhere) {
+        final String strFeedbackErr = String.format(STR_I18N_UNKN_FTS, strDecision, strWhere);
+        LOGGER.error(strFeedbackErr);
+        return strFeedbackErr;
+    }
+
+    /**
      * handle NameUnformatted
      * @param intRsParams number for parameters
      * @param strUnformatted original string
@@ -103,7 +115,7 @@ public final class LogExposureClass {
             case 1 -> String.format(strUnformatted, strReplacement[0]);
             case 2 -> String.format(strUnformatted, strReplacement[0], strReplacement[1]);
             case 3 -> String.format(strUnformatted, strReplacement[0], strReplacement[1], strReplacement[2]);
-            default -> String.format(STR_I18N_UNKN_FTS, intRsParams, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(STR_I18N_UNKN)));
+            default -> getUnsupportedFeatures(String.valueOf(intRsParams), StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(STR_I18N_UNKN)));
         };
     }
 

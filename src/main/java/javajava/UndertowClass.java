@@ -82,8 +82,8 @@ public final class UndertowClass {
 
     /**
      * Time Zone set logic
-     * @param queryParams
-     * @param session
+     * @param queryParams page parameters
+     * @param session session
      */
     public static void handleTimeZoneSession(final Map<String, Deque<String>> queryParams, final Session session) {
         if (queryParams.get("TZ") != null) {

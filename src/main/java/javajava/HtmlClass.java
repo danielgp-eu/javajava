@@ -134,7 +134,7 @@ FROM
         public static gg.jte.Content buildApplicationDetail() {
             final Model prjModel = ProjectClass.getProjectModel();
             final gg.jte.Content appContent = output -> output.writeContent(String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjModel.getVersion(), prjModel.getDevelopers().getFirst().getName()));
-            final String strFeedback = String.format("I have just build application details: %s", appContent.toString());
+            final String strFeedback = String.format("I have just build application details: %s", appContent);
             LogExposureClass.LOGGER.info(strFeedback);
             return appContent;
         }

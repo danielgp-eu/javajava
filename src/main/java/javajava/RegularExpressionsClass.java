@@ -185,14 +185,14 @@ public final class RegularExpressionsClass {
      * @return name of the active group
      */
     public static String getActiveGroup(final MatchResult result) {
-        final List<String> CAPTURE_GROUPS = List.of(
+        final List<String> capturedGroups = List.of(
                 STR_MAVEN_PKG,
                 STR_AGING_TS,
                 STR_AGING_DATE,
                 BasicStructuresClass.STR_TS_MSEC,
                 BasicStructuresClass.STR_TIMESTAMP,
                 BasicStructuresClass.STR_JUST_DATE);
-        return CAPTURE_GROUPS.stream()
+        return capturedGroups.stream()
                 .filter(groupName -> result.group(groupName) != null)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No group matched"));
@@ -247,30 +247,35 @@ public final class RegularExpressionsClass {
                 // Determine which group matched
                 final String matchedGroup = getActiveGroup(matchResult);
                 final String text = matchResult.group(matchedGroup);
-                if (STR_MAVEN_PKG.equals(matchedGroup)) {
-                    if (text.contains("compliance-snowflake")
-                            || text.contains("danielgp-eu")) {
-                        return text;
-                    } else {
-                        return String.format(mapPatterns.get(STR_MAVEN_PKG).get("URL"), text.replace(':', '/'), text);
+                switch (matchedGroup) {
+                    case STR_MAVEN_PKG -> {
+                        if (text.contains("compliance-snowflake")
+                                || text.contains("danielgp-eu")) {
+                            return text;
+                        } else {
+                            return String.format(mapPatterns.get(STR_MAVEN_PKG).get("URL"), text.replace(':', '/'), text);
+                        }
                     }
-                } else if (STR_AGING_TS.equals(matchedGroup)) {
-                    final String strDate = text.substring(0, 11);
-                    final String strTime = text.substring(12, 20);
-                    return convertAgingDateIntoHumanReadableString(strDate)
-                            + "<br/>" + convertAgingTimeIntoHumanReadableString(strTime);
-                } else if (STR_AGING_DATE.equals(matchedGroup)) {
-                    final String outString = convertAgingDateIntoHumanReadableString(text);
-                    return outString.isEmpty() ? "TODAY" : outString;
-                } else {
-                    final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_INPUT));
-                    // Convert based on the specific group rules
-                    final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
-                        LocalDate.parse(text, inputFormat).atStartOfDay(ZoneId.of(inputTimeZone))
-                        : LocalDateTime.parse(text, inputFormat).atZone(ZoneId.of(inputTimeZone));
-                    final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT));
-                    final ZonedDateTime targetTime = sourceTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
-                    return targetTime.format(outputFormat);
+                    case STR_AGING_TS -> {
+                        final String strDate = text.substring(0, 11);
+                        final String strTime = text.substring(12, 20);
+                        return convertAgingDateIntoHumanReadableString(strDate)
+                                + "<br/>" + convertAgingTimeIntoHumanReadableString(strTime);
+                    }
+                    case STR_AGING_DATE -> {
+                        final String outString = convertAgingDateIntoHumanReadableString(text);
+                        return outString.isEmpty() ? "TODAY" : outString;
+                    }
+                    case null, default -> {
+                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_INPUT));
+                        // Convert based on the specific group rules
+                        final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
+                                LocalDate.parse(text, inputFormat).atStartOfDay(ZoneId.of(inputTimeZone))
+                                : LocalDateTime.parse(text, inputFormat).atZone(ZoneId.of(inputTimeZone));
+                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT));
+                        final ZonedDateTime targetTime = sourceTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
+                        return targetTime.format(outputFormat);
+                    }
                 }
             } catch (IllegalStateException _) {
                 return matchResult.group(); // Fallback if parsing fails

@@ -151,6 +151,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
     /**
+     * Database Snowflake
+     */
+    public static final String STR_SNOWFLAKE = "Snowflake";
+    /**
      * string constant
      */
     public static final String STR_SRL_NUM = "Serial Number";
