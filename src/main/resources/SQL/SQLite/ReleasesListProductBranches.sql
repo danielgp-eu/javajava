@@ -1,6 +1,6 @@
 WITH
     "CTE__INITIAL"                                                              AS (
-        SELECT
+        SELECT DISTINCT
               "o"."OrganizationName"                                            AS "OrganizationName"
             , "p"."ProductName"                                                 AS "ProductName"
             , "p"."ProfileId"                                                   AS "ProfileId"
@@ -9,7 +9,6 @@ WITH
             , "pb"."ProductId"                                                  AS "ProductId"
             , "pb"."BranchId"                                                   AS "BranchId"
             , JSON_EXTRACT("pb"."BranchURLs", '$.Releases')                     AS "Releases"
-            , MAX("bv"."ReleaseDate")                                           AS "MaxReleaseDate"
             , MAX("bv"."VersionId") OVER
                 (PARTITION BY
                       "o"."OrganizationName"
@@ -30,14 +29,6 @@ WITH
                 "pb"."BranchId"       = "bv"."BranchId"
         WHERE
             "pb"."BranchStatus" IN ('Active', 'Innovation', 'LTS')
-        GROUP BY
-              "o"."OrganizationName"
-            , "p"."ProductName"
-            , "p"."ProfileId"
-            , "pb"."ProductId"
-            , "pb"."BranchName"
-            , "pb"."BranchId"
-            , "pb"."BranchURLs"
     ),
     "CTE__FINAL"                                                                AS (
         SELECT
@@ -52,11 +43,7 @@ WITH
             , "bv"."ReleaseDate"                                                AS "Latest release date"
             , SUBSTR(TIMEDIFF('now', "bv"."ReleaseDate"), 0, 12)                AS "Latest release aging full"
             , (JulianDay(date()) - JulianDay("bv"."ReleaseDate"))               AS "Latest release aging days"
-            , MAX("bv"."VersionId")
-                OVER (PARTITION BY
-                        "bv"."BranchId"
-                    ORDER BY
-                        "bv"."VersionId" DESC)                                  AS "VersionId"
+            , "bv"."VersionId"                                                  AS "VersionId"
             , IFNULL("pl"."ProfileName", '#')                                   AS "Profile Name"
             , IFNULL("pl"."ProfileId", 999)                                     AS "ProfileId"
         FROM
