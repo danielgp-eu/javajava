@@ -58,7 +58,8 @@ public final class ShellingClass {
     public static void executeShell(final ProcessBuilder builder, final String strOutLineSep) {
         startTimestamp = LocalDateTime.now();
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
-        try(Process process = builder.start()) {
+        try {
+            final Process process = builder.start();
             // Read stdout and stderr asynchronously with CompletableFuture
             final CompletableFuture<String> stdoutFuture = CompletableFuture.supplyAsync(() ->
                 getStandardReaderIntoString(process.inputReader(), strOutLineSep) // inputReader() = stdout
@@ -69,6 +70,9 @@ public final class ShellingClass {
             final int exitCode = process.waitFor();
             CompletableFuture.allOf(stdoutFuture, stderrFuture).join();
             setProcessResults(stdoutFuture, stderrFuture, exitCode);
+            if (process != null) {
+                process.destroy();
+            }
         } catch (IOException ex) {
             final String strFeedback = String.format(LocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
