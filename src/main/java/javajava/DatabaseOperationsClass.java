@@ -121,7 +121,8 @@ public final class DatabaseOperationsClass {
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                LogExposureClass.exposeSqlExecutionSuccessInfo(strPurpose);
+                final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strPurpose);
+                LogExposureClass.LOGGER.info(strFeedback);
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionError"), strPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -291,6 +292,10 @@ public final class DatabaseOperationsClass {
      * Database Query Binding
      */
     public static final class QueryBindingClass {
+        /**
+         * variable for Batch Size
+         */
+        /* default */ private static int batchSize = 1000;
 
         /**
          * Values to be added for bulk operations
@@ -324,10 +329,11 @@ public final class DatabaseOperationsClass {
                         bindSingleParameter(preparedStatement, properties);
                     }
                     preparedStatement.addBatch();
-                    if ((crtRow % 200 == 0)
+                    if ((crtRow % batchSize == 0)
                             || (crtRow == intRows)) { // each 200 rows OR final one
                         preparedStatement.executeLargeBatch();
-                        LogExposureClass.exposeSqlExecutionSuccessInfo(strQueryPurpose);
+                        final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose + " record " + crtRow);
+                        LogExposureClass.LOGGER.info(strFeedback);
                     }
                 }
             } catch (SQLException e) {
@@ -368,6 +374,14 @@ public final class DatabaseOperationsClass {
             } catch (SQLException e) {
                 setSqlParameterBindingError(e, strKey, strQuery);
             }
+        }
+
+        /**
+         * Setter for Batch Size
+         * @param inBatchSize
+         */
+        public static void setBatchSize(final int inBatchSize) {
+            batchSize = inBatchSize;
         }
 
         /**

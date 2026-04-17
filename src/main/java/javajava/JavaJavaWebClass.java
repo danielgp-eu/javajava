@@ -7,10 +7,6 @@ import java.util.stream.Stream;
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
 import io.undertow.server.HttpHandler;
-import io.undertow.server.session.Session;
-import io.undertow.util.Headers;
-import io.undertow.util.Sessions;
-import io.undertow.util.StatusCodes;
 
 /**
  * Web interface class
@@ -74,31 +70,28 @@ public final class JavaJavaWebClass {
     }
 
     /**
+     * Body content handler
+     * @return web Content
+     */
+    public static gg.jte.Content handleBodyContent() {
+        final String page = UndertowClass.ParametersClass.getPageParameter();
+        return output -> output.writeContent(switch(page) {
+            case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
+            case "FilesHashing"              -> getFileHashingAsHtmlTable();
+            case "SoftwareReleases"          -> getSoftwareReleasesIntoHtml();
+            case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
+            default                          -> String.format("Welcome %s", System.getProperty("user.name"));
+        });
+    }
+
+    /**
      * Handle web content
      * @return PathHandler web content
      */
     public static HttpHandler handleWebContent() {
         return exchange -> {
-            // initialize session
-            Session session = Sessions.getSession(exchange);
-            // Create a new session if one doesn't exist
-            if (session == null) {
-                session = Sessions.getOrCreateSession(exchange);
-            }
-            // Get the 'page' query parameter (Deques are used for multi-value parameters)
-            final Map<String, Deque<String>> queryParams = exchange.getQueryParameters();
-            final Deque<String> pageParams = queryParams.get("page");
-            final String page = (pageParams != null) ? pageParams.getFirst() : "home";
-            final String strTitle = BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : mapMenu.get(page).get(BasicStructuresClass.STR_TITLE);
-            UndertowClass.handleTimeZoneSession(queryParams, session);
-            if (queryParams.get("redirectAction") != null) {
-                exchange.setStatusCode(StatusCodes.SEE_OTHER); // 303 Redirect
-                exchange.getResponseHeaders().put(Headers.LOCATION, "/?"
-                        + queryParams.get("redirectAction").getFirst());
-                exchange.endExchange();
-            }
-            final String sessionTimeZone = session.getAttribute("TZ").toString();
-            HtmlClass.Table.setTimeZone(sessionTimeZone);
+            UndertowClass.handleCommonThings(exchange);
+            final String page = UndertowClass.ParametersClass.getPageParameter();
             switch(page) {
                 case "FilesHashing":
                     // intentionally blank
@@ -111,28 +104,25 @@ public final class JavaJavaWebClass {
                     // intentionally blank
                     break;
             }
-            final gg.jte.Content bodyContent = output -> output.writeContent(switch(page) {
-                case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
-                case "FilesHashing"              -> getFileHashingAsHtmlTable();
-                case "SoftwareReleases"          -> getSoftwareReleasesIntoHtml();
-                case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
-                default                          -> String.format("Welcome %s", System.getProperty("user.name"));
-            });
             final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
             final Utf8ByteOutput output = new Utf8ByteOutput();
-            UndertowClass.TemplateRendering.setOutput(output);
-            UndertowClass.TemplateRendering.setServerExchange(exchange);
-            UndertowClass.TemplateRendering.packParameter("page", page);
-            UndertowClass.TemplateRendering.packParameter("title", strTitle);
-            UndertowClass.TemplateRendering.packParameter("menu", HtmlClass.CommonWebElements.buildMenu(mapMenu));
-            UndertowClass.TemplateRendering.packParameter("content", bodyContent);
-            UndertowClass.TemplateRendering.packParameter("timeZoneSelect", HtmlClass.CommonWebElements.buildTimeZoneSelect(sessionTimeZone));
-            UndertowClass.TemplateRendering.packParameter("currentPageQuery", exchange.getQueryString());
-            UndertowClass.TemplateRendering.packParameter("geoCoordinates", HtmlClass.CommonWebElements.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
-            UndertowClass.TemplateRendering.packParameter("appDetails", HtmlClass.CommonWebElements.buildApplicationDetail());
-            UndertowClass.TemplateRendering.packParameter("timeNow", HtmlClass.CommonWebElements.buildCurrentTimestamp(sessionTimeZone));
-            UndertowClass.TemplateRendering.renderTemplate(templateEngine, "index.jte");
+            UndertowClass.TemplateRenderingClass.setOutput(output);
+            UndertowClass.TemplateRenderingClass.setServerExchange(exchange);
+            packAllParameters();
+            UndertowClass.TemplateRenderingClass.renderTemplate(templateEngine, "index.jte");
         };
+    }
+
+    /**
+     * Packing all parameters to Template
+     */
+    private static void packAllParameters() {
+        final String page = UndertowClass.ParametersClass.getPageParameter();
+        UndertowClass.TemplateRenderingClass.packParameter("page", page);
+        UndertowClass.TemplateRenderingClass.packParameter("title", BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : mapMenu.get(page).get(BasicStructuresClass.STR_TITLE));
+        UndertowClass.TemplateRenderingClass.packParameter("menu", HtmlClass.CommonWebElements.buildMenu(mapMenu));
+        UndertowClass.TemplateRenderingClass.packParameter("content", handleBodyContent());
+        UndertowClass.TemplateRenderingClass.packCommonParameters();
     }
 
     private JavaJavaWebClass() {

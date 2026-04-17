@@ -162,7 +162,11 @@ FROM
          */
         public static gg.jte.Content buildMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
             final StringBuilder strMenuContent = new StringBuilder(1000);
-            inMapMenu.forEach((strKey, mapValue) -> strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU))));
+            inMapMenu.forEach((strKey, mapValue) -> {
+                if (!mapValue.getOrDefault(BasicStructuresClass.STR_MENU, "").isEmpty()) {
+                    strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU)));
+                }
+            });
             return output -> output.writeContent(strMenuContent.toString());
         }
 

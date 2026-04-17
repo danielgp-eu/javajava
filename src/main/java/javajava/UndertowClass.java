@@ -27,19 +27,13 @@ import io.undertow.server.session.SessionAttachmentHandler;
 import io.undertow.server.session.SessionCookieConfig;
 import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
+import io.undertow.util.Sessions;
+import io.undertow.util.StatusCodes;
 
 /**
  * Undertow common class
  */
 public final class UndertowClass {
-    /**
-     * Session Manager handle
-     */
-    private static final InMemorySessionManager SESSION_MANAGER = new InMemorySessionManager("SESSION_MANAGER");
-    /**
-     * Session Config handle
-     */
-    private static final SessionCookieConfig SESSION_CONFIG = new SessionCookieConfig();
     /**
      * Root handle variable
      */
@@ -52,6 +46,10 @@ public final class UndertowClass {
      * Web port variable
      */
     private static String webPort;
+    /**
+     * Web protocol variable
+     */
+    private static String webProtocol;
 
     /**
      * Initiating Template Engine
@@ -64,50 +62,28 @@ public final class UndertowClass {
         return templateEngine;
     }
 
-    /**
-     * Getter for SESSION_MANAGER
-     * @return InMemorySessionManager
-     */
-    public static SessionCookieConfig getSessionConfig() {
-        return SESSION_CONFIG;
-    }
 
     /**
-     * Getter for SESSION_MANAGER
-     * @return InMemorySessionManager
+     * Common web page handle logic
+     * @param inExchange input Exchange
      */
-    public static InMemorySessionManager getSessionManager() {
-        return SESSION_MANAGER;
-    }
-
-    /**
-     * Time Zone set logic
-     * @param queryParams page parameters
-     * @param session session
-     */
-    public static void handleTimeZoneSession(final Map<String, Deque<String>> queryParams, final Session session) {
-        if (queryParams.get("TZ") != null) {
-            session.setAttribute("TZ", queryParams.get("TZ").getFirst());
-        }
-        if (session.getAttribute("TZ") == null) {
-            final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-            final String crtUserTimeZone = System.getProperty("user.timezone");
-            if (crtUserTimeZone != null
-                    && !sortedTimeZones.getOrDefault(crtUserTimeZone, "").isEmpty()) {
-                session.setAttribute("TZ", crtUserTimeZone);
-            } else {
-                session.setAttribute("TZ", "Asia/Kolkata");
-            }
-        }
+    public static void handleCommonThings(final HttpServerExchange inExchange) {
+        ParametersClass.setQueryParameters(inExchange);
+        ParametersClass.setPageParameter();
+        SessionClass.initializeSession(inExchange);
+        SessionClass.handleTimeZoneSession();
+        ParametersClass.redirectPageIfNeeded(inExchange);
+        HtmlClass.Table.setTimeZone(UndertowClass.SessionClass.getSession().getAttribute("TZ").toString());
     }
 
     /**
      * Reading Project Properties
      */
     private static void readWebConfigurationFromProjectProperties() {
-        final String[] varsToPick = {"webIp"};
+        final String[] varsToPick = {"webIp", "webProtocol"};
         final Properties webProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
         webIp = webProperties.get("webIp").toString();
+        webProtocol = webProperties.get("webProtocol").toString();
     }
 
     /**
@@ -127,16 +103,13 @@ public final class UndertowClass {
                     .addPrefixPath("/" + pathStatic, staticHandler)
                     .addPrefixPath("/", rootHandler);
             // finally package everything to consider Session handler
-            final HttpHandler sessionHandler = new SessionAttachmentHandler(
-                routesHandler, 
-                SESSION_MANAGER, 
-                SESSION_CONFIG
-            );
+            final HttpHandler sessionHandler = SessionClass.getSessionHandler(routesHandler);
+            // start Web Server
             final Undertow.Builder builder = Undertow.builder()
                     .addHttpListener(Integer.parseInt(webPort), webIp)
                     .setHandler(sessionHandler);
             final Undertow server = builder.build();
-            final String strFeedback = String.format("Server running at http://%s:%s", webIp, webPort);
+            final String strFeedback = String.format("Server running at %s://%s:%s", webProtocol, webIp, webPort);
             LogExposureClass.LOGGER.info(strFeedback);
             server.start();
         } catch (IOException ex) {
@@ -164,7 +137,152 @@ public final class UndertowClass {
     /**
      * Template management
      */
-    public static final class TemplateRendering {
+    public static final class ParametersClass {
+        /**
+         * Page variable
+         */
+        private static String parameterPage;
+        /**
+         * page parameter variables
+         */
+        private static Map<String, Deque<String>> queryParams;
+
+        /**
+         * Getter for parameterPage
+         * @return String
+         */
+        public static String getPageParameter() {
+            return parameterPage;
+        }
+
+        /**
+         * Getter for queryParams
+         * @return Map
+         */
+        public static Map<String, Deque<String>> getQueryParameters() {
+            return queryParams;
+        }
+
+        /**
+         * Getting Response Header
+         * @param exchange HttpServerExchange
+         * @return HeaderMap
+         */
+        private static HeaderMap getResponseHeader(final HttpServerExchange exchange) {
+            return exchange.getResponseHeaders();
+        }
+
+        /**
+         * Redirecting page
+         * @param exchange
+         */
+        public static void redirectPageIfNeeded(final HttpServerExchange exchange) {
+            if (queryParams.get("redirectAction") != null) {
+                exchange.setStatusCode(StatusCodes.SEE_OTHER); // 303 Redirect
+                final HeaderMap responseHeader = getResponseHeader(exchange);
+                responseHeader.put(Headers.LOCATION, "/?" + queryParams.get("redirectAction").getFirst());
+                exchange.endExchange();
+            }
+        }
+
+        /**
+         * Page parameter isolation
+         */
+        public static void setPageParameter() {
+            final Deque<String> pageParams = queryParams.get("page");
+            parameterPage = (pageParams == null) ? "home" : pageParams.getFirst();
+        }
+
+        /**
+         * get query parameters into local variable
+         * @param inExchange HttpServerExchange
+         */
+        public static void setQueryParameters(final HttpServerExchange inExchange) {
+            // Get the 'page' query parameter (Deques are used for multi-value parameters)
+            queryParams = inExchange.getQueryParameters(); 
+        }
+
+        // Private constructor to prevent instantiation
+        private ParametersClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Template management
+     */
+    public static final class SessionClass {
+        /**
+         * Session Manager handle
+         */
+        private static final InMemorySessionManager SESSION_MANAGER = new InMemorySessionManager("SESSION_MANAGER");
+        /**
+         * Session Config handle
+         */
+        private static final SessionCookieConfig SESSION_CONFIG = new SessionCookieConfig();
+        /**
+         * Session variable
+         */
+        private static Session session;
+
+        /**
+         * Getter for session
+         * @return Session
+         */
+        public static Session getSession() {
+            return session;
+        }
+
+        /**
+         * Getter Session Handler
+         * @param routesHandler routes
+         * @return HttpHandler
+         */
+        public static HttpHandler getSessionHandler(final PathHandler routesHandler) {
+            return new SessionAttachmentHandler(routesHandler, SESSION_MANAGER, SESSION_CONFIG);
+        }
+
+        /**
+         * Time Zone set logic
+         * @param queryParams page parameters
+         */
+        public static void handleTimeZoneSession() {
+            final Map<String, Deque<String>> queryParams = ParametersClass.getQueryParameters();
+            if (queryParams.get("TZ") != null) {
+                session.setAttribute("TZ", queryParams.get("TZ").getFirst());
+            }
+            if (session.getAttribute("TZ") == null) {
+                final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+                final String crtUserTimeZone = System.getProperty("user.timezone");
+                if (crtUserTimeZone != null
+                        && !sortedTimeZones.getOrDefault(crtUserTimeZone, "").isEmpty()) {
+                    session.setAttribute("TZ", crtUserTimeZone);
+                } else {
+                    session.setAttribute("TZ", "Asia/Kolkata");
+                }
+            }
+        }
+
+        /**
+         * Session initializing
+         * @param inExchange input Exchange
+         */
+        public static void initializeSession(final HttpServerExchange inExchange) {
+            session = Sessions.getOrCreateSession(inExchange);
+        }
+
+        // Private constructor to prevent instantiation
+        private SessionClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Template management
+     */
+    public static final class TemplateRenderingClass {
         /**
          * server exchange
          */
@@ -179,18 +297,16 @@ public final class UndertowClass {
         private static Utf8ByteOutput output;
 
         /**
-         * Helper method with explicit typing to handle rendering
+         * Getter for parameterPage
+         * @return String
          */
-        public static void renderTemplate(final TemplateEngine engine, final String fileName) {
-            engine.render(fileName, params, output);
-            final HeaderMap header = exchange.getResponseHeaders();
-            handleResponseHeader(header);
-            final Sender response = exchange.getResponseSender();
-            handleResponseSender(response);
+        private static String getCurrentPageQuery() {
+            return exchange.getQueryString().replaceAll("([|])", "");
         }
 
         /**
          * handle Response Header
+         * @param header map
          */
         private static void handleResponseHeader(final HeaderMap header) {
             final long contentLength = output.getContentLength();
@@ -200,16 +316,44 @@ public final class UndertowClass {
 
         /**
          * handle Response Sender
+         * @param response received response 
          */
         private static void handleResponseSender(final Sender response) {
             response.send(ByteBuffer.wrap(output.toByteArray()));
         }
 
         /**
+         * Common parameters packing
+         */
+        public static void packCommonParameters() {
+            final String sessionTimeZone = UndertowClass.SessionClass.getSession().getAttribute("TZ").toString();
+            packParameter("timeZoneSelect", HtmlClass.CommonWebElements.buildTimeZoneSelect(sessionTimeZone));
+            packParameter("currentPageQuery", getCurrentPageQuery());
+            packParameter("geoCoordinates", HtmlClass.CommonWebElements.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
+            packParameter("appDetails", HtmlClass.CommonWebElements.buildApplicationDetail());
+            packParameter("timeNow", HtmlClass.CommonWebElements.buildCurrentTimestamp(sessionTimeZone));
+        }
+
+        /**
          * pack Parameter
+         * @param name for parameter
+         * @param value for parameter
          */
         public static void packParameter(final String name, final Object value) {
             params.put(name, value);
+        }
+
+        /**
+         * Helper method with explicit typing to handle rendering
+         * @param engine template pointer
+         * @param fileName name of file for template
+         */
+        public static void renderTemplate(final TemplateEngine engine, final String fileName) {
+            engine.render(fileName, params, output);
+            final HeaderMap header = exchange.getResponseHeaders();
+            handleResponseHeader(header);
+            final Sender response = exchange.getResponseSender();
+            handleResponseSender(response);
         }
 
         /**
@@ -228,7 +372,7 @@ public final class UndertowClass {
         }
 
         // Private constructor to prevent instantiation
-        private TemplateRendering() {
+        private TemplateRenderingClass() {
             // intentional empty
         }
 

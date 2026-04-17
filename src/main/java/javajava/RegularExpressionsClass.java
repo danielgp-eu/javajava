@@ -199,21 +199,6 @@ public final class RegularExpressionsClass {
     }
 
     /**
-     * Check if String is actually Date
-     *
-     * @param inputString string to evaluate
-     * @return True if given String is actually Date
-     */
-    public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
-        boolean bolReturn = false;
-        if (inputString != null) {
-            final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
-            bolReturn = pattern.matcher(inputString).matches();
-        }
-        return bolReturn;
-    }
-
-    /**
      * Number with Suffix If Non-Zero
      * @param inNumber number to evaluate
      * @param strSingular singular suffix
@@ -281,6 +266,48 @@ public final class RegularExpressionsClass {
                 return matchResult.group(); // Fallback if parsing fails
             }
         });
+    }
+
+    /**
+     * Validation logic using Regular Expressions
+     */
+    public final class ValidationClass {
+
+        /**
+         * Check if String is actually Date
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Date
+         */
+        public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
+            boolean bolReturn = false;
+            if (inputString != null) {
+                final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
+                bolReturn = pattern.matcher(inputString).matches();
+            }
+            return bolReturn;
+        }
+
+        /**
+         * Validation file name
+         * @param given file name
+         * @return file name only if valid
+         */
+        private static String validateFileName(final String value) {
+            if (value == null || value.isBlank()) {
+                throw new IllegalArgumentException("File name must not be null or blank");
+            }
+            if (!value.matches("^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\\.[a-zA-Z0-9_-]+$")) {
+                throw new IllegalArgumentException("File name contains invalid characters");
+            }
+            return value;
+        }
+
+        // Private constructor to prevent instantiation
+        private ValidationClass() {
+            // intentionally blank
+        }
+
     }
 
     /**

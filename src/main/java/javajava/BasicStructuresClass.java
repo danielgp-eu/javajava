@@ -546,7 +546,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Date
          */
         public static boolean isStringActuallyDate(final String inputString) {
-            return RegularExpressionsClass.isStringActuallySomething(inputString, STR_JUST_DATE);
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, STR_JUST_DATE);
         }
 
         /**
@@ -556,7 +556,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyDecimal(final String inputString) {
-            return RegularExpressionsClass.isStringActuallySomething(inputString, "decimal");
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "decimal");
         }
 
         /**
@@ -566,7 +566,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyInteger(final String inputString) {
-            return RegularExpressionsClass.isStringActuallySomething(inputString, "integer");
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "integer");
         }
 
         /**
@@ -576,7 +576,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Numeric
          */
         public static boolean isStringActuallyNumeric(final String inputString) {
-            return RegularExpressionsClass.isStringActuallySomething(inputString, "numeric");
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "numeric");
         }
 
         /**
@@ -586,7 +586,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp
          */
         public static boolean isStringActuallyTimestamp(final String inputString) {
-            return RegularExpressionsClass.isStringActuallySomething(inputString, STR_TIMESTAMP);
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, STR_TIMESTAMP);
         }
 
         /**
@@ -596,7 +596,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp w. milliseconds
          */
         public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
-            return RegularExpressionsClass.isStringActuallySomething(inputString, STR_TS_MSEC);
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, STR_TS_MSEC);
         }
 
         // Private constructor to prevent instantiation
