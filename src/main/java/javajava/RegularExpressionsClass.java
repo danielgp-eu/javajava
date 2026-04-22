@@ -25,7 +25,7 @@ public final class RegularExpressionsClass {
             RegularExpressionsClass.STR_AGING_TS, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
             RegularExpressionsClass.STR_AGING_TIME, Map.of(RegularExpressionsClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
             "decimal", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+\\.\\d+-?"),
-            "integer", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d{1,10}-?"),
+            "long", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d{1,18}-?"),
             BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
@@ -291,16 +291,20 @@ public final class RegularExpressionsClass {
         /**
          * Validation file name
          * @param given file name
-         * @return file name only if valid
+         * @return true if file name is valid, false otherwise
          */
-        private static String validateFileName(final String value) {
+        public static boolean isFileNameValid(final String value) {
+            boolean validFileName = true;
             if (value == null || value.isBlank()) {
-                throw new IllegalArgumentException("File name must not be null or blank");
+                final String strFeedback = "File name must not be null or blank";
+                LogExposureClass.LOGGER.error(strFeedback);
+                validFileName = false;
+            } else if(!value.matches("^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\\.[a-zA-Z0-9_-]+$")) {
+                final String strFeedback = "File name contains invalid characters";
+                LogExposureClass.LOGGER.error(strFeedback);
+                validFileName = false;
             }
-            if (!value.matches("^[a-zA-Z0-9](?:[a-zA-Z0-9 ._-]*[a-zA-Z0-9])?\\.[a-zA-Z0-9_-]+$")) {
-                throw new IllegalArgumentException("File name contains invalid characters");
-            }
-            return value;
+            return validFileName;
         }
 
         // Private constructor to prevent instantiation

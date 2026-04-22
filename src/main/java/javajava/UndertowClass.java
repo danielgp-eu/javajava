@@ -245,7 +245,6 @@ public final class UndertowClass {
 
         /**
          * Time Zone set logic
-         * @param queryParams page parameters
          */
         public static void handleTimeZoneSession() {
             final Map<String, Deque<String>> queryParams = ParametersClass.getQueryParameters();

@@ -335,6 +335,9 @@ FROM
             } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue)) {
                 cellStyle = CSS_TEXT_RIGHT;
                 strValue = String.format(Locale.US, "%,d", Integer.parseInt(strValue));
+            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyLong(strValue)) {
+                cellStyle = CSS_TEXT_RIGHT;
+                strValue = String.format(Locale.US, "%,d", Long.parseLong(strValue));
             } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDate(strValue)) {
                 cellStyle = CSS_TEXT_RIGHT;
                 strValue = TimingClass.Localization.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");

@@ -247,7 +247,7 @@ public final class BasicStructuresClass {
      */
     public static int convertStringIntoInteger(final String strNumber) {
         int noToReturn = 0;
-        final boolean isNumeric = StringEvaluationClass.isStringActuallyInteger(strNumber);
+        final boolean isNumeric = StringEvaluationClass.isStringActuallyLong(strNumber);
         if (isNumeric) {
             noToReturn = Integer.parseInt(strNumber);
         }
@@ -528,6 +528,14 @@ public final class BasicStructuresClass {
      * Evaluating things
      */
     public static final class StringEvaluationClass {
+        /**
+         * Maximum Length for Integer
+         */
+        /* default */ private static final int MAX_LENGTH_INT = 10;
+        /**
+         * Maximum Integer
+         */
+        /* default */ private static final int MAX_INT = 2_147_483_647;
 
         /**
          * Checks if given string is included in a given List of Strings
@@ -566,7 +574,25 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyInteger(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "integer");
+            boolean evaluation = RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "long");
+            if (evaluation
+                    && inputString.length() >= MAX_LENGTH_INT) {
+                final long longValue = Long.parseLong(inputString);
+                if (longValue > MAX_INT) {
+                    evaluation = false;
+                }
+            }
+            return evaluation;
+        }
+
+        /**
+         * Check if String is actually Long
+         *
+         * @param inputString string to evaluate
+         * @return True if given String is actually Long
+         */
+        public static boolean isStringActuallyLong(final String inputString) {
+            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "long");
         }
 
         /**

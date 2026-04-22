@@ -20,6 +20,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.sqlite.Function;
 
@@ -844,6 +845,15 @@ public final class DatabaseOperationsClass {
                         final String text = value_text(0);
                         final String pattern = value_text(1);
                         result(RegularExpressionsClass.doesExist(text, pattern));
+                    }
+                });
+                Function.create(connection, "REGEXP_REPLACE", new Function() {
+                    @Override
+                    protected void xFunc() throws SQLException {
+                        final String text = value_text(0);
+                        final String pattern = value_text(1);
+                        final String replacement = value_text(2);
+                        result(Pattern.compile(pattern).matcher(text).replaceAll(replacement));
                     }
                 });
             } catch(SQLException e) {
