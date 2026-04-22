@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import oshi.PlatformEnum;
 import oshi.hardware.Baseboard;
 import oshi.hardware.CentralProcessor;
 import oshi.hardware.ComputerSystem;
@@ -19,6 +18,7 @@ import oshi.hardware.VirtualMemory;
 import oshi.software.os.NetworkParams;
 import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
+import oshi.util.PlatformEnum;
 
 /**
  * Hardware class
