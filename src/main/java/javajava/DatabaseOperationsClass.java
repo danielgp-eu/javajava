@@ -1009,7 +1009,7 @@ public final class DatabaseOperationsClass {
             if (currentUser.isEmpty()) {
                 currentUser = "UNKNOWN_USER";
             }
-            properties.put("user", currentUser.toUpperCase(Locale.getDefault()).replaceFirst("HONEYWELLAEROSPACE.COM", "HONEYWELL.COM"));
+            properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
             properties.put("db", strDatabase);
             properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
             properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
