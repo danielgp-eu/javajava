@@ -308,38 +308,43 @@ public final class DatabaseOperationsClass {
          */
         public static void executeValuesIntoDatabaseUsingPreparedStatement(final Connection objConnection, final String strQueryPurpose, final List<Properties> objValues, final String strQuery, final Properties specialFields) {
             final int intRows = objValues.size();
-            final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
-            final int intParameters = mapParameterOrder.size();
-            final String strFinalQuery = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strQuery);
-            try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQuery)) {
-                final Properties properties = new Properties();
-                // cycle through each row
-                for (int crtRow = 1; crtRow <= intRows; crtRow++) {
-                    final Properties currentProps = objValues.get(crtRow - 1);
-                    // cycle through every single Parameter to set its value to PreparedStatement
-                    for (int intParameter = 0; intParameter < intParameters; intParameter++) {
-                        final int index = intParameter + 1;
-                        final String strKey = mapParameterOrder.get(intParameter);
-                        final String strOriginalValue = currentProps.getProperty(strKey);
-                        properties.put("index", index);
-                        properties.put("strKey", strKey);
-                        properties.put("strOriginalValue", strOriginalValue);
-                        properties.put("strQuery", strQuery);
-                        properties.put("strArrayCleanable", specialFields.get("Cleanable").toString());
-                        properties.put("strArrayNullable", specialFields.get("Nullable").toString());
-                        bindSingleParameter(preparedStatement, properties);
+            if (intRows == 0) {
+                final String strFeedback = String.format("Within %s a request to process %s rows was given...", StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName())), intRows);
+                LogExposureClass.LOGGER.warn(strFeedback);
+            } else {
+                final List<String> mapParameterOrder = getPromptParametersOrderWithinQuery(strQuery, objValues);
+                final int intParameters = mapParameterOrder.size();
+                final String strFinalQuery = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strQuery);
+                try (PreparedStatement preparedStatement = objConnection.prepareStatement(strFinalQuery)) {
+                    final Properties properties = new Properties();
+                    // cycle through each row
+                    for (int crtRow = 1; crtRow <= intRows; crtRow++) {
+                        final Properties currentProps = objValues.get(crtRow - 1);
+                        // cycle through every single Parameter to set its value to PreparedStatement
+                        for (int intParameter = 0; intParameter < intParameters; intParameter++) {
+                            final int index = intParameter + 1;
+                            final String strKey = mapParameterOrder.get(intParameter);
+                            final String strOriginalValue = currentProps.getProperty(strKey);
+                            properties.put("index", index);
+                            properties.put("strKey", strKey);
+                            properties.put("strOriginalValue", strOriginalValue);
+                            properties.put("strQuery", strQuery);
+                            properties.put("strArrayCleanable", specialFields.get("Cleanable").toString());
+                            properties.put("strArrayNullable", specialFields.get("Nullable").toString());
+                            bindSingleParameter(preparedStatement, properties);
+                        }
+                        preparedStatement.addBatch();
+                        if ((crtRow % batchSize == 0)
+                                || (crtRow == intRows)) { // each 200 rows OR final one
+                            preparedStatement.executeLargeBatch();
+                            final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose + " record " + crtRow);
+                            LogExposureClass.LOGGER.info(strFeedback);
+                        }
                     }
-                    preparedStatement.addBatch();
-                    if ((crtRow % batchSize == 0)
-                            || (crtRow == intRows)) { // each 200 rows OR final one
-                        preparedStatement.executeLargeBatch();
-                        final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose + " record " + crtRow);
-                        LogExposureClass.LOGGER.info(strFeedback);
-                    }
+                } catch (SQLException e) {
+                    setSqlExceptionError(e, objValues, strQuery);
+                    throw (IllegalStateException)new IllegalStateException().initCause(e);
                 }
-            } catch (SQLException e) {
-                setSqlExceptionError(e, objValues, strQuery);
-                throw (IllegalStateException)new IllegalStateException().initCause(e);
             }
         }
 
@@ -1004,7 +1009,7 @@ public final class DatabaseOperationsClass {
             if (currentUser.isEmpty()) {
                 currentUser = "UNKNOWN_USER";
             }
-            properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
+            properties.put("user", currentUser.toUpperCase(Locale.getDefault()).replaceFirst("HONEYWELLAEROSPACE.COM", "HONEYWELL.COM"));
             properties.put("db", strDatabase);
             properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
             properties.put("role", propInstance.get("Role").toString().replace("\"", ""));

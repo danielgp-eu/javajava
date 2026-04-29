@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -194,7 +194,7 @@
 
     <build>
         <plugins>
-            <!-- Source: https://mvnrepository.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/io.takari.maven.plugins/takari-lifecycle-plugin -->
             <!-- Description: Takari Lifecycle Plugin -->
             <plugin>
               <groupId>io.takari.maven.plugins</groupId>
@@ -216,7 +216,7 @@
                 <verbose>true</verbose>
               </configuration>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-assembly-plugin -->
             <!-- Description: A Maven plugin to create archives of your project's sources, classes, dependencies etc. from flexible assembly descriptors. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -237,7 +237,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-javadoc-plugin -->
             <!-- Description: The Apache Maven Javadoc Plugin is a plugin that uses the javadoc tool for generating javadocs for the specified project. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -255,7 +255,7 @@
                     <doclint>none</doclint>
                 </configuration>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.cyclonedx/cyclonedx-maven-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.cyclonedx/cyclonedx-maven-plugin -->
             <!-- Description: The CycloneDX Maven plugin generates CycloneDX Software Bill of Materials (SBOM) containing the aggregate of all direct and transitive dependencies of a project. -->
             <plugin>
                 <groupId>org.cyclonedx</groupId>
@@ -270,7 +270,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-antrun-plugin -->
             <!-- Description: Runs Ant scripts embedded in the POM -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -287,7 +287,7 @@
                             <target>
                                 <mkdir dir="${project.basedir}/src/main/resources/data" />
                                 <get src="https://data.iana.org/time-zones/data/zone1970.tab"
-                                     dest="${project.basedir}/src/main/resources/data/zone1970.tab"
+                                     dest="${project.basedir}/src/main/resources/time_zones/zone1970.tab"
                                      skipexisting="true" />
                             </target>
                         </configuration>
@@ -365,7 +365,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-gpg-plugin -->
             <!-- Description: Signs the project artifacts with GnuPG. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -384,7 +384,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.jacoco/jacoco-maven-plugin -->
             <!-- Description: he JaCoCo Maven Plugin provides the JaCoCo runtime agent to your tests and allows basic report creation. -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -425,7 +425,7 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
+            <!-- Source: https://central.sonatype.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
             <!-- Description: Maven Surefire MOJO in maven-surefire-plugin. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

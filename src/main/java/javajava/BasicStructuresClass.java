@@ -206,6 +206,10 @@ public final class BasicStructuresClass {
      * Version string
      */
     public static final String STR_VERSION = "Version";
+    /**
+     * Yes string
+     */
+    public static final String STR_YES = "YES";
 
     /**
      * Safely computes percentage

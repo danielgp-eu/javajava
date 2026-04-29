@@ -43,7 +43,7 @@ public final class ZoneDataServiceClass {
      * IANA zone logic
      */
     private static void loadIanaZones() {
-        final String propertyFileName = "/data/zone1970.tab";
+        final String propertyFileName = "/time_zones/zone1970.tab";
         try (InputStream inputStream = ZoneDataServiceClass.class.getResourceAsStream(propertyFileName);
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader bReader = new BufferedReader(inputStreamReader)) {

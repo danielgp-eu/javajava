@@ -290,7 +290,7 @@ public final class RegularExpressionsClass {
 
         /**
          * Validation file name
-         * @param given file name
+         * @param value given file name
          * @return true if file name is valid, false otherwise
          */
         public static boolean isFileNameValid(final String value) {
