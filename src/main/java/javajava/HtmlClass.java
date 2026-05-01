@@ -23,19 +23,35 @@ public final class HtmlClass {
     public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
         final List<String> outHtml = new ArrayList<>();
         if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
+            final String strLabel = objFeatures.getOrDefault("Label", "").toString() + (objFeatures.getOrDefault("multiple", "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
             if (objFeatures.getOrDefault("Label Style", "").toString().isEmpty()) {
-                outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label")));
+                outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), strLabel));
             } else {
-                outHtml.add(String.format("<label for=\"%s\" style=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label Style").toString(), objFeatures.get("Label")));
+                outHtml.add(String.format("<label for=\"%s\" style=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label Style").toString(), strLabel));
             }
             if (objFeatures.getOrDefault("Label on Same Line", "").toString().isEmpty()) {
                 outHtml.add("<br/>");
             }
         }
-        outHtml.add(String.format("<select name=\"%s\" id=\"%s\">", objFeatures.get("Name"), objFeatures.get("Id")));
+        final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
+        String additionalAttrib = "";
+        final List<String> defaults = new ArrayList<>();
+        if (objFeatures.getOrDefault("multiple", "").toString().isEmpty()) {
+            defaults.add(defaultValue);
+        } else {
+            additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get("multiple"));
+            if (!defaultValue.isEmpty()) {
+                final String[] defaultVals = defaultValue.split(",");
+                for (String strDefault : defaultVals) {
+                    defaults.add(strDefault);
+                }
+            }
+        }
+        outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>", objFeatures.get("Name"), objFeatures.get("Id"), additionalAttrib));
         mapValues.forEach((strValue, strText) -> {
             String strSelected = "";
-            if (strValue.equalsIgnoreCase(objFeatures.getOrDefault("Default", "None").toString())) {
+            if (!defaults.isEmpty()
+                    && defaults.contains(strValue)) {
                 strSelected = " selected";
             }
             outHtml.add(String.format("<option value=\"%s\"%s>%s</option>", strValue, strSelected, strText));
@@ -134,7 +150,7 @@ FROM
         public static gg.jte.Content buildApplicationDetail() {
             final Model prjModel = ProjectClass.getProjectModel();
             final gg.jte.Content appContent = output -> output.writeContent(String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjModel.getVersion(), prjModel.getDevelopers().getFirst().getName()));
-            final String strFeedback = String.format("I have just build application details: %s", appContent);
+            final String strFeedback = String.format("I have just build application details: %s", appContent.toString());
             LogExposureClass.LOGGER.info(strFeedback);
             return appContent;
         }

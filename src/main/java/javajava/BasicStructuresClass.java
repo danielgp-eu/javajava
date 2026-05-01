@@ -51,6 +51,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
     /**
+     * String for internal Environment
+     */
+    public static final String STR_ENV = "Environment";
+    /**
      * Firmware string
      */
     public static final String STR_FIRMWARE = "Firmware";

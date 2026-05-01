@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -54,11 +54,11 @@
         <jackson-dataformat-xml.version>3.1.2</jackson-dataformat-xml.version>
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
-        <jte.version>3.2.3</jte.version>
+        <jte.version>3.2.4</jte.version>
         <log4j-slf4j2-impl.version>2.25.4</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.15</maven-model.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
-        <oshi-core-java25.version>6.12.0</oshi-core-java25.version>
+        <oshi-core-ffm.version>7.0.0</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.0.0</sqlite-jdbc.version>
@@ -76,7 +76,7 @@
     </properties>
 
     <dependencies>
-        <!-- Source: https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
+        <!-- Source: https://central.sonatype.com/artifact/com.ibm.icu/icu4j -->
         <!-- Description: International Components for Unicode for Java (ICU4J) is a mature, widely used Java library providing Unicode and Globalization support -->
         <dependency>
             <groupId>com.ibm.icu</groupId>
@@ -84,16 +84,16 @@
             <version>${icu4j.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/com.github.oshi/oshi-core-java25 -->
+        <!-- Source: https://central.sonatype.com/artifact/com.github.oshi/oshi-core-java25 -->
         <!-- Description: A JNA-based (native) operating system information library for Java that aims to provide a cross-platform implementation to retrieve system information, such as version, memory, CPU, disk, battery, etc. -->
         <!-- oshi-core implementation using FFM -->
         <dependency>
             <groupId>com.github.oshi</groupId>
-            <artifactId>oshi-core-java25</artifactId>
-            <version>${oshi-core-java25.version}</version>
+            <artifactId>oshi-core-ffm</artifactId>
+            <version>${oshi-core-ffm.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/gg.jte/jte -->
+        <!-- Source: https://central.sonatype.com/artifact/gg.jte/jte -->
         <!-- Description: Java Template Engine -->
         <dependency>
             <groupId>gg.jte</groupId>
@@ -101,7 +101,7 @@
             <version>${jte.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/info.picocli/picocli -->
+        <!-- Source: https://central.sonatype.com/artifact/info.picocli/picocli -->
         <!-- Description: Java command line parser with both an annotations API and a programmatic API. Usage help with ANSI styles and colors. Autocomplete. Nested subcommands. Easily included as source to avoid adding a dependency. -->
         <dependency>
             <groupId>info.picocli</groupId>
@@ -109,7 +109,7 @@
             <version>${picocli.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/io.undertow/undertow-core -->
+        <!-- Source: https://central.sonatype.com/artifact/io.undertow/undertow-core -->
         <!-- Description: The core module of Undertow, a lightweight and high-performance web server for Java. -->
         <dependency>
             <groupId>io.undertow</groupId>
@@ -117,7 +117,7 @@
             <version>${undertow-core.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
+        <!-- Source: https://central.sonatype.com/artifact/org.apache.logging.log4j/log4j-slf4j2-impl -->
         <!-- Description: The Apache Log4j SLF4J 2.0 API binding to Log4j 2 Core -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -125,7 +125,7 @@
             <version>${log4j-slf4j2-impl.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.maven/maven-core -->
+        <!-- Source: https://central.sonatype.com/artifact/org.apache.maven/maven-core -->
         <!-- Description: Core classes of Apache Maven to manage the building process. -->
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -133,7 +133,7 @@
             <version>${maven-model.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils -->
+        <!-- Source: https://central.sonatype.com/artifact/org.codehaus.plexus/plexus-utils -->
         <!-- Description: A collection of various utility classes to ease working with strings, files, command lines and more. -->
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
@@ -141,7 +141,7 @@
             <version>${plexus-interpolation.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.jspecify/jspecify -->
+        <!-- Source: https://central.sonatype.com/artifact/org.jspecify/jspecify -->
         <!-- JSpecify for null safety -->
         <dependency>
             <groupId>org.jspecify</groupId>
@@ -150,7 +150,7 @@
             <scope>compile</scope>
         </dependency>
         <!-- Test dependencies -->
-        <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter -->
+        <!-- Source: https://central.sonatype.com/artifact/org.junit.jupiter/junit-jupiter -->
         <!-- Description: Module "junit-jupiter" of JUnit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -158,7 +158,7 @@
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/org.jacoco/org.jacoco.agent -->
+        <!-- Source: https://central.sonatype.com/artifact/org.jacoco/org.jacoco.agent -->
         <!-- Description: JaCoCo Agent (aka Java Code Coverage) -->
         <dependency>
             <groupId>org.jacoco</groupId>
@@ -166,7 +166,7 @@
             <version>${org.jacoco.agent.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+        <!-- https://central.sonatype.com/artifact/org.xerial/sqlite-jdbc -->
         <!-- SQLite JDBC is a library for accessing and creating SQLite database files in Java (it includes native libraries) -->
         <dependency>
             <groupId>org.xerial</groupId>
@@ -174,7 +174,7 @@
             <version>${sqlite-jdbc.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
+        <!-- Source: https://central.sonatype.com/artifact/tools.jackson.core/jackson-databind -->
         <!-- Description: General data-binding functionality for Jackson: works on core streaming API -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
@@ -182,7 +182,7 @@
             <version>${jackson-databind.version}</version>
             <scope>compile</scope>
         </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.dataformat/jackson-dataformat-xml -->
+        <!-- Source: https://central.sonatype.com/artifact/tools.jackson.dataformat/jackson-dataformat-xml -->
         <!-- Description: Data format extension for Jackson to offer alternative support for serializing POJOs as XML and deserializing XML as POJOs. -->
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
