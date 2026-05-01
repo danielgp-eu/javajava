@@ -31,7 +31,7 @@ public final class RegularExpressionsClass {
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-[0-1-2]{1}\\d{1})"),
             RegularExpressionsClass.STR_MAVEN_PKG, Map.of(RegularExpressionsClass.STR_REG_EXP, "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+",
-                    "URL", "<a href=\"https://central.sonatype.com/artifact/%s/\" target=\"_blank\">%s</a>"),
+                    "URL", "<a href=\"https://repo1.maven.org/maven2/%s/%s/\" target=\"_blank\">%s</a>"),
             "numeric", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
             BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
@@ -238,7 +238,8 @@ public final class RegularExpressionsClass {
                                 || text.contains("danielgp-eu")) {
                             return text;
                         } else {
-                            return String.format(mapPatterns.get(STR_MAVEN_PKG).get("URL"), text.replace(':', '/'), text);
+                            final String[] urlParts = text.split(":");
+                            return String.format(mapPatterns.get(STR_MAVEN_PKG).get("URL"), urlParts[0].replace('.', '/'), urlParts[1], text);
                         }
                     }
                     case STR_AGING_TS -> {

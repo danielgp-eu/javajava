@@ -2,6 +2,7 @@ package javajava;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,18 +36,14 @@ public final class HtmlClass {
         }
         final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
         String additionalAttrib = "";
-        final List<String> defaults = new ArrayList<>();
-        if (objFeatures.getOrDefault("multiple", "").toString().isEmpty()) {
-            defaults.add(defaultValue);
-        } else {
+        String[] defaultVals = {defaultValue};
+        if (!objFeatures.getOrDefault("multiple", "").toString().isEmpty()) {
             additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get("multiple"));
             if (!defaultValue.isEmpty()) {
-                final String[] defaultVals = defaultValue.split(",");
-                for (String strDefault : defaultVals) {
-                    defaults.add(strDefault);
-                }
+                defaultVals = defaultValue.split(",");
             }
         }
+        final List<String> defaults = Arrays.asList(defaultVals);
         outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>", objFeatures.get("Name"), objFeatures.get("Id"), additionalAttrib));
         mapValues.forEach((strValue, strText) -> {
             String strSelected = "";
