@@ -55,7 +55,7 @@ header {
 }
 
 main {
-    padding: 6rem 1rem 1rem 10rem;
+    padding: 6rem 1rem 1rem 12rem;
 }
 
 nav ul {
@@ -65,6 +65,7 @@ nav ul {
     margin: 0rem;
     padding: 5rem 0.5rem 1rem 0.5rem;
     position: fixed;
+    max-width: 11rem;
 }
 
 td {
