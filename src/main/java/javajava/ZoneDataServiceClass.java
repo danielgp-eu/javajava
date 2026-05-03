@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.SequencedMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +28,9 @@ public final class ZoneDataServiceClass {
      */
     private static final int LINE_W_COORDINATE = 3;
     /**
-     * Session Config handle
+     * Supported IANA time-zone identifiers
      */
-    private static final List<String> SUPPORTED_TZ = new java.util.ArrayList<>(List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"));
+    private static final List<String> SUPPORTED_TZ = new CopyOnWriteArrayList<>(List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"));
     /**
      * Cached zones
      */
@@ -83,8 +84,7 @@ public final class ZoneDataServiceClass {
             final String friendlyTimeZone = TimingClass.getFriendlyOffset(crtTimeZone);
             if (friendlyTimeZone.startsWith("UTC-")) {
                 mapBeforeUtc.put(crtTimeZone, friendlyTimeZone + " " + crtTimeZone);
-            }
-            if (friendlyTimeZone.startsWith("UTC+")) {
+            } else {
                 mapAfterUtc.put(crtTimeZone, friendlyTimeZone + " " + crtTimeZone);
             }
         }

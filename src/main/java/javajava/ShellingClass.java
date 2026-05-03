@@ -69,9 +69,7 @@ public final class ShellingClass {
             final int exitCode = process.waitFor();
             CompletableFuture.allOf(stdoutFuture, stderrFuture).join();
             setProcessResults(stdoutFuture, stderrFuture, exitCode);
-            if (process != null) {
-                process.destroy();
-            }
+            process.destroy();
         } catch (IOException ex) {
             final String strFeedback = String.format(LocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
@@ -246,7 +244,7 @@ public final class ShellingClass {
          */
         private static void setPowerShellFile(final String psBinary) {
             final File psFileLocal = new File(psBinary);
-            if (psFileLocal.exists() || psFileLocal.canExecute()) {
+            if (psFileLocal.exists() && psFileLocal.canExecute()) {
                 psPath = psBinary;
             } else {
                 final String strFeedback = String.format("Security violation: PowerShell executable not found or not executable: %s...", psBinary);

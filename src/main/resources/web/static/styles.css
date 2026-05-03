@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    background-color: #FFF!important;
+    background-color: #FFF !important;
     font-family: Arial;
     font-size: 1rem;
     margin: 0;
@@ -14,7 +14,7 @@ body {
 }
 
 footer, header {
-    background: rgba(0, 227, 151, 0.75)!important;
+    background: rgba(0, 227, 151, 0.75) !important;
 }
 
 footer {
@@ -30,7 +30,7 @@ footer {
 
 h1 {
     font-size: 2rem;
-    font-weight: bold!important;
+    font-weight: bold !important;
 }
 
 header {
@@ -42,13 +42,13 @@ header {
 }
 
 .infoBox {
-    background: rgba(218, 255, 125, 0.75)!important;
+    background: rgba(218, 255, 125, 0.75) !important;
     border: 1px blue dotted;
     border-radius: 5px;
     margin-left: 8rem;
     position: fixed;
     right: 0.5rem;
-    text-align:center;
+    text-align: center;
     top: 3.5rem;
     width: 30%;
     z-index: 999;
@@ -59,7 +59,7 @@ main {
 }
 
 nav ul {
-    background: rgba(0, 227, 151, 1)!important;
+    background: rgba(0, 227, 151, 1) !important;
     height: 100%;
     list-style-type: none;
     margin: 0rem;
@@ -69,8 +69,8 @@ nav ul {
 }
 
 td {
-    font-family: monospace!important;
-    vertical-align:top!important;
+    font-family: monospace !important;
+    vertical-align: top !important;
 }
 
 td:hover {
