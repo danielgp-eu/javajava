@@ -4,7 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-public class RegularExpressionsClassTests {
+/**
+ * Regular Expressions testing
+ */
+class RegularExpressionsClassTests {
     /**
      * String for Original not equal to Expected
      */
@@ -25,4 +28,12 @@ public class RegularExpressionsClassTests {
         final String handled = RegularExpressionsClass.convertAgingTimeIntoHumanReadableString(strOriginal);
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }
+
+    /**
+     * Constructor
+     */
+    public RegularExpressionsClassTests() {
+        // intentionally blank
+    }
+
 }
