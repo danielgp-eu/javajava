@@ -335,7 +335,7 @@ public final class DatabaseOperationsClass {
                         }
                         preparedStatement.addBatch();
                         if ((crtRow % batchSize == 0)
-                                || (crtRow == intRows)) { // each 200 rows OR final one
+                                || (crtRow == intRows)) { // each batchSize rows OR final one
                             preparedStatement.executeLargeBatch();
                             final String strFeedback = String.format(LocalizationClass.getMessage("i18nSQLqueryExecutionSuccess"), strQueryPurpose + " record " + crtRow);
                             LogExposureClass.LOGGER.info(strFeedback);
@@ -384,7 +384,7 @@ public final class DatabaseOperationsClass {
 
         /**
          * Setter for Batch Size
-         * @param inBatchSize
+         * @param inBatchSize the batch size for database operations
          */
         public static void setBatchSize(final int inBatchSize) {
             batchSize = inBatchSize;
@@ -498,25 +498,6 @@ public final class DatabaseOperationsClass {
         }
 
         /**
-         * Collecting current row
-         * @param resultSet digesting result-set
-         * @param columnCount number of columns to iterate through
-         * @param resultSetMetaData column names
-         * @return Properties with current row value and their name
-         */
-        private static Properties getCurrentRowIntoProperties(final ResultSet resultSet, final int columnCount, final ResultSetMetaData resultSetMetaData) throws SQLException {
-            final Properties currentRow = new Properties();
-            for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
-                String crtValue = resultSet.getString(colIndex);
-                if (resultSet.wasNull()) {
-                    crtValue = STR_NULL;
-                }
-                currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
-            }
-            return currentRow;
-        }
-
-        /**
          * get structure from ResultSet
          *
          * @param resultSet result-set
@@ -527,15 +508,8 @@ public final class DatabaseOperationsClass {
             try {
                 final ResultSetMetaData metaData = resultSet.getMetaData();
                 final int columnCount = metaData.getColumnCount();
-                final Properties colProperties = new Properties();
                 for (int columnNumber = 1; columnNumber <= columnCount; columnNumber++) {
-                    colProperties.clear();
-                    colProperties.put("Display Size", metaData.getColumnDisplaySize(columnNumber));
-                    colProperties.put("Name", metaData.getColumnName(columnNumber));
-                    colProperties.put("Precision", metaData.getPrecision(columnNumber));
-                    colProperties.put("Scale", metaData.getScale(columnNumber));
-                    colProperties.put("Type", metaData.getColumnTypeName(columnNumber));
-                    colProperties.put("Nullable", metaData.isNullable(columnNumber));
+                    final Properties colProperties = RowProcessingClass.captureMetadataIntoProperties(metaData, columnNumber);
                     listResultSet.add(colProperties);
                 }
             } catch (SQLException e) {
@@ -558,7 +532,7 @@ public final class DatabaseOperationsClass {
                 final int columnCount = resultSetMetaData.getColumnCount();
                 int intRow = 0;
                 while (resultSet.next()) {
-                    listResultSet.add(getCurrentRowIntoProperties(resultSet, columnCount, resultSetMetaData));
+                    listResultSet.add(RowProcessingClass.getCurrentRowIntoProperties(resultSet, columnCount, resultSetMetaData));
                     intRow++;
                 }
                 final String strFeedback = String.format("I have found %d records", intRow);
@@ -673,6 +647,57 @@ public final class DatabaseOperationsClass {
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return listReturn;
+        }
+
+        /**
+         * Basic features for Databases
+         */
+        public static final class RowProcessingClass {
+
+            /**
+             * Capturing Metadata Into Properties
+             * @param metaData metadata from SQL query
+             * @param columnNumber number of current column
+             * @return Properties
+             * @throws SQLException
+             */
+            private static Properties captureMetadataIntoProperties(final ResultSetMetaData metaData, final int columnNumber) throws SQLException {
+                final Properties colProperties = new Properties();
+                colProperties.put("Display Size", metaData.getColumnDisplaySize(columnNumber));
+                colProperties.put("Name", metaData.getColumnName(columnNumber));
+                colProperties.put("Precision", metaData.getPrecision(columnNumber));
+                colProperties.put("Scale", metaData.getScale(columnNumber));
+                colProperties.put("Type", metaData.getColumnTypeName(columnNumber));
+                colProperties.put("Nullable", metaData.isNullable(columnNumber));
+                return colProperties;
+            }
+
+            /**
+             * Collecting current row
+             * @param resultSet digesting result-set
+             * @param columnCount number of columns to iterate through
+             * @param resultSetMetaData column names
+             * @return Properties with current row value and their name
+             */
+            private static Properties getCurrentRowIntoProperties(final ResultSet resultSet, final int columnCount, final ResultSetMetaData resultSetMetaData) throws SQLException {
+                final Properties currentRow = new Properties();
+                for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
+                    String crtValue = resultSet.getString(colIndex);
+                    if (resultSet.wasNull()) {
+                        crtValue = STR_NULL;
+                    }
+                    currentRow.put(resultSetMetaData.getColumnName(colIndex), crtValue);
+                }
+                return currentRow;
+            }
+
+            /**
+             * Constructor
+             */
+            private RowProcessingClass() {
+                // intentionally blank
+            }
+
         }
 
         /**

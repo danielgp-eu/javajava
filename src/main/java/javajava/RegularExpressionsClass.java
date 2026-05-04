@@ -272,7 +272,7 @@ public final class RegularExpressionsClass {
     /**
      * Validation logic using Regular Expressions
      */
-    public final class ValidationClass {
+    public final static class ValidationClass {
 
         /**
          * Check if String is actually Date
