@@ -113,21 +113,21 @@ public final class RegularExpressionsClass {
 
     /**
      * Count occurrences with String
-     * @param hystack string to count in
+     * @param haystack string to count in
      * @param needleType type of pattern search
      * @return number of occurrences
      */
-    public static int countOccurrences(final String hystack, final String needleType) {
+    public static int countOccurrences(final String haystack, final String needleType) {
         final Pattern pattern = switch(needleType) {
             case "NamedParameters" -> Pattern.compile(BasicStructuresClass.STR_PRMTR_RGX);
             case "ComplexPositionalTypeParameters" -> Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
             case "PositionalTypeParameters" -> Pattern.compile("%[ACEGHSTXacdefghostx]");
             default -> Pattern.compile(".*");
         };
-        final Matcher matcher = pattern.matcher(hystack);
+        final Matcher matcher = pattern.matcher(haystack);
         int count = 0;
         while (matcher.find()) {
-            count = count + matcher.groupCount();
+            count++;
         }
         return count;
     }
