@@ -294,7 +294,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <mkdir dir="${project.basedir}/src/main/resources/data" />
+                                <mkdir dir="${project.basedir}/src/main/resources/time_zones" />
                                 <get src="https://data.iana.org/time-zones/data/zone1970.tab"
                                      dest="${project.basedir}/src/main/resources/time_zones/zone1970.tab"
                                      skipexisting="true" />
