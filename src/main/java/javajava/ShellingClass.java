@@ -71,10 +71,10 @@ public final class ShellingClass {
             setProcessResults(stdoutFuture, stderrFuture, exitCode);
             process.destroy();
         } catch (IOException ex) {
-            final String strFeedback = String.format(LocalizationClass.getMessage("i18nProcessExecutionFailed"), Arrays.toString(ex.getStackTrace()));
+            final String strFeedback = String.format("Process execution failed: %s", Arrays.toString(ex.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         } catch(InterruptedException ei) {
-            final String strFeedback = String.format(LocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+            final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.warn(strFeedback);
             /* Clean up whatever needs to be handled before interrupting  */
             Thread.currentThread().interrupt();
@@ -115,7 +115,7 @@ public final class ShellingClass {
         executeShellUtility("WHOAMI", "/UPN", "");
         String strUser = strProcOut;
         if (strUser.startsWith("ERROR:")) {
-            final String strFeedback = LocalizationClass.getMessage("i18nUserPrincipalNameError");
+            final String strFeedback = "ERROR: Unable to get User Principal Name (UPN), hence will get regular User Name";
             LogExposureClass.LOGGER.error(strFeedback);
             executeShellUtility("WHOAMI", "", "");
             strUser = strProcOut;
@@ -155,7 +155,7 @@ public final class ShellingClass {
                 strProcOut = stdoutFuture.get();
                 strProcErr = stderrFuture.get();
             } catch (InterruptedException ei) {
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+                final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
                 LogExposureClass.LOGGER.warn(strFeedback);
                 /* Clean up whatever needs to be handled before interrupting  */
                 Thread.currentThread().interrupt();
@@ -164,14 +164,14 @@ public final class ShellingClass {
                 LogExposureClass.LOGGER.error(strFeedback);
                 throw (IllegalStateException)new IllegalStateException().initCause(ee);
             }
-            strCaptureMessage = "i18nProcessExecutionWithCaptureCompleted";
+            strCaptureMessage = "Process execution WITH output captured completed with exit code %d";
         } else {
-            strCaptureMessage = "i18nProcessExecutionWithoutCaptureCompleted";
+            strCaptureMessage = "Process execution w/o output captured completed with exit code %d";
         }
         final LocalDateTime finishTimeStamp = LocalDateTime.now();
         final String strFeedback = TimingClass.logDuration(startTimestamp,
                 finishTimeStamp,
-                String.format(LocalizationClass.getMessage(strCaptureMessage), exitCode));
+                String.format(strCaptureMessage, exitCode));
         LogExposureClass.LOGGER.debug(strFeedback);
     }
 

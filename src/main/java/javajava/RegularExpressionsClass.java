@@ -7,6 +7,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.regex.MatchResult;
@@ -209,7 +210,7 @@ public final class RegularExpressionsClass {
         return switch(inNumber) {
             case 0  -> "";
             case 1  -> inNumber + " " + strSingular;
-            default -> inNumber + " " +  strPlural;
+            default -> inNumber + " " + strPlural;
         };
     }
 
@@ -258,7 +259,7 @@ public final class RegularExpressionsClass {
                         final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
                                 LocalDate.parse(text, inputFormat).atStartOfDay(ZoneId.of(inputTimeZone))
                                 : LocalDateTime.parse(text, inputFormat).atZone(ZoneId.of(inputTimeZone));
-                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT));
+                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT), Locale.US);
                         final ZonedDateTime targetTime = sourceTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
                         return targetTime.format(outputFormat);
                     }

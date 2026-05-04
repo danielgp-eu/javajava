@@ -67,7 +67,7 @@ public final class TimingClass {
             final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
             lastModifTime = dateTime.format(fixedFormatter);
         } catch (IOException ei) {
-            final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileFindingError"), file.getParent(), file.getFileName());
+            final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder", file.getParent(), file.getFileName());
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return lastModifTime;
@@ -202,7 +202,8 @@ public final class TimingClass {
                 throw new UnsupportedOperationException(strFeedbackErr);
             }
             if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
-                strReturn = String.format(strFormats, lngNumber, LocalizationClass.getMessageWithPlural("i18nTimePart" + strWhichPart, lngNumber));
+                final String strPart = lngNumber == 1 ? strWhichPart : strWhichPart + "s";
+                strReturn = String.format(strFormats, lngNumber, strPart);
             } else {
                 strReturn = String.format(strFormats, lngNumber);
             }
@@ -306,7 +307,7 @@ public final class TimingClass {
     @NonNull
     public static String logDuration(@NonNull final LocalDateTime startTimeStamp, @NonNull final LocalDateTime finishTimeStamp, @NonNull final String strPartial) {
         final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
-        return String.format(LocalizationClass.getMessage("i18nWithDrtn")
+        return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
             , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")

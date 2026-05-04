@@ -73,7 +73,7 @@ public final class SoftwareReleasesClass {
             rsProperties.put("FetchType", "Values");
             resultReleases = DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
         } catch (SQLException e) {
-            final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nSQLconnectionCreationFailedLight"), BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
+            final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
             LogExposureClass.LOGGER.debug(strFeedbackErr);
         }
         return resultReleases;

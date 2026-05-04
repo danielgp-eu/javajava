@@ -87,7 +87,7 @@ public final class ArchivingClass {
                     fileOrigSize = 0L;
                 }
                 final float percentage = BasicStructuresClass.computePercentageSafely(fileArchSize, fileOrigSize);
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFolderStatisticsArchived"), strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
+                final String strFeedback = String.format("Folder %s statistics are %s which was compressed to archive %s having a size of %s bytes (which is %s%% of the original)", strArchivingDir.replace("\"", ""), folderProps, strArchiveName, fileArchSize, percentage);
                 LogExposureClass.LOGGER.info(strFeedback);
             }
         }

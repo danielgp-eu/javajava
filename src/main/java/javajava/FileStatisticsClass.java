@@ -87,7 +87,7 @@ public final class FileStatisticsClass {
             // Read and discard all data while updating the digest
             dis.transferTo(OutputStream.nullOutputStream());
         } catch (IOException e) {
-            final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nFileContentError"), "*", Arrays.toString(e.getStackTrace()));
+            final String strFeedbackErr = String.format("Error when attempting to get content of file \"%s\": %s", "*", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedbackErr);
         }
         assert digest != null;
@@ -114,7 +114,7 @@ public final class FileStatisticsClass {
             executor.shutdown();
             executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
         } catch (InterruptedException ei) {
-            final String strFeedback = String.format(LocalizationClass.getMessage("i18nAppInterruptedExecution"), Arrays.toString(ei.getStackTrace()));
+            final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
             LogExposureClass.LOGGER.warn(strFeedback);
             /* Clean up whatever needs to be handled before interrupting  */
             Thread.currentThread().interrupt();
@@ -196,7 +196,7 @@ public final class FileStatisticsClass {
                         try {
                             return new FolderStats(1, 0, Files.size(path));
                         } catch (IOException e) {
-                            final String strFeedback = String.format(LocalizationClass.getMessage("i18nEmptyFolder"), strFolderName, Arrays.toString(e.getStackTrace()));
+                            final String strFeedback = String.format("Input/Output exception on %s folder encountered on %s", strFolderName, Arrays.toString(e.getStackTrace()));
                             LogExposureClass.LOGGER.debug(strFeedback);
                             return FolderStats.empty();
                         }
@@ -253,16 +253,16 @@ public final class FileStatisticsClass {
             final Properties propertiesReturn = new Properties();
             switch(String.valueOf(fileSize)) {
                 case "-1":
-                    propertiesReturn.put("NOT_READABLE", String.format(LocalizationClass.getMessage("i18nFileUnreadable"), strFileName));
+                    propertiesReturn.put("NOT_READABLE", String.format("Given file %s is NOT a readable file...", strFileName));
                     break;
                 case "-2":
-                    propertiesReturn.put("NOT_A_FILE", String.format(LocalizationClass.getMessage("i18nFileNotAfile"), strFileName));
+                    propertiesReturn.put("NOT_A_FILE", String.format("Given file %s is not really a file...", strFileName));
                     break;
                 case "-3":
-                    propertiesReturn.put("DOES_NOT_EXIST", String.format(LocalizationClass.getMessage("i18nFileDoesNotExist"), strFileName));
+                    propertiesReturn.put("DOES_NOT_EXIST", String.format("Given file %s does NOT exist...", strFileName));
                     break;
                 case "-99":
-                    propertiesReturn.put("NULL_FILE_NAME", LocalizationClass.getMessage("i18nFileDoesNotExist"));
+                    propertiesReturn.put("NULL_FILE_NAME", "Given file %s does NOT exist...");
                     break;
                 default:
                     propertiesReturn.put("OK", strFileName);
@@ -345,7 +345,7 @@ public final class FileStatisticsClass {
          * @return List of String
          */
         public static List<String> getSubFoldersFromFolder(final String strFolderName) {
-            final String strFeedbackAtmpt = String.format(LocalizationClass.getMessage("i18nFileSubFoldersAttempt"), strFolderName);
+            final String strFeedbackAtmpt = String.format("Will attempt to get all sub-folders from within \"%s\" folder...", strFolderName);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             final List<String> arraySubFolders = new ArrayList<>();
             final Path directory = Paths.get(strFolderName);
@@ -358,7 +358,7 @@ public final class FileStatisticsClass {
                     }
                 }
             } catch (IOException ex) {
-                final String strFeedbackErr = String.format(LocalizationClass.getMessage("i18nFileSubFoldersError"), strFolderName, Arrays.toString(ex.getStackTrace()));
+                final String strFeedbackErr = String.format("Error encountered when attempting to get sub-folders from %s folder... %s", strFolderName, Arrays.toString(ex.getStackTrace()));
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
             return arraySubFolders;
@@ -434,7 +434,7 @@ public final class FileStatisticsClass {
             if (isItOk2) {
                 strFileJson = ePreety.getValue().toString();
             } else {
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileConfigurationNotFound")
+                final String strFeedback = String.format("Configuration file was NOT found (not as %s, nor %s)..."
                     , propsFile.getProperty(STR_MINIFIED, "")
                     , propsFile.getProperty(STR_PRTY_PRNT, ""));
                 LogExposureClass.LOGGER.error(strFeedback);

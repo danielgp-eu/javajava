@@ -13,10 +13,6 @@ import picocli.CommandLine.Option;
  */
 public final class CommonInteractiveClass {
     /**
-     * Boolean Auto Locale
-     */
-    private static boolean bolAutoLocale;
-    /**
      * Exit Code
      */
     private static int exitCode;
@@ -24,19 +20,6 @@ public final class CommonInteractiveClass {
      * Start Date Time
      */
     private static LocalDateTime startDateTime;
-
-
-    /**
-     * Starting sequence
-     */
-    public static void initializeLocalization() {
-        if (bolAutoLocale) {
-            final String userLocale = LocalizationClass.getUserLocale();
-            LocalizationClass.setLocaleByString(userLocale);
-        } else {
-            LocalizationClass.setLocaleByString(BasicStructuresClass.DEFAULT_LOCALE);
-        }
-    }
 
     /**
      * Shut Down sequence
@@ -48,7 +31,7 @@ public final class CommonInteractiveClass {
         final LocalDateTime finishTimeStamp = LocalDateTime.now();
         final String strFeedbackEnd = TimingClass.logDuration(startDateTime,
                 finishTimeStamp,
-                String.format(LocalizationClass.getMessage("i18nEntOp"), inOperation));
+                String.format("Entire operation %s completed", inOperation));
         LogExposureClass.LOGGER.info(strFeedbackEnd);
     }
 
@@ -59,7 +42,7 @@ public final class CommonInteractiveClass {
         final String strFeedbackLines = "-".repeat(80);
         LogExposureClass.LOGGER.info(strFeedbackLines);
         final String[] prjProperties = getProjectProperties();
-        final String strFeedback = String.format(LocalizationClass.getMessage("i18nNewExec"), prjProperties[0], prjProperties[1], prjProperties[2]);
+        final String strFeedback = String.format("%s:%s v.%s => New Execution", prjProperties[0], prjProperties[1], prjProperties[2]);
         LogExposureClass.LOGGER.info(strFeedback);
         LogExposureClass.LOGGER.info(strFeedbackLines);
     }
@@ -75,14 +58,6 @@ public final class CommonInteractiveClass {
         strToReturn[1] = projectModel.getArtifactId();
         strToReturn[2] = projectModel.getVersion();
         return strToReturn;
-    }
-
-    /**
-     * Setter for Auto Locale
-     * @param inAutoLocale true or false
-     */
-    public static void setAutoLocale(final boolean inAutoLocale) {
-        bolAutoLocale = inAutoLocale;
     }
 
     /**

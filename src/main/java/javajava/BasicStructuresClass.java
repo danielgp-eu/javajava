@@ -410,7 +410,7 @@ public final class BasicStructuresClass {
                 final List<String> arrayVariables = Arrays.asList(strVariables);
                 arrayVariables.forEach(crtVariable -> svProperties.put(crtVariable, inProperties.getProperty(crtVariable)));
                 if (!propertyFileName.startsWith("/META-INF/maven/")) {
-                    final String strFeedback = String.format(LocalizationClass.getMessage("i18nFileContentIntoStreamSuccess"), svProperties);
+                    final String strFeedback = String.format("I have successfully loaded entire content from %s file into stream...", svProperties);
                     LogExposureClass.LOGGER.debug(strFeedback);
                 }
             } catch (IOException ei) {
@@ -480,7 +480,7 @@ public final class BasicStructuresClass {
          * @return query with named parameters
          */
         private static String convertPromptParameters(final String strOriginalQ, final String type) {
-            final String strFeedbackStrt = LocalizationClass.getMessage("i18nSQLqueryOriginalIs", strOriginalQ);
+            final String strFeedbackStrt = String.format("Original query is: \"%s\"", strOriginalQ);
             LogExposureClass.LOGGER.debug(strFeedbackStrt);
             final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
             String strFinalQ = strOriginalQ;
@@ -493,7 +493,7 @@ public final class BasicStructuresClass {
                     strFinalQ = strFinalQ.replace(currentPrmtName, convertSinglePromptParameterIntoNamedParameter(currentPrmtName));
                 }
             }
-            final String strFeedbackEnd = LocalizationClass.getMessage("i18nSQLqueryFinalIs", strFinalQ);
+            final String strFeedbackEnd = String.format("Final query is: \"%s\"", strFinalQ);
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
             return strFinalQ;
         }

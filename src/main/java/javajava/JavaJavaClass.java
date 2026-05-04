@@ -51,8 +51,6 @@ public final class JavaJavaClass {
      * @param args command-line arguments
      */
     /* default */ static void main(final String... args) {
-        CommonInteractiveClass.setAutoLocale(true);
-        CommonInteractiveClass.initializeLocalization();
         CommonInteractiveClass.setStartDateTime();
         CommonInteractiveClass.startMeUp();
         // execute appropriate Command with 
@@ -606,7 +604,7 @@ class GetInformationFromDatabase implements Runnable {
                 DatabaseOperationsClass.SpecificSnowflakeClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
-                final String strFeedback = String.format(LocalizationClass.getMessage("i18nUnknParamFinal"), strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                final String strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
                 break;
         }

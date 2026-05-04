@@ -53,7 +53,7 @@ public final class EnvironmentCapturingAssembleClass {
      */
     public static String packageCurrentEnvironmentDetailsIntoJson() {
         final StringBuilder strJsonString = new StringBuilder();
-        final String strFeedback = LocalizationClass.getMessage("i18nAppInformationCapturing");
+        final String strFeedback = "Capturing information...";
         LogExposureClass.LOGGER.info(strFeedback);
         final String strHardware = "\"Hardware\":{"
                 + "\"CPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutCentralProcessorUnit())
@@ -63,7 +63,7 @@ public final class EnvironmentCapturingAssembleClass {
                 + ",\"Network Interface\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetworkInterfaces())
                 + ",\"RAM\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutRandomAccessMemory())
                 + "}";
-        final String strFeedbackH = LocalizationClass.getMessage("i18nAppInformationHardwareCaptured");
+        final String strFeedbackH = "I just captured Hardware information...";
         LogExposureClass.LOGGER.debug(strFeedbackH);
         final String strSoftware = "\"Software\":{"
                 + "\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
@@ -71,10 +71,10 @@ public final class EnvironmentCapturingAssembleClass {
                 + ",\"Network\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork())
                 + ",\"Storage\":" + JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions())
                 + "}";
-        final String strFeedbackS = LocalizationClass.getMessage("i18nAppInformationSoftwareCaptured");
+        final String strFeedbackS = "I just captured Software information...";
         LogExposureClass.LOGGER.debug(strFeedbackS);
         final String strEnvironment = "\"Environment\":" + JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
-        final String strFeedbackEnv = LocalizationClass.getMessage("i18nAppInformationEnvironmentCaptured");
+        final String strFeedbackEnv = "I just captured Environment information...";
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
         return strJsonString.append('{')
                 .append(strHardware)
