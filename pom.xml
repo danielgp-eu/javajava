@@ -60,7 +60,7 @@
         <oshi-core-ffm.version>7.0.1</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
-        <sqlite-jdbc.version>3.53.0.0</sqlite-jdbc.version>
+        <sqlite-jdbc.version>3.53.1.0</sqlite-jdbc.version>
         <undertow-core.version>2.4.0.RC4</undertow-core.version>
         <!-- Build Plugin versions -->
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>

@@ -289,7 +289,7 @@ public final class UndertowClass {
         /**
          * page parameters
          */
-        private static final Map<String, Object> params = new ConcurrentHashMap<>();
+        private static final Map<String, Object> TEMPLATE_PARAMS = new ConcurrentHashMap<>();
         /**
          * output handler
          */
@@ -339,7 +339,7 @@ public final class UndertowClass {
          * @param value for parameter
          */
         public static void packParameter(final String name, final Object value) {
-            params.put(name, value);
+            TEMPLATE_PARAMS.put(name, value);
         }
 
         /**
@@ -348,7 +348,7 @@ public final class UndertowClass {
          * @param fileName name of file for template
          */
         public static void renderTemplate(final TemplateEngine engine, final String fileName) {
-            engine.render(fileName, params, output);
+            engine.render(fileName, TEMPLATE_PARAMS, output);
             final HeaderMap header = exchange.getResponseHeaders();
             handleResponseHeader(header);
             final Sender response = exchange.getResponseSender();

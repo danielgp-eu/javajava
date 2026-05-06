@@ -64,7 +64,7 @@ public final class TimingClass {
             final Instant instant = Instant.ofEpochMilli(modifTime);
             // Convert to LocalDateTime in system default zone
             final LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+            final DateTimeFormatter fixedFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US);
             lastModifTime = dateTime.format(fixedFormatter);
         } catch (IOException ei) {
             final String strFeedback = String.format("Error encountered when attempting to get %s file(s) from %s folder", file.getParent(), file.getFileName());
@@ -126,8 +126,8 @@ public final class TimingClass {
     @NonNull
     public static String convertTimeFormat(@NonNull final String inDate, @NonNull final String inTimeFormat, @NonNull final String outTimeFormat) {
         // Define input and output formatters
-        final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat);
-        final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat);
+        final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat, Locale.US);
+        final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat, Locale.US);
         // Parse and format
         final LocalDate date = LocalDate.parse(inDate, inputFormatter);
         return date.format(outputFormatter);
@@ -142,7 +142,7 @@ public final class TimingClass {
     @NonNull
     public static String getCurrentTimestamp(@NonNull final String strDtTmPattern) {
         final LocalDateTime nowI = LocalDateTime.now();
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern, Locale.US);
         return formatter.format(nowI);
     }
 
@@ -156,7 +156,7 @@ public final class TimingClass {
     @NonNull
     public static String getCurrentTimestamp(@NonNull final String strDtTmPattern, @NonNull final String strZoneName) {
         final ZonedDateTime nowI = ZonedDateTime.now(ZoneId.of(strZoneName));
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern);
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern, Locale.US);
         return formatter.format(nowI);
     }
 
@@ -339,7 +339,7 @@ public final class TimingClass {
                 final ZoneId outZone = ZoneId.of(outputTimeZone);
                 outTime = inTimeStamp.withZoneSameInstant(outZone);
             }
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat);
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat, Locale.US);
             return outTime.format(formatter);
         }
 
@@ -350,7 +350,7 @@ public final class TimingClass {
          */
         private static ZonedDateTime convertStringIntoZonedDateTime(final String strTimeStamp, final String inputFormat) {
             final LocalDateTime localTime = LocalDateTime.parse(strTimeStamp, 
-                    DateTimeFormatter.ofPattern(inputFormat));
+                    DateTimeFormatter.ofPattern(inputFormat, Locale.US));
             return localTime.atZone(ZoneId.of(inputTimeZone));
         }
 
@@ -360,8 +360,8 @@ public final class TimingClass {
          * @return String formated date
          */
         public static String formatDateFriendly(final String strDate, final String inputFormat, final String outputFormat) {
-            final LocalDate outDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern(inputFormat));
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat);
+            final LocalDate outDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern(inputFormat, Locale.US));
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat, Locale.US);
             return outDate.format(formatter);
         }
 

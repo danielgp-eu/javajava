@@ -21,7 +21,7 @@ public final class RegularExpressionsClass {
     /**
      * Patterns Map
      */
-    public static final Map<String, Map<String, String>> mapPatterns = Map.of(
+    public static final Map<String, Map<String, String>> MAP_PATTERNS = Map.of(
             RegularExpressionsClass.STR_AGING_DATE, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
             RegularExpressionsClass.STR_AGING_TS, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
             RegularExpressionsClass.STR_AGING_TIME, Map.of(RegularExpressionsClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
@@ -80,7 +80,7 @@ public final class RegularExpressionsClass {
      * @return String in human readable format
      */
     public static String convertAgingDateIntoHumanReadableString(final String ageString) {
-        final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP));
+        final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
         final Matcher matcher = agePattern.matcher(ageString);
         final StringJoiner result = new StringJoiner(", ");
         if (matcher.matches()) {
@@ -99,7 +99,7 @@ public final class RegularExpressionsClass {
      * @return String in human readable format
      */
     public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
-        final Pattern agePattern = Pattern.compile(mapPatterns.get(STR_AGING_TIME).get(STR_REG_EXP));
+        final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
         final Matcher matcher = agePattern.matcher(ageString);
         final StringJoiner result = new StringJoiner(", ");
         if (matcher.matches()) {
@@ -220,12 +220,12 @@ public final class RegularExpressionsClass {
      * @return replaced text
      */
     public static String replacePatternsWithTimeZones(final String inString, final String inputTimeZone, final String outputTimeZone) {
-        final String strRegExp = "(?<MavenPackage>" + mapPatterns.get(STR_MAVEN_PKG).get(STR_REG_EXP) + ")"
-                + "|" + "(?<agingTimestamp>" + mapPatterns.get(STR_AGING_TS).get(STR_REG_EXP) + ")"
-                + "|" + "(?<agingDate>" + mapPatterns.get(STR_AGING_DATE).get(STR_REG_EXP) + ")"
-                + "|" + "(?<timestampWithMilliseconds>" + mapPatterns.get(BasicStructuresClass.STR_TS_MSEC).get(STR_REG_EXP) + ")"
-                + "|" + "(?<timestamp>" + mapPatterns.get(BasicStructuresClass.STR_TIMESTAMP).get(STR_REG_EXP) + ")"
-                + "|" + "(?<justDate>" + mapPatterns.get(BasicStructuresClass.STR_JUST_DATE).get(STR_REG_EXP) + ")";
+        final String strRegExp = "(?<MavenPackage>" + MAP_PATTERNS.get(STR_MAVEN_PKG).get(STR_REG_EXP) + ")"
+                + "|" + "(?<agingTimestamp>" + MAP_PATTERNS.get(STR_AGING_TS).get(STR_REG_EXP) + ")"
+                + "|" + "(?<agingDate>" + MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP) + ")"
+                + "|" + "(?<timestampWithMilliseconds>" + MAP_PATTERNS.get(BasicStructuresClass.STR_TS_MSEC).get(STR_REG_EXP) + ")"
+                + "|" + "(?<timestamp>" + MAP_PATTERNS.get(BasicStructuresClass.STR_TIMESTAMP).get(STR_REG_EXP) + ")"
+                + "|" + "(?<justDate>" + MAP_PATTERNS.get(BasicStructuresClass.STR_JUST_DATE).get(STR_REG_EXP) + ")";
         final Pattern pattern = Pattern.compile(strRegExp);
         final Matcher matcher = pattern.matcher(inString);
         return matcher.replaceAll(matchResult -> {
@@ -240,7 +240,7 @@ public final class RegularExpressionsClass {
                             return text;
                         } else {
                             final String[] urlParts = text.split(":");
-                            return String.format(mapPatterns.get(STR_MAVEN_PKG).get("URL"), urlParts[0].replace('.', '/'), urlParts[1], text);
+                            return String.format(MAP_PATTERNS.get(STR_MAVEN_PKG).get("URL"), urlParts[0].replace('.', '/'), urlParts[1], text);
                         }
                     }
                     case STR_AGING_TS -> {
@@ -254,12 +254,12 @@ public final class RegularExpressionsClass {
                         return outString.isEmpty() ? "TODAY" : outString;
                     }
                     case null, default -> {
-                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_INPUT));
+                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT), Locale.US);
                         // Convert based on the specific group rules
                         final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
                                 LocalDate.parse(text, inputFormat).atStartOfDay(ZoneId.of(inputTimeZone))
                                 : LocalDateTime.parse(text, inputFormat).atZone(ZoneId.of(inputTimeZone));
-                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(mapPatterns.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT), Locale.US);
+                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT), Locale.US);
                         final ZonedDateTime targetTime = sourceTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
                         return targetTime.format(outputFormat);
                     }
@@ -273,7 +273,7 @@ public final class RegularExpressionsClass {
     /**
      * Validation logic using Regular Expressions
      */
-    public final static class ValidationClass {
+    public static final class ValidationClass {
 
         /**
          * Check if String is actually Date
@@ -284,7 +284,7 @@ public final class RegularExpressionsClass {
         public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
             boolean bolReturn = false;
             if (inputString != null) {
-                final Pattern pattern = Pattern.compile(mapPatterns.get(mapIdentifier).get(STR_REG_EXP));
+                final Pattern pattern = Pattern.compile(MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP));
                 bolReturn = pattern.matcher(inputString).matches();
             }
             return bolReturn;

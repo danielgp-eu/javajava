@@ -34,7 +34,7 @@ public final class FileStatisticsClass {
     /**
      * file statistics
      */
-    private static final List<Properties> fileStatistics = new ArrayList<>();
+    private static final List<Properties> FILE_STATISTICS = new ArrayList<>();
 
     /**
      * A simple record to hold our results
@@ -133,7 +133,7 @@ public final class FileStatisticsClass {
                 if (Files.isDirectory(file)) {
                     gatherFileStatisticsFromFolder(file.toString());
                 } else if (Files.isRegularFile(file)) {
-                    fileStatistics.add(getSingleFileStatistic(file));
+                    FILE_STATISTICS.add(getSingleFileStatistic(file));
                 }
             }
         } catch (IOException ei) {
@@ -170,11 +170,11 @@ public final class FileStatisticsClass {
      * @param strFolderName input folder name
      */
     public static List<Properties> getFileStatisticsIntoMap(final String strFolderName) {
-        if (!fileStatistics.isEmpty()) {
-            fileStatistics.clear();
+        if (!FILE_STATISTICS.isEmpty()) {
+            FILE_STATISTICS.clear();
         }
         gatherFileStatisticsFromFolder(strFolderName);
-        return fileStatistics;
+        return FILE_STATISTICS;
     }
 
     /**
@@ -353,8 +353,6 @@ public final class FileStatisticsClass {
                 for (final Path entry : stream) {
                     if (Files.isDirectory(entry)) {
                         arraySubFolders.add(entry.toString());
-                        final String strFeedback = String.format("Folder %s was found", entry);
-                        LogExposureClass.LOGGER.info(strFeedback);
                     }
                 }
             } catch (IOException ex) {
@@ -415,7 +413,7 @@ public final class FileStatisticsClass {
                     final Properties propsPreety = RetrievingClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_PRTY_PRNT));
                     for(final Entry<Object, Object> ePreety : propsPreety.entrySet()) {
                         final boolean isItOk2 = "OK".equals(ePreety.getKey());
-                        getJsonFileName(isItOk2, ePreety, propsFile);
+                        strFileJson = getJsonFileName(isItOk2, ePreety, propsFile);
                     }
                 }
             }

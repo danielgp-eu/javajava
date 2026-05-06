@@ -155,7 +155,7 @@ class AnalyzePomFiles implements Runnable {
     /**
      * Private constructor to prevent instantiation
      */
-    public AnalyzePomFiles() {
+    protected AnalyzePomFiles() {
         super();
     }
 
@@ -385,7 +385,7 @@ class CaptureEnvironmentDetailsIntoJsonFile implements Runnable {
     /**
      * Private constructor to prevent instantiation
      */
-    public CaptureEnvironmentDetailsIntoJsonFile() {
+    protected CaptureEnvironmentDetailsIntoJsonFile() {
         super();
     }
 
@@ -654,13 +654,15 @@ class GetSubFoldersFromFolder implements Runnable {
 
     @Override
     public void run() {
-        FileStatisticsClass.RetrievingClass.getSubFoldersFromFolder(strFolderName);
+        final List<String> arraySubFolders = FileStatisticsClass.RetrievingClass.getSubFoldersFromFolder(strFolderName);
+        final String strFeedback = String.format("Considering folder %s following sub-folders were found: %s", strFolderName, arraySubFolders);
+        LogExposureClass.LOGGER.info(strFeedback);
     }
 
     /**
      * Private constructor to prevent instantiation
      */
-    public GetSubFoldersFromFolder() {
+    protected GetSubFoldersFromFolder() {
         super();
     }
 
@@ -813,14 +815,14 @@ class JsonSplit implements Runnable {
     /**
      * Setter for fileSize
      */
-    public static void setFileSize(final String strFileName) {
+    private static void setFileSize(final String strFileName) {
         fileSize = FileStatisticsClass.RetrievingClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
     }
 
     /**
      * Setter for fileSize
      */
-    public static void setFileSizeDifferenceCompareToThreshold() {
+    private static void setFileSizeDifferenceCompareToThreshold() {
         final float sizePercentage = BasicStructuresClass.computePercentageSafely(fileSize, sizeThreshold);
         sizeDifference = (float) new BigDecimal(Double.toString(100 - sizePercentage))
                 .setScale(2, RoundingMode.HALF_UP)
@@ -830,7 +832,7 @@ class JsonSplit implements Runnable {
     /**
      * Setter for sizeThreshold
      */
-    public static void setSplitSizeThreshold() {
+    private static void setSplitSizeThreshold() {
         sizeThreshold = SIZE_THRESHOLD;
         if (splitSize != 0) {
             sizeThreshold = splitSize;

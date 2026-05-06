@@ -55,6 +55,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_ENV = "Environment";
     /**
+     * String for internal Environment Details
+     */
+    public static final String STR_ENV_DTLS = "EnvironmentDetails";
+    /**
      * Firmware string
      */
     public static final String STR_FIRMWARE = "Firmware";
@@ -445,6 +449,24 @@ public final class BasicStructuresClass {
                 }
             }
             return strBuilder.toString();
+        }
+
+        /**
+         * Cleaning string to be used as database object
+         * @param strObject input String
+         * @return String cleaned
+         */
+        public static String cleanStringAsDatabaseObject(final String strObject) {
+            return strObject.replaceAll("[^A-Za-z0-9_\\/\\.\\|\\(\\)]", "");
+        }
+
+        /**
+         * Cleaning string from unwanted characters
+         * @param strObject input String
+         * @return String cleaned
+         */
+        public static String cleanStringFromUnwantedCharacters(final String strObject) {
+            return strObject.replaceAll("[^A-Za-z0-9 _\\-–\\/\\.\\(\\)\\:\\'\\`]", "");
         }
 
         /**

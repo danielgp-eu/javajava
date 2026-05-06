@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Properties;
 
 import static java.lang.Math.*;
@@ -35,7 +36,7 @@ public final class SunClass {
     /**
      * Properties for output 
      */
-    private static final Properties outProperties = new Properties();
+    private static final Properties OUT_PROPERTIES = new Properties();
 
     /**
      * Calculates Sunrise and Sunset for a given location
@@ -45,21 +46,21 @@ public final class SunClass {
     public static Properties getSunRiseAndSet(final String crtLocationDetail) {
         final String[] arrayLocPieces = crtLocationDetail.split(",");
         final ZonedDateTime nowZ = ZonedDateTime.now(internalZoneId);
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS z");
-        outProperties.put("Location", arrayLocPieces[0]);
-        outProperties.put("Country Name", arrayLocPieces[3]);
-        outProperties.put("Division Name", arrayLocPieces[2]);
-        outProperties.put("Place Name", arrayLocPieces[1]);
-        outProperties.put("Local Timestamp", nowZ.format(formatter));
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS z", Locale.US);
+        OUT_PROPERTIES.put("Location", arrayLocPieces[0]);
+        OUT_PROPERTIES.put("Country Name", arrayLocPieces[3]);
+        OUT_PROPERTIES.put("Division Name", arrayLocPieces[2]);
+        OUT_PROPERTIES.put("Place Name", arrayLocPieces[1]);
+        OUT_PROPERTIES.put("Local Timestamp", nowZ.format(formatter));
         final ZonedDateTime sunrise = calculateSunSetOrRise(nowZ, true);
-        final DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSS z");
-        outProperties.put("Sunrise", sunrise.format(formatterTime));
+        final DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSS z", Locale.US);
+        OUT_PROPERTIES.put("Sunrise", sunrise.format(formatterTime));
         final ZonedDateTime sunset = calculateSunSetOrRise(nowZ, false);
-        outProperties.put("Sunset", sunset.format(formatterTime));
+        OUT_PROPERTIES.put("Sunset", sunset.format(formatterTime));
         final Duration objDurationSun = Duration.between(sunrise, sunset);
-        outProperties.put("Daylight time", TimingClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
+        OUT_PROPERTIES.put("Daylight time", TimingClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
         enhanceSunStatistics(nowZ, sunrise, sunset);
-        return outProperties;
+        return OUT_PROPERTIES;
     }
 
     /**
@@ -145,14 +146,14 @@ public final class SunClass {
             objDurationPrior = Duration.between(sunset, nowZ);
             objDurationNext = Duration.between(nowZ, sunriseNext);
         }
-        outProperties.put("Sun situation", strSunSituation);
-        outProperties.put("Current Situation", strCrtSituation);
-        outProperties.put("Prior event", String.format(strPriorEvent, TimingClass.convertNanosecondsIntoSomething(objDurationPrior, BasicStructuresClass.STR_TM_HUMAN)));
-        outProperties.put("Next event", String.format(strNextEvent, TimingClass.convertNanosecondsIntoSomething(objDurationNext, BasicStructuresClass.STR_TM_HUMAN)));
+        OUT_PROPERTIES.put("Sun situation", strSunSituation);
+        OUT_PROPERTIES.put("Current Situation", strCrtSituation);
+        OUT_PROPERTIES.put("Prior event", String.format(strPriorEvent, TimingClass.convertNanosecondsIntoSomething(objDurationPrior, BasicStructuresClass.STR_TM_HUMAN)));
+        OUT_PROPERTIES.put("Next event", String.format(strNextEvent, TimingClass.convertNanosecondsIntoSomething(objDurationNext, BasicStructuresClass.STR_TM_HUMAN)));
         final Duration objDurationPriorN = Duration.between(sunsetPrior, sunrise);
-        outProperties.put("Prior night", TimingClass.convertNanosecondsIntoSomething(objDurationPriorN, BasicStructuresClass.STR_TM_HUMAN));
+        OUT_PROPERTIES.put("Prior night", TimingClass.convertNanosecondsIntoSomething(objDurationPriorN, BasicStructuresClass.STR_TM_HUMAN));
         final Duration objDurationNextN = Duration.between(sunset, sunriseNext);
-        outProperties.put("Next night", TimingClass.convertNanosecondsIntoSomething(objDurationNextN, BasicStructuresClass.STR_TM_HUMAN));
+        OUT_PROPERTIES.put("Next night", TimingClass.convertNanosecondsIntoSomething(objDurationNextN, BasicStructuresClass.STR_TM_HUMAN));
     }
 
     /**
@@ -161,7 +162,7 @@ public final class SunClass {
      */
     public static void setLatitude(final double inLatitude) {
         dblLatitude = inLatitude;
-        outProperties.put("Latitude", dblLatitude);
+        OUT_PROPERTIES.put("Latitude", dblLatitude);
     }
 
     /**
@@ -170,7 +171,7 @@ public final class SunClass {
      */
     public static void setLongitude(final double inLongitude) {
         dblLongitude = inLongitude;
-        outProperties.put("Longitude", dblLongitude);
+        OUT_PROPERTIES.put("Longitude", dblLongitude);
     }
 
     /**
@@ -179,7 +180,7 @@ public final class SunClass {
      */
     public static void setZoneId(final String inZoneName) {
         try {
-            outProperties.put("Zone Name", inZoneName);
+            OUT_PROPERTIES.put("Zone Name", inZoneName);
             // Pre-cache available IDs for high-performance lookup
             final ZoneId zoneId = ZoneId.of(inZoneName);
             final String strFeedback = String.format("Given zone name %s has the corresponding ZoneId %s", inZoneName, zoneId);

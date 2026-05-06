@@ -15,20 +15,25 @@ public final class JavaJavaWebClass {
     /**
      * Menu
      */
-    private static final SequencedMap<String, Map<String, String>> mapMenu = Stream.of(
-            Map.entry("home", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
+    private static final SequencedMap<String, Map<String, String>> MAP_MENU = Stream.of(
+            Map.entry("home", Map.of(
+                    BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
                     BasicStructuresClass.STR_MENU, "Home",
                     BasicStructuresClass.STR_TITLE, "Home Page")),
-            Map.entry("SoftwareReleases", Map.of(BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
+            Map.entry("SoftwareReleases", Map.of(
+                    BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
                     BasicStructuresClass.STR_MENU, "Software Releases",
                     BasicStructuresClass.STR_TITLE, "Software Releases")),
-            Map.entry(BasicStructuresClass.STR_TS, Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
+            Map.entry(BasicStructuresClass.STR_TS, Map.of(
+                    BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
                     BasicStructuresClass.STR_MENU, "SQLite Table Statistics",
                     BasicStructuresClass.STR_TITLE, "SQLite Table Statistics")),
-            Map.entry("FilesHashing", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
+            Map.entry("FilesHashing", Map.of(
+                    BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
                     BasicStructuresClass.STR_MENU, "Hashing",
                     BasicStructuresClass.STR_TITLE, "Downloads File Hashing")),
-            Map.entry("EnvironmentDetails", Map.of(BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
+            Map.entry(BasicStructuresClass.STR_ENV_DTLS, Map.of(
+                    BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
                     BasicStructuresClass.STR_MENU, "Environment",
                     BasicStructuresClass.STR_TITLE, "Environment Details"))
     ).collect(
@@ -36,8 +41,8 @@ public final class JavaJavaWebClass {
                     Map.Entry::getKey, 
                     Map.Entry::getValue, 
                     (v1, _) -> v1, 
-                    LinkedHashMap::new  // Ensures it returns a SequencedMap
-            ));
+                    LinkedHashMap::new)  // Ensures it returns a SequencedMap
+    );
 
     /**
      * Outputs file statistics into an HTML table
@@ -76,11 +81,11 @@ public final class JavaJavaWebClass {
     public static gg.jte.Content handleBodyContent() {
         final String page = UndertowClass.ParametersClass.getPageParameter();
         return output -> output.writeContent(switch(page) {
-            case "EnvironmentDetails"        -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
-            case "FilesHashing"              -> getFileHashingAsHtmlTable();
-            case "SoftwareReleases"          -> getSoftwareReleasesIntoHtml();
-            case BasicStructuresClass.STR_TS -> HtmlClass.getTableStatisticsAsHtmlTable();
-            default                          -> String.format("Welcome %s", System.getProperty("user.name"));
+            case BasicStructuresClass.STR_ENV_DTLS  -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
+            case "FilesHashing"                     -> getFileHashingAsHtmlTable();
+            case "SoftwareReleases"                 -> getSoftwareReleasesIntoHtml();
+            case BasicStructuresClass.STR_TS        -> HtmlClass.getTableStatisticsAsHtmlTable();
+            default                                 -> String.format("Welcome %s", System.getProperty("user.name"));
         });
     }
 
@@ -119,8 +124,8 @@ public final class JavaJavaWebClass {
     private static void packAllParameters() {
         final String page = UndertowClass.ParametersClass.getPageParameter();
         UndertowClass.TemplateRenderingClass.packParameter("page", page);
-        UndertowClass.TemplateRenderingClass.packParameter("title", BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : mapMenu.get(page).get(BasicStructuresClass.STR_TITLE));
-        UndertowClass.TemplateRenderingClass.packParameter("menu", HtmlClass.CommonWebElements.buildMenu(mapMenu));
+        UndertowClass.TemplateRenderingClass.packParameter("title", BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : MAP_MENU.get(page).get(BasicStructuresClass.STR_TITLE));
+        UndertowClass.TemplateRenderingClass.packParameter("menu", HtmlClass.CommonWebElements.buildMenu(MAP_MENU));
         UndertowClass.TemplateRenderingClass.packParameter("content", handleBodyContent());
         UndertowClass.TemplateRenderingClass.packCommonParameters();
     }
