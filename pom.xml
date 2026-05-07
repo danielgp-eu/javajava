@@ -57,7 +57,7 @@
         <log4j-slf4j2-impl.version>2.25.4</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.15</maven-model.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
-        <oshi-core-ffm.version>7.0.1</oshi-core-ffm.version>
+        <oshi-core-ffm.version>7.1.0</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.1.0</sqlite-jdbc.version>
