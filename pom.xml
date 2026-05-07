@@ -54,7 +54,7 @@
         <jspecify.version>1.0.0</jspecify.version>
         <junit-jupiter.version>6.0.3</junit-jupiter.version>
         <jte.version>3.2.4</jte.version>
-        <log4j-slf4j2-impl.version>2.25.4</log4j-slf4j2-impl.version>
+        <log4j-slf4j2-impl.version>2.26.0</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.15</maven-model.version>
         <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
         <oshi-core-ffm.version>7.0.1</oshi-core-ffm.version>
