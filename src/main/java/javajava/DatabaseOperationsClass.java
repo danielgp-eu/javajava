@@ -234,7 +234,7 @@ public final class DatabaseOperationsClass {
                 final String strFeedbackOk = String.format("A %s SQL connection was successfully closed!", strDatabaseType);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format("SQL connection closing failed: %s", strDatabaseType, e.getLocalizedMessage());
+                final String strFeedbackErr = String.format("SQL connection of type %s closing failed: %s", strDatabaseType, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
         }
@@ -253,7 +253,7 @@ public final class DatabaseOperationsClass {
                 final String strFeedbackOk = String.format("A %s SQL statement was successfully closed!", strDatabaseType);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (SQLException e) {
-                final String strFeedbackErr = String.format("SQL statement closing failed: %s", strDatabaseType, e.getLocalizedMessage());
+                final String strFeedbackErr = String.format("SQL statement of type %s closing failed: %s", strDatabaseType, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.debug(strFeedbackErr);
             }
         }
@@ -1057,7 +1057,7 @@ public final class DatabaseOperationsClass {
                 final String strFeedbackOk = String.format("%s driver %s has been successfully loaded", STR_SNOWFLAKE, strDriverName + " v. " + jdbcVersion);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (ClassNotFoundException ex) {
-                final String strFeedbackErr = String.format("%s driver %s not found...", STR_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
+                final String strFeedbackErr = String.format("%s driver %s not found... %s", STR_SNOWFLAKE, strDriverName, Arrays.toString(ex.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
         }

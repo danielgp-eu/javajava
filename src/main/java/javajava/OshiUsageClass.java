@@ -169,7 +169,8 @@ public final class OshiUsageClass {
         public static List<NetworkIF> getOshiNetworkInterfaces() {
             return getOshiNetworkInterfacesRaw().stream()
                     .filter(net -> net.getIfOperStatus() == NetworkIF.IfOperStatus.UP)
-                    .filter(net -> net.getIPv4addr().length != 0 || net.getIPv6addr().length != 0)
+                    .filter(net -> net.getIPv4addr().length != 0
+                                || net.getIPv6addr().length != 0)
                     .toList();
         }
 

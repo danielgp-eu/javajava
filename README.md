@@ -57,6 +57,7 @@ Various Java classes to be re-used
 * [How to Run a Shell Command in Java](https://www.baeldung.com/run-shell-command-in-java)
 * [Java 8 Streams Filter With Multiple Conditions Examples](https://www.javacodegeeks.com/2021/07/java-8-streams-filter-with-multiple-conditions-examples.html)
 * [Java and Event‑Driven Architectures: Kafka, Pulsar, and the Modern Streaming Landscape](https://www.javacodegeeks.com/2026/01/java-and-event-driven-architectures-kafka-pulsar-and-the-modern-streaming-landscape.html)
+* [Java Collections Series](https://www.baeldung.com/java-collections)
 * [Java Configuring Multiple Appenders](https://howtodoinjava.com/log4j2/log4j2-xml-configuration-example/#5-the-log4j2xml-file-location)
 * [Java Best Practices](https://blog.jetbrains.com/idea/2024/02/java-best-practices/)
 * [Java Best Practices from GiHub in28minutes repository](https://github.com/in28minutes/java-best-practices)
