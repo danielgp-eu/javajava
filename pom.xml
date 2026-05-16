@@ -24,19 +24,20 @@
 
     <developers>
         <developer>
+            <id>danielgp</id>
             <name>Daniel-Gheorghe Popiniuc</name>
             <email>danielpopiniuc@gmail.com</email>
             <roles>
                 <role>Developer</role>
             </roles>
             <timezone>+2</timezone>
-            <organization>DanielGP-EU</organization>
+            <organization>danielgp-eu</organization>
             <organizationUrl>https://github.com/danielgp-eu</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/danielgp-eu/javajava.git</connection>
+        <connection>scm:git:https://github.com/danielgp-eu/javajava.git</connection>
         <developerConnection>scm:git:ssh://github.com/danielgp-eu/javajava.git</developerConnection>
         <url>https://github.com/danielgp-eu/javajava</url>
     </scm>
@@ -447,6 +448,20 @@
                     <systemPropertyVariables>
                         <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
                     </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!-- Source: https://maven.apache.org/surefire/maven-surefire-plugin/ -->
+            <!-- Binaries: https://repo1.maven.org/maven2/org/sonatype/central/central-publishing-maven-plugin -->
+            <!-- Description: This project is a maven plugin for publishing components in Maven Central, for more details on its usage see https://central.sonatype.org/publish/publish-portal-maven. -->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.10.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>published</waitUntil>
                 </configuration>
             </plugin>
         </plugins>

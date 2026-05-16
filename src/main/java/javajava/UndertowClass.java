@@ -73,7 +73,9 @@ public final class UndertowClass {
         SessionClass.initializeSession(inExchange);
         SessionClass.handleTimeZoneSession();
         ParametersClass.redirectPageIfNeeded(inExchange);
-        HtmlClass.Table.setTimeZone(UndertowClass.SessionClass.getSession().getAttribute("TZ").toString());
+        final Object tzAttribute = UndertowClass.SessionClass.getSession().getAttribute("TZ");
+        final String timeZone = tzAttribute != null ? tzAttribute.toString() : "UTC";
+        HtmlClass.Table.setTimeZone(timeZone);
     }
 
     /**
@@ -174,7 +176,7 @@ public final class UndertowClass {
 
         /**
          * Redirecting page
-         * @param exchange
+         * @param exchange HttpServerExchange used to set redirect status, location header, and end the exchange
          */
         public static void redirectPageIfNeeded(final HttpServerExchange exchange) {
             if (queryParams.get("redirectAction") != null) {
