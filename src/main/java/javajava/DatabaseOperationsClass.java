@@ -907,7 +907,7 @@ public final class DatabaseOperationsClass {
                  ResultSet rsCols = executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
                 listReturn = DatabaseOperationsClass.ResultSettingClass.getResultSetColumnValues(rsCols);
             } catch(SQLException e){
-                final String strFeedback = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, Arrays.toString(e.getStackTrace()), StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                final String strFeedback = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return listReturn;
