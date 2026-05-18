@@ -176,7 +176,8 @@ public final class UndertowClass {
 
         /**
          * Redirecting page
-         * @param exchange HttpServerExchange used to set redirect status, location header, and end the exchange
+         * @param exchange HttpServerExchange used to set redirect status,
+         *  location header and end the exchange
          */
         public static void redirectPageIfNeeded(final HttpServerExchange exchange) {
             if (queryParams.get("redirectAction") != null) {

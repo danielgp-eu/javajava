@@ -235,8 +235,7 @@ public final class RegularExpressionsClass {
                 final String text = matchResult.group(matchedGroup);
                 switch (matchedGroup) {
                     case STR_MAVEN_PKG -> {
-                        if (text.contains("compliance-snowflake")
-                                || text.contains("danielgp-eu")) {
+                        if (text.contains("compliance-snowflake")) {
                             return text;
                         } else {
                             final String[] urlParts = text.split(":");

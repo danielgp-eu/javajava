@@ -18,8 +18,8 @@ public final class JavaJavaWebClass {
     private static final SequencedMap<String, Map<String, String>> MAP_MENU = Stream.of(
             Map.entry("home", Map.of(
                     BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
-                    BasicStructuresClass.STR_MENU, "Home",
-                    BasicStructuresClass.STR_TITLE, "Home Page")),
+                    BasicStructuresClass.STR_MENU, "JavaJava",
+                    BasicStructuresClass.STR_TITLE, "JavaJava")),
             Map.entry("SoftwareReleases", Map.of(
                     BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
                     BasicStructuresClass.STR_MENU, "Software Releases",
@@ -30,11 +30,11 @@ public final class JavaJavaWebClass {
                     BasicStructuresClass.STR_TITLE, "SQLite Table Statistics")),
             Map.entry("FilesHashing", Map.of(
                     BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
-                    BasicStructuresClass.STR_MENU, "Hashing",
+                    BasicStructuresClass.STR_MENU, "Downloads File Hashing",
                     BasicStructuresClass.STR_TITLE, "Downloads File Hashing")),
             Map.entry(BasicStructuresClass.STR_ENV_DTLS, Map.of(
                     BasicStructuresClass.STR_ICON, "fa-solid fa-computer",
-                    BasicStructuresClass.STR_MENU, "Environment",
+                    BasicStructuresClass.STR_MENU, "Environment Details",
                     BasicStructuresClass.STR_TITLE, "Environment Details"))
     ).collect(
             Collectors.toMap(
