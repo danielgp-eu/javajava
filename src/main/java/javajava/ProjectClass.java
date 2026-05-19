@@ -206,21 +206,26 @@ public final class ProjectClass {
      * set the POM to work with
      */
     private static void setPomFile() {
-        final StringBuilder sbPom = new StringBuilder(100);
-        final String strPrjFolder = getCurrentFolder();
-        sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
-        if (externalPomFile == null) {
-            if (isRunningFromJar()) {
-                sbPom.append(INTERNAL_POM);
-            }
-        } else {
+        if (externalPomFile != null) {
             final String strFeedback = String.format("External POM file %s is being considered!", externalPomFile);
             LogExposureClass.LOGGER.info(strFeedback);
-            if (isRunningFromJar()) {
-                sbPom.append(externalPomFile);
+        }
+        if (isRunningFromJar()) {
+            if (externalPomFile == null) {
+                pomFile = INTERNAL_POM;
+            } else {
+                pomFile = externalPomFile;
+            }
+        } else {
+            if (externalPomFile == null) {
+                final StringBuilder sbPom = new StringBuilder(100);
+                final String strPrjFolder = getCurrentFolder();
+                sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
+                pomFile = sbPom.toString();
+            } else {
+                pomFile = externalPomFile;
             }
         }
-        pomFile = sbPom.toString();
     }
 
     /**
@@ -364,7 +369,8 @@ public final class ProjectClass {
             if (prjModel.getDependencyManagement() != null) {
                 loadProjectModelCentralDependencies();
             }
-            if (prjModel.getBuild().getPluginManagement() != null) {
+            if (prjModel.getBuild() != null
+                    && prjModel.getBuild().getPluginManagement() != null) {
                 loadProjectModelPluginManagement();
             }
         }
