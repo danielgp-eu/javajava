@@ -556,8 +556,7 @@ public final class DatabaseOperationsClass {
                 final String strFeedback = "ResultSet is null";
                 LogExposureClass.LOGGER.error(strFeedback);
             }
-            final List<Properties> listResultSet = resultSet == null ? new ArrayList<>() : getResultSetColumnValues(resultSet);
-            return listResultSet;
+            return resultSet == null ? new ArrayList<>() : getResultSetColumnValues(resultSet);
 
         }
 
