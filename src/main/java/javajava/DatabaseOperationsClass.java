@@ -557,7 +557,6 @@ public final class DatabaseOperationsClass {
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return resultSet == null ? new ArrayList<>() : getResultSetColumnValues(resultSet);
-
         }
 
         /**
