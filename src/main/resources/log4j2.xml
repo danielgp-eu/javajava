@@ -46,7 +46,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root additivity="false" level="DEBUG">
+        <Root additivity="false" level="INFO">
             <AppenderRef ref="restLog" />
             <AppenderRef ref="errorLog" />
         </Root>

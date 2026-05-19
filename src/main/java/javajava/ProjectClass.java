@@ -90,9 +90,40 @@ public final class ProjectClass {
     public static Model getProjectModel() {
         if (prjModel == null) {
             loadProjectModel();
-            Loaders.loadComponents();
         }
         return prjModel;
+    }
+
+    /**
+     * get Project Model
+     * @param reader
+     * @param pomReference
+     * @return
+     */
+    private static Model getProjectModelFromSystem(final MavenXpp3Reader reader, final String pomReference) {
+        Model model = null;
+        try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomReference), StandardCharsets.UTF_8)) {
+            model = reader.read(bReader);
+        } catch (IOException | XmlPullParserException ex) {
+            LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+        }
+        return model;
+    }
+
+    /**
+     * get Project Model
+     * @param reader
+     * @param pomReference
+     * @return
+     */
+    private static Model getProjectModelFromInsideJar(final MavenXpp3Reader reader, final String pomReference) {
+        Model model = null;
+        try (InputStream inputStream = ProjectClass.class.getResourceAsStream(pomReference)) {
+            model = reader.read(inputStream);
+        } catch (IOException | XmlPullParserException ex) {
+            LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+        }
+        return model;
     }
 
     /**
@@ -154,23 +185,12 @@ public final class ProjectClass {
      */
     public static void loadProjectModel() {
         setPomFile();
-        // 1. Read the raw model
         final MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = null;
-        if (INTERNAL_POM.equals(pomFile)) {
-            try (InputStream inputStream = ProjectClass.class.getResourceAsStream(INTERNAL_POM)) {
-                model = reader.read(inputStream);
-            } catch (IOException | XmlPullParserException ex) {
-                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
-            }
+        if (Files.exists(Path.of(pomFile))) {
+            prjModel = getProjectModelFromSystem(reader, pomFile);
         } else {
-            try(BufferedReader bReader = Files.newBufferedReader(Path.of(pomFile), StandardCharsets.UTF_8)) {
-                model = reader.read(bReader);
-            } catch (IOException | XmlPullParserException ex) {
-                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
-            }
+            prjModel = getProjectModelFromInsideJar(reader, pomFile);
         }
-        prjModel = model;
         Loaders.loadComponents();
     }
 
@@ -187,17 +207,18 @@ public final class ProjectClass {
      */
     private static void setPomFile() {
         final StringBuilder sbPom = new StringBuilder(100);
+        final String strPrjFolder = getCurrentFolder();
+        sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
         if (externalPomFile == null) {
             if (isRunningFromJar()) {
                 sbPom.append(INTERNAL_POM);
-            } else {
-                final String strPrjFolder = getCurrentFolder();
-                sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
             }
         } else {
-            sbPom.append(externalPomFile);
             final String strFeedback = String.format("External POM file %s is being considered!", externalPomFile);
             LogExposureClass.LOGGER.info(strFeedback);
+            if (isRunningFromJar()) {
+                sbPom.append(externalPomFile);
+            }
         }
         pomFile = sbPom.toString();
     }
