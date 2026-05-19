@@ -18,7 +18,7 @@ class TimingClassTests {
     /**
      * String format for assertion when actual/original is not equal to expected
      */
-    private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
+    private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
 
     @Test
     void testGetIsoYearWeek() {
