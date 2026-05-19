@@ -23,7 +23,7 @@ import oshi.software.os.OperatingSystem;
 import oshi.util.FormatUtil;
 
 /**
- * initiating OSHI package
+ * Initiating OSHI package.
  */
 public final class OshiUsageClass {
     /**
@@ -95,7 +95,7 @@ public final class OshiUsageClass {
     }
 
     /**
-     * initiating Hardware package
+     * Initiating Hardware package.
      */
     public static final class OshiHardware {
 
@@ -208,7 +208,7 @@ public final class OshiUsageClass {
     }
 
     /**
-     * initiating Software package
+     * Initiating Software package.
      */
     public static final class OshiSoftware {
 

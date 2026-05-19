@@ -308,7 +308,7 @@ public final class ProjectClass {
             final StringBuilder strJsonModule = new StringBuilder(100);
             prjModel.getModules().forEach(module -> {
                 final String crtModulePom = pathPomFile.getParent()
-                        + File.separator + module+ File.separator + "pom.xml";
+                        + File.separator + module + File.separator + "pom.xml";
                 if (!strJsonModule.isEmpty()) {
                     strJsonModule.append(',');
                 }
@@ -375,9 +375,9 @@ public final class ProjectClass {
         private static void loadProjectModelCentralDependencies() {
             final Map<String, Object> centralDeps = new ConcurrentHashMap<>();
             for (final Dependency dependency : prjModel.getDependencyManagement().getDependencies()) {
-                final String strKkey = dependency.getGroupId() + ":" + dependency.getArtifactId();
+                final String strKey = dependency.getGroupId() + ":" + dependency.getArtifactId();
                 final String strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
-                centralDeps.put(strKkey, strVersion);
+                centralDeps.put(strKey, strVersion);
             }
             managedVersions = centralDeps;
         }
@@ -388,9 +388,9 @@ public final class ProjectClass {
         private static void loadProjectModelPluginManagement() {
             final Map<String, Object> centralPlugM = new ConcurrentHashMap<>();
             for (final Plugin plugin : prjModel.getBuild().getPluginManagement().getPlugins()) {
-                final String strKkey = plugin.getGroupId() + ":" + plugin.getArtifactId();
+                final String strKey = plugin.getGroupId() + ":" + plugin.getArtifactId();
                 final String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
-                centralPlugM.put(strKkey, strVersion);
+                centralPlugM.put(strKey, strVersion);
             }
             pluginCentralVers = centralPlugM;
         }
@@ -459,7 +459,11 @@ public final class ProjectClass {
             prjModel.getBuild().getPlugins().forEach(plugin -> {
                 final String strKey = plugin.getGroupId() + ":" + plugin.getArtifactId();
                 String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
-                if (strVersion.isEmpty() && !managedVersions.isEmpty()) {
+                if (strVersion.isEmpty()
+                        && managedVersions != null
+                        && !managedVersions.isEmpty()
+                        && pluginCentralVers != null
+                        && !pluginCentralVers.isEmpty()) {
                     strVersion = pluginCentralVers.getOrDefault(strKey, UNKNOWN).toString();
                 }
                 mapToReturn.put(strKey, strVersion);
@@ -476,7 +480,9 @@ public final class ProjectClass {
             prjModel.getDependencies().forEach(dependency -> {
                 final String strKey = dependency.getGroupId() + ":" + dependency.getArtifactId();
                 String strVersion = getProjectModelValueWithInterpolationIfNeeded(dependency.getVersion());
-                if (strVersion.isEmpty() && !managedVersions.isEmpty()) {
+                if (strVersion.isEmpty()
+                        && managedVersions != null
+                        && !managedVersions.isEmpty()) {
                     strVersion = managedVersions.getOrDefault(strKey, UNKNOWN).toString();
                 }
                 mapToReturn.put(strKey, strVersion);
@@ -495,7 +501,11 @@ public final class ProjectClass {
                     profile.getBuild().getPlugins().forEach(plugin -> {
                         final String strKey = plugin.getGroupId() + ":" + plugin.getArtifactId();
                         String strVersion = getProjectModelValueWithInterpolationIfNeeded(plugin.getVersion());
-                        if (strVersion.isEmpty() && !managedVersions.isEmpty()) {
+                        if (strVersion.isEmpty()
+                                && managedVersions != null
+                                && !managedVersions.isEmpty()
+                                && pluginCentralVers != null
+                                && !pluginCentralVers.isEmpty()) {
                             strVersion = pluginCentralVers.getOrDefault(strKey, UNKNOWN).toString();
                         }
                         mapToReturn.put(strKey, strVersion);

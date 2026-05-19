@@ -271,7 +271,7 @@ public final class DatabaseOperationsClass {
             Statement objStatement = null;
             try {
                 objStatement = connection.createStatement();
-                final String strFeedbackOk = String.format("A %s SQL statement was successfully instantiated\\!", strDatabaseType);
+                final String strFeedbackOk = String.format("A %s SQL statement was successfully instantiated!", strDatabaseType);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format("SQL statement creation failed: %s", e.getLocalizedMessage());
@@ -552,13 +552,11 @@ public final class DatabaseOperationsClass {
          * @return List of Properties
          */
         public static List<Properties> getResultSetColumnValuesWithNullCheck(final ResultSet resultSet) {
-            List<Properties> listResultSet = new ArrayList<>();
             if (resultSet == null) {
                 final String strFeedback = "ResultSet is null";
                 LogExposureClass.LOGGER.error(strFeedback);
-            } else {
-                listResultSet = getResultSetColumnValues(resultSet);
             }
+            final List<Properties> listResultSet = resultSet == null ? new ArrayList<>() : getResultSetColumnValues(resultSet);
             return listResultSet;
 
         }
@@ -610,7 +608,17 @@ public final class DatabaseOperationsClass {
             int intResultSetRows = -1;
             try {
                 if (intRows == 0) {
-                    intResultSetRows = resultSet.getFetchSize() + 1;
+                    final int currentRow = resultSet.getRow();
+                    if (resultSet.last()) {
+                        intResultSetRows = resultSet.getRow();
+                    } else {
+                        intResultSetRows = 0;
+                    }
+                    if (currentRow > 0) {
+                        resultSet.absolute(currentRow);
+                    } else {
+                        resultSet.beforeFirst();
+                    }
                 } else {
                     intResultSetRows = intRows;
                 }
@@ -629,7 +637,7 @@ public final class DatabaseOperationsClass {
          * @return List of Properties
          */
         public static List<Properties> getResultSetStandardized(final Statement objStatement, final Properties rsProperties, final Properties queryProperties) {
-            List<Properties> listReturn = null;
+            List<Properties> listReturn = new ArrayList<>();
             final String strPurpose = rsProperties.get("Purpose").toString();
             final String strQueryToUse = rsProperties.get("QueryToUse").toString();
             final String strFetchType = rsProperties.get("FetchType").toString();
@@ -907,7 +915,7 @@ public final class DatabaseOperationsClass {
                  ResultSet rsCols = executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
                 listReturn = DatabaseOperationsClass.ResultSettingClass.getResultSetColumnValues(rsCols);
             } catch(SQLException e){
-                final String strFeedback = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                final String strFeedback = String.format("%s connection has failed at %s: %s", BasicStructuresClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)), e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return listReturn;
