@@ -433,10 +433,6 @@ public final class DatabaseOperationsClass {
          */
         public static final String STR_I18N_STM_UNB = "Unable to get the number of %s in the ResultSet... %s";
         /**
-         * Rows counter
-         */
-        private static int intRows;
-        /**
          * rows for result set
          */
         private static int intResultSetRows;
@@ -487,7 +483,6 @@ public final class DatabaseOperationsClass {
          * @param objProperties properties (with features to apply)
          */
         public static void digestCustomQueryProperties(final String strPurpose, final ResultSet resultSet, final Properties objProperties) {
-            intResultSetRows = getResultSetNumberOfRows(resultSet);
             intColumnsIs = getResultSetNumberOfColumns(resultSet);
             for (final Object obj : objProperties.keySet()) {
                 final String key = (String) obj;
@@ -535,9 +530,9 @@ public final class DatabaseOperationsClass {
                     listResultSet.add(RowProcessingClass.getCurrentRowIntoProperties(resultSet, columnCount, resultSetMetaData));
                     intRow++;
                 }
+                intResultSetRows = intRow;
                 final String strFeedback = String.format("I have found %d records", intRow);
                 LogExposureClass.LOGGER.debug(strFeedback);
-                intRows = intRow;
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format(STR_I18N_STM_UNB, "structures", e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedbackErr);
@@ -594,37 +589,6 @@ public final class DatabaseOperationsClass {
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return intColumns;
-        }
-
-        /**
-         * get # of Columns from ResultSet
-         *
-         * @param resultSet result-set
-         * @return number of rows
-         */
-        private static int getResultSetNumberOfRows(final ResultSet resultSet) {
-            int intResultSetRows = -1;
-            try {
-                if (intRows == 0) {
-                    final int currentRow = resultSet.getRow();
-                    if (resultSet.last()) {
-                        intResultSetRows = resultSet.getRow();
-                    } else {
-                        intResultSetRows = 0;
-                    }
-                    if (currentRow > 0) {
-                        resultSet.absolute(currentRow);
-                    } else {
-                        resultSet.beforeFirst();
-                    }
-                } else {
-                    intResultSetRows = intRows;
-                }
-            } catch (SQLException e) {
-                final String strFeedback = String.format(STR_I18N_STM_UNB, "rows", e.getLocalizedMessage());
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-            return intResultSetRows;
         }
 
         /**
