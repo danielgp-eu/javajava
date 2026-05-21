@@ -47,7 +47,7 @@ public final class SoftwareReleasesClass {
         String strRowColor = "#fff";
         if (!agingDays.isEmpty()) {
             final long[] longRanges = {14, 30, 90};
-            final long longAging = Long.parseLong(agingDays);
+            final long longAging = Long.parseLong(agingDays.replaceAll(".0$", ""));
             if (longAging <= longRanges[0]) {
                 strRowColor = "#51ff6d";
             } else if (longAging <= longRanges[1]) {
