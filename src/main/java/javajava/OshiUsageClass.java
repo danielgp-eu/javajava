@@ -63,7 +63,7 @@ public final class OshiUsageClass {
      */
     public static Map<String, Object> getDetailsAboutAvailableStoragePartitions() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final FileSystem osFileSystem = OshiUsageClass.OshiSoftware.getOshiFileSystem();
+        final FileSystem osFileSystem = OshiSoftware.getOshiFileSystem();
         final List<OSFileStore> osFileStores = osFileSystem.getFileStores();
         for(final OSFileStore fileStore : osFileStores) {
             final String strIdentifier = "Partition UUID#" + fileStore.getUUID() + " ";

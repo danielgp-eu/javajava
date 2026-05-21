@@ -59,6 +59,14 @@ public final class BasicStructuresClass {
      */
     public static final String STR_ENV_DTLS = "EnvironmentDetails";
     /**
+     * String for internal Executing query successful
+     */
+    public static final String STR_EXEC_QRY_OK = "Executing %s query was successful!";
+    /**
+     * Constant for File Hashing
+     */
+    public static final String STR_FILE_HASHING = "FileHashing";
+    /**
      * Firmware string
      */
     public static final String STR_FIRMWARE = "Firmware";
@@ -102,6 +110,10 @@ public final class BasicStructuresClass {
      * string constant
      */
     public static final String STR_MONITOR_NAME = "Monitor Name";
+    /**
+     * Multiple constant
+     */
+    public static final String STR_MULTIPLE = "multiple";
     /**
      * standard String
      */
@@ -163,6 +175,10 @@ public final class BasicStructuresClass {
      */
     public static final String STR_SNOWFLAKE = "Snowflake";
     /**
+     * Constant for Software Releases
+     */
+    public static final String STR_SOFTWARE_RLS = "SoftwareReleases";
+    /**
      * string constant
      */
     public static final String STR_SRL_NUM = "Serial Number";
@@ -178,6 +194,10 @@ public final class BasicStructuresClass {
      * System constant
      */
     public static final String STR_SYSTEM = "System";
+    /**
+     * Style constant
+     */
+    public static final String STR_STYLE = "style";
     /**
      * Table constant
      */

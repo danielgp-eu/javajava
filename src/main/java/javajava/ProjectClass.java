@@ -29,7 +29,7 @@ public final class ProjectClass {
     /**
      * External POM file to be considered (Optional)
      */
-    private static String externalPomFile;
+    private static String externalPomFile = "";
     /**
      * special value
      */
@@ -206,18 +206,18 @@ public final class ProjectClass {
      * set the POM to work with
      */
     private static void setPomFile() {
-        if (externalPomFile != null) {
+        if (!externalPomFile.isBlank()) {
             final String strFeedback = String.format("External POM file %s is being considered!", externalPomFile);
             LogExposureClass.LOGGER.info(strFeedback);
         }
         if (isRunningFromJar()) {
-            if (externalPomFile == null) {
+            if (externalPomFile.isBlank()) {
                 pomFile = INTERNAL_POM;
             } else {
                 pomFile = externalPomFile;
             }
         } else {
-            if (externalPomFile == null) {
+            if (externalPomFile.isBlank()) {
                 final StringBuilder sbPom = new StringBuilder(100);
                 final String strPrjFolder = getCurrentFolder();
                 sbPom.append(strPrjFolder).append(File.separator).append("pom.xml");
@@ -232,6 +232,14 @@ public final class ProjectClass {
      * initiating Components class
      */
     public static final class Application {
+        /**
+         * constant for Build Plugins
+         */
+        /* default */ public static final String STR_PLUGINS_BUILD = "BuildPlugins";
+        /**
+         * constant for Profile Plugins
+         */
+        /* default */ public static final String STR_PLUGINS_PRFLE = "ProfilePlugins";
 
         /**
          * Application details
@@ -252,12 +260,12 @@ public final class ProjectClass {
                 strJsonString.append(",\"Dependencies\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projDependencies));
             }
-            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent("BuildPlugins");
+            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent(STR_PLUGINS_BUILD);
             if (!projBuildPlugins.isEmpty()) {
                 strJsonString.append(",\"Build Plugins\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projBuildPlugins));
             }
-            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent("ProfilePlugins");
+            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent(STR_PLUGINS_PRFLE);
             if (!projPrflPlugins.isEmpty()) {
                 strJsonString.append(",\"Profile Plugins\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projPrflPlugins));
@@ -286,11 +294,11 @@ public final class ProjectClass {
             if (!projDependencies.isEmpty()) {
                 projDependencies.forEach((strKey, objValue) -> appDetails.put("Direct Dependency - " + strKey, objValue));
             }
-            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent("BuildPlugins");
+            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent(STR_PLUGINS_BUILD);
             if (!projBuildPlugins.isEmpty()) {
                 projBuildPlugins.forEach((strKey, objValue) -> appDetails.put("Build Plugins - " + strKey, objValue));
             }
-            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent("ProfilePlugins");
+            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent(STR_PLUGINS_PRFLE);
             if (!projPrflPlugins.isEmpty()) {
                 projPrflPlugins.forEach((strKey, objValue) -> appDetails.put("Profile Plugins - " + strKey, objValue));
             }
@@ -435,7 +443,7 @@ public final class ProjectClass {
         public static Map<String, Object> getProjectModelComponent(final String strComponentName) {
             Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
             switch(strComponentName) {
-                case "BuildPlugins":
+                case Application.STR_PLUGINS_BUILD:
                     if (prjModel.getBuild() != null) {
                         mapToReturn = getBuildPlugins();
                     }
@@ -445,7 +453,7 @@ public final class ProjectClass {
                         mapToReturn = getDependencies();
                     }
                     break;
-                case "ProfilePlugins":
+                case Application.STR_PLUGINS_PRFLE:
                     if (prjModel.getProfiles() != null) {
                         mapToReturn = getProfilePlugins();
                     }

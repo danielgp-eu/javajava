@@ -24,7 +24,8 @@ public final class HtmlClass {
     public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
         final List<String> outHtml = new ArrayList<>();
         if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
-            final String strLabel = objFeatures.getOrDefault("Label", "").toString() + (objFeatures.getOrDefault("multiple", "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
+            final String strLabel = objFeatures.getOrDefault("Label", "").toString()
+                    + (objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
             if (objFeatures.getOrDefault("Label Style", "").toString().isEmpty()) {
                 outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), strLabel));
             } else {
@@ -37,8 +38,8 @@ public final class HtmlClass {
         final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
         String additionalAttrib = "";
         String[] defaultVals = {defaultValue};
-        if (!objFeatures.getOrDefault("multiple", "").toString().isEmpty()) {
-            additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get("multiple"));
+        if (!objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty()) {
+            additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(BasicStructuresClass.STR_MULTIPLE));
             if (!defaultValue.isEmpty()) {
                 defaultVals = defaultValue.split(",");
             }
@@ -91,18 +92,19 @@ WHERE
     AND "m"."name" NOT LIKE 'sqlite_%';
 """;
         final List<Properties> resultTables = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table list and their sequence", strQuery);
+        final String strQueryCount = """
+                SELECT
+                '%s'                                                              AS "Table"
+              , COUNT(*)                                                          AS "Records"
+              , %s                                                                AS "Sequence"
+          FROM
+              "%s"
+  """;
         resultTables.forEach(objProperty -> {
             if (!strQueryRaw.isEmpty()) {
                 strQueryRaw.append(" UNION ALL ");
             }
-            strQueryRaw.append(String.format("""
-        SELECT
-              '%s'                                                              AS "Table"
-            , COUNT(*)                                                          AS "Records"
-            , %s                                                                AS "Sequence"
-        FROM
-            "%s"
-""", objProperty.get(BasicStructuresClass.STR_TABLE), objProperty.get("Sequence"), objProperty.get(BasicStructuresClass.STR_TABLE)));
+            strQueryRaw.append(String.format(strQueryCount, objProperty.get(BasicStructuresClass.STR_TABLE), objProperty.get("Sequence"), objProperty.get(BasicStructuresClass.STR_TABLE)));
         });
         final String strFinalQuery = String.format("""
 WITH
@@ -242,8 +244,8 @@ FROM
                     }
                     final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
                     final String strValue = mapSmartLogic.get("value");
-                    if (!mapSmartLogic.get("style").isEmpty()) {
-                        cellStyle.append(mapSmartLogic.get("style"));
+                    if (!mapSmartLogic.get(BasicStructuresClass.STR_STYLE).isEmpty()) {
+                        cellStyle.append(mapSmartLogic.get(BasicStructuresClass.STR_STYLE));
                     }
                     if (cellStyle.isEmpty()) {
                         strHtmlTable.append(String.format("<td>%s</td>", strValue));
@@ -260,6 +262,7 @@ FROM
          * Generate HTML from a Map of values
          * @param inList values stored as a list
          * @return String
+         * TODO: reduce Cognitive Complexity from current (2026-05-21) 28 to 15 or below
          */
         public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
             final StringBuilder strHeaderTable = new StringBuilder(100);
@@ -364,7 +367,7 @@ FROM
                 strValue = TimingClass.Localization.replacePatterns(strValue);
             }
             return Map.of(
-                    "style", cellStyle,
+                    BasicStructuresClass.STR_STYLE, cellStyle,
                     "value", strValue);
         }
 

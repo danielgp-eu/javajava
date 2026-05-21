@@ -28,6 +28,10 @@ public final class ZoneDataServiceClass {
      */
     private static final int LINE_W_COORDINATE = 3;
     /**
+     * Time Zone file
+     */
+    private static final String TZ_FILE = "/time_zones/zone1970.tab";
+    /**
      * Supported IANA time-zone identifiers
      */
     private static final List<String> SUPPORTED_TZ = new CopyOnWriteArrayList<>(List.of("America/Los_Angeles", "America/Phoenix", "America/Denver", "America/Chicago", "America/New_York", "Europe/Dublin", "Europe/London", "Europe/Prague", "Europe/Berlin", "Europe/Bucharest", "Asia/Kolkata", "Asia/Shanghai", "Asia/Tokyo", "Australia/Melbourne"));
@@ -44,8 +48,7 @@ public final class ZoneDataServiceClass {
      * IANA zone logic
      */
     private static void loadIanaZones() {
-        final String propertyFileName = "/time_zones/zone1970.tab";
-        try (InputStream inputStream = ZoneDataServiceClass.class.getResourceAsStream(propertyFileName);
+        try (InputStream inputStream = ZoneDataServiceClass.class.getResourceAsStream(TZ_FILE);
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
                 BufferedReader bReader = new BufferedReader(inputStreamReader)) {
             bReader.lines()
@@ -57,7 +60,7 @@ public final class ZoneDataServiceClass {
                     }
                 });
         } catch (IOException ei) {
-            final Path ptPrjProps = Path.of(propertyFileName);
+            final Path ptPrjProps = Path.of(TZ_FILE);
             final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }

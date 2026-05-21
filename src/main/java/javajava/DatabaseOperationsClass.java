@@ -90,7 +90,7 @@ public final class DatabaseOperationsClass {
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
                 resultSet = objStatement.executeQuery(strQueryToUse);
-                final String strFeedbackOk = String.format("Executing %s query was successful!", strPurpose);
+                final String strFeedbackOk = String.format(BasicStructuresClass.STR_EXEC_QRY_OK, strPurpose);
                 LogExposureClass.LOGGER.debug(strFeedbackOk);
                 ResultSettingClass.digestCustomQueryProperties(strPurpose, resultSet, objProperties);
             } catch (SQLException e) {
@@ -122,7 +122,7 @@ public final class DatabaseOperationsClass {
                 } else {
                     objStatement.execute(strQueryToUse);
                 }
-                final String strFeedback = String.format("Executing %s query was successful!", strPurpose);
+                final String strFeedback = String.format(BasicStructuresClass.STR_EXEC_QRY_OK, strPurpose);
                 LogExposureClass.LOGGER.info(strFeedback);
             } catch (SQLException e) {
                 final String strFeedbackErr = String.format("SQL query execution for %s purpose has failed: %s... %s", strPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
@@ -337,7 +337,7 @@ public final class DatabaseOperationsClass {
                         if ((crtRow % batchSize == 0)
                                 || (crtRow == intRows)) { // each batchSize rows OR final one
                             preparedStatement.executeLargeBatch();
-                            final String strFeedback = String.format("Executing %s query was successful!", strQueryPurpose + " record " + crtRow);
+                            final String strFeedback = String.format(BasicStructuresClass.STR_EXEC_QRY_OK, strQueryPurpose + " record " + crtRow);
                             LogExposureClass.LOGGER.info(strFeedback);
                         }
                     }
@@ -825,7 +825,7 @@ public final class DatabaseOperationsClass {
             try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
                 Statement objStatement = ConnectivityClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
                 final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "purpose " + strWhich, STR_VALUES);
-                if (listProps != null) {
+                if (!listProps.isEmpty()) {
                     final String strFeedback = listProps.toString();
                     LogExposureClass.LOGGER.info(strFeedback);
                 }

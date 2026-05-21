@@ -20,7 +20,7 @@ public final class JavaJavaWebClass {
                     BasicStructuresClass.STR_ICON, "fa-solid fa-house-user",
                     BasicStructuresClass.STR_MENU, "JavaJava",
                     BasicStructuresClass.STR_TITLE, "JavaJava")),
-            Map.entry("SoftwareReleases", Map.of(
+            Map.entry(BasicStructuresClass.STR_SOFTWARE_RLS, Map.of(
                     BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
                     BasicStructuresClass.STR_MENU, "Software Releases",
                     BasicStructuresClass.STR_TITLE, "Software Releases")),
@@ -28,7 +28,7 @@ public final class JavaJavaWebClass {
                     BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
                     BasicStructuresClass.STR_MENU, "SQLite Table Statistics",
                     BasicStructuresClass.STR_TITLE, "SQLite Table Statistics")),
-            Map.entry("FilesHashing", Map.of(
+            Map.entry(BasicStructuresClass.STR_FILE_HASHING, Map.of(
                     BasicStructuresClass.STR_ICON, "fa-solid fa-hashtag",
                     BasicStructuresClass.STR_MENU, "Downloads File Hashing",
                     BasicStructuresClass.STR_TITLE, "Downloads File Hashing")),
@@ -81,11 +81,11 @@ public final class JavaJavaWebClass {
     public static gg.jte.Content handleBodyContent() {
         final String page = UndertowClass.ParametersClass.getPageParameter();
         return output -> output.writeContent(switch(page) {
-            case BasicStructuresClass.STR_ENV_DTLS  -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
-            case "FilesHashing"                     -> getFileHashingAsHtmlTable();
-            case "SoftwareReleases"                 -> getSoftwareReleasesIntoHtml();
-            case BasicStructuresClass.STR_TS        -> HtmlClass.getTableStatisticsAsHtmlTable();
-            default                                 -> String.format("Welcome %s", System.getProperty("user.name"));
+            case BasicStructuresClass.STR_ENV_DTLS      -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
+            case BasicStructuresClass.STR_FILE_HASHING   -> getFileHashingAsHtmlTable();
+            case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtml();
+            case BasicStructuresClass.STR_TS            -> HtmlClass.getTableStatisticsAsHtmlTable();
+            default                                     -> String.format("Welcome %s", System.getProperty("user.name"));
         });
     }
 
@@ -98,11 +98,7 @@ public final class JavaJavaWebClass {
             UndertowClass.handleCommonThings(exchange);
             final String page = UndertowClass.ParametersClass.getPageParameter();
             switch(page) {
-                case "FilesHashing":
-                    // intentionally blank
-                case "SoftwareReleases":
-                    // intentionally blank
-                case BasicStructuresClass.STR_TS:
+                case BasicStructuresClass.STR_FILE_HASHING, BasicStructuresClass.STR_SOFTWARE_RLS, BasicStructuresClass.STR_TS:
                     TimingClass.Localization.setInputTimeZone("UTC");
                     break;
                 default:
