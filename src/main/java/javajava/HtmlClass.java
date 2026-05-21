@@ -187,6 +187,7 @@ public final class HtmlClass {
                 setTimeZone(System.getProperty("user.timezone"));
             }
             htmlTableLines.clear();
+            strTableHeader = "";
             rememberKey = getRememberKey(objFeatures);
             useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
             for (final SequencedMap<Object, Object> recordMap : inList) {
@@ -249,10 +250,10 @@ public final class HtmlClass {
          * process each record
          * @param recordMap map with record content
          */
-        public static void processRecord(final SequencedMap<Object, Object> recordMap) {
-            TabSubSubClass.ensureHeaderExists(recordMap);
+        private static void processRecord(final SequencedMap<Object, Object> recordMap) {
+            HeaderSubSubClass.ensureHeaderExists(recordMap);
             if (rememberKey.isEmpty()) {
-                TabSubSubClass.ensureHeaderAppended();
+                HeaderSubSubClass.ensureHeaderAppended();
             } else {
                 handleTabSwitch(recordMap);
             }
@@ -305,7 +306,7 @@ public final class HtmlClass {
                     }
                 });
                 strTableRow.append("</tr>");
-                return String.join("", strTableRow);
+                return strTableRow.toString();
             }
 
             /**
@@ -360,7 +361,7 @@ public final class HtmlClass {
         /**
          * Rows logic
          */
-        public static final class TabSubSubClass {
+        public static final class HeaderSubSubClass {
 
             /**
              * Table Body row logic
@@ -368,19 +369,19 @@ public final class HtmlClass {
              * @return String
              */
             private static String buildTableHeader(final SequencedMap<Object, Object> recordMap) {
-                final StringBuilder strHeaderTable = new StringBuilder(100);
-                strHeaderTable.append("<table><thead>");
+                final StringBuilder strBuilder = new StringBuilder(100);
+                strBuilder.append("<table><thead>");
                 recordMap.forEach((strKey, _) -> {
                     if (!rememberKey.equalsIgnoreCase(strKey.toString())
                             && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                        strHeaderTable.append(String.format("<th>%s</th>", strKey));
+                        strBuilder.append(String.format("<th>%s</th>", strKey));
                     }
                 });
                 if (useCounter) {
-                    strHeaderTable.append("<th>#</th>");
+                    strBuilder.append("<th>#</th>");
                 }
-                strHeaderTable.append("</thead><tbody>");
-                return String.join("", strHeaderTable);
+                strBuilder.append("</thead><tbody>");
+                return strBuilder.toString();
             }
 
             /**
@@ -406,7 +407,7 @@ public final class HtmlClass {
             /**
              * constructor
              */
-            private TabSubSubClass() {
+            private HeaderSubSubClass() {
                 // intentionally left blank
             }
 
