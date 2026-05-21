@@ -68,14 +68,14 @@ public final class UndertowClass {
      * @param inExchange input Exchange
      */
     public static void handleCommonThings(final HttpServerExchange inExchange) {
-        ParametersClass.setQueryParameters(inExchange);
-        ParametersClass.setPageParameter();
-        SessionClass.initializeSession(inExchange);
-        SessionClass.handleTimeZoneSession();
-        ParametersClass.redirectPageIfNeeded(inExchange);
-        final Object tzAttribute = UndertowClass.SessionClass.getSession().getAttribute("TZ");
+        ParametersSubClass.setQueryParameters(inExchange);
+        ParametersSubClass.setPageParameter();
+        SessionSubClass.initializeSession(inExchange);
+        SessionSubClass.handleTimeZoneSession();
+        ParametersSubClass.redirectPageIfNeeded(inExchange);
+        final Object tzAttribute = UndertowClass.SessionSubClass.getSession().getAttribute("TZ");
         final String timeZone = tzAttribute != null ? tzAttribute.toString() : "UTC";
-        HtmlClass.Table.setTimeZone(timeZone);
+        HtmlClass.TableSubClass.setTimeZone(timeZone);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class UndertowClass {
      */
     private static void readWebConfigurationFromProjectProperties() {
         final String[] varsToPick = {"webIp", "webProtocol"};
-        final Properties webProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
+        final Properties webProperties = BasicStructuresClass.PropertiesReaderSubClass.getVariableFromProjectProperties("/project.properties", varsToPick);
         webIp = webProperties.get("webIp").toString();
         webProtocol = webProperties.get("webProtocol").toString();
     }
@@ -105,7 +105,7 @@ public final class UndertowClass {
                     .addPrefixPath("/" + pathStatic, staticHandler)
                     .addPrefixPath("/", rootHandler);
             // finally package everything to consider Session handler
-            final HttpHandler sessionHandler = SessionClass.getSessionHandler(routesHandler);
+            final HttpHandler sessionHandler = SessionSubClass.getSessionHandler(routesHandler);
             // start Web Server
             final Undertow.Builder builder = Undertow.builder()
                     .addHttpListener(Integer.parseInt(webPort), webIp)
@@ -139,7 +139,7 @@ public final class UndertowClass {
     /**
      * Template management
      */
-    public static final class ParametersClass {
+    public static final class ParametersSubClass {
         /**
          * Page variable
          */
@@ -206,7 +206,7 @@ public final class UndertowClass {
         }
 
         // Private constructor to prevent instantiation
-        private ParametersClass() {
+        private ParametersSubClass() {
             // intentionally blank
         }
 
@@ -215,7 +215,7 @@ public final class UndertowClass {
     /**
      * Template management
      */
-    public static final class SessionClass {
+    public static final class SessionSubClass {
         /**
          * Session Manager handle
          */
@@ -250,7 +250,7 @@ public final class UndertowClass {
          * Time Zone set logic
          */
         public static void handleTimeZoneSession() {
-            final Map<String, Deque<String>> queryParams = ParametersClass.getQueryParameters();
+            final Map<String, Deque<String>> queryParams = ParametersSubClass.getQueryParameters();
             if (queryParams.get("TZ") != null) {
                 session.setAttribute("TZ", queryParams.get("TZ").getFirst());
             }
@@ -275,7 +275,7 @@ public final class UndertowClass {
         }
 
         // Private constructor to prevent instantiation
-        private SessionClass() {
+        private SessionSubClass() {
             // intentionally blank
         }
 
@@ -284,7 +284,7 @@ public final class UndertowClass {
     /**
      * Template management
      */
-    public static final class TemplateRenderingClass {
+    public static final class TemplateRenderingSubClass {
         /**
          * server exchange
          */
@@ -328,12 +328,12 @@ public final class UndertowClass {
          * Common parameters packing
          */
         public static void packCommonParameters() {
-            final String sessionTimeZone = UndertowClass.SessionClass.getSession().getAttribute("TZ").toString();
-            packParameter("timeZoneSelect", HtmlClass.CommonWebElements.buildTimeZoneSelect(sessionTimeZone));
+            final String sessionTimeZone = UndertowClass.SessionSubClass.getSession().getAttribute("TZ").toString();
+            packParameter("timeZoneSelect", HtmlClass.buildTimeZoneSelect(sessionTimeZone));
             packParameter("currentPageQuery", getCurrentPageQuery());
-            packParameter("geoCoordinates", HtmlClass.CommonWebElements.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
-            packParameter("appDetails", HtmlClass.CommonWebElements.buildApplicationDetail());
-            packParameter("timeNow", HtmlClass.CommonWebElements.buildCurrentTimestamp(sessionTimeZone));
+            packParameter("geoCoordinates", HtmlClass.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
+            packParameter("appDetails", HtmlClass.buildApplicationDetail());
+            packParameter("timeNow", TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone));
         }
 
         /**
@@ -374,7 +374,7 @@ public final class UndertowClass {
         }
 
         // Private constructor to prevent instantiation
-        private TemplateRenderingClass() {
+        private TemplateRenderingSubClass() {
             // intentional empty
         }
 

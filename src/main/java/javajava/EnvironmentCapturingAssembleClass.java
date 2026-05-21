@@ -81,7 +81,7 @@ public final class EnvironmentCapturingAssembleClass {
                 .append(',')
                 .append(strSoftware)
                 .append(',')
-                .append(ProjectClass.Application.getApplicationDetails())
+                .append(ProjectClass.ApplicationSubClass.getApplicationDetails())
                 .append(',')
                 .append(strEnvironment)
                 .append('}').toString();
@@ -94,18 +94,18 @@ public final class EnvironmentCapturingAssembleClass {
      */
     public static List<Properties> packageCurrentEnvironmentDetailsIntoListOfProperties() {
         final List<Properties> resultReleases = new ArrayList<>();
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Environment", gatherEnvironmentDetails()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - CPU", HardwareClass.getDetailsAboutCentralProcessorUnit()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - GPU", HardwareClass.getDetailsAboutGraphicCards()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - Mainboard", HardwareClass.getDetailsAboutMainboard()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - Monitors", HardwareClass.getDetailsAboutMonitor()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - Network Interfaces", HardwareClass.getDetailsAboutNetworkInterfaces()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Hardware - RAM", HardwareClass.getDetailsAboutRandomAccessMemory()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Java", gatherJavaDetails()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - OS", HardwareClass.getDetailsAboutOperatingSystem()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Network", HardwareClass.getDetailsAboutNetwork()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Software - Storage", OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
-        resultReleases.addAll(BasicStructuresClass.ListAndMapClass.convertMapOfStringsIntoListOfProperties("Application", ProjectClass.Application.getApplicationDetailsIntoMap()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Environment", gatherEnvironmentDetails()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Hardware - CPU", HardwareClass.getDetailsAboutCentralProcessorUnit()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Hardware - GPU", HardwareClass.getDetailsAboutGraphicCards()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Hardware - Mainboard", HardwareClass.getDetailsAboutMainboard()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Hardware - Monitors", HardwareClass.getDetailsAboutMonitor()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Hardware - Network Interfaces", HardwareClass.getDetailsAboutNetworkInterfaces()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Hardware - RAM", HardwareClass.getDetailsAboutRandomAccessMemory()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Software - Java", gatherJavaDetails()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Software - OS", HardwareClass.getDetailsAboutOperatingSystem()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Software - Network", HardwareClass.getDetailsAboutNetwork()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Software - Storage", OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
+        resultReleases.addAll(BasicStructuresClass.ListAndMapSubClass.convertMapOfStringsIntoListOfProperties("Application", ProjectClass.ApplicationSubClass.getApplicationDetailsIntoMap()));
         return resultReleases;
     }
 

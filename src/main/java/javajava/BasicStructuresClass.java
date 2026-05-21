@@ -265,7 +265,7 @@ public final class BasicStructuresClass {
      */
     public static BigDecimal convertStringIntoBigDecimal(final String strNumber) {
         BigDecimal noToReturn = null;
-        final boolean isNumeric = StringEvaluationClass.isStringActuallyNumeric(strNumber);
+        final boolean isNumeric = StringEvaluationSubClass.isStringActuallyNumeric(strNumber);
         if (isNumeric) {
             noToReturn = new BigDecimal(strNumber).stripTrailingZeros();
         }
@@ -279,7 +279,7 @@ public final class BasicStructuresClass {
      */
     public static int convertStringIntoInteger(final String strNumber) {
         int noToReturn = 0;
-        final boolean isNumeric = StringEvaluationClass.isStringActuallyLong(strNumber);
+        final boolean isNumeric = StringEvaluationSubClass.isStringActuallyLong(strNumber);
         if (isNumeric) {
             noToReturn = Integer.parseInt(strNumber);
         }
@@ -307,7 +307,7 @@ public final class BasicStructuresClass {
     /**
      * List and Maps management
      */
-    public static final class ListAndMapClass {
+    public static final class ListAndMapSubClass {
 
         /**
          * Map into List
@@ -410,7 +410,7 @@ public final class BasicStructuresClass {
         }
 
         // Private constructor to prevent instantiation
-        private ListAndMapClass() {
+        private ListAndMapSubClass() {
             // intentional empty
         }
 
@@ -419,7 +419,7 @@ public final class BasicStructuresClass {
     /**
      * Project Properties Reader
      */
-    public static final class PropertiesReaderClass {
+    public static final class PropertiesReaderSubClass {
 
         /**
          * get variable
@@ -428,7 +428,7 @@ public final class BasicStructuresClass {
          */
         public static Properties getVariableFromProjectProperties(final String propertyFileName, final String... strVariables) {
             final Properties svProperties = new Properties();
-            try(InputStream inputStream = PropertiesReaderClass.class.getResourceAsStream(propertyFileName)) {
+            try(InputStream inputStream = PropertiesReaderSubClass.class.getResourceAsStream(propertyFileName)) {
                 final Properties inProperties = new Properties();
                 inProperties.load(inputStream);
                 final List<String> arrayVariables = Arrays.asList(strVariables);
@@ -445,7 +445,7 @@ public final class BasicStructuresClass {
             return svProperties;
         }
 
-        private PropertiesReaderClass() {
+        private PropertiesReaderSubClass() {
             // intentionally left open
         }
 
@@ -454,7 +454,7 @@ public final class BasicStructuresClass {
     /**
      * Cleaning things
      */
-    public static final class StringCleaningClass {
+    public static final class StringCleaningSubClass {
 
         /**
          * Clean String From CurlyBraces
@@ -501,7 +501,7 @@ public final class BasicStructuresClass {
         }
 
         // Private constructor to prevent instantiation
-        private StringCleaningClass() {
+        private StringCleaningSubClass() {
             // intentionally blank
         }
 
@@ -510,7 +510,7 @@ public final class BasicStructuresClass {
     /**
      * Conversion things
      */
-    public static final class StringConversionClass {
+    public static final class StringConversionSubClass {
         /**
          * Single Question Mark Character
          */
@@ -564,11 +564,11 @@ public final class BasicStructuresClass {
          * @return String
          */
         private static String convertSinglePromptParameterIntoNamedParameter(final String strOriginal) {
-            return ":" + StringCleaningClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
+            return ":" + StringCleaningSubClass.cleanStringFromCurlyBraces(strOriginal).replace(" ", "_");
         }
 
         // Private constructor to prevent instantiation
-        private StringConversionClass() {
+        private StringConversionSubClass() {
             // intentionally blank
         }
 
@@ -577,7 +577,7 @@ public final class BasicStructuresClass {
     /**
      * Evaluating things
      */
-    public static final class StringEvaluationClass {
+    public static final class StringEvaluationSubClass {
         /**
          * Maximum Length for Integer
          */
@@ -604,7 +604,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Date
          */
         public static boolean isStringActuallyDate(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, STR_JUST_DATE);
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_JUST_DATE);
         }
 
         /**
@@ -614,7 +614,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyDecimal(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "decimal");
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, "decimal");
         }
 
         /**
@@ -624,7 +624,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Integer
          */
         public static boolean isStringActuallyInteger(final String inputString) {
-            boolean evaluation = RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "long");
+            boolean evaluation = RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, "long");
             if (evaluation
                     && inputString.length() >= MAX_LENGTH_INT) {
                 final long longValue = Long.parseLong(inputString);
@@ -642,7 +642,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Long
          */
         public static boolean isStringActuallyLong(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "long");
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, "long");
         }
 
         /**
@@ -652,7 +652,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Numeric
          */
         public static boolean isStringActuallyNumeric(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, "numeric");
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, "numeric");
         }
 
         /**
@@ -662,7 +662,7 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp
          */
         public static boolean isStringActuallyTimestamp(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, STR_TIMESTAMP);
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_TIMESTAMP);
         }
 
         /**
@@ -672,11 +672,11 @@ public final class BasicStructuresClass {
          * @return True if given String is actually Time-stamp w. milliseconds
          */
         public static boolean isStringActuallyTimestampWithMilliseconds(final String inputString) {
-            return RegularExpressionsClass.ValidationClass.isStringActuallySomething(inputString, STR_TS_MSEC);
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_TS_MSEC);
         }
 
         // Private constructor to prevent instantiation
-        private StringEvaluationClass() {
+        private StringEvaluationSubClass() {
             // intentionally blank
         }
 
@@ -685,7 +685,7 @@ public final class BasicStructuresClass {
     /**
      * Transforming things
      */
-    public static final class StringTransformationClass {
+    public static final class StringTransformationSubClass {
 
         /**
          * Compute String checksum
@@ -760,7 +760,7 @@ public final class BasicStructuresClass {
         }
 
         // Private constructor to prevent instantiation
-        private StringTransformationClass() {
+        private StringTransformationSubClass() {
             // intentionally blank
         }
 

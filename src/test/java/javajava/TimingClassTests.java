@@ -105,7 +105,7 @@ class TimingClassTests {
 Started on 2026-03-25.
 Standard log at 2026-03-25 10:00:00.
 High precision at 2026-12-25 14:30:05.123.""";
-        final String handled = TimingClass.Localization.replacePatterns(largeContent);
+        final String handled = TimingClass.LocalizationSubClass.replacePatterns(largeContent);
         final String strExpected = """
 Started on Wed, 25 Mar 2026.
 Standard log at Wed, 25 Mar 2026 10:00:00.

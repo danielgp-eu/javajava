@@ -73,8 +73,8 @@ public final class JsonOperationsClass {
             || (objValue instanceof Double)
             || (objValue.toString().startsWith("[") && objValue.toString().endsWith("]"))
             || (objValue.toString().startsWith("{") && objValue.toString().endsWith("}"))
-            || BasicStructuresClass.StringEvaluationClass.isStringActuallyNumeric(objValue.toString())
-            || BasicStructuresClass.StringEvaluationClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
+            || BasicStructuresClass.StringEvaluationSubClass.isStringActuallyNumeric(objValue.toString())
+            || BasicStructuresClass.StringEvaluationSubClass.hasMatchingSubstring(objValue.toString(), unquotedValues);
         String strRaw = "\"%s\":\"%s\"";
         if (needsQuotesAround) {
             strRaw = "\"%s\":%s";
@@ -212,7 +212,7 @@ public final class JsonOperationsClass {
     /**
      * JSON array evaluate and split if too big
      */
-    public static final class JsonArrayClass {
+    public static final class ArraySubClass {
         /**
          * Minimum value length for bucketing
          */
@@ -357,7 +357,7 @@ public final class JsonOperationsClass {
         public static void splitJsonIntoSmallerGrouped() {
             final JsonFactory jsonFactory = JsonFactory.builder().build();
             final ObjectReadContext readContext = ObjectReadContext.empty();
-            FileOperationsClass.MassChangeClass.setSearchingFolder(strOutFolder); // used for Mass Change (if necessary)
+            FileOperationsClass.MassChangeSubClass.setSearchingFolder(strOutFolder); // used for Mass Change (if necessary)
             final String strFeedbackTemp = String.format("JSON file named %s will be split into smaller pieces...", strInputJsonFile);
             LogExposureClass.LOGGER.debug(strFeedbackTemp);
             String remeberedValue = null;
@@ -436,10 +436,10 @@ public final class JsonOperationsClass {
         private static void writeObjectStart(final Path outFile) {
             boolean isFileNew = true;
             if (Files.exists(outFile)) {
-                FileOperationsClass.MassChangeClass.setOldContent("]");
-                FileOperationsClass.MassChangeClass.setNewContent(",");
-                FileOperationsClass.MassChangeClass.setPattern(outFile.getFileName().toString());
-                FileOperationsClass.MassChangeClass.massChangeToFilesWithinFolder();
+                FileOperationsClass.MassChangeSubClass.setOldContent("]");
+                FileOperationsClass.MassChangeSubClass.setNewContent(",");
+                FileOperationsClass.MassChangeSubClass.setPattern(outFile.getFileName().toString());
+                FileOperationsClass.MassChangeSubClass.massChangeToFilesWithinFolder();
                 isFileNew = false;
             }
             try {
@@ -473,7 +473,7 @@ public final class JsonOperationsClass {
         /**
          * Constructor
          */
-        private JsonArrayClass() {
+        private ArraySubClass() {
             // intentionally blank
         }
 

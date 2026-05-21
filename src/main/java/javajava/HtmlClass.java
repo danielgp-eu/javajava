@@ -17,190 +17,121 @@ import org.apache.maven.model.Model;
 public final class HtmlClass {
 
     /**
-     * establishing the Key to Remember if relevant
-     * @param objFeatures optional HTML Table features
+     * Application Details
+     * @return Content
+     */
+    public static gg.jte.Content buildApplicationDetail() {
+        final Model prjModel = ProjectClass.getProjectModel();
+        final String appDetails = String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjModel.getVersion(), prjModel.getDevelopers().getFirst().getName());
+        final String strFeedback = String.format("I have just build application details: %s", appDetails);
+        LogExposureClass.LOGGER.info(strFeedback);
+        return output -> output.writeContent(appDetails);
+    }
+
+    /**
+     * Geographical Coordinates from TZ
      * @return String
      */
-    public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
-        final List<String> outHtml = new ArrayList<>();
-        if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
+    public static String buildGeographicalCoordinatesFromTimeZone(final String sessionTimeZone) {
+        final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
+        return zInfo.latitude() + "," + zInfo.longitude();
+    }
+
+    /**
+     * Building Time-Zone select
+     * @return Content
+     */
+    public static gg.jte.Content buildMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
+        final StringBuilder strMenuContent = new StringBuilder(1000);
+        inMapMenu.forEach((strKey, mapValue) -> {
+            if (!mapValue.getOrDefault(BasicStructuresClass.STR_MENU, "").isEmpty()) {
+                strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU)));
+            }
+        });
+        return output -> output.writeContent(strMenuContent.toString());
+    }
+
+    /**
+     * Building Time-Zone select
+     * @return Content
+     */
+    public static gg.jte.Content buildTimeZoneSelect(final String inTimeZone) {
+        final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+        final Properties selectProps = new Properties();
+        selectProps.put("Name", "TZ");
+        selectProps.put("Id", "TZ");
+        selectProps.put("Default", inTimeZone);
+        return output -> output.writeContent(SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps));
+    }
+
+    /**
+     * List and Maps management
+     */
+    public static final class SelectInputSubClass {
+        /**
+         * Variable for Defaults
+         */
+        private static List<String> defaults = new ArrayList<>();
+        /**
+         * Variable for Additional Attributes
+         */
+        private static String additionalAttrib = "";
+
+        /**
+         * build Label as HTML tag 
+         * @param objFeatures optional HTML Table features
+         * @return String
+         */
+        private static String buildLabelTag(final Properties objFeatures) {
             final String strLabel = objFeatures.getOrDefault("Label", "").toString()
                     + (objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty() ? "" : "<sup>(multiple values possible)</sup>");
-            if (objFeatures.getOrDefault("Label Style", "").toString().isEmpty()) {
-                outHtml.add(String.format("<label for=\"%s\">%s:</label>", objFeatures.get("Id"), strLabel));
-            } else {
-                outHtml.add(String.format("<label for=\"%s\" style=\"%s\">%s:</label>", objFeatures.get("Id"), objFeatures.get("Label Style").toString(), strLabel));
-            }
-            if (objFeatures.getOrDefault("Label on Same Line", "").toString().isEmpty()) {
-                outHtml.add("<br/>");
-            }
-        }
-        final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
-        String additionalAttrib = "";
-        String[] defaultVals = {defaultValue};
-        if (!objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty()) {
-            additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(BasicStructuresClass.STR_MULTIPLE));
-            if (!defaultValue.isEmpty()) {
-                defaultVals = defaultValue.split(",");
-            }
-        }
-        final List<String> defaults = Arrays.asList(defaultVals);
-        outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>", objFeatures.get("Name"), objFeatures.get("Id"), additionalAttrib));
-        mapValues.forEach((strValue, strText) -> {
-            String strSelected = "";
-            if (!defaults.isEmpty()
-                    && defaults.contains(strValue)) {
-                strSelected = " selected";
-            }
-            outHtml.add(String.format("<option value=\"%s\"%s>%s</option>", strValue, strSelected, strText));
-        });
-        outHtml.add("</select>");
-        return String.join("", outHtml);
-    }
-
-    /**
-     * Outputs file statistics into an HTML table
-     * @return String
-     */
-    public static String getEnvironmentDetailsAsHtmlTable() {
-        final Properties objFeatures = new Properties();
-        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
-        final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
-        final List<String> desiredOrder = List.of("Category", "Element", "Value");
-        final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
-                .toList();
-        return Table.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
-    }
-
-    /**
-     * Outputs table statistics into an HTML table
-     * @return String
-     */
-    public static String getTableStatisticsAsHtmlTable() {
-        final StringBuilder strQueryRaw = new StringBuilder(1000);
-        final String strQuery = """
-SELECT
-      "m"."name"                                                                AS "Table"
-    , IFNULL("q"."seq", 0)                                                      AS "Sequence"
-FROM
-    "sqlite_master"                                                             AS "m"
-    LEFT JOIN "sqlite_sequence"                                                 AS "q"  ON
-        "m"."name" = "q"."name"
-WHERE
-        "m"."type" = 'table'
-    AND "m"."name" NOT LIKE 'sqlite_%';
-""";
-        final List<Properties> resultTables = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table list and their sequence", strQuery);
-        final String strQueryCount = """
-                SELECT
-                '%s'                                                              AS "Table"
-              , COUNT(*)                                                          AS "Records"
-              , %s                                                                AS "Sequence"
-          FROM
-              "%s"
-  """;
-        resultTables.forEach(objProperty -> {
-            if (!strQueryRaw.isEmpty()) {
-                strQueryRaw.append(" UNION ALL ");
-            }
-            strQueryRaw.append(String.format(strQueryCount, objProperty.get(BasicStructuresClass.STR_TABLE), objProperty.get("Sequence"), objProperty.get(BasicStructuresClass.STR_TABLE)));
-        });
-        final String strFinalQuery = String.format("""
-WITH
-    "CTE__Raw"                                                                  AS (
-        %s
-    )
-SELECT
-      ROW_NUMBER () OVER (ORDER BY "Table")                                     AS "#"
-    , "Table"                                                                   AS "Table"
-    , "Records"                                                                 AS "Records"
-    , "Sequence"                                                                AS "Sequence"
-    , 'color:'
-        || CASE
-            WHEN "Sequence" = "Records" THEN
-                'green'
-            WHEN "Sequence" = 0         THEN
-                'blue'
-            ELSE
-                'red'
-            END || ';'                                                          AS "RowStyle"
-    , "Sequence" - "Records"                                                    AS "Gap"
-FROM
-    "CTE__Raw";
-""", strQueryRaw);
-        final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
-        final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Sequence", "Gap");
-        final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
-                .toList();
-        return Table.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());
-    }
-
-    /**
-     * Common Web Elements
-     */
-    public static final class CommonWebElements {
-
-        /**
-         * Application Details
-         * @return Content
-         */
-        public static gg.jte.Content buildApplicationDetail() {
-            final Model prjModel = ProjectClass.getProjectModel();
-            final gg.jte.Content appContent = output -> output.writeContent(String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjModel.getVersion(), prjModel.getDevelopers().getFirst().getName()));
-            final String strFeedback = String.format("I have just build application details: %s", appContent.toString());
-            LogExposureClass.LOGGER.info(strFeedback);
-            return appContent;
+            final String tagLabelRaw = "<label for=\"%s\"%s>%s:</label>";
+            final String strLabelStyle = objFeatures.getOrDefault("Label Style", "").toString().isEmpty() ? "" : "style=\"" + objFeatures.get("Label Style").toString() + "\"";
+            return String.format(tagLabelRaw, objFeatures.get("Id"), strLabelStyle, strLabel)
+                    + (objFeatures.getOrDefault("Label on Same Line", "").toString().isEmpty() ? "<br/>" : "");
         }
 
         /**
-         * Current Time-stamp from TZ
+         * establishing the Key to Remember if relevant
+         * @param objFeatures optional HTML Table features
          * @return String
          */
-        public static String buildCurrentTimestamp(final String sessionTimeZone) {
-            return TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone);
-        }
-
-        /**
-         * Geographical Coordinates from TZ
-         * @return String
-         */
-        public static String buildGeographicalCoordinatesFromTimeZone(final String sessionTimeZone) {
-            final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
-            return zInfo.latitude() + "," + zInfo.longitude();
-        }
-
-        /**
-         * Building Time-Zone select
-         * @return Content
-         */
-        public static gg.jte.Content buildMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
-            final StringBuilder strMenuContent = new StringBuilder(1000);
-            inMapMenu.forEach((strKey, mapValue) -> {
-                if (!mapValue.getOrDefault(BasicStructuresClass.STR_MENU, "").isEmpty()) {
-                    strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU)));
+        public static String buildSelectInput(final SequencedMap<String, String> mapValues, final Properties objFeatures) {
+            final List<String> outHtml = new ArrayList<>();
+            if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
+                outHtml.add(buildLabelTag(objFeatures));
+            }
+            manageAdditionalAttribuesAndDefaults(objFeatures);
+            outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>", objFeatures.get("Name"), objFeatures.get("Id"), additionalAttrib));
+            mapValues.forEach((strValue, strText) -> {
+                String strSelected = "";
+                if (!defaults.isEmpty()
+                        && defaults.contains(strValue)) {
+                    strSelected = " selected";
                 }
+                outHtml.add(String.format("<option value=\"%s\"%s>%s</option>", strValue, strSelected, strText));
             });
-            return output -> output.writeContent(strMenuContent.toString());
+            outHtml.add("</select>");
+            return String.join("", outHtml);
+        }
+
+        private static void manageAdditionalAttribuesAndDefaults(final Properties objFeatures) {
+            final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
+            String[] defaultVals = {defaultValue};
+            if (!objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty()) {
+                additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(BasicStructuresClass.STR_MULTIPLE));
+                if (!defaultValue.isEmpty()) {
+                    defaultVals = defaultValue.split(",");
+                }
+            }
+            defaults = Arrays.asList(defaultVals);
         }
 
         /**
-         * Building Time-Zone select
-         * @return Content
+         * constructor
          */
-        public static gg.jte.Content buildTimeZoneSelect(final String inTimeZone) {
-            final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-            final Properties selectProps = new Properties();
-            selectProps.put("Name", "TZ");
-            selectProps.put("Id", "TZ");
-            selectProps.put("Default", inTimeZone);
-            return output -> output.writeContent(buildSelectInput(sortedTimeZones, selectProps));
-        }
-
-        // Private constructor to prevent instantiation
-        private CommonWebElements() {
-            // intentional empty
+        private SelectInputSubClass() {
+            // intentionally left blank
         }
 
     }
@@ -208,114 +139,74 @@ FROM
     /**
      * List and Maps management
      */
-    public static final class Table {
-        /**
-         * Time Zone variable
-         */
-        private static final long LARGE_STRING = 25;
+    public static final class TableSubClass {
         /**
          * CSS to align text to right
          */
         private static final String CSS_TEXT_RIGHT = "text-align:right;";
         /**
+         * variable for Current Tab value
+         */
+        private static String currentTabValue;
+        /**
+         * variable for HTML Table
+         */
+        private static List<String> htmlTableLines = new ArrayList<>();
+        /**
+         * Time Zone variable
+         */
+        private static final long LARGE_STRING = 25;
+        /**
+         * variable for Remember Key
+         */
+        private static String rememberKey;
+        /**
+         * variable for row counter
+         */
+        private static int rowCounter;
+        /**
+         * variable for Table Header
+         */
+        private static String strTableHeader = "";
+        /**
          * Time Zone variable
          */
         private static String strTimeZone;
         /**
-         * Row Counter variable
+         * variable for Counter usage
          */
-        private static int rowCounter;
-
-        /**
-         * Table Body row logic
-         * @param strRememberKey value of Key remembered
-         * @param recordProperties properties of the record to be transformed into HTML row
-         * @return String
-         */
-        private static String buildTableBodyRow(final String strRememberKey, final SequencedMap<Object, Object> recordProperties) {
-            final StringBuilder strHtmlTable = new StringBuilder(1000);
-            strHtmlTable.append("<tr>");
-            recordProperties.forEach((strKey, objValue) -> {
-                if (!strRememberKey.equalsIgnoreCase(strKey.toString())
-                        && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                    final StringBuilder cellStyle = new StringBuilder(100);
-                    if (recordProperties.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
-                        cellStyle.append(recordProperties.get(BasicStructuresClass.STR_ROW_STYLE).toString());
-                    }
-                    final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
-                    final String strValue = mapSmartLogic.get("value");
-                    if (!mapSmartLogic.get(BasicStructuresClass.STR_STYLE).isEmpty()) {
-                        cellStyle.append(mapSmartLogic.get(BasicStructuresClass.STR_STYLE));
-                    }
-                    if (cellStyle.isEmpty()) {
-                        strHtmlTable.append(String.format("<td>%s</td>", strValue));
-                    } else {
-                        strHtmlTable.append(String.format("<td style=\"%s\">%s</td>", cellStyle, strValue));
-                    }
-                }
-            });
-            strHtmlTable.append("</tr>");
-            return strHtmlTable.toString();
-        }
+        private static boolean useCounter;
 
         /**
          * Generate HTML from a Map of values
          * @param inList values stored as a list
          * @return String
-         * TODO: reduce Cognitive Complexity from current (2026-05-21) 28 to 15 or below
          */
         public static String getListOfSequencedMapIntoHtmlTable(final List<SequencedMap<Object, Object>> inList, final Properties objFeatures) {
-            final StringBuilder strHeaderTable = new StringBuilder(100);
-            final StringBuilder strHtmlTable = new StringBuilder(1000);
             if (strTimeZone == null) {
                 setTimeZone(System.getProperty("user.timezone"));
             }
-            final String strRememberKey = getRememberKey(objFeatures);
-            final boolean bolCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
-            final String[] strRememberValue = { "None" };
-            inList.forEach( recordProperties -> {
-                if (strHeaderTable.isEmpty()) {
-                    strHeaderTable.append("<table><thead>");
-                    recordProperties.forEach((strKey, _) -> {
-                        if (!strRememberKey.equalsIgnoreCase(strKey.toString())
-                                && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
-                            strHeaderTable.append(String.format("<th>%s</th>", strKey));
-                        }
-                    });
-                    if (bolCounter) {
-                        strHeaderTable.append("<th>#</th>");
-                    }
-                    strHeaderTable.append("</thead><tbody>");
-                }
-                if (strRememberKey.isEmpty()) {
-                    if (strHtmlTable.isEmpty()) {
-                        strHtmlTable.append(strHeaderTable);
-                        rowCounter = 0;
-                    }
-                } else {
-                    final String crtValueForTab = recordProperties.get(strRememberKey).toString();
-                    if (!strRememberValue[0].equalsIgnoreCase(crtValueForTab)) {
-                        if (strHtmlTable.isEmpty()) {
-                            strHtmlTable.append("<div id=\"tabStandard\" class=\"tabber\">");
-                        } else {
-                            strHtmlTable.append(String.format("</tbody></table></div><!-- %s -->", crtValueForTab));
-                        }
-                        strHtmlTable.append(String.format("<div class=\"tabbertab\" title=\"%s\">%s", crtValueForTab, strHeaderTable));
-                        strRememberValue[0] = crtValueForTab;
-                        rowCounter = 0;
-                    }
-                }
-                if (bolCounter) {
-                    rowCounter++;
-                    recordProperties.put("#", String.valueOf(rowCounter));
-                }
-                strHtmlTable.append(buildTableBodyRow(strRememberKey, recordProperties));
-            });
-            strHtmlTable.append("</tbody></table>");
-            if (!strRememberKey.isEmpty()) {
-                strHtmlTable.append(String.format("</div><!-- %s --></div><!-- tabStandard -->", strRememberValue[0]));
+            htmlTableLines.clear();
+            rememberKey = getRememberKey(objFeatures);
+            useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
+            for (final SequencedMap<Object, Object> recordMap : inList) {
+                processRecord(recordMap);
             }
-            return strHtmlTable.toString();
+            finish();
+            return String.join("", htmlTableLines);
+        }
+
+        /**
+         * final
+         * @return String
+         */
+        public static void finish() {
+            if (!strTableHeader.isEmpty()) {
+                htmlTableLines.add("</tbody></table>");
+                if (!rememberKey.isEmpty()) {
+                    htmlTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", currentTabValue));
+                }
+            }
         }
 
         /**
@@ -332,43 +223,44 @@ FROM
         }
 
         /**
-         * Manage Cell Style and Value
-         * @param inValue input value
-         * @return Map
+         * handle Tab switch
+         * @param recordMap properties of the record to be transformed into HTML row
          */
-        private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
-            String cellStyle = "";
-            String strValue = inValue.toString();
-            if (BasicStructuresClass.STR_NULL.equalsIgnoreCase(strValue)) {
-                cellStyle = "color:LightGrey;font-style:italic;";
-                strValue = "&lt;NULL&gt;";
-            } else if (strValue.isBlank()) {
-                cellStyle = "color:Grey;font-style:italic;";
-                strValue = "&lt;blank&gt;";
-            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDecimal(strValue)) {
-                cellStyle = CSS_TEXT_RIGHT;
-                strValue = String.format(Locale.US, "%,.2f", new BigDecimal(strValue));
-            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyInteger(strValue)) {
-                cellStyle = CSS_TEXT_RIGHT;
-                strValue = String.format(Locale.US, "%,d", Integer.parseInt(strValue));
-            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyLong(strValue)) {
-                cellStyle = CSS_TEXT_RIGHT;
-                strValue = String.format(Locale.US, "%,d", Long.parseLong(strValue));
-            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyDate(strValue)) {
-                cellStyle = CSS_TEXT_RIGHT;
-                strValue = TimingClass.Localization.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");
-            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestamp(strValue)) {
-                cellStyle = CSS_TEXT_RIGHT;
-                strValue = TimingClass.Localization.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
-            } else if (BasicStructuresClass.StringEvaluationClass.isStringActuallyTimestampWithMilliseconds(strValue)) {
-                cellStyle = CSS_TEXT_RIGHT;
-                strValue = TimingClass.Localization.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
-            } else if (strValue.length() >= LARGE_STRING) {
-                strValue = TimingClass.Localization.replacePatterns(strValue);
+        private static void handleTabSwitch(final SequencedMap<Object, Object> recordMap) {
+            final Object valObj = recordMap.get(rememberKey);
+            final String valueForTab = valObj == null ? "null" : valObj.toString();
+            final String prev = currentTabValue == null ? "" : currentTabValue;
+            if (!valueForTab.equalsIgnoreCase(prev)) {
+                if (htmlTableLines.isEmpty()) {
+                    // first tab: open tab container
+                    htmlTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
+                } else if (currentTabValue != null) {
+                    // close previous tab's table
+                    htmlTableLines.add(String.format("</tbody></table></div><!-- %s -->", currentTabValue));
+                }
+                // open new tab with header
+                htmlTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, strTableHeader));
+                currentTabValue = valueForTab;
+                rowCounter = 0;
             }
-            return Map.of(
-                    BasicStructuresClass.STR_STYLE, cellStyle,
-                    "value", strValue);
+        }
+
+        /**
+         * process each record
+         * @param recordMap map with record content
+         */
+        public static void processRecord(final SequencedMap<Object, Object> recordMap) {
+            TabSubSubClass.ensureHeaderExists(recordMap);
+            if (rememberKey.isEmpty()) {
+                TabSubSubClass.ensureHeaderAppended();
+            } else {
+                handleTabSwitch(recordMap);
+            }
+            if (useCounter) {
+                rowCounter++;
+                recordMap.put("#", String.valueOf(rowCounter));
+            }
+            htmlTableLines.add(RowSubSubClass.buildTableBodyRow(recordMap));
         }
 
         /**
@@ -377,13 +269,153 @@ FROM
          */
         public static void setTimeZone(final String inTimeZone) {
             strTimeZone = inTimeZone;
-            TimingClass.Localization.setOutputTimeZone(inTimeZone);
+            TimingClass.LocalizationSubClass.setOutputTimeZone(inTimeZone);
+        }
+
+        /**
+         * Rows logic
+         */
+        public static final class RowSubSubClass {
+
+            /**
+             * Table Body row logic
+             * @param recordMap properties of the record to be transformed into HTML row
+             * @return String
+             */
+            private static String buildTableBodyRow(final SequencedMap<Object, Object> recordMap) {
+                final StringBuilder strTableRow = new StringBuilder(1000);
+                strTableRow.append("<tr>");
+                recordMap.forEach((strKey, objValue) -> {
+                    if (!rememberKey.equalsIgnoreCase(strKey.toString())
+                            && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
+                        final StringBuilder cellStyle = new StringBuilder(100);
+                        if (recordMap.containsKey(BasicStructuresClass.STR_ROW_STYLE)) {
+                            cellStyle.append(recordMap.get(BasicStructuresClass.STR_ROW_STYLE).toString());
+                        }
+                        final Map<String, String> mapSmartLogic = manageCellStyleAndValue(objValue);
+                        final String strValue = mapSmartLogic.get("value");
+                        if (!mapSmartLogic.get(BasicStructuresClass.STR_STYLE).isEmpty()) {
+                            cellStyle.append(mapSmartLogic.get(BasicStructuresClass.STR_STYLE));
+                        }
+                        if (cellStyle.isEmpty()) {
+                            strTableRow.append(String.format("<td>%s</td>", strValue));
+                        } else {
+                            strTableRow.append(String.format("<td style=\"%s\">%s</td>", cellStyle, strValue));
+                        }
+                    }
+                });
+                strTableRow.append("</tr>");
+                return String.join("", strTableRow);
+            }
+
+            /**
+             * Manage Cell Style and Value
+             * @param inValue input value
+             * @return Map
+             */
+            private static Map<String, String> manageCellStyleAndValue(final Object inValue) {
+                String cellStyle = "";
+                String strValue = inValue.toString();
+                if (BasicStructuresClass.STR_NULL.equalsIgnoreCase(strValue)) {
+                    cellStyle = "color:LightGrey;font-style:italic;";
+                    strValue = "&lt;NULL&gt;";
+                } else if (strValue.isBlank()) {
+                    cellStyle = "color:Grey;font-style:italic;";
+                    strValue = "&lt;blank&gt;";
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDecimal(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = String.format(Locale.US, "%,.2f", new BigDecimal(strValue));
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyInteger(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = String.format(Locale.US, "%,d", Integer.parseInt(strValue));
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyLong(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = String.format(Locale.US, "%,d", Long.parseLong(strValue));
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = TimingClass.LocalizationSubClass.formatDateFriendly(strValue, "yyyy-MM-dd", "EEE, dd MMM yyyy");
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestamp(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss");
+                } else if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(strValue)) {
+                    cellStyle = CSS_TEXT_RIGHT;
+                    strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
+                } else if (strValue.length() >= LARGE_STRING) {
+                    strValue = TimingClass.LocalizationSubClass.replacePatterns(strValue);
+                }
+                return Map.of(
+                        BasicStructuresClass.STR_STYLE, cellStyle,
+                        "value", strValue);
+            }
+
+            /**
+             * constructor
+             */
+            private RowSubSubClass() {
+                // intentionally left blank
+            }
+
+        }
+
+        /**
+         * Rows logic
+         */
+        public static final class TabSubSubClass {
+
+            /**
+             * Table Body row logic
+             * @param recordMap properties of the record to be transformed into HTML row
+             * @return String
+             */
+            private static String buildTableHeader(final SequencedMap<Object, Object> recordMap) {
+                final StringBuilder strHeaderTable = new StringBuilder(100);
+                strHeaderTable.append("<table><thead>");
+                recordMap.forEach((strKey, _) -> {
+                    if (!rememberKey.equalsIgnoreCase(strKey.toString())
+                            && !BasicStructuresClass.STR_ROW_STYLE.equalsIgnoreCase(strKey.toString())) {
+                        strHeaderTable.append(String.format("<th>%s</th>", strKey));
+                    }
+                });
+                if (useCounter) {
+                    strHeaderTable.append("<th>#</th>");
+                }
+                strHeaderTable.append("</thead><tbody>");
+                return String.join("", strHeaderTable);
+            }
+
+            /**
+             * ensuring Table Header is appended
+             */
+            private static void ensureHeaderAppended() {
+                if (htmlTableLines.isEmpty()) {
+                    htmlTableLines.add(strTableHeader);
+                    rowCounter = 0;
+                }
+            }
+
+            /**
+             * initiating Table Header
+             * @param recordMap records to parse
+             */
+            private static void ensureHeaderExists(final SequencedMap<Object, Object> recordMap) {
+                if (strTableHeader.isEmpty()) {
+                    strTableHeader = buildTableHeader(recordMap);
+                }
+            }
+
+            /**
+             * constructor
+             */
+            private TabSubSubClass() {
+                // intentionally left blank
+            }
+
         }
 
         /**
          * constructor
          */
-        private Table() {
+        private TableSubClass() {
             // intentionally left blank
         }
 

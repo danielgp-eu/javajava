@@ -46,7 +46,7 @@ public final class ShellingClass {
             builder.command(strCommand, strParameters);
         }
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
-        builder.directory(FileStatisticsClass.RetrievingClass.getCurrentUserFolder());
+        builder.directory(FileStatisticsClass.RetrievingSubClass.getCurrentUserFolder());
         return builder;
     }
 
@@ -196,7 +196,7 @@ public final class ShellingClass {
     /**
      * PowerShell execution
      */
-    public static final class PowerShellExecutionClass {
+    public static final class PowerShellExecutionSubClass {
         /**
          * PowerShell file
          */
@@ -223,7 +223,7 @@ public final class ShellingClass {
             if (crtOperatingSys.startsWith("Windows")) {
                 try {
                     final String[] varsToPick = {"osWindowsSystem32Path", "powerShellBinary"};
-                    final Properties svProperties = BasicStructuresClass.PropertiesReaderClass.getVariableFromProjectProperties("/project.properties", varsToPick);
+                    final Properties svProperties = BasicStructuresClass.PropertiesReaderSubClass.getVariableFromProjectProperties("/project.properties", varsToPick);
                     setPowerShellFile(svProperties.get("powerShellBinary").toString());
                     validatePathEnvironmentVariable();
                     final String[] arrayCommand = buildWindowsApplicationCommandSafely(strFileName);
@@ -275,7 +275,7 @@ public final class ShellingClass {
         /**
          * Constructor
          */
-        private PowerShellExecutionClass() {
+        private PowerShellExecutionSubClass() {
             // intentionally left blank
         }
 

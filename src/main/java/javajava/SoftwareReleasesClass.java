@@ -65,13 +65,13 @@ public final class SoftwareReleasesClass {
      */
     private static List<Properties> getSoftwareReleasesFromDatabase() {
         List<Properties> resultReleases = new ArrayList<>();
-        try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClass.getSqLiteConnection(releasesDatabase);
-                Statement objStatement = DatabaseOperationsClass.ConnectivityClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
+        try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClassSubClass.getSqLiteConnection(releasesDatabase);
+                Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
             final Properties rsProperties = new Properties();
             rsProperties.put("Purpose", "Software Releases");
             rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
             rsProperties.put("FetchType", "Values");
-            resultReleases = DatabaseOperationsClass.ResultSettingClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
+            resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
         } catch (SQLException e) {
             final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
             LogExposureClass.LOGGER.debug(strFeedbackErr);

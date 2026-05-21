@@ -84,7 +84,7 @@ class AnalyzeColumnsFromCsvFiles implements Runnable {
                                                       final Integer intColToEval,
                                                       final Integer intColToGrpBy) {
         // Group values by category
-        final Map<String, List<String>> groupedColumns = FileOperationsClass.ContentReadingClass.getListOfValuesFromColumnGroupedByAnotherColumnValuesFromCsvFile(strFileName, intColToEval, intColToGrpBy);
+        final Map<String, List<String>> groupedColumns = FileOperationsClass.ContentReadingSubClass.getListOfValuesFromColumnGroupedByAnotherColumnValuesFromCsvFile(strFileName, intColToEval, intColToGrpBy);
         // Define merge rules
         final Map<List<String>, String> mergeRules = Map.of(
                 List.of("ARRAY", "OBJECT", "VARIANT"), "COMPOSITE__STRUCTURED",
@@ -92,20 +92,20 @@ class AnalyzeColumnsFromCsvFiles implements Runnable {
                 List.of("DATETIME", "TIMESTAMP", "TIMESTAMP_LTZ", "TIMESTAMP_NTZ", "TIMESTAMP_TZ"), "COMPOSITE__TIMESTAMP",
                 List.of("BINARY", "TEXT", "VARCHAR"), "COMPOSITE__TEXT"
         );
-        final Map<String, List<String>> grpCols = BasicStructuresClass.ListAndMapClass.mergeKeys(groupedColumns, mergeRules);
+        final Map<String, List<String>> grpCols = BasicStructuresClass.ListAndMapSubClass.mergeKeys(groupedColumns, mergeRules);
         final String strFeedback = "=".repeat(20) + strFileName + "=".repeat(20);
         LogExposureClass.LOGGER.info(strFeedback);
-        FileOperationsClass.ContentWritingClass.setCsvColumnSeparator(',');
+        FileOperationsClass.ContentWritingSubClass.setCsvColumnSeparator(',');
         grpCols.forEach((keyDataType, valList) -> {
             final String strColFileName = strFileName.replace(".csv", "__columns.csv");
             final String strFeedbackFile = "Writing file " + strColFileName;
             LogExposureClass.LOGGER.info(strFeedbackFile);
-            FileOperationsClass.ContentWritingClass.setCsvLinePrefix(keyDataType);
-            FileOperationsClass.ContentWritingClass.writeStringListToCsvFile(strColFileName, "DataType,Column", valList);
+            FileOperationsClass.ContentWritingSubClass.setCsvLinePrefix(keyDataType);
+            FileOperationsClass.ContentWritingSubClass.writeStringListToCsvFile(strColFileName, "DataType,Column", valList);
             final String strFeedbackWrt = String.format("Writing file for %s which has %s values", keyDataType, valList.size());
             LogExposureClass.LOGGER.info(strFeedbackWrt);
-            final Map<String, Long> sorted = BasicStructuresClass.ListAndMapClass.getWordCounts(valList, "(_| )");
-            FileOperationsClass.ContentWritingClass.writeLinkedHashMapToCsvFile(strFileName.replace(".csv", "__words.csv"), "DataType,Word,Occurrences", sorted);
+            final Map<String, Long> sorted = BasicStructuresClass.ListAndMapSubClass.getWordCounts(valList, "(_| )");
+            FileOperationsClass.ContentWritingSubClass.writeLinkedHashMapToCsvFile(strFileName.replace(".csv", "__words.csv"), "DataType,Word,Occurrences", sorted);
         });
     }
 
@@ -141,13 +141,13 @@ class AnalyzePomFiles implements Runnable {
 
     @Override
     public void run() {
-        final String strFeedbackThis = String.format("For this project relevant POM information is: {%s}", ProjectClass.Application.getApplicationDetails());
+        final String strFeedbackThis = String.format("For this project relevant POM information is: {%s}", ProjectClass.ApplicationSubClass.getApplicationDetails());
         LogExposureClass.LOGGER.info(strFeedbackThis);
         final String[] inFiles = options.getInFileNames();
         for (final String strFileName : inFiles) {
             ProjectClass.setExternalPomFile(strFileName);
             ProjectClass.loadProjectModel();
-            final String strFeedback = String.format("For given POM file %s relevant information is: {%s}", strFileName, ProjectClass.Application.getApplicationDetails());
+            final String strFeedback = String.format("For given POM file %s relevant information is: {%s}", strFileName, ProjectClass.ApplicationSubClass.getApplicationDetails());
             LogExposureClass.LOGGER.info(strFeedback);
         }
     }
@@ -379,7 +379,7 @@ class CaptureEnvironmentDetailsIntoJsonFile implements Runnable {
         final String strOutFileName = optionOut.getOutFileName();
         final String strFeedback = String.format("Environment details are %s and will intend to write it to %s file", strEnvDetails, strOutFileName);
         LogExposureClass.LOGGER.info(strFeedback);
-        FileOperationsClass.ContentWritingClass.writeRawTextToFile(strOutFileName, strEnvDetails);
+        FileOperationsClass.ContentWritingSubClass.writeRawTextToFile(strOutFileName, strEnvDetails);
     }
 
     /**
@@ -416,7 +416,7 @@ class CaptureImportsFromJavaSourceFilesIntoCsvFile implements Runnable {
         final String[] inFolders = options.getFolderNames();
         final String outCsvFile = optionOut.getOutFileName();
         for (final String strFolder : inFolders) {
-            FileOperationsClass.ContentReadingClass.extractImportStatementsFromJavaSourceFilesIntoCsvFile(Path.of(strFolder), Path.of(outCsvFile));
+            FileOperationsClass.ContentReadingSubClass.extractImportStatementsFromJavaSourceFilesIntoCsvFile(Path.of(strFolder), Path.of(outCsvFile));
         }
     }
 
@@ -444,7 +444,7 @@ class CaptureWindowsApplicationsInstalledIntoCsvFile implements Runnable {
     @Override
     public void run() {
         final String outCsvFile = optionOut.getOutFileName();
-        ShellingClass.PowerShellExecutionClass.captureWindowsApplicationsIntoCsvFile(outCsvFile);
+        ShellingClass.PowerShellExecutionSubClass.captureWindowsApplicationsIntoCsvFile(outCsvFile);
     }
 
     /**
@@ -480,12 +480,12 @@ class CleanOlderFilesFromFolder implements Runnable {
 
     @Override
     public void run() {
-        FileOperationsClass.DeletingClass.OlderClass.setCleanedFolderStatistics(true);
+        FileOperationsClass.DeletingSubClass.OlderClass.setCleanedFolderStatistics(true);
         final String[] inFolders = options.getFolderNames();
         for (final String strFolder : inFolders) {
-            FileOperationsClass.DeletingClass.OlderClass.setOrResetCleanedFolderStatistics();
-            FileOperationsClass.DeletingClass.OlderClass.deleteFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
-            final Map<String, Long> statsClndFldr = FileOperationsClass.DeletingClass.OlderClass.getCleanedFolderStatistics();
+            FileOperationsClass.DeletingSubClass.OlderClass.setOrResetCleanedFolderStatistics();
+            FileOperationsClass.DeletingSubClass.OlderClass.deleteFilesOlderThanGivenDays(strFolder, intDaysOlderLimit);
+            final Map<String, Long> statsClndFldr = FileOperationsClass.DeletingSubClass.OlderClass.getCleanedFolderStatistics();
             final String strFeedback = String.format("Folder %s has been cleaned eliminating %s files and freeing %s bytes in terms of disk space...", strFolder, statsClndFldr.get("Files"), statsClndFldr.get("Size"));
             LogExposureClass.LOGGER.info(strFeedback);
         }
@@ -597,11 +597,11 @@ class GetInformationFromDatabase implements Runnable {
         Properties properties = new Properties();
         switch (strDatabaseType) {
             case "MySQL":
-                properties = DatabaseOperationsClass.SpecificMySql.getConnectionPropertiesForMySQL();
-                DatabaseOperationsClass.SpecificMySql.performMySqlPreDefinedAction(strLclInfoType, properties);
+                properties = DatabaseOperationsClass.SpecificMySqlSubClass.getConnectionPropertiesForMySQL();
+                DatabaseOperationsClass.SpecificMySqlSubClass.performMySqlPreDefinedAction(strLclInfoType, properties);
                 break;
             case "Snowflake":
-                DatabaseOperationsClass.SpecificSnowflakeClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
+                DatabaseOperationsClass.SpecificSnowflakeClassSubClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
                 final String strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -654,7 +654,7 @@ class GetSubFoldersFromFolder implements Runnable {
 
     @Override
     public void run() {
-        final List<String> arraySubFolders = FileStatisticsClass.RetrievingClass.getSubFoldersFromFolder(strFolderName);
+        final List<String> arraySubFolders = FileStatisticsClass.RetrievingSubClass.getSubFoldersFromFolder(strFolderName);
         final String strFeedback = String.format("Considering folder %s following sub-folders were found: %s", strFolderName, arraySubFolders);
         LogExposureClass.LOGGER.info(strFeedback);
     }
@@ -701,7 +701,7 @@ class JavaJavaWebUserInterface implements Runnable {
     @Override
     public void run() {
         UndertowClass.setWebPort(String.valueOf(portNumber));
-        DatabaseOperationsClass.SpecificSqLiteClass.setInternalDatabase(strDbReleases);
+        DatabaseOperationsClass.SpecificSqLiteClassSubClass.setInternalDatabase(strDbReleases);
         SoftwareReleasesClass.setReleasesDatabase(strDbReleases);
         UndertowClass.setRootHandler(JavaJavaWebClass.handleWebContent());
         UndertowClass.runWebServer();
@@ -782,7 +782,7 @@ class JsonSplit implements Runnable {
         for (final String strFileName : inFiles) {
             setFileSize(strFileName);
             if (fileSize <= 0) {
-                final Properties propertiesReturn = FileStatisticsClass.RetrievingClass.checkFileExistanceAndReadability(fileSize, strFileName);
+                final Properties propertiesReturn = FileStatisticsClass.RetrievingSubClass.checkFileExistanceAndReadability(fileSize, strFileName);
                 final String strFeedback = String.format("There is something not right with given file name... %s", propertiesReturn);
                 LogExposureClass.LOGGER.error(strFeedback);
             } else {
@@ -801,22 +801,22 @@ class JsonSplit implements Runnable {
     private static void performJsonSplit(final String strFileName) {
         final String strFeedback = String.format("File %s has a size of %s bytes which compared to split file threshold of %s bytes is %s%% bigger, hence split IS required and will be performed!", strFileName, fileSize, sizeThreshold, Math.abs(sizeDifference));
         LogExposureClass.LOGGER.info(strFeedback);
-        JsonOperationsClass.JsonArrayClass.setInputJsonFile(strFileName);
-        JsonOperationsClass.JsonArrayClass.setDestinationFolder(strDestFolder);
-        JsonOperationsClass.JsonArrayClass.setRelevantField(strField);
+        JsonOperationsClass.ArraySubClass.setInputJsonFile(strFileName);
+        JsonOperationsClass.ArraySubClass.setDestinationFolder(strDestFolder);
+        JsonOperationsClass.ArraySubClass.setRelevantField(strField);
         if (bucketLength != 0) {
-            JsonOperationsClass.JsonArrayClass.setBucketLength(bucketLength);
+            JsonOperationsClass.ArraySubClass.setBucketLength(bucketLength);
         }
-        final String destPattern = JsonOperationsClass.JsonArrayClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
-        FileOperationsClass.DeletingClass.deleteFilesMatchingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
-        JsonOperationsClass.JsonArrayClass.splitJsonIntoSmallerGrouped(); // actual logic
+        final String destPattern = JsonOperationsClass.ArraySubClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
+        FileOperationsClass.DeletingSubClass.deleteFilesMatchingPatternFromFolder(strDestFolder, destPattern); // clean slate to avoid inheriting old content
+        JsonOperationsClass.ArraySubClass.splitJsonIntoSmallerGrouped(); // actual logic
     }
 
     /**
      * Setter for fileSize
      */
     private static void setFileSize(final String strFileName) {
-        fileSize = FileStatisticsClass.RetrievingClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
+        fileSize = FileStatisticsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
     }
 
     /**

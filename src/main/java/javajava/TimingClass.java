@@ -317,7 +317,7 @@ public final class TimingClass {
     /**
      * Time Zones and associated coordinates handler
      */
-    public static final class Localization {
+    public static final class LocalizationSubClass {
         /**
          * Input time zone variable
          */
@@ -393,7 +393,7 @@ public final class TimingClass {
         /**
          * Constructor
          */
-        private Localization() {
+        private LocalizationSubClass() {
             // intentionally blank
         }
 

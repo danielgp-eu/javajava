@@ -1,7 +1,7 @@
 autoEnabled=true
 bindingSuggestionsDisabled=false
 eclipse.preferences.version=1
-fileExclusions=DIRECTORY\:src/main/resources/SQL
+fileExclusions=DIRECTORY\:src/main/resources
 indexingBasedOnEclipsePlugIns=true
 projectKey=danielgp-eu_javajava
 serverId=SonarQube_Cloud/danielgp-eu

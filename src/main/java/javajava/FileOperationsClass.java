@@ -39,7 +39,7 @@ public final class FileOperationsClass {
     /**
      * File Content Reading
      */
-    public static final class ContentReadingClass {
+    public static final class ContentReadingSubClass {
 
         /**
          * Capture Import Statements from Java source files into CSV
@@ -51,7 +51,7 @@ public final class FileOperationsClass {
             try (BufferedWriter writer = Files.newBufferedWriter(outCsvFile, StandardCharsets.UTF_8)) {
                 writer.write("Path;File;Imported;Timestamp");
                 writer.newLine();
-                final List<Path> arrayFiles = FileStatisticsClass.RetrievingClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
+                final List<Path> arrayFiles = FileStatisticsClass.RetrievingSubClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
                 arrayFiles.forEach(crtFileName -> {
                     try (BufferedReader reader = Files.newBufferedReader(crtFileName, StandardCharsets.UTF_8)) {
                         String line = reader.readLine();  // Initialize the variable outside the loop
@@ -122,7 +122,7 @@ public final class FileOperationsClass {
             String strContent = null;
             final String strFeedback = String.format("Attempting to get content into a String from %s file...", strFileName);
             LogExposureClass.LOGGER.debug(strFeedback);
-            try (InputStream iStream = ContentReadingClass.class.getResourceAsStream(strFileName);
+            try (InputStream iStream = ContentReadingSubClass.class.getResourceAsStream(strFileName);
                     InputStreamReader inputStreamReader = new InputStreamReader(iStream, StandardCharsets.UTF_8);
                     BufferedReader bReader = new BufferedReader(inputStreamReader)) {
                 strContent = bReader.readAllAsString();
@@ -166,7 +166,7 @@ public final class FileOperationsClass {
         /**
          * Constructor
          */
-        private ContentReadingClass() {
+        private ContentReadingSubClass() {
             // intentionally blank
         }
 
@@ -175,7 +175,7 @@ public final class FileOperationsClass {
     /**
      * File Content Reading
      */
-    public static final class ContentWritingClass {
+    public static final class ContentWritingSubClass {
         /**
          * Column Separator for CSV file writing methods
          */
@@ -236,7 +236,7 @@ public final class FileOperationsClass {
          * @param strFileName file name to write to
          */
         public static void writeListToTextFile(final String strFileName, final List<String> listStrings) {
-            DeletingClass.deleteFileIfExists(strFileName);
+            DeletingSubClass.deleteFileIfExists(strFileName);
             try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
                 listStrings.forEach(strLine -> {
                     try {
@@ -294,7 +294,7 @@ public final class FileOperationsClass {
          * @param strRawText content
          */
         public static void writeRawTextToFile(final String strFileName, final String strRawText) {
-            DeletingClass.deleteFileIfExists(strFileName);
+            DeletingSubClass.deleteFileIfExists(strFileName);
             try (BufferedWriter bwr = Files.newBufferedWriter(Path.of(strFileName), StandardCharsets.UTF_8)) {
                 bwr.write(strRawText);
                 final String strFeedback = String.format("Writing list to %s file completed successfully!", strFileName);
@@ -336,7 +336,7 @@ public final class FileOperationsClass {
         /**
          * Constructor
          */
-        private ContentWritingClass() {
+        private ContentWritingSubClass() {
             // intentionally blank
         }
 
@@ -345,7 +345,7 @@ public final class FileOperationsClass {
     /**
      * File Deletion logic
      */
-    public static final class DeletingClass {
+    public static final class DeletingSubClass {
 
         /**
          * Removes a files if already exists
@@ -492,7 +492,7 @@ public final class FileOperationsClass {
         /**
          * Constructor
          */
-        private DeletingClass() {
+        private DeletingSubClass() {
             // intentionally blank
         }
 
@@ -501,7 +501,7 @@ public final class FileOperationsClass {
     /**
      * File Mass Change logic
      */
-    public static final class MassChangeClass {
+    public static final class MassChangeSubClass {
         /**
          * holding characters being replaced
          */
@@ -611,7 +611,7 @@ public final class FileOperationsClass {
         /**
          * Constructor
          */
-        private MassChangeClass() {
+        private MassChangeSubClass() {
             // intentionally blank
         }
     }
@@ -619,7 +619,7 @@ public final class FileOperationsClass {
     /**
      * File Moving logic
      */
-    public static final class MovingClass {
+    public static final class MovingSubClass {
 
         /**
          * Archives single file to new location
@@ -643,7 +643,7 @@ public final class FileOperationsClass {
         /**
          * Constructor
          */
-        private MovingClass() {
+        private MovingSubClass() {
             // intentionally blank
         }
 

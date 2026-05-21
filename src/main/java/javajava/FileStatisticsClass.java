@@ -39,10 +39,10 @@ public final class FileStatisticsClass {
     /**
      * A simple record to hold our results
      */
-    /* default */ record FolderStats(long fileCount, long folderCount, long totalSize) {
-        /* default */ static FolderStats empty() { return new FolderStats(0, 0, 0); }
-        /* default */ FolderStats add(final FolderStats other) {
-            return new FolderStats(
+    /* default */ record FolderStatsRecord(long fileCount, long folderCount, long totalSize) {
+        /* default */ static FolderStatsRecord empty() { return new FolderStatsRecord(0, 0, 0); }
+        /* default */ FolderStatsRecord add(final FolderStatsRecord other) {
+            return new FolderStatsRecord(
                 this.fileCount + other.fileCount,
                 this.folderCount + other.folderCount,
                 this.totalSize + other.totalSize
@@ -187,22 +187,22 @@ public final class FileStatisticsClass {
         final Path directory = Paths.get(strFolderName.replace("\"", ""));
         // use DirectoryStream to list files which are present in specific
         try (Stream<Path> stream = Files.walk(directory)) {
-            final FolderStats stats = stream
+            final FolderStatsRecord stats = stream
                 .map(path -> {
                     if (Files.isDirectory(path)) {
                         // Don't count the root directory itself as a sub-folder
-                        return path.equals(directory) ? FolderStats.empty() : new FolderStats(0, 1, 0);
+                        return path.equals(directory) ? FolderStatsRecord.empty() : new FolderStatsRecord(0, 1, 0);
                     } else {
                         try {
-                            return new FolderStats(1, 0, Files.size(path));
+                            return new FolderStatsRecord(1, 0, Files.size(path));
                         } catch (IOException e) {
                             final String strFeedback = String.format("Input/Output exception on %s folder encountered on %s", strFolderName, Arrays.toString(e.getStackTrace()));
                             LogExposureClass.LOGGER.debug(strFeedback);
-                            return FolderStats.empty();
+                            return FolderStatsRecord.empty();
                         }
                     }
                 })
-                .reduce(FolderStats.empty(), FolderStats::add);
+                .reduce(FolderStatsRecord.empty(), FolderStatsRecord::add);
             pathProps.put("TOTAL_OBJECTS", stats.folderCount() + stats.fileCount());
             pathProps.put("DIRECTORIES", stats.folderCount());
             pathProps.put("FILES", stats.fileCount());
@@ -241,7 +241,7 @@ public final class FileStatisticsClass {
     /**
      * File Content Reading
      */
-    public static final class RetrievingClass {
+    public static final class RetrievingSubClass {
 
         /**
          * Checking if a file exists and is readable
@@ -365,7 +365,7 @@ public final class FileStatisticsClass {
         /**
          * Constructor
          */
-        private RetrievingClass() {
+        private RetrievingSubClass() {
             // intentionally blank
         }
 
@@ -374,7 +374,7 @@ public final class FileStatisticsClass {
     /**
      * File Content Reading
      */
-    public static final class RetrievingCompactOrRegularFileClass {
+    public static final class RetrievingCompactOrRegularFileSubClass {
         /**
          * String constant Minified
          */
@@ -404,13 +404,13 @@ public final class FileStatisticsClass {
         public static String getJsonConfigurationFile(final String strFilePattern) {
             final Properties propsFile = establishRegularOrCompactFileName(strFilePattern);
             String strFileJson = null;
-            final Properties propsMinified = RetrievingClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_MINIFIED));
+            final Properties propsMinified = RetrievingSubClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_MINIFIED));
             for(final Entry<Object, Object> eMinified : propsMinified.entrySet()) {
                 final boolean isItOk = "OK".equals(eMinified.getKey());
                 if (isItOk) {
                     strFileJson = eMinified.getValue().toString();
                 } else {
-                    final Properties propsPreety = RetrievingClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_PRTY_PRNT));
+                    final Properties propsPreety = RetrievingSubClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_PRTY_PRNT));
                     for(final Entry<Object, Object> ePreety : propsPreety.entrySet()) {
                         final boolean isItOk2 = "OK".equals(ePreety.getKey());
                         strFileJson = getJsonFileName(isItOk2, ePreety, propsFile);
@@ -444,7 +444,7 @@ public final class FileStatisticsClass {
         /**
          * Constructor
          */
-        private RetrievingCompactOrRegularFileClass() {
+        private RetrievingCompactOrRegularFileSubClass() {
             // intentionally blank
         }
 

@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
 import io.undertow.server.HttpHandler;
+import javajava.HtmlClass.TableSubClass;
 
 /**
  * Web interface class
@@ -48,30 +49,45 @@ public final class JavaJavaWebClass {
      * Outputs file statistics into an HTML table
      * @return String
      */
+    public static String getEnvironmentDetailsAsHtmlTable() {
+        final Properties objFeatures = new Properties();
+        objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Category");
+        final List<Properties> envDetails = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
+        final List<String> desiredOrder = List.of("Category", "Element", "Value");
+        final List<SequencedMap<Object, Object>> orderedList = envDetails.stream()
+                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
+                .toList();
+        return TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+    }
+
+    /**
+     * Outputs file statistics into an HTML table
+     * @return String
+     */
     private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
         final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoMap("C:/www/Downloads/");
         final List<String> desiredOrder = List.of("Folder", "File", "Size [bytes]", "Last Modified Time", "SHA-256");
         final List<SequencedMap<Object, Object>> orderedList = crtFileStatistics.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
+                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                 .toList();
-        return HtmlClass.Table.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
+        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
     }
 
     /**
      * expose Software Release details from internal DB
      * @return String software releases details
      */
-    private static String getSoftwareReleasesIntoHtml() {
+    private static String getSoftwareReleasesIntoHtmlTable() {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
         final List<Properties> softwareReleases = SoftwareReleasesClass.consolidateSoftwareReleases();
         final List<String> desiredOrder = List.of("Organization", "Product", "Version", "Date", "Files");
         final List<SequencedMap<Object, Object>> orderedList = softwareReleases.stream()
-                .map(prop -> BasicStructuresClass.ListAndMapClass.sortProperties(prop, desiredOrder))
+                .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                 .toList();
-        return HtmlClass.Table.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
+        return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, objFeatures);
     }
 
     /**
@@ -79,12 +95,12 @@ public final class JavaJavaWebClass {
      * @return web Content
      */
     public static gg.jte.Content handleBodyContent() {
-        final String page = UndertowClass.ParametersClass.getPageParameter();
+        final String page = UndertowClass.ParametersSubClass.getPageParameter();
         return output -> output.writeContent(switch(page) {
-            case BasicStructuresClass.STR_ENV_DTLS      -> HtmlClass.getEnvironmentDetailsAsHtmlTable();
-            case BasicStructuresClass.STR_FILE_HASHING   -> getFileHashingAsHtmlTable();
-            case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtml();
-            case BasicStructuresClass.STR_TS            -> HtmlClass.getTableStatisticsAsHtmlTable();
+            case BasicStructuresClass.STR_ENV_DTLS      -> getEnvironmentDetailsAsHtmlTable();
+            case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
+            case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable();
+            case BasicStructuresClass.STR_TS            -> SqLiteStatisticsSubClass.getTableStatisticsAsHtmlTable();
             default                                     -> String.format("Welcome %s", System.getProperty("user.name"));
         });
     }
@@ -96,10 +112,10 @@ public final class JavaJavaWebClass {
     public static HttpHandler handleWebContent() {
         return exchange -> {
             UndertowClass.handleCommonThings(exchange);
-            final String page = UndertowClass.ParametersClass.getPageParameter();
+            final String page = UndertowClass.ParametersSubClass.getPageParameter();
             switch(page) {
                 case BasicStructuresClass.STR_FILE_HASHING, BasicStructuresClass.STR_SOFTWARE_RLS, BasicStructuresClass.STR_TS:
-                    TimingClass.Localization.setInputTimeZone("UTC");
+                    TimingClass.LocalizationSubClass.setInputTimeZone("UTC");
                     break;
                 default:
                     // intentionally blank
@@ -107,10 +123,10 @@ public final class JavaJavaWebClass {
             }
             final TemplateEngine templateEngine = UndertowClass.createTemplateEngine();
             final Utf8ByteOutput output = new Utf8ByteOutput();
-            UndertowClass.TemplateRenderingClass.setOutput(output);
-            UndertowClass.TemplateRenderingClass.setServerExchange(exchange);
+            UndertowClass.TemplateRenderingSubClass.setOutput(output);
+            UndertowClass.TemplateRenderingSubClass.setServerExchange(exchange);
             packAllParameters();
-            UndertowClass.TemplateRenderingClass.renderTemplate(templateEngine, "index.jte");
+            UndertowClass.TemplateRenderingSubClass.renderTemplate(templateEngine, "index.jte");
         };
     }
 
@@ -118,12 +134,71 @@ public final class JavaJavaWebClass {
      * Packing all parameters to Template
      */
     private static void packAllParameters() {
-        final String page = UndertowClass.ParametersClass.getPageParameter();
-        UndertowClass.TemplateRenderingClass.packParameter("page", page);
-        UndertowClass.TemplateRenderingClass.packParameter("title", BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : MAP_MENU.get(page).get(BasicStructuresClass.STR_TITLE));
-        UndertowClass.TemplateRenderingClass.packParameter("menu", HtmlClass.CommonWebElements.buildMenu(MAP_MENU));
-        UndertowClass.TemplateRenderingClass.packParameter("content", handleBodyContent());
-        UndertowClass.TemplateRenderingClass.packCommonParameters();
+        final String page = UndertowClass.ParametersSubClass.getPageParameter();
+        UndertowClass.TemplateRenderingSubClass.packParameter("page", page);
+        UndertowClass.TemplateRenderingSubClass.packParameter("title", BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : MAP_MENU.get(page).get(BasicStructuresClass.STR_TITLE));
+        UndertowClass.TemplateRenderingSubClass.packParameter("menu", HtmlClass.buildMenu(MAP_MENU));
+        UndertowClass.TemplateRenderingSubClass.packParameter("content", handleBodyContent());
+        UndertowClass.TemplateRenderingSubClass.packCommonParameters();
+    }
+
+    /**
+     * List and Maps management
+     */
+    public static final class SqLiteStatisticsSubClass {
+
+        /**
+         * read SQLite tables and their record count
+         * @return StringBuilder
+         */
+        private static StringBuilder buildTableRecordCounting() {
+            final String strQueryCount = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTableRecordCounting");
+            final StringBuilder strQueryRaw = new StringBuilder(1000);
+            final List<Properties> resultTables = getTablesAndTheirSequence();
+            resultTables.forEach(objProperty -> {
+                if (!strQueryRaw.isEmpty()) {
+                    strQueryRaw.append(" UNION ALL ");
+                }
+                strQueryRaw.append(String.format(strQueryCount,
+                        objProperty.get(BasicStructuresClass.STR_TABLE),
+                        objProperty.get("Sequence"),
+                        objProperty.get(BasicStructuresClass.STR_TABLE)));
+            });
+            return strQueryRaw;
+        }
+
+        /**
+         * read SQLite tables and their sequence
+         * @return List<Properties>
+         */
+        private static List<Properties> getTablesAndTheirSequence() {
+            final String queryTables = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
+            return DatabaseOperationsClass.SpecificSqLiteClassSubClass.getSqLiteResultSetValues("Table list and their sequence", queryTables);
+        }
+
+        /**
+         * Outputs table statistics into an HTML table
+         * @return String
+         */
+        public static String getTableStatisticsAsHtmlTable() {
+            final StringBuilder queryRecordCount = buildTableRecordCounting();
+            final String queryTableStats = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTables");
+            final String strFinalQuery =  String.format(queryTableStats, queryRecordCount);
+            final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteClassSubClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
+            final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Sequence", "Gap");
+            final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
+                    .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
+                    .toList();
+            return TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());
+        }
+
+        /**
+         * constructor
+         */
+        private SqLiteStatisticsSubClass() {
+            // intentionally left blank
+        }
+
     }
 
     private JavaJavaWebClass() {

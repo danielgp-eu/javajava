@@ -63,7 +63,7 @@ public final class OshiUsageClass {
      */
     public static Map<String, Object> getDetailsAboutAvailableStoragePartitions() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final FileSystem osFileSystem = OshiSoftware.getOshiFileSystem();
+        final FileSystem osFileSystem = SoftwareSubClass.getOshiFileSystem();
         final List<OSFileStore> osFileStores = osFileSystem.getFileStores();
         for(final OSFileStore fileStore : osFileStores) {
             final String strIdentifier = "Partition UUID#" + fileStore.getUUID() + " ";
@@ -97,7 +97,7 @@ public final class OshiUsageClass {
     /**
      * Initiating Hardware package.
      */
-    public static final class OshiHardware {
+    public static final class HardwareSubClass {
 
         /**
          * Hardware info
@@ -201,7 +201,7 @@ public final class OshiUsageClass {
         /**
          * Constructor
          */
-        private OshiHardware() {
+        private HardwareSubClass() {
             // intentionally left blank
         }
 
@@ -210,7 +210,7 @@ public final class OshiUsageClass {
     /**
      * Initiating Software package.
      */
-    public static final class OshiSoftware {
+    public static final class SoftwareSubClass {
 
         /**
          * Software info
@@ -262,7 +262,7 @@ public final class OshiUsageClass {
         /**
          * Constructor
          */
-        private OshiSoftware() {
+        private SoftwareSubClass() {
             // intentionally left blank
         }
 

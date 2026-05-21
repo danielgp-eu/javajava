@@ -1,5 +1,7 @@
 package javajava;
 
+import static java.lang.Math.*;
+
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -10,8 +12,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Properties;
-
-import static java.lang.Math.*;
 
 /**
  * Sun position class

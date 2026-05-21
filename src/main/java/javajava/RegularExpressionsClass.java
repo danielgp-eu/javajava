@@ -272,7 +272,7 @@ public final class RegularExpressionsClass {
     /**
      * Validation logic using Regular Expressions
      */
-    public static final class ValidationClass {
+    public static final class ValidationSubClass {
 
         /**
          * Check if String is actually Date
@@ -309,7 +309,7 @@ public final class RegularExpressionsClass {
         }
 
         // Private constructor to prevent instantiation
-        private ValidationClass() {
+        private ValidationSubClass() {
             // intentionally blank
         }
 

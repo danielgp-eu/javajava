@@ -191,7 +191,7 @@ public final class ProjectClass {
         } else {
             prjModel = getProjectModelFromInsideJar(reader, pomFile);
         }
-        Loaders.loadComponents();
+        LoaderSubClass.loadComponents();
     }
 
     /**
@@ -231,7 +231,7 @@ public final class ProjectClass {
     /**
      * initiating Components class
      */
-    public static final class Application {
+    public static final class ApplicationSubClass {
         /**
          * constant for Build Plugins
          */
@@ -255,17 +255,17 @@ public final class ProjectClass {
                     .append("\":\"")
                     .append(prjModel.getVersion())
                     .append('\"');
-            final Map<String, Object> projDependencies = Components.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 strJsonString.append(",\"Dependencies\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projDependencies));
             }
-            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent(STR_PLUGINS_BUILD);
+            final Map<String, Object> projBuildPlugins = ComponentsSubClass.getProjectModelComponent(STR_PLUGINS_BUILD);
             if (!projBuildPlugins.isEmpty()) {
                 strJsonString.append(",\"Build Plugins\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projBuildPlugins));
             }
-            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent(STR_PLUGINS_PRFLE);
+            final Map<String, Object> projPrflPlugins = ComponentsSubClass.getProjectModelComponent(STR_PLUGINS_PRFLE);
             if (!projPrflPlugins.isEmpty()) {
                 strJsonString.append(",\"Profile Plugins\":")
                         .append(JsonOperationsClass.getMapIntoJsonString(projPrflPlugins));
@@ -290,15 +290,15 @@ public final class ProjectClass {
             final Map<String, Object> appDetails = new ConcurrentHashMap<>();
             final Model prjModel = getProjectModel();
             appDetails.put("Application - " + prjModel.getGroupId() + ":" + prjModel.getArtifactId(), prjModel.getVersion());
-            final Map<String, Object> projDependencies = Components.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+            final Map<String, Object> projDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
             if (!projDependencies.isEmpty()) {
                 projDependencies.forEach((strKey, objValue) -> appDetails.put("Direct Dependency - " + strKey, objValue));
             }
-            final Map<String, Object> projBuildPlugins = Components.getProjectModelComponent(STR_PLUGINS_BUILD);
+            final Map<String, Object> projBuildPlugins = ComponentsSubClass.getProjectModelComponent(STR_PLUGINS_BUILD);
             if (!projBuildPlugins.isEmpty()) {
                 projBuildPlugins.forEach((strKey, objValue) -> appDetails.put("Build Plugins - " + strKey, objValue));
             }
-            final Map<String, Object> projPrflPlugins = Components.getProjectModelComponent(STR_PLUGINS_PRFLE);
+            final Map<String, Object> projPrflPlugins = ComponentsSubClass.getProjectModelComponent(STR_PLUGINS_PRFLE);
             if (!projPrflPlugins.isEmpty()) {
                 projPrflPlugins.forEach((strKey, objValue) -> appDetails.put("Profile Plugins - " + strKey, objValue));
             }
@@ -342,7 +342,7 @@ public final class ProjectClass {
                         .append(mdlVersion)
                         .append('\"')
                         ;
-                final Map<String, Object> mdlDependencies = Components.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
+                final Map<String, Object> mdlDependencies = ComponentsSubClass.getProjectModelComponent(BasicStructuresClass.STR_DEPENDENCIES);
                 if (!mdlDependencies.isEmpty()) {
                     strJsonModule.append(",\"Dependencies\":")
                             .append(JsonOperationsClass.getMapIntoJsonString(mdlDependencies));
@@ -356,7 +356,7 @@ public final class ProjectClass {
         /**
          * Constructor
          */
-        private Application() {
+        private ApplicationSubClass() {
             // intentionally left blank
         }
 
@@ -365,7 +365,7 @@ public final class ProjectClass {
     /**
      * initiating Components class
      */
-    public static final class Loaders {
+    public static final class LoaderSubClass {
 
         /**
          * Load all components: Dependencies and Plug-ins
@@ -422,7 +422,7 @@ public final class ProjectClass {
         /**
          * Constructor
          */
-        private Loaders() {
+        private LoaderSubClass() {
             // intentionally left blank
         }
     }
@@ -430,7 +430,7 @@ public final class ProjectClass {
     /**
      * initiating Components class
      */
-    public static final class Components {
+    public static final class ComponentsSubClass {
         /**
          * special value
          */
@@ -443,7 +443,7 @@ public final class ProjectClass {
         public static Map<String, Object> getProjectModelComponent(final String strComponentName) {
             Map<String, Object> mapToReturn = new ConcurrentHashMap<>();
             switch(strComponentName) {
-                case Application.STR_PLUGINS_BUILD:
+                case ApplicationSubClass.STR_PLUGINS_BUILD:
                     if (prjModel.getBuild() != null) {
                         mapToReturn = getBuildPlugins();
                     }
@@ -453,7 +453,7 @@ public final class ProjectClass {
                         mapToReturn = getDependencies();
                     }
                     break;
-                case Application.STR_PLUGINS_PRFLE:
+                case ApplicationSubClass.STR_PLUGINS_PRFLE:
                     if (prjModel.getProfiles() != null) {
                         mapToReturn = getProfilePlugins();
                     }
@@ -532,7 +532,7 @@ public final class ProjectClass {
         /**
          * Constructor
          */
-        private Components() {
+        private ComponentsSubClass() {
             // intentionally left blank
         }
 

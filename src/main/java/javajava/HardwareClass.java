@@ -67,8 +67,8 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutCentralProcessorUnit() {
-        final CentralProcessor processor = OshiUsageClass.OshiHardware.getOshiProcessor();
-        final CentralProcessor.ProcessorIdentifier procIdentif = OshiUsageClass.OshiHardware.getOshiProcessorIdentifier();
+        final CentralProcessor processor = OshiUsageClass.HardwareSubClass.getOshiProcessor();
+        final CentralProcessor.ProcessorIdentifier procIdentif = OshiUsageClass.HardwareSubClass.getOshiProcessorIdentifier();
         final List<String> featureFlags = processor.getFeatureFlags().stream()
                 .sorted()
                 .toList();
@@ -92,9 +92,9 @@ public final class HardwareClass {
      */
     public static Map<String, Object> getDetailsAboutGraphicCards() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final List<GraphicsCard> graphicCards = OshiUsageClass.OshiHardware.getOshiGraphicsCards();
+        final List<GraphicsCard> graphicCards = OshiUsageClass.HardwareSubClass.getOshiGraphicsCards();
         for (final GraphicsCard  graphicCard : graphicCards) {
-            final String strIdentifier = "Video Card ID#" + BasicStructuresClass.StringTransformationClass.computeStringSignature(graphicCard.getName()) + " ";
+            final String strIdentifier = "Video Card ID#" + BasicStructuresClass.StringTransformationSubClass.computeStringSignature(graphicCard.getName()) + " ";
             arrayAttributes.putAll(Map.of(
                     strIdentifier + BasicStructuresClass.STR_NAME, graphicCard.getName(),
                     strIdentifier + "Vendor", graphicCard.getVendor(),
@@ -110,20 +110,20 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutMainboard() {
-        final Baseboard baseboard = OshiUsageClass.OshiHardware.getOshiMotherboard();
+        final Baseboard baseboard = OshiUsageClass.HardwareSubClass.getOshiMotherboard();
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>(Map.of(
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_MANUFACTURER, baseboard.getManufacturer(),
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_MODEL, baseboard.getModel(),
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_VERSION, baseboard.getVersion(),
                 BasicStructuresClass.STR_MAINBOARD + " " + BasicStructuresClass.STR_SRL_NUM, baseboard.getSerialNumber()));
-        final Firmware firmware = OshiUsageClass.OshiHardware.getOshiFirmware();
+        final Firmware firmware = OshiUsageClass.HardwareSubClass.getOshiFirmware();
         arrayAttributes.putAll(Map.of(
                 BasicStructuresClass.STR_FIRMWARE + " " + BasicStructuresClass.STR_MANUFACTURER, firmware.getManufacturer(),
                 BasicStructuresClass.STR_FIRMWARE + " " + "Name", firmware.getName(),
                 BasicStructuresClass.STR_FIRMWARE + " " + "Description", firmware.getDescription(),
                 BasicStructuresClass.STR_FIRMWARE + " " + BasicStructuresClass.STR_VERSION, firmware.getVersion(),
                 BasicStructuresClass.STR_FIRMWARE + " " + "Release Date", firmware.getReleaseDate() == null ? "unknown" : firmware.getReleaseDate()));
-        final ComputerSystem computerSystem = OshiUsageClass.OshiHardware.getOshiComputerSystem();
+        final ComputerSystem computerSystem = OshiUsageClass.HardwareSubClass.getOshiComputerSystem();
         arrayAttributes.putAll(Map.of(
                 BasicStructuresClass.STR_SYSTEM + " " + BasicStructuresClass.STR_MANUFACTURER, computerSystem.getManufacturer(),
                 BasicStructuresClass.STR_SYSTEM + " " + BasicStructuresClass.STR_MODEL, computerSystem.getModel(),
@@ -138,10 +138,10 @@ public final class HardwareClass {
      */
     public static Map<String, Object> getDetailsAboutMonitor() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final List<Display> displays = OshiUsageClass.OshiHardware.getOshiMonitor();
+        final List<Display> displays = OshiUsageClass.HardwareSubClass.getOshiMonitor();
         for (final Display crtDisplay : displays) {// The EDID is the "fingerprint" of the monitor hardware
             final byte[] edid = crtDisplay.getEdid();
-            final String uniqueId = "Monitor #" + BasicStructuresClass.StringTransformationClass.computeStringSignature(Base64.getEncoder().encodeToString(edid));
+            final String uniqueId = "Monitor #" + BasicStructuresClass.StringTransformationSubClass.computeStringSignature(Base64.getEncoder().encodeToString(edid));
             final Map<String, Object> crtMonitor = digestSingleDisplayDetails(crtDisplay);
             crtMonitor.forEach((strKey, strValue) -> arrayAttributes.put(uniqueId + " " + strKey, strValue));
         }
@@ -153,7 +153,7 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutNetwork() {
-        final NetworkParams networkParams = OshiUsageClass.OshiSoftware.getOshiNetworkParameters();
+        final NetworkParams networkParams = OshiUsageClass.SoftwareSubClass.getOshiNetworkParameters();
         return Map.of(
                 "DNS Servers", String.join(", ", networkParams.getDnsServers()),
                 "Domain Name", networkParams.getDomainName(),
@@ -169,7 +169,7 @@ public final class HardwareClass {
      */
     public static Map<String, Object> getDetailsAboutNetworkInterfaces() {
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>();
-        final List<NetworkIF> networkIFs = OshiUsageClass.OshiHardware.getOshiNetworkInterfaces();
+        final List<NetworkIF> networkIFs = OshiUsageClass.HardwareSubClass.getOshiNetworkInterfaces();
         for (final NetworkIF net : networkIFs) {
             net.updateAttributes(); // Refresh interface stats
             final String strIdentifier = "Memory MAC#" + net.getMacaddr() + " ";
@@ -191,13 +191,13 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutOperatingSystem() {
-        final OperatingSystem.OSVersionInfo version = OshiUsageClass.OshiSoftware.getOshiVersionInfo();
+        final OperatingSystem.OSVersionInfo version = OshiUsageClass.SoftwareSubClass.getOshiVersionInfo();
         return Map.of(
                 "Architecture", System.getProperty("os.arch"),
                 "Build", version.getBuildNumber(),
                 "Code", version.getCodeName(),
-                "Family", OshiUsageClass.OshiSoftware.getOshiFamily(),
-                BasicStructuresClass.STR_MANUFACTURER, OshiUsageClass.OshiSoftware.getOshiManufacturer(),
+                "Family", OshiUsageClass.SoftwareSubClass.getOshiFamily(),
+                BasicStructuresClass.STR_MANUFACTURER, OshiUsageClass.SoftwareSubClass.getOshiManufacturer(),
                 BasicStructuresClass.STR_NAME, System.getProperty("os.name"),
                 "Platform", PlatformEnum.getCurrentPlatform().toString(),
                 BasicStructuresClass.STR_VERSION, version.getVersion());
@@ -209,8 +209,8 @@ public final class HardwareClass {
      * @return Map
      */
     public static Map<String, Object> getDetailsAboutRandomAccessMemory() {
-        final GlobalMemory globalMemory = OshiUsageClass.OshiHardware.getOshiMemory();
-        final VirtualMemory virtualMemory = OshiUsageClass.OshiHardware.getOshiVirtualMemory();
+        final GlobalMemory globalMemory = OshiUsageClass.HardwareSubClass.getOshiMemory();
+        final VirtualMemory virtualMemory = OshiUsageClass.HardwareSubClass.getOshiVirtualMemory();
         final Map<String, Object> arrayAttributes = new ConcurrentHashMap<>(Map.of(
                 "Available", FormatUtil.formatBytes(globalMemory.getAvailable()),
                 "Page Size", FormatUtil.formatBytes(globalMemory.getPageSize()),

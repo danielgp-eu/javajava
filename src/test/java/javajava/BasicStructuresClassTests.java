@@ -105,21 +105,21 @@ class BasicStructuresClassTests {
         @Test
         void testCleanStringFromCurlyBraces() {
             final String strOriginal = "Original";
-            final String handled = BasicStructuresClass.StringCleaningClass.cleanStringFromCurlyBraces("{" + strOriginal + "}");
+            final String handled = BasicStructuresClass.StringCleaningSubClass.cleanStringFromCurlyBraces("{" + strOriginal + "}");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
         @Test
         void testStripQuotes() {
             final String strOriginal = "Original";
-            final String handled = BasicStructuresClass.StringCleaningClass.stripQuotes("\"" + strOriginal + "\"");
+            final String handled = BasicStructuresClass.StringCleaningSubClass.stripQuotes("\"" + strOriginal + "\"");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
         @Test
         void testStripQuotesShort() {
             final String strOriginal = "O";
-            final String handled = BasicStructuresClass.StringCleaningClass.stripQuotes("\"");
+            final String handled = BasicStructuresClass.StringCleaningSubClass.stripQuotes("\"");
             assertNotEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
@@ -144,7 +144,7 @@ class BasicStructuresClassTests {
             final List<String> listStrings = new ArrayList<>();
             listStrings.add("First");
             listStrings.add("Second");
-            final boolean handled = BasicStructuresClass.StringEvaluationClass.hasMatchingSubstring("First", listStrings);
+            final boolean handled = BasicStructuresClass.StringEvaluationSubClass.hasMatchingSubstring("First", listStrings);
             assertTrue(handled, String.format("\"%s\" is not true as expected", handled));
         }
 
@@ -168,7 +168,7 @@ class BasicStructuresClassTests {
         void testConvertPromptParametersIntoNamedParameters() {
             final String strOriginal = "SELECT {Field A}";
             final String strExpected = "SELECT :Field_A";
-            final String handled = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoNamedParameters(strOriginal);
+            final String handled = BasicStructuresClass.StringConversionSubClass.convertPromptParametersIntoNamedParameters(strOriginal);
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
 
@@ -176,7 +176,7 @@ class BasicStructuresClassTests {
         void testConvertPromptParametersIntoParameters() {
             final String strOriginal = "SELECT {Field A}";
             final String strExpected = "SELECT ?";
-            final String handled = BasicStructuresClass.StringConversionClass.convertPromptParametersIntoParameters(strOriginal);
+            final String handled = BasicStructuresClass.StringConversionSubClass.convertPromptParametersIntoParameters(strOriginal);
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
 
@@ -200,14 +200,14 @@ class BasicStructuresClassTests {
         void testEncloseStringIfContainsSpace() {
             final String strOriginal = "Original String";
             final String strExpected = "\"Original String\"";
-            final String handled = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(strOriginal, '\"');
+            final String handled = BasicStructuresClass.StringTransformationSubClass.encloseStringIfContainsSpace(strOriginal, '\"');
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
 
         @Test
         void testEncloseStringIfContainsSpaceFutile() {
             final String strExpected = "\"Original String\"";
-            final String handled = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(strExpected, '\"');
+            final String handled = BasicStructuresClass.StringTransformationSubClass.encloseStringIfContainsSpace(strExpected, '\"');
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
 
@@ -215,7 +215,7 @@ class BasicStructuresClassTests {
         void testEncloseStringIfContainsSpacePartialEnd() {
             final String strOriginal = "\"Original String";
             final String strExpected = strOriginal + '"';
-            final String handled = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(strOriginal, '\"');
+            final String handled = BasicStructuresClass.StringTransformationSubClass.encloseStringIfContainsSpace(strOriginal, '\"');
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
 
@@ -223,7 +223,7 @@ class BasicStructuresClassTests {
         void testEncloseStringIfContainsSpacePartialStart() {
             final String strOriginal = "Original String\"";
             final String strExpected = '"' + strOriginal;
-            final String handled = BasicStructuresClass.StringTransformationClass.encloseStringIfContainsSpace(strOriginal, '\"');
+            final String handled = BasicStructuresClass.StringTransformationSubClass.encloseStringIfContainsSpace(strOriginal, '\"');
             assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
         }
 
@@ -235,7 +235,7 @@ class BasicStructuresClassTests {
             final Properties expectedProps = new Properties();
             expectedProps.put("key", "value");
             expectedProps.put("password", "*U*N*D*I*S*C*L*O*S*E*D*");
-            final Properties handled = BasicStructuresClass.StringTransformationClass.obfuscateProperties(originalProps);
+            final Properties handled = BasicStructuresClass.StringTransformationSubClass.obfuscateProperties(originalProps);
             assertEquals(expectedProps, handled, String.format(ORIG_NQ_EXPCT, handled, expectedProps));
         }
 
