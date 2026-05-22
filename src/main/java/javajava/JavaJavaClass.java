@@ -601,7 +601,7 @@ class GetInformationFromDatabase implements Runnable {
                 DatabaseOperationsClass.SpecificMySqlSubClass.performMySqlPreDefinedAction(strLclInfoType, properties);
                 break;
             case "Snowflake":
-                DatabaseOperationsClass.SpecificSnowflakeClassSubClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
+                DatabaseOperationsClass.SpecificSnowflakeSubClass.performSnowflakePreDefinedAction(strLclInfoType, properties);
                 break;
             default:
                 final String strFeedback = String.format("Unknown %s argument received in %s, do not know what to do with it, therefore will quit, bye!", strDatabaseType, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
@@ -701,7 +701,7 @@ class JavaJavaWebUserInterface implements Runnable {
     @Override
     public void run() {
         UndertowClass.setWebPort(String.valueOf(portNumber));
-        DatabaseOperationsClass.SpecificSqLiteClassSubClass.setInternalDatabase(strDbReleases);
+        DatabaseOperationsClass.SpecificSqLiteSubClass.setInternalDatabase(strDbReleases);
         SoftwareReleasesClass.setReleasesDatabase(strDbReleases);
         UndertowClass.setRootHandler(JavaJavaWebClass.handleWebContent());
         UndertowClass.runWebServer();

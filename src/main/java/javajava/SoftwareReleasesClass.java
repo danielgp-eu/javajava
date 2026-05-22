@@ -65,7 +65,7 @@ public final class SoftwareReleasesClass {
      */
     private static List<Properties> getSoftwareReleasesFromDatabase() {
         List<Properties> resultReleases = new ArrayList<>();
-        try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteClassSubClass.getSqLiteConnection(releasesDatabase);
+        try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteConnection(releasesDatabase);
                 Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
             final Properties rsProperties = new Properties();
             rsProperties.put("Purpose", "Software Releases");

@@ -810,7 +810,7 @@ public final class DatabaseOperationsClass {
     /**
      * SQLite methods
      */
-    public static final class SpecificSqLiteClassSubClass {
+    public static final class SpecificSqLiteSubClass {
         /**
          * Internal database variable
          */
@@ -893,7 +893,7 @@ public final class DatabaseOperationsClass {
         /**
          * constructor
          */
-        private SpecificSqLiteClassSubClass() {
+        private SpecificSqLiteSubClass() {
             // empty constructor
         }
 
@@ -902,7 +902,7 @@ public final class DatabaseOperationsClass {
     /**
      * Snowflake methods
      */
-    public static final class SpecificSnowflakeClassSubClass {
+    public static final class SpecificSnowflakeSubClass {
         /**
          * String for Snowflake
          */
@@ -1051,7 +1051,7 @@ public final class DatabaseOperationsClass {
         /**
          * Constructor
          */
-        private SpecificSnowflakeClassSubClass() {
+        private SpecificSnowflakeSubClass() {
             // intentionally blank
         }
     }

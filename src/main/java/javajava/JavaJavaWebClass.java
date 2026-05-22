@@ -173,7 +173,7 @@ public final class JavaJavaWebClass {
          */
         private static List<Properties> getTablesAndTheirSequence() {
             final String queryTables = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
-            return DatabaseOperationsClass.SpecificSqLiteClassSubClass.getSqLiteResultSetValues("Table list and their sequence", queryTables);
+            return DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteResultSetValues("Table list and their sequence", queryTables);
         }
 
         /**
@@ -184,7 +184,7 @@ public final class JavaJavaWebClass {
             final StringBuilder queryRecordCount = buildTableRecordCounting();
             final String queryTableStats = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTables");
             final String strFinalQuery =  String.format(queryTableStats, queryRecordCount);
-            final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteClassSubClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
+            final List<Properties> resultTableStats = DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteResultSetValues("Table Statistics", strFinalQuery);
             final List<String> desiredOrder = List.of("#", BasicStructuresClass.STR_TABLE, "Records", "Sequence", "Gap");
             final List<SequencedMap<Object, Object>> orderedList = resultTableStats.stream()
                     .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
