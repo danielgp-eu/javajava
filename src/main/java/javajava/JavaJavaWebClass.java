@@ -1,5 +1,6 @@
 package javajava;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -99,8 +100,10 @@ public final class JavaJavaWebClass {
         return output -> output.writeContent(switch(page) {
             case BasicStructuresClass.STR_ENV_DTLS      -> getEnvironmentDetailsAsHtmlTable();
             case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
-            case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable();
-            case BasicStructuresClass.STR_TS            -> SqLiteStatisticsSubClass.getTableStatisticsAsHtmlTable();
+            case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable()
+                    + SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
+            case BasicStructuresClass.STR_TS            -> SqLiteStatisticsSubClass.getTableStatisticsAsHtmlTable()
+                    + SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
             default                                     -> String.format("Welcome %s", System.getProperty("user.name"));
         });
     }
@@ -146,6 +149,15 @@ public final class JavaJavaWebClass {
      * List and Maps management
      */
     public static final class SqLiteStatisticsSubClass {
+
+        /**
+         * Build Information Box
+         * @return String
+         */
+        private static String buildSqLiteFileInfoBox() {
+            final Path fileName = Path.of(DatabaseOperationsClass.SpecificSqLiteSubClass.getInternalDatabase());
+            return HtmlClass.buildFileInfoBox(fileName);
+        }
 
         /**
          * read SQLite tables and their record count

@@ -73,7 +73,7 @@ public final class FileStatisticsClass {
      * @param algorithm checksum algorithm name
      * @return String
      */
-    private static String computeSingleChecksum(final Path file, final String algorithm) {
+    public static String computeSingleChecksum(final Path file, final String algorithm) {
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance(algorithm);

@@ -817,6 +817,13 @@ public final class DatabaseOperationsClass {
         private static String internalDatabase;
 
         /**
+         * Getter for internalDatabase
+         */
+        public static String getInternalDatabase() {
+            return internalDatabase;
+        }
+
+        /**
          * Initiates a SQLite connection
          * @return Connection
          */

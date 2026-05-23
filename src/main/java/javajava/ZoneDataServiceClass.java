@@ -19,6 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
+record ZoneInfoRecord(
+        String zoneId,
+        double latitude,
+        double longitude,
+        List<String> countryCodes,
+        List<String> countryNames,
+        String friendlyOffset) {}
+
 /**
  * Time Zones and associated coordinates handler
  */

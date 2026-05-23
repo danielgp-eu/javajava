@@ -1,6 +1,7 @@
 package javajava;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,10 @@ import org.apache.maven.model.Model;
  * HTML generating logic
  */
 public final class HtmlClass {
+    /**
+     * Important string template variable
+     */
+    public static final String STRING_IMPORTANT = "<span style=\"font-weight:bold;text-shadow: 1px 1px 2px #999;\">%s</span>";
 
     /**
      * Application Details
@@ -35,6 +40,20 @@ public final class HtmlClass {
     public static String buildGeographicalCoordinatesFromTimeZone(final String sessionTimeZone) {
         final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
         return zInfo.latitude() + "," + zInfo.longitude();
+    }
+
+    /**
+     * Build Information Box
+     * @return String
+     */
+    public static String buildFileInfoBox(final Path fileName) {
+        final String[] infoStrings = {
+               String.format(STRING_IMPORTANT, fileName),
+               String.format(STRING_IMPORTANT, String.format(Locale.US, "%,d", fileName.toFile().length())),
+               String.format(STRING_IMPORTANT, TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName)),
+               String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), FileStatisticsClass.computeSingleChecksum(fileName, "SHA-256"))
+        };
+        return String.format("<div class=\"infoBox\" style=\"box-shadow: 0px 0px 3px 3px blue;font-size:0.7rem;padding:2px;text-align:left;\">File is %s, having as size of %s bytes, last modified time-stamp on %s with a checksum SHA-256 value of %s</div>", infoStrings[0], infoStrings[1], infoStrings[2], infoStrings[3]);
     }
 
     /**

@@ -13,7 +13,7 @@ body {
     width: 100%;
 }
 
-footer, header {
+footer, header, nav ul, .infoBox {
     background: rgba(0, 227, 151, 0.75) !important;
 }
 
@@ -42,7 +42,6 @@ header {
 }
 
 .infoBox {
-    background: rgba(218, 255, 125, 0.75) !important;
     border: 1px blue dotted;
     border-radius: 5px;
     margin-left: 8rem;
@@ -59,7 +58,6 @@ main {
 }
 
 nav ul {
-    background: rgba(0, 227, 151, 1) !important;
     height: 100%;
     list-style-type: none;
     margin: 0rem;
