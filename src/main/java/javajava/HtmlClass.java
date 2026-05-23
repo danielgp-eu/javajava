@@ -80,6 +80,7 @@ public final class HtmlClass {
         selectProps.put("Name", "TZ");
         selectProps.put("Id", "TZ");
         selectProps.put("Default", inTimeZone);
+        selectProps.put("Size", 1);
         return output -> output.writeContent(SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps));
     }
 
@@ -138,10 +139,13 @@ public final class HtmlClass {
             final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
             String[] defaultVals = {defaultValue};
             if (!objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty()) {
-                additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(BasicStructuresClass.STR_MULTIPLE));
                 if (!defaultValue.isEmpty()) {
                     defaultVals = defaultValue.split(",");
                 }
+                additionalAttrib = String.format(" multiple size=\"%s\"", objFeatures.get(BasicStructuresClass.STR_MULTIPLE));
+            }
+            if (!objFeatures.getOrDefault("Size", "").toString().isEmpty()) {
+                additionalAttrib = String.format(" size=\"%s\"", objFeatures.get("Size"));
             }
             defaults = Arrays.asList(defaultVals);
         }
