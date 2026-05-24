@@ -60,6 +60,15 @@ public final class ProjectClass {
     private static Model prjModel;
 
     /**
+     * Build Information Box
+     * @return String
+     */
+    public static String buildProductObjectModelFileInfoBox() {
+        final Path fileName = Path.of(pomFile);
+        return HtmlClass.buildFileInfoBox(fileName);
+    }
+
+    /**
      * Getter for pomFile
      * @return String
      */

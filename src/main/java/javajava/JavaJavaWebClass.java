@@ -98,7 +98,8 @@ public final class JavaJavaWebClass {
     public static gg.jte.Content handleBodyContent() {
         final String page = UndertowClass.ParametersSubClass.getPageParameter();
         return output -> output.writeContent(switch(page) {
-            case BasicStructuresClass.STR_ENV_DTLS      -> getEnvironmentDetailsAsHtmlTable();
+            case BasicStructuresClass.STR_ENV_DTLS      -> getEnvironmentDetailsAsHtmlTable()
+                    + ProjectClass.buildProductObjectModelFileInfoBox();
             case BasicStructuresClass.STR_FILE_HASHING  -> getFileHashingAsHtmlTable();
             case BasicStructuresClass.STR_SOFTWARE_RLS  -> getSoftwareReleasesIntoHtmlTable()
                     + SqLiteStatisticsSubClass.buildSqLiteFileInfoBox();
@@ -185,6 +186,8 @@ public final class JavaJavaWebClass {
          */
         private static List<Properties> getTablesAndTheirSequence() {
             final String queryTables = DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "StatisticsTablesAndTheirSequence");
+            final String strFeedback = String.format("Table list and their sequence query is: %s", queryTables);
+            LogExposureClass.LOGGER.debug(strFeedback);
             return DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteResultSetValues("Table list and their sequence", queryTables);
         }
 

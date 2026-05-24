@@ -1,9 +1,7 @@
 package javajava;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -178,24 +175,16 @@ public final class DatabaseOperationsClass {
      */
     public static String getPreDefinedQuery(final String strDatabaseType, final String strFileName) {
         String strFilePath = String.format("/SQL/%s/%s.sql", strDatabaseType, strFileName);
-        long fileSizeActual = 0;
-        if (ProjectClass.isRunningFromJar()) {
-            try (InputStream inStream = Objects.requireNonNull(DatabaseOperationsClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
-                // transferTo returns the number of bytes transferred (Java 9+)
-                fileSizeActual = inStream.transferTo(OutputStream.nullOutputStream());
-            } catch (IOException ei) {
-                LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
-            }
-        } else {
-            strFilePath = ProjectClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
-            fileSizeActual = FileStatisticsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(strFilePath);
-        }
+        final long fileSizeActual = FileStatisticsClass.RetrievingSubClass.getInternalFileSize(strFilePath);
         final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strFilePath, fileSizeActual);
         LogExposureClass.LOGGER.debug(strFeedback);
         final long fileSizeLimit = 10;
         if (fileSizeActual < fileSizeLimit) {
             final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strFileName, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
             throw new UnsupportedOperationException(strFeedbackErr);
+        }
+        if (!ProjectClass.isRunningFromJar()) {
+            strFilePath = ProjectClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
         }
         return FileOperationsClass.ContentReadingSubClass.getFileContentIntoString(strFilePath);
     }

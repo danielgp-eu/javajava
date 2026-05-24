@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -316,6 +317,26 @@ public final class FileStatisticsClass {
                 }
             }
             return fileSize;
+        }
+
+        /**
+         * get internal file size from Disk or inside Jar
+         * @param strFilePath 
+         * @return size of the file
+         */
+        public static long getInternalFileSize(final String strFilePath) {
+            final String strFilePathDisk = ProjectClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
+            long fileSizeActual = FileStatisticsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(strFilePathDisk);
+            if (ProjectClass.isRunningFromJar()
+                    || fileSizeActual < 0) {
+                try (InputStream inStream = Objects.requireNonNull(DatabaseOperationsClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
+                    // transferTo returns the number of bytes transferred (Java 9+)
+                    fileSizeActual = inStream.transferTo(OutputStream.nullOutputStream());
+                } catch (IOException ei) {
+                    LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
+                }
+            }
+            return fileSizeActual;
         }
 
         /**

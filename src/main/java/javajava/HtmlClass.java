@@ -1,7 +1,15 @@
 package javajava;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,12 +55,32 @@ public final class HtmlClass {
      * @return String
      */
     public static String buildFileInfoBox(final Path fileName) {
+        final String strThousandSep = "%,d";
         final String[] infoStrings = {
                String.format(STRING_IMPORTANT, fileName),
-               String.format(STRING_IMPORTANT, String.format(Locale.US, "%,d", fileName.toFile().length())),
+               String.format(STRING_IMPORTANT, String.format(Locale.US, strThousandSep, fileName.toFile().length())),
                String.format(STRING_IMPORTANT, TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName)),
                String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), FileStatisticsClass.computeSingleChecksum(fileName, "SHA-256"))
         };
+        if (!Files.exists(fileName)) {
+            final String strFeedback = String.format("Given file %s was not found on disk and statistics for it are %s, hence will be looking for it within JAR", fileName, infoStrings);
+            LogExposureClass.LOGGER.debug(strFeedback);
+            final String internalFile = fileName.toString().replace("\\", "/");
+            try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
+                final String strFeedback2 = String.format("Input Stream is: %s", inStream);
+                LogExposureClass.LOGGER.debug(strFeedback2);
+                infoStrings[1] = String.format(STRING_IMPORTANT, String.format(Locale.US, strThousandSep, inStream.transferTo(OutputStream.nullOutputStream())));
+                final URL resourceUrl = HtmlClass.class.getResource(internalFile);
+                final String strFeedback3 = String.format("URI is: %s", resourceUrl);
+                LogExposureClass.LOGGER.debug(strFeedback3);
+                final long lastModified = resourceUrl.openConnection().getLastModified();
+                final String strLastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault()).toString().replace("T"," ");
+                infoStrings[2] = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss"));
+                // infoStrings[3] Checksum is not correct !!!!!!!!!!!!!!!!!!!!!!!!!!
+            } catch (IOException ex) {
+                LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
+            }
+        }
         return String.format("<div class=\"infoBox\" style=\"box-shadow: 0px 0px 3px 3px blue;font-size:0.7rem;padding:2px;text-align:left;\">File is %s, having as size of %s bytes, last modified time-stamp on %s with a checksum SHA-256 value of %s</div>", infoStrings[0], infoStrings[1], infoStrings[2], infoStrings[3]);
     }
 
@@ -222,7 +250,6 @@ public final class HtmlClass {
 
         /**
          * final
-         * @return String
          */
         public static void finish() {
             if (!strTableHeader.isEmpty()) {
