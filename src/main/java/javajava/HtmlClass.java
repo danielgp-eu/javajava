@@ -76,7 +76,6 @@ public final class HtmlClass {
                 final long lastModified = resourceUrl.openConnection().getLastModified();
                 final String strLastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault()).toString().replace("T"," ");
                 infoStrings[2] = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss"));
-                // infoStrings[3] Checksum is not correct !!!!!!!!!!!!!!!!!!!!!!!!!!
             } catch (IOException ex) {
                 LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
             }
