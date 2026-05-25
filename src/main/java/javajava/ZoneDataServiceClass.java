@@ -139,9 +139,18 @@ public final class ZoneDataServiceClass {
         }
         final double lat = RegularExpressionsClass.dmsToDecimal(coords.substring(0, splitIdx), false);
         final double lon = RegularExpressionsClass.dmsToDecimal(coords.substring(splitIdx), true);
-        // 3. Get Current Offset String
-        final String offsetStr = "UTC" + ZonedDateTime.now(ZoneId.of(zoneId)).getOffset().getId();
-        CACHE.put(zoneId, new ZoneInfoRecord(zoneId, lat, lon, codes, names, offsetStr));
+        CACHE.put(zoneId, new ZoneInfoRecord(zoneId, lat, lon, codes, names, ""));
+    }
+
+    private static ZoneInfoRecord withCurrentOffset(final ZoneInfoRecord record) {
+        final String offsetStr = "UTC" + ZonedDateTime.now(ZoneId.of(record.zoneId())).getOffset().getId();
+        return new ZoneInfoRecord(
+                record.zoneId(),
+                record.latitude(),
+                record.longitude(),
+                record.countryCodes(),
+                record.countryNames(),
+                offsetStr);
     }
 
     /**
@@ -150,7 +159,8 @@ public final class ZoneDataServiceClass {
      * @return ZoneInfo
      */
     public static ZoneInfoRecord get(final String zoneId) {
-        return CACHE.get(zoneId);
+        final ZoneInfoRecord record = CACHE.get(zoneId);
+        return record == null ? null : withCurrentOffset(record);
     }
 
     /**
@@ -158,7 +168,9 @@ public final class ZoneDataServiceClass {
      * @return Collection of ZoneInfo
      */
     public static Collection<ZoneInfoRecord> getAll() {
-        return CACHE.values();
+        return CACHE.values().stream()
+                .map(ZoneDataServiceClass::withCurrentOffset)
+                .toList();
     }
 
     /**
