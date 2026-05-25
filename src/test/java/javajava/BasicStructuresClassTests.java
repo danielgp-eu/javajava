@@ -104,28 +104,28 @@ class BasicStructuresClassTests {
 
         @Test
         void testCleanStringAsDatabaseObject() {
-            final String strOriginal = "Original";
+            final String strOriginal = "Original1";
             final String handled = BasicStructuresClass.StringCleaningSubClass.cleanStringAsDatabaseObject(strOriginal + "^");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
         @Test
         void testCleanStringFromCurlyBraces() {
-            final String strOriginal = "Original";
+            final String strOriginal = "Original2";
             final String handled = BasicStructuresClass.StringCleaningSubClass.cleanStringFromCurlyBraces("{" + strOriginal + "}");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
         @Test
         void testCleanStringFromUnwantedCharacters() {
-            final String strOriginal = "Original";
+            final String strOriginal = "Original3";
             final String handled = BasicStructuresClass.StringCleaningSubClass.cleanStringFromUnwantedCharacters(strOriginal + "^");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
 
         @Test
         void testStripQuotes() {
-            final String strOriginal = "Original";
+            final String strOriginal = "Original4";
             final String handled = BasicStructuresClass.StringCleaningSubClass.stripQuotes("\"" + strOriginal + "\"");
             assertEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
         }
