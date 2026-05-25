@@ -32,6 +32,8 @@ jobs:
           passphrase: ${{ secrets.GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+        env:
+          GPG_TTY: /dev/null
 
       - name: Cache SonarQube packages
         uses: actions/cache@v4
