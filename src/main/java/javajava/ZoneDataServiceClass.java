@@ -142,15 +142,20 @@ public final class ZoneDataServiceClass {
         CACHE.put(zoneId, new ZoneInfoRecord(zoneId, lat, lon, codes, names, ""));
     }
 
-    private static ZoneInfoRecord withCurrentOffset(final ZoneInfoRecord record) {
-        final String offsetStr = "UTC" + ZonedDateTime.now(ZoneId.of(record.zoneId())).getOffset().getId();
+    /**
+     * capture Zone Info with current offset
+     * @param inRecord original Zone Info record
+     * @return UTC system Zone Info record
+     */
+    private static ZoneInfoRecord withCurrentOffset(final ZoneInfoRecord inRecord) {
+        final String strOffset = "UTC" + ZonedDateTime.now(ZoneId.of(inRecord.zoneId())).getOffset().getId();
         return new ZoneInfoRecord(
-                record.zoneId(),
-                record.latitude(),
-                record.longitude(),
-                record.countryCodes(),
-                record.countryNames(),
-                offsetStr);
+                inRecord.zoneId(),
+                inRecord.latitude(),
+                inRecord.longitude(),
+                inRecord.countryCodes(),
+                inRecord.countryNames(),
+                strOffset);
     }
 
     /**
@@ -159,8 +164,8 @@ public final class ZoneDataServiceClass {
      * @return ZoneInfo
      */
     public static ZoneInfoRecord get(final String zoneId) {
-        final ZoneInfoRecord record = CACHE.get(zoneId);
-        return record == null ? null : withCurrentOffset(record);
+        final ZoneInfoRecord ziRecord = CACHE.get(zoneId);
+        return ziRecord == null ? null : withCurrentOffset(ziRecord);
     }
 
     /**
