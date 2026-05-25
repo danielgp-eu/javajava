@@ -63,7 +63,7 @@ public final class HtmlClass {
                String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), FileStatisticsClass.computeSingleChecksum(fileName, "SHA-256"))
         };
         if (!Files.exists(fileName)) {
-            final String strFeedback = String.format("Given file %s was not found on disk and statistics for it are %s, hence will be looking for it within JAR", fileName, infoStrings);
+            final String strFeedback = String.format("Given file %s was not found on disk and statistics for it are %s, hence will be looking for it within JAR", fileName, Arrays.toString(infoStrings));
             LogExposureClass.LOGGER.debug(strFeedback);
             final String internalFile = fileName.toString().replace("\\", "/");
             try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {

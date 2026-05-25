@@ -187,7 +187,7 @@ public final class SunClass {
             LogExposureClass.LOGGER.debug(strFeedback);
             internalZoneId = zoneId;
         } catch (DateTimeException e) {
-            final String strFeedback = String.format("Given zone name %s does not seem to be a valid one... %s", inZoneName, e.getStackTrace());
+            final String strFeedback = String.format("Given zone name %s does not seem to be a valid one... %s", inZoneName, e.getMessage());
             LogExposureClass.LOGGER.debug(strFeedback);
         }
     }
