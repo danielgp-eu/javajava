@@ -907,6 +907,10 @@ public final class DatabaseOperationsClass {
          * standard String
          */
         public static final String STR_ROLES = "Roles";
+        /**
+         * standard String
+         */
+        private static String strUserName;
 
         /**
          * Snowflake Bootstrap
@@ -996,11 +1000,14 @@ public final class DatabaseOperationsClass {
          */
         private static Properties getSnowflakeProperties(final String strDatabase, final Properties propInstance) {
             final Properties properties = new Properties();
-            String currentUser = ShellingClass.getCurrentUserAccount();
+            String currentUser = strUserName;
+            if (strUserName == null) {
+                currentUser = ShellingClass.getCurrentUserAccount().toUpperCase(Locale.getDefault());
+            }
             if (currentUser.isEmpty()) {
                 currentUser = "UNKNOWN_USER";
             }
-            properties.put("user", currentUser.toUpperCase(Locale.getDefault()));
+            properties.put("user", currentUser);
             properties.put("db", strDatabase);
             properties.put("authenticator", propInstance.get("Authenticator").toString().replace("\"", ""));
             properties.put("role", propInstance.get("Role").toString().replace("\"", ""));
@@ -1042,6 +1049,14 @@ public final class DatabaseOperationsClass {
                 final String strFeedback = String.format("Error \"%s\"", Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);
             }
+        }
+
+        /**
+         * Setter for strUserName
+         * @param inUsername imposed username for Snowflake connectivity
+         */
+        public static void setUsernameForConnection(final String inUsername) {
+            strUserName = inUsername;
         }
 
         /**
