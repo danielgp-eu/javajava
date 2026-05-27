@@ -131,10 +131,10 @@ Various Java classes to be re-used
 
 ### Java Unit Testing
 
-* [Guide to JUnit 5 Parameterized Tests](https://www.baeldung.com/parameterized-tests-junit-5)
+* [Guide to JUnit 5+ Parameterized Tests](https://www.baeldung.com/parameterized-tests-junit-5)
 * [Introduction to JUnit 5](https://www.geeksforgeeks.org/introduction-to-junit-5/)
 * [JUnit Tutorials](https://howtodoinjava.com/junit5/junit/)
-* [JUnit 5](https://junit.org/junit5/)
+* [JUnit 6](https://junit.org/junit6/)
 * [JUnit 5 Tutorial (with Examples)](https://howtodoinjava.com/junit-5-tutorial/)
 * [Mocking JDBC for Unit Testing](https://www.baeldung.com/mocking-jdbc-unit-testing)
 
@@ -160,28 +160,31 @@ To avoid a pesky warning at execution time a VM Attribute having the value `--en
 
 ## Features implemented
 
-* AnalyzeColumnsFromCsvFiles                    --inFileName (1..*)
-* AnalyzePomFiles                               --inFileName (1..*)
+* AnalyzeColumnsFromCsvFiles                    --inFileName (1..*) InFileNameOptionMixinClass
+* AnalyzePomFiles                               --inFileName (1..*) InFileNameOptionMixinClass
 * ArchiveFolders                                --archivingExecutable (0..1)
                                                     --archivePassword (0..1)
                                                         --archivePrefix (0..1)
                                                             --archiveSuffix (0..1)
-                                                                --folderName (1..*)
-                                                                    --folderDestination (1)
-* CaptureChecksumsOfFilesFromFoldersIntoCsvFile --folderName (1..*)
-                                                    --outFileName (1)
-* CaptureEnvironmentDetailsIntoJsonFile         --outFileName (1)
-* CaptureImportsFromJavaSourceFilesIntoCsvFile  --folderName (1..*)
-                                                    --outFileName (1)
-* CaptureWindowsApplicationsInstalledIntoCsvFile--outFileName (1)
-* CleanOlderFilesFromFolder                     --folderName (1..*)
+                                                                --folderName (1..*) FolderNameOptionMixinClass
+                                                                    --folderDestination (1) FolderDestinationOptionMixinClass
+* CaptureChecksumsOfFilesFromFoldersIntoCsvFile --folderName (1..*) FolderNameOptionMixinClass
+                                                    --outFileName (1) OutFileNameOptionMixinClass
+* CaptureEnvironmentDetailsIntoJsonFile         --outFileName (1) OutFileNameOptionMixinClass
+* CaptureImportsFromJavaSourceFilesIntoCsvFile  --folderName (1..*) FolderNameOptionMixinClass
+                                                    --outFileName (1) OutFileNameOptionMixinClass
+* CaptureWindowsApplicationsInstalledIntoCsvFile--outFileName (1) OutFileNameOptionMixinClass
+* CleanOlderFilesFromFolder                     --folderName (1..*) FolderNameOptionMixinClass
                                                     --daysOlderLimit (1)
 * ExperimentalFeature
 * GetInformationFromDatabase                    --databaseType (1)
                                                     --informationType (1..*)
-* GetSubFoldersFromFolder                       --folderName (1)
-* JsonSplit                                     --inFileName (1..*)
-                                                    --folderDestination (1)
+* GetSubFoldersFromFolder                       --folderName (1..*) FolderNameOptionMixinClass
+* JavaJavaWebUserInterface                      --databaseReleases (1)
+                                                    --port (1)
+                                                        --folderName (1..*) FolderNameOptionMixinClass
+* JsonSplit                                     --inFileName (1..*) InFileNameOptionMixinClass
+                                                    --folderDestination (1) FolderDestinationOptionMixinClass
                                                         --splitSize (0..1)
                                                             --field (1)
                                                                 --bucketLength (0..1)

@@ -45,6 +45,8 @@ public final class JavaJavaWebClass {
                     (v1, _) -> v1, 
                     LinkedHashMap::new)  // Ensures it returns a SequencedMap
     );
+    /** Variable for Folders relevant for Checksum Exposure */
+    private static String[] strFolderNames;
 
     /**
      * Outputs file statistics into an HTML table
@@ -68,9 +70,13 @@ public final class JavaJavaWebClass {
     private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
         FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
-        final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoMap("C:/www/Downloads/");
+        final List<Properties> foldersStatistics = new ArrayList<>();
+        for(final String crtFolderName: strFolderNames) {
+            final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoListOfProperties(crtFolderName);
+            foldersStatistics.addAll(crtFileStatistics);
+        }
         final List<String> desiredOrder = List.of("Folder", "File", "Size [bytes]", "Last Modified Time", "SHA-256");
-        final List<SequencedMap<Object, Object>> orderedList = crtFileStatistics.stream()
+        final List<SequencedMap<Object, Object>> orderedList = foldersStatistics.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
                 .toList();
         return HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(orderedList, new Properties());  
@@ -144,6 +150,14 @@ public final class JavaJavaWebClass {
         UndertowClass.TemplateRenderingSubClass.packParameter("menu", HtmlClass.buildMenu(MAP_MENU));
         UndertowClass.TemplateRenderingSubClass.packParameter("content", handleBodyContent());
         UndertowClass.TemplateRenderingSubClass.packCommonParameters();
+    }
+
+    /**
+     * Setter for strFolderNames
+     * @param inFolderNames list of Folders relevant for checksum exposure
+     */
+    public static void setFolderNamesForChecksumExposure(final String... inFolderNames) {
+        strFolderNames = inFolderNames;
     }
 
     /**

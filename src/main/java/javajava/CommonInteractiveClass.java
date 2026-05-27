@@ -20,6 +20,16 @@ public final class CommonInteractiveClass {
      * Start Date Time
      */
     private static LocalDateTime startDateTime;
+    /** Picocli attribute for Commands */
+    private static final String PICOCLI_CMNDS = "%nCommands:%n%n";
+    /** Picocli attribute for Description */
+    private static final String PICOCLI_DESCR = "%nDescription:%n%n";
+    /** Picocli attribute for Options */
+    private static final String PICOCLI_OPTNS = "%nOptions:%n%n";
+    /** Picocli attribute for Parameters */
+    private static final String PICOCLI_PRMTRS = "%nParameters:%n%n";
+    /** Picocli attribute for Usage */
+    private static final String PICOCLI_USAGE = "%nUsage:%n%n";
 
     /**
      * Shut Down sequence
@@ -76,13 +86,43 @@ public final class CommonInteractiveClass {
     }
 
     /**
+     * Reusable Folder Destination for Picocli logic
+     */
+    @Command(synopsisHeading      = PICOCLI_USAGE,
+             descriptionHeading   = PICOCLI_DESCR,
+             parameterListHeading = PICOCLI_PRMTRS,
+             optionListHeading    = PICOCLI_OPTNS,
+             commandListHeading   = PICOCLI_CMNDS)
+    /* default */ public static class FolderDestinationOptionMixinClass {
+
+        /**
+         * String for FolderName
+         */
+        @Option(
+                names = {"-fldDst", "--folderDestination"},
+                description = "Destination Folder where archives will be created",
+                arity = BasicStructuresClass.STR_ONE,
+                required = true)
+        private static String strDestFolder;
+
+        /**
+         * Getter for strDestFolder
+         * @return String of Folder Names (1)
+         */
+        public String getFolderDetination() {
+            return strDestFolder;
+        }
+
+    }
+
+    /**
      * Reusable Folder Name for Picocli logic
      */
-    @Command(synopsisHeading      = "%nUsage:%n%n",
-             descriptionHeading   = "%nDescription:%n%n",
-             parameterListHeading = "%nParameters:%n%n",
-             optionListHeading    = "%nOptions:%n%n",
-             commandListHeading   = "%nCommands:%n%n")
+    @Command(synopsisHeading      = PICOCLI_USAGE,
+             descriptionHeading   = PICOCLI_DESCR,
+             parameterListHeading = PICOCLI_PRMTRS,
+             optionListHeading    = PICOCLI_OPTNS,
+             commandListHeading   = PICOCLI_CMNDS)
     /* default */ public static class FolderNameOptionMixinClass {
 
         /**
@@ -108,11 +148,11 @@ public final class CommonInteractiveClass {
     /**
      * Reusable input File Name for Picocli logic
      */
-    @Command(synopsisHeading      = "%nUsage:%n%n",
-             descriptionHeading   = "%nDescription:%n%n",
-             parameterListHeading = "%nParameters:%n%n",
-             optionListHeading    = "%nOptions:%n%n",
-             commandListHeading   = "%nCommands:%n%n")
+    @Command(synopsisHeading      = PICOCLI_USAGE,
+             descriptionHeading   = PICOCLI_DESCR,
+             parameterListHeading = PICOCLI_PRMTRS,
+             optionListHeading    = PICOCLI_OPTNS,
+             commandListHeading   = PICOCLI_CMNDS)
     /* default */ public static class InFileNameOptionMixinClass {
 
         /**
@@ -138,11 +178,11 @@ public final class CommonInteractiveClass {
     /**
      * Reusable output File Name for Picocli logic
      */
-    @Command(synopsisHeading      = "%nUsage:%n%n",
-             descriptionHeading   = "%nDescription:%n%n",
-             parameterListHeading = "%nParameters:%n%n",
-             optionListHeading    = "%nOptions:%n%n",
-             commandListHeading   = "%nCommands:%n%n")
+    @Command(synopsisHeading      = PICOCLI_USAGE,
+             descriptionHeading   = PICOCLI_DESCR,
+             parameterListHeading = PICOCLI_PRMTRS,
+             optionListHeading    = PICOCLI_OPTNS,
+             commandListHeading   = PICOCLI_CMNDS)
     /* default */ public static class OutFileNameOptionMixinClass {
 
         /**

@@ -148,7 +148,7 @@ public final class FileStatisticsClass {
      * @param strFolderName input folder name
      */
     private static void gatherFileStatisticsFromFolderIntoFile(final String strFolderName, final BufferedWriter writer) {
-        final List<Properties> crtFileStatistics = getFileStatisticsIntoMap(strFolderName);
+        final List<Properties> crtFileStatistics = getFileStatisticsIntoListOfProperties(strFolderName);
         crtFileStatistics.forEach(fileProperties -> {
             try {
                 writer.write(fileProperties.get("Folder").toString()
@@ -170,7 +170,7 @@ public final class FileStatisticsClass {
      * performs statistics for all files within a given folder 
      * @param strFolderName input folder name
      */
-    public static List<Properties> getFileStatisticsIntoMap(final String strFolderName) {
+    public static List<Properties> getFileStatisticsIntoListOfProperties(final String strFolderName) {
         if (!FILE_STATISTICS.isEmpty()) {
             FILE_STATISTICS.clear();
         }
