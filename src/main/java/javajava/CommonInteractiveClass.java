@@ -12,13 +12,9 @@ import picocli.CommandLine.Option;
  * Common class for Interactive service
  */
 public final class CommonInteractiveClass {
-    /**
-     * Exit Code
-     */
+    /** Exit Code variable */
     private static int exitCode;
-    /**
-     * Start Date Time
-     */
+    /** Start Date Time variable */
     private static LocalDateTime startDateTime;
     /** Picocli attribute for Commands */
     private static final String PICOCLI_CMNDS = "%nCommands:%n%n";
