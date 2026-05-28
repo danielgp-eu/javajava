@@ -2,6 +2,8 @@
 
 Various Java classes to be re-used
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=danielgp-eu_javajava&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=danielgp-eu_javajava)
+
 
 ## Included References
 
