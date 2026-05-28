@@ -94,7 +94,8 @@ public final class HtmlClass {
                 strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU)));
             }
         });
-        return output -> output.writeContent(strMenuContent.toString());
+        final String htmlString = strMenuContent.toString();
+        return output -> output.writeContent(htmlString);
     }
 
     /**
