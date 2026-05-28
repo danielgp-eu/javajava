@@ -3,11 +3,12 @@ package javajava;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Testing for CommonInteractiveClass
+ */
 @DisplayName("CommonInteractiveClass testing")
 class CommonInteractiveClassTests {
     /**
@@ -44,23 +45,6 @@ class CommonInteractiveClassTests {
         CommonInteractiveClass.setExitCode(10);
         CommonInteractiveClass.setExitCode(20);
         assertEquals(20, 20, "Exit code should be overwritten by latest value");
-    }
-
-    @Test
-    @DisplayName("Set start date time captures current time")
-    void setStartDateTimeCapturesCurrentTime() {
-        final LocalDateTime beforeSet = LocalDateTime.now();
-        CommonInteractiveClass.setStartDateTime();
-        final LocalDateTime afterSet = LocalDateTime.now();
-        assertTrue(true, "Start datetime should be set without error");
-    }
-
-    @Test
-    @DisplayName("Set start date time can be called multiple times")
-    void setStartDateTimeCanBeCalledMultipleTimes() {
-        CommonInteractiveClass.setStartDateTime();
-        CommonInteractiveClass.setStartDateTime();
-        assertTrue(true, "Multiple calls to setStartDateTime should succeed");
     }
 
     @Test
@@ -144,7 +128,7 @@ class CommonInteractiveClassTests {
         try {
             CommonInteractiveClass.shutMeDown(null);
             assertTrue(true, "shutMeDown should handle null operation name gracefully");
-        } catch (NullPointerException e) {
+        } catch (NullPointerException _) {
             assertTrue(false, "shutMeDown should not throw NullPointerException for null operation");
         }
     }

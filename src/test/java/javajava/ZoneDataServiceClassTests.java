@@ -1,168 +1,241 @@
 package javajava;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.SequencedMap;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * ZoneDataServiceClass testing
+ */
 @DisplayName("ZoneDataServiceClass unit testing")
 class ZoneDataServiceClassTests {
+    /** Constant for Calculated Not Equal to Expected */
     private static final String ORIG_NQ_EXPCT = "calculated result is not equal to expected result";
-
-    @Test
-    @DisplayName("Get supported time zones returns non-empty collection")
-    void getSupportedTimeZonesReturnsNonEmpty() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        assertTrue(!timeZones.isEmpty(), "Supported time zones should not be empty");
-    }
-
-    @Test
-    @DisplayName("Get supported time zones includes common American zones")
-    void getSupportedTimeZonesIncludeAmericaZones() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        assertTrue(timeZones.containsKey("America/Los_Angeles"), "America/Los_Angeles should be supported");
-        assertTrue(timeZones.containsKey("America/New_York"), "America/New_York should be supported");
-        assertTrue(timeZones.containsKey("America/Chicago"), "America/Chicago should be supported");
-    }
-
-    @Test
-    @DisplayName("Get supported time zones includes European zones")
-    void getSupportedTimeZonesIncludeEuropeZones() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        assertTrue(timeZones.containsKey("Europe/London"), "Europe/London should be supported");
-        assertTrue(timeZones.containsKey("Europe/Berlin"), "Europe/Berlin should be supported");
-        assertTrue(timeZones.containsKey("Europe/Prague"), "Europe/Prague should be supported");
-    }
-
-    @Test
-    @DisplayName("Get supported time zones includes Asian zones")
-    void getSupportedTimeZonesIncludeAsiaZones() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        assertTrue(timeZones.containsKey("Asia/Tokyo"), "Asia/Tokyo should be supported");
-        assertTrue(timeZones.containsKey("Asia/Shanghai"), "Asia/Shanghai should be supported");
-        assertTrue(timeZones.containsKey("Asia/Kolkata"), "Asia/Kolkata should be supported");
-    }
-
-    @Test
-    @DisplayName("Get supported time zones includes Australian zones")
-    void getSupportedTimeZonesIncludeAustraliaZones() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        assertTrue(timeZones.containsKey("Australia/Melbourne"), "Australia/Melbourne should be supported");
-    }
+    /** Constant for Zone Info should not be null */
+    private static final String ZONE_INFO_NOT_NUL = "Zone info should not be null";
+    /** Constant for America/New_York */
+    private static final String AMERICA_NY = "America/New_York";
 
     @Test
     @DisplayName("Loaded time zones are properly sorted with UTC offsets")
-    void getTimeZonesAreSortedWithUtcOffsets() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        for (final var value : timeZones.values()) {
-            assertTrue(!value.isEmpty(), "Time zone display value should not be empty");
-            assertTrue(value.contains("UTC"), "Time zone display should contain UTC offset");
+    void testGetTimeZonesAreSortedWithUtcOffsets() {
+        final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+        for (final String value : timeZones.values()) {
+            assertAll("Loaded time zones are properly sorted with UTC offsets",
+                    () -> assertTrue(!value.isEmpty(), "Time zone display value should not be empty"),
+                    () -> assertTrue(value.contains("UTC"), "Time zone display should contain UTC offset")
+            );
         }
     }
 
     @Test
     @DisplayName("Get zone info returns null for non-existent zone")
-    void getZoneInfoForNonExistentZoneReturnsNull() {
-        final var zoneInfo = ZoneDataServiceClass.get("Invalid/Zone_That_Does_Not_Exist");
+    void testGetZoneInfoForNonExistentZoneReturnsNull() {
+        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Invalid/Zone_That_Does_Not_Exist");
         assertEquals(null, zoneInfo, ORIG_NQ_EXPCT);
     }
 
     @Test
     @DisplayName("Get zone info returns valid record for known zone")
-    void getZoneInfoReturnsValidRecordForKnownZone() {
-        final var zoneInfo = ZoneDataServiceClass.get("America/New_York");
-        assertTrue(zoneInfo != null, "Zone info should not be null for valid zone");
-        assertEquals("America/New_York", zoneInfo.zoneId(), "Zone ID should match");
-    }
-
-    @Test
-    @DisplayName("Get zone info includes latitude and longitude coordinates")
-    void getZoneInfoIncludesCoordinates() {
-        final var zoneInfo = ZoneDataServiceClass.get("America/New_York");
-        assertTrue(zoneInfo != null, "Zone info should not be null");
-        assertTrue(zoneInfo.latitude() != 0.0 || zoneInfo.longitude() != 0.0, "Coordinates should be non-zero");
+    void testGetZoneInfoReturnsValidRecordForKnownZone() {
+        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
+        assertAll("Get zone info returns valid record for known zone",
+                () -> assertTrue(zoneInfo != null, "Zone info should not be null for valid zone"),
+                () -> assertEquals(AMERICA_NY, zoneInfo.zoneId(), "Zone ID should match")
+        );
     }
 
     @Test
     @DisplayName("Get zone info includes country codes")
-    void getZoneInfoIncludesCountryCodes() {
-        final var zoneInfo = ZoneDataServiceClass.get("Europe/Berlin");
-        assertTrue(zoneInfo != null, "Zone info should not be null");
-        assertTrue(!zoneInfo.countryCodes().isEmpty(), "Country codes should not be empty");
+    void testGetZoneInfoIncludesCountryCodes() {
+        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Europe/Berlin");
+        assertAll("Get zone info includes country codes",
+                () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                () -> assertTrue(!zoneInfo.countryCodes().isEmpty(), "Country codes should not be empty")
+        );
     }
 
     @Test
     @DisplayName("Get zone info includes country names")
-    void getZoneInfoIncludesCountryNames() {
-        final var zoneInfo = ZoneDataServiceClass.get("Asia/Tokyo");
-        assertTrue(zoneInfo != null, "Zone info should not be null");
-        assertTrue(!zoneInfo.countryNames().isEmpty(), "Country names should not be empty");
+    void testGetZoneInfoIncludesCountryNames() {
+        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Asia/Tokyo");
+        assertAll("Get zone info includes country names",
+                () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                () -> assertTrue(!zoneInfo.countryNames().isEmpty(), "Country names should not be empty")
+        );
     }
 
     @Test
     @DisplayName("Get zone info includes current UTC offset")
-    void getZoneInfoIncludesCurrentUtcOffset() {
-        final var zoneInfo = ZoneDataServiceClass.get("America/Los_Angeles");
-        assertTrue(zoneInfo != null, "Zone info should not be null");
-        assertTrue(zoneInfo.friendlyOffset().startsWith("UTC"), "Offset should start with UTC");
+    void testGetZoneInfoIncludesCurrentUtcOffset() {
+        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Los_Angeles");
+        assertAll("Get zone info includes current UTC offset",
+                () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                () -> assertTrue(zoneInfo.friendlyOffset().startsWith("UTC"), "Offset should start with UTC")
+        );
     }
 
     @Test
     @DisplayName("Get all zones returns non-empty collection")
-    void getAllZonesReturnsNonEmpty() {
-        final var allZones = ZoneDataServiceClass.getAll();
+    void testGetAllZonesReturnsNonEmpty() {
+        final Collection<ZoneInfoRecord> allZones = ZoneDataServiceClass.getAll();
         assertTrue(!allZones.isEmpty(), "All zones collection should not be empty");
     }
 
     @Test
     @DisplayName("Get all zones returns cached zones with current offsets")
-    void getAllZonesReturnsCachedZonesWithOffsets() {
-        final var allZones = ZoneDataServiceClass.getAll();
-        for (final var zoneRecord : allZones) {
-            assertTrue(zoneRecord.friendlyOffset().startsWith("UTC"), "Each zone should have UTC offset");
-            assertTrue(!zoneRecord.zoneId().isEmpty(), "Each zone should have a zone ID");
+    void testGetAllZonesReturnsCachedZonesWithOffsets() {
+        final Collection<ZoneInfoRecord> allZones = ZoneDataServiceClass.getAll();
+        for (final ZoneInfoRecord zoneRecord : allZones) {
+            assertAll("Get all zones returns cached zones with current offsets",
+                    () -> assertTrue(zoneRecord.friendlyOffset().startsWith("UTC"), "Each zone should have UTC offset"),
+                    () -> assertTrue(!zoneRecord.zoneId().isEmpty(), "Each zone should have a zone ID")
+            );
         }
     }
 
     @Test
     @DisplayName("Get zone info multiple calls return consistent data")
-    void getZoneInfoMultipleCallsReturnConsistentData() {
-        final var firstCall = ZoneDataServiceClass.get("Europe/London");
-        final var secondCall = ZoneDataServiceClass.get("Europe/London");
-        assertEquals(firstCall.zoneId(), secondCall.zoneId(), "Zone ID should be consistent");
-        assertEquals(firstCall.latitude(), secondCall.latitude(), "Latitude should be consistent");
-        assertEquals(firstCall.longitude(), secondCall.longitude(), "Longitude should be consistent");
-    }
-
-    @Test
-    @DisplayName("Load supported time zones preserves insertion order for UTC zones")
-    void loadSupportedTimeZonesPreservesOrderForUtcZones() {
-        final var timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
-        final var keysList = new ArrayList<>(timeZones.keySet());
-        assertTrue(keysList.size() >= 5, "Should have at least 5 supported zones");
-    }
-
-    @Test
-    @DisplayName("Zone info coordinates are within valid range")
-    void getZoneInfoCoordinatesAreWithinValidRange() {
-        final var zoneInfo = ZoneDataServiceClass.get("America/Denver");
-        assertTrue(zoneInfo != null, "Zone info should not be null");
-        assertTrue(zoneInfo.latitude() >= -90 && zoneInfo.latitude() <= 90, "Latitude should be between -90 and 90");
-        assertTrue(zoneInfo.longitude() >= -180 && zoneInfo.longitude() <= 180, "Longitude should be between -180 and 180");
+    void testGetZoneInfoMultipleCallsReturnConsistentData() {
+        final ZoneInfoRecord firstCall = ZoneDataServiceClass.get("Europe/London");
+        final ZoneInfoRecord secondCall = ZoneDataServiceClass.get("Europe/London");
+        assertAll("Get zone info multiple calls return consistent data",
+                () -> assertEquals(firstCall.zoneId(), secondCall.zoneId(), "Zone ID should be consistent"),
+                () -> assertEquals(firstCall.latitude(), secondCall.latitude(), "Latitude should be consistent"),
+                () -> assertEquals(firstCall.longitude(), secondCall.longitude(), "Longitude should be consistent")
+        );
     }
 
     @Test
     @DisplayName("Get zone info for southern hemisphere zone")
-    void getZoneInfoForSouthernHemisphereZone() {
-        final var zoneInfo = ZoneDataServiceClass.get("Australia/Melbourne");
-        assertTrue(zoneInfo != null, "Zone info should not be null for southern hemisphere");
-        // Southern hemisphere should have negative latitude
-        assertTrue(zoneInfo.latitude() < 0, "Southern hemisphere zones should have negative latitude");
+    void testGetZoneInfoForSouthernHemisphereZone() {
+        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Australia/Melbourne");
+        assertAll("Get zone info for southern hemisphere zone",
+                () -> assertTrue(zoneInfo != null, "Zone info should not be null for southern hemisphere"),
+                () -> assertTrue(zoneInfo.latitude() < 0, "Southern hemisphere zones should have negative latitude")
+        );
     }
 
+    /**
+     * Test for Coordinates
+     */
+    @Nested
+    /* default */ @DisplayName("Coordinates testing...")
+    class TestCoordinates {
+
+        @Test
+        @DisplayName("Get zone info includes latitude and longitude coordinates")
+        void testGetZoneInfoIncludesCoordinates() {
+            final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
+            assertAll("Get zone info includes latitude and longitude coordinates",
+                    () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                    () -> assertTrue(zoneInfo.latitude() != 0.0 || zoneInfo.longitude() != 0.0, "Coordinates should be non-zero")
+            );
+        }
+
+        @Test
+        @DisplayName("Zone info coordinates are within valid range")
+        void testGetZoneInfoCoordinatesAreWithinValidRange() {
+            final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Denver");
+            assertAll("Zone info coordinates are within valid range",
+                    () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                    () -> assertTrue(zoneInfo.latitude() >= -90 && zoneInfo.latitude() <= 90, "Latitude should be between -90 and 90"),
+                    () -> assertTrue(zoneInfo.longitude() >= -180 && zoneInfo.longitude() <= 180, "Longitude should be between -180 and 180")
+            );
+        }
+
+        /**
+         * Constructor
+         */
+        public TestCoordinates() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Test for Zones
+     */
+    @Nested
+    /* default */ @DisplayName("Zones testing...")
+    class TestSupportedZones{
+
+        @Test
+        @DisplayName("Load supported time zones preserves insertion order for UTC zones")
+        void loadSupportedTimeZonesPreservesOrderForUtcZones() {
+            final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            final List<String> keysList = new ArrayList<>(timeZones.keySet());
+            assertTrue(keysList.size() >= 5, "Should have at least 5 supported zones");
+        }
+
+        @Test
+        @DisplayName("Get supported time zones returns non-empty collection")
+        void testGetSupportedTimeZonesReturnsNonEmpty() {
+            final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            assertTrue(!timeZones.isEmpty(), "Supported time zones should not be empty");
+        }
+
+        @Test
+        @DisplayName("Get supported time zones includes common American zones")
+        void testGetSupportedTimeZonesIncludeAmericaZones() {
+            final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            assertAll("Get supported time zones includes common American zones",
+                    () -> assertTrue(timeZones.containsKey("America/Los_Angeles"), "America/Los_Angeles should be supported"),
+                    () -> assertTrue(timeZones.containsKey(AMERICA_NY), "America/New_York should be supported"),
+                    () -> assertTrue(timeZones.containsKey("America/Chicago"), "America/Chicago should be supported")
+            );
+        }
+
+        @Test
+        @DisplayName("Get supported time zones includes European zones")
+        void testGetSupportedTimeZonesIncludeEuropeZones() {
+            final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            assertAll("Get supported time zones includes European zones",
+                    () -> assertTrue(timeZones.containsKey("Europe/London"), "Europe/London should be supported"),
+                    () -> assertTrue(timeZones.containsKey("Europe/Berlin"), "Europe/Berlin should be supported"),
+                    () -> assertTrue(timeZones.containsKey("Europe/Prague"), "Europe/Prague should be supported")
+            );
+        }
+
+        @Test
+        @DisplayName("Get supported time zones includes Asian zones")
+        void testGetSupportedTimeZonesIncludeAsiaZones() {
+            final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            assertAll("Get supported time zones includes Asian zones",
+                    () -> assertTrue(timeZones.containsKey("Asia/Tokyo"), "Asia/Tokyo should be supported"),
+                    () -> assertTrue(timeZones.containsKey("Asia/Shanghai"), "Asia/Shanghai should be supported"),
+                    () -> assertTrue(timeZones.containsKey("Asia/Kolkata"), "Asia/Kolkata should be supported")
+            );
+        }
+
+        @Test
+        @DisplayName("Get supported time zones includes Australian zones")
+        void testGetSupportedTimeZonesIncludeAustraliaZones() {
+            final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
+            assertTrue(timeZones.containsKey("Australia/Melbourne"), "Australia/Melbourne should be supported");
+        }
+
+        /**
+         * Constructor
+         */
+        public TestSupportedZones() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Constructor
+     */
     public ZoneDataServiceClassTests() {
         // intentionally blank
     }
