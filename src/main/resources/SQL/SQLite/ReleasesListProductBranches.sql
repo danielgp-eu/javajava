@@ -54,31 +54,38 @@ WITH
             LEFT JOIN "profile_list"                                            AS "pl"   ON
                 "ci"."ProfileId"                 = "pl"."ProfileId"
     ),
+    "CTE__Constants"                                                            AS (
+        SELECT
+              'InstalledIdentifier'                                             AS "Installed_Id"
+            , 'Kit'                                                             AS "Kit"
+    ),
     "CTE__Files"                                                                AS (
         SELECT
               "fv"."VersionId"                                                  AS "VersionId"
             , TRIM(
                 GROUP_CONCAT(
-                    IIF("fv"."FileType" = 'InstalledIdentifier'
+                    IIF("fv"."FileType" = "cc"."Installed_Id"
                         , "fl"."FileName", '')), ',')                           AS "File Installed Name"
             , TRIM(
                 GROUP_CONCAT(
-                    IIF("fv"."FileType" = 'Kit'
+                    IIF("fv"."FileType" = "cc"."Kit"
                         , "fl"."FileName", '')), ',')                           AS "File Kit Name"
             , TRIM(
                 GROUP_CONCAT(
-                    IIF("fv"."FileType" = 'InstalledIdentifier'
+                    IIF("fv"."FileType" = "cc"."Installed_Id"
                         , "fl"."FileId", '')), ',')                             AS "File Installed Id"
             , TRIM(
                 GROUP_CONCAT(
-                    IIF("fv"."FileType" = 'Kit'
+                    IIF("fv"."FileType" = "cc"."Kit"
                         , "fl"."FileId", '')), ',')                             AS "File Kit Id"
         FROM
             "file_version"                                                      AS "fv"
             INNER JOIN "file_list"                                              AS "fl"    ON
                 "fv"."FileId" = "fl"."FileId"
+            INNER JOIN "CTE__Constants"                                         AS "cc"    ON
+                1 = 1
         WHERE
-            "fv"."FileType"  IN ('InstalledIdentifier', 'Kit')
+            "fv"."FileType"  IN ("cc"."Installed_Id", "cc"."Kit")
         GROUP BY
             "fv"."VersionId"
     )
