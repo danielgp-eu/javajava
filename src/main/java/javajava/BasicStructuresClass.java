@@ -495,7 +495,7 @@ public final class BasicStructuresClass {
          * @return String with proper escaped characters
          */
         public static String ensureEscapingForValidJson(final String inString) {
-            return inString.replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
+            return inString.replace("\n", "\\n").replace("\r", "\\r").replace("\t", " ");
         }
 
         /**
