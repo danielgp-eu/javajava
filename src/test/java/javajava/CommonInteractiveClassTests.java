@@ -37,14 +37,16 @@ class CommonInteractiveClassTests {
         void setExitCodeStoresProvidedCode() {
             final int testCode = 42;
             CommonInteractiveClass.setExitCode(testCode);
-            assertEquals(testCode, testCode, String.format(ORIG_NQ_EXPCT, testCode, testCode));
+            final int testCodeStored = CommonInteractiveClass.getExitCode();
+            assertEquals(testCode, testCodeStored, String.format(ORIG_NQ_EXPCT, testCode, testCodeStored));
         }
 
         @Test
         @DisplayName("Set exit code with zero stores zero")
         void setExitCodeWithZeroStoresZero() {
             CommonInteractiveClass.setExitCode(0);
-            assertEquals(0, 0, "Exit code zero should be valid");
+            final int testCodeStored = CommonInteractiveClass.getExitCode();
+            assertEquals(0, testCodeStored, "Exit code zero should be valid");
         }
 
         @Test
@@ -52,7 +54,8 @@ class CommonInteractiveClassTests {
         void setExitCodeWithNegativeValueStoresNegative() {
             final int negativeCode = -1;
             CommonInteractiveClass.setExitCode(negativeCode);
-            assertEquals(negativeCode, negativeCode, "Negative exit code should be stored");
+            final int testCodeStored = CommonInteractiveClass.getExitCode();
+            assertEquals(negativeCode, testCodeStored, "Negative exit code should be stored");
         }
 
         @Test
@@ -60,7 +63,8 @@ class CommonInteractiveClassTests {
         void setExitCodeOverwritesPreviousValue() {
             CommonInteractiveClass.setExitCode(10);
             CommonInteractiveClass.setExitCode(20);
-            assertEquals(20, 20, "Exit code should be overwritten by latest value");
+            final int testCodeStored = CommonInteractiveClass.getExitCode();
+            assertEquals(20, testCodeStored, "Exit code should be overwritten by latest value");
         }
 
         /**

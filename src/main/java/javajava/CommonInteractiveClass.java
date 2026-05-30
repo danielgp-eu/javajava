@@ -67,6 +67,13 @@ public final class CommonInteractiveClass {
     }
 
     /**
+     * Getter for Exit Code
+     */
+    public static int getExitCode() {
+        return exitCode;
+    }
+
+    /**
      * Setter for Exit Code
      * @param inExitCode actual Exit Code
      */
