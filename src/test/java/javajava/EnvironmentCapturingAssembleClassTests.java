@@ -23,7 +23,11 @@ class EnvironmentCapturingAssembleClassTests {
                 .build();
         boolean bolReturn = true;
         try {
-            mapper.readTree(json);
+            if (json == null) {
+                bolReturn = false;
+            } else {
+                mapper.readTree(json);
+            }
         } catch (JacksonException _) {
             bolReturn = false;
         }
