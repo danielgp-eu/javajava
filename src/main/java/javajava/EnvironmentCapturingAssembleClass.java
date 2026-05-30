@@ -29,6 +29,20 @@ public final class EnvironmentCapturingAssembleClass {
     }
 
     /**
+     * Hardware details gathered
+     * @return Map
+     */
+    private static Map<String, Object> gatherHarwareDetails() {
+        return Map.of(
+                "CPU", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutCentralProcessorUnit()),
+                "GPU", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutGraphicCards()),
+                "Mainboard", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMainboard()),
+                "Monitor", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMonitor()),
+                "Network Interface", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetworkInterfaces()),
+                "RAM", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutRandomAccessMemory()));
+    }
+
+    /**
      * Environment details gathered
      * @return Map
      */
@@ -47,6 +61,18 @@ public final class EnvironmentCapturingAssembleClass {
     }
 
     /**
+     * Software details gathered
+     * @return Map
+     */
+    private static Map<String, Object> gatherSoftwareDetails() {
+        return Map.of(
+                "Java", JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails()),
+                "OS", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutOperatingSystem()),
+                "Network", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork()),
+                "Storage", JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions()));
+    }
+
+    /**
      * Capturing current Environment details
      * 
      * @return String
@@ -55,24 +81,13 @@ public final class EnvironmentCapturingAssembleClass {
         final StringBuilder strJsonString = new StringBuilder();
         final String strFeedback = "Capturing information...";
         LogExposureClass.LOGGER.info(strFeedback);
-        final String strHardware = "\"Hardware\":{"
-                + "\"CPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutCentralProcessorUnit())
-                + ",\"GPU\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutGraphicCards())
-                + ",\"Mainboard\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMainboard())
-                + ",\"Monitor\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutMonitor())
-                + ",\"Network Interface\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetworkInterfaces())
-                + ",\"RAM\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutRandomAccessMemory())
-                + "}";
+        final String strHardware = "\"Hardware\":" + JsonOperationsClass.getMapIntoJsonString(gatherHarwareDetails());
         final String strFeedbackH = "I just captured Hardware information...";
         LogExposureClass.LOGGER.debug(strFeedbackH);
-        final String strSoftware = "\"Software\":{"
-                + "\"Java\":" + JsonOperationsClass.getMapIntoJsonString(gatherJavaDetails())
-                + ",\"OS\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutOperatingSystem())
-                + ",\"Network\":" + JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutNetwork())
-                + ",\"Storage\":" + JsonOperationsClass.getMapIntoJsonString(OshiUsageClass.getDetailsAboutAvailableStoragePartitions())
-                + "}";
+        final String strSoftware = "\"Software\":" + JsonOperationsClass.getMapIntoJsonString(gatherSoftwareDetails());
         final String strFeedbackS = "I just captured Software information...";
         LogExposureClass.LOGGER.debug(strFeedbackS);
+        final String strApps = ProjectClass.ApplicationSubClass.getApplicationDetails();
         final String strEnvironment = "\"Environment\":" + JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
         final String strFeedbackEnv = "I just captured Environment information...";
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
@@ -81,7 +96,7 @@ public final class EnvironmentCapturingAssembleClass {
                 .append(',')
                 .append(strSoftware)
                 .append(',')
-                .append(ProjectClass.ApplicationSubClass.getApplicationDetails())
+                .append(strApps)
                 .append(',')
                 .append(strEnvironment)
                 .append('}').toString();
