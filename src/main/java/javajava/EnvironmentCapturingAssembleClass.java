@@ -78,25 +78,31 @@ public final class EnvironmentCapturingAssembleClass {
      * @return String
      */
     public static String packageCurrentEnvironmentDetailsIntoJson() {
-        final StringBuilder strJsonString = new StringBuilder().append('{');
+        final StringBuilder strJsonString = new StringBuilder(1000).append('{');
         final String strFeedback = "Capturing information...";
         LogExposureClass.LOGGER.info(strFeedback);
-        final String strHardware = "\"Hardware\":" + JsonOperationsClass.getMapIntoJsonString(gatherHarwareDetails());
-        strJsonString.append(strHardware);
+        final String strHardware = JsonOperationsClass.getMapIntoJsonString(gatherHarwareDetails());
+        if (strHardware != null) {
+            strJsonString.append("\"Hardware\":").append(strHardware);
+        }
         final String strFeedbackH = "I just captured Hardware information...";
         LogExposureClass.LOGGER.debug(strFeedbackH);
-        final String strSoftware = "\"Software\":" + JsonOperationsClass.getMapIntoJsonString(gatherSoftwareDetails());
-        strJsonString.append(',').append(strSoftware);
+        final String strSoftware = JsonOperationsClass.getMapIntoJsonString(gatherSoftwareDetails());
+        if (strSoftware != null) {
+            strJsonString.append(",\"Software\":").append(strSoftware);
+        }
         final String strFeedbackS = "I just captured Software information...";
         LogExposureClass.LOGGER.debug(strFeedbackS);
-        final String strApps = ProjectClass.ApplicationSubClass.getApplicationDetails();
-        if (strApps != null) {
-            strJsonString.append(',').append(strApps);
+        final String strAppDetails = ProjectClass.ApplicationSubClass.getApplicationDetails();
+        if (strAppDetails != null) {
+            strJsonString.append(',').append(strAppDetails);
         }
-        final String strEnvironment = "\"Environment\":" + JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
+        final String strEnvironment = JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
         final String strFeedbackEnv = "I just captured Environment information...";
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
-        strJsonString.append(',').append(strEnvironment);
+        if (strEnvironment != null) {
+            strJsonString.append(",\"Environment\":").append(strEnvironment);
+        }
         return strJsonString.append('}').toString();
     }
 
