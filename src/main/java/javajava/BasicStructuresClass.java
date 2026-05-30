@@ -490,6 +490,15 @@ public final class BasicStructuresClass {
         }
 
         /**
+         * Ensuring proper escaping for valid JSON
+         * @param inString input String
+         * @return String with proper escaped characters
+         */
+        public static String ensureEscapingForValidJson(final String inString) {
+            return inString.replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
+        }
+
+        /**
          * Helper to remove surrounding double quotes safely
          * @param strInput initial String
          * @return String without double quotes enclosing

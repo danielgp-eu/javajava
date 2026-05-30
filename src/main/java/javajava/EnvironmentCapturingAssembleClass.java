@@ -15,22 +15,23 @@ public final class EnvironmentCapturingAssembleClass {
      * @return Map
      */
     private static Map<String, Object> gatherEnvironmentDetails() {
+        final String strInsteadOfNull = "---";
         String strComputer = System.getenv("COMPUTERNAME");
         if (strComputer == null) {
             strComputer = System.getenv("HOSTNAME");
         }
         final String userAccount = ShellingClass.getCurrentUserAccount();
         return Map.of(
-                "Computer", strComputer != null ? strComputer : "---",
-                "Country", System.getProperty("user.country", "---"),
-                "Country.Format", System.getProperty("user.country.format", "---"),
-                "Language", System.getProperty("user.language", "---"),
-                "Language.Format", System.getProperty("user.language.format", "---"),
-                "Home", System.getProperty("user.home", "---").replace("\\", "\\\\"),
-                "Name", System.getProperty("user.name", "---"),
-                "Timezone", System.getProperty("user.timezone", "---"),
-                "Username", System.getenv("USERNAME") != null ? System.getenv("USERNAME") : System.getProperty("user.name", "---"),
-                "User Account", userAccount != null ? userAccount : "---");
+                "Computer", strComputer != null ? strComputer : strInsteadOfNull,
+                "Country", System.getProperty("user.country", strInsteadOfNull),
+                "Country.Format", System.getProperty("user.country.format", strInsteadOfNull),
+                "Language", System.getProperty("user.language", strInsteadOfNull),
+                "Language.Format", System.getProperty("user.language.format", strInsteadOfNull),
+                "Home", System.getProperty("user.home", strInsteadOfNull).replace("\\", "\\\\"),
+                "Name", System.getProperty("user.name", strInsteadOfNull),
+                "Timezone", System.getProperty("user.timezone", strInsteadOfNull),
+                "Username", System.getenv("USERNAME") != null ? System.getenv("USERNAME") : System.getProperty("user.name", strInsteadOfNull),
+                "User Account", userAccount != null ? userAccount : strInsteadOfNull);
     }
 
     /**
@@ -108,7 +109,7 @@ public final class EnvironmentCapturingAssembleClass {
         if (strEnvironment != null) {
             strJsonString.append(",\"Environment\":").append(strEnvironment);
         }
-        return strJsonString.append('}').toString();
+        return BasicStructuresClass.StringCleaningSubClass.ensureEscapingForValidJson(strJsonString.append('}').toString());
     }
 
     /**
