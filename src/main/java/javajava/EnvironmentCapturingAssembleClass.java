@@ -30,7 +30,7 @@ public final class EnvironmentCapturingAssembleClass {
                 "Name", System.getProperty("user.name", "---"),
                 "Timezone", System.getProperty("user.timezone", "---"),
                 "Username", System.getenv("USERNAME") != null ? System.getenv("USERNAME") : System.getProperty("user.name", "---"),
-                "User Account", userAccount != null ? userAccount : "---"));
+                "User Account", userAccount != null ? userAccount : "---");
     }
 
     /**
