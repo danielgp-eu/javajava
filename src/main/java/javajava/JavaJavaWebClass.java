@@ -146,7 +146,12 @@ public final class JavaJavaWebClass {
     private static void packAllParameters() {
         final String page = UndertowClass.ParametersSubClass.getPageParameter();
         UndertowClass.TemplateRenderingSubClass.packParameter("page", page);
-        UndertowClass.TemplateRenderingSubClass.packParameter("title", BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page) ? page : MAP_MENU.get(page).get(BasicStructuresClass.STR_TITLE));
+        String title = page;
+        if (!BasicStructuresClass.STR_LOCALIZATION.equalsIgnoreCase(page)) {
+            final Map<String, String> menuEntry = MAP_MENU.get(page);
+            title = menuEntry != null ? menuEntry.getOrDefault(BasicStructuresClass.STR_TITLE, page) : page;
+        }
+        UndertowClass.TemplateRenderingSubClass.packParameter("title", title);
         UndertowClass.TemplateRenderingSubClass.packParameter("menu", HtmlClass.buildMenu(MAP_MENU));
         UndertowClass.TemplateRenderingSubClass.packParameter("content", handleBodyContent());
         UndertowClass.TemplateRenderingSubClass.packCommonParameters();

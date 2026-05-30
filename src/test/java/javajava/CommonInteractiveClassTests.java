@@ -21,7 +21,7 @@ class CommonInteractiveClassTests {
     @DisplayName("Folder destination option mixin get folder destination returns set value")
     void folderDestinationOptionMixinGetFolderDestinationReturnsSetValue() {
         final CommonInteractiveClass.FolderDestinationOptionMixinClass mixin = new CommonInteractiveClass.FolderDestinationOptionMixinClass();
-        final String destination = mixin.getFolderDetination();
+        final String destination = mixin.getFolderDestination();
         assertTrue(destination != null || destination == null, "getFolderDetination should return a value or null");
     }
 

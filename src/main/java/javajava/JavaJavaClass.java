@@ -230,7 +230,7 @@ class ArchiveFolders implements Runnable {
             propFolder.clear();
             final Properties folderProps = FileStatisticsClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
-            ArchivingClass.setArchiveNameWithinDestinationFolder(optFolderDest.getFolderDetination());
+            ArchivingClass.setArchiveNameWithinDestinationFolder(optFolderDest.getFolderDestination());
             ArchivingClass.archiveFolderAs7z();
             ArchivingClass.exposeArchivedStatistics(folderProps);
         }
@@ -804,13 +804,13 @@ class JsonSplit implements Runnable {
         final String strFeedback = String.format("File %s has a size of %s bytes which compared to split file threshold of %s bytes is %s%% bigger, hence split IS required and will be performed!", strFileName, fileSize, sizeThreshold, Math.abs(sizeDifference));
         LogExposureClass.LOGGER.info(strFeedback);
         JsonOperationsClass.ArraySubClass.setInputJsonFile(strFileName);
-        JsonOperationsClass.ArraySubClass.setDestinationFolder(optFolderDest.getFolderDetination());
+        JsonOperationsClass.ArraySubClass.setDestinationFolder(optFolderDest.getFolderDestination());
         JsonOperationsClass.ArraySubClass.setRelevantField(strField);
         if (bucketLength != 0) {
             JsonOperationsClass.ArraySubClass.setBucketLength(bucketLength);
         }
         final String destPattern = JsonOperationsClass.ArraySubClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
-        FileOperationsClass.DeletingSubClass.deleteFilesMatchingPatternFromFolder(optFolderDest.getFolderDetination(), destPattern); // clean slate to avoid inheriting old content
+        FileOperationsClass.DeletingSubClass.deleteFilesMatchingPatternFromFolder(optFolderDest.getFolderDestination(), destPattern); // clean slate to avoid inheriting old content
         JsonOperationsClass.ArraySubClass.splitJsonIntoSmallerGrouped(); // actual logic
     }
 

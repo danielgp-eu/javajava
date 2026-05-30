@@ -105,7 +105,7 @@ public final class CommonInteractiveClass {
          * Getter for strDestFolder
          * @return String of Folder Names (1)
          */
-        public String getFolderDetination() {
+        public String getFolderDestination() {
             return strDestFolder;
         }
 
