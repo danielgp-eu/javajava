@@ -105,9 +105,9 @@ public final class ProjectClass {
 
     /**
      * get Project Model
-     * @param reader
-     * @param pomReference
-     * @return
+     * @param reader class for reading XML
+     * @param pomReference string for Project Object Model location
+     * @return Model object
      */
     private static Model getProjectModelFromSystem(final MavenXpp3Reader reader, final String pomReference) {
         Model model = null;
@@ -121,9 +121,9 @@ public final class ProjectClass {
 
     /**
      * get Project Model
-     * @param reader
-     * @param pomReference
-     * @return
+     * @param reader class for reading XML files
+     * @param pomReference string for Project Object Model location
+     * @return Model object
      */
     private static Model getProjectModelFromInsideJar(final MavenXpp3Reader reader, final String pomReference) {
         Model model = null;

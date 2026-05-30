@@ -202,7 +202,7 @@ public final class HtmlClass {
         /**
          * variable for HTML Table
          */
-        private static List<String> htmlTableLines = new ArrayList<>();
+        private static final List<String> htmlTableLines = new ArrayList<>();
         /**
          * Time Zone variable
          */

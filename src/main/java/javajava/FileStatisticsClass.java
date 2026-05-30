@@ -321,7 +321,7 @@ public final class FileStatisticsClass {
 
         /**
          * get internal file size from Disk or inside Jar
-         * @param strFilePath 
+         * @param strFilePath  input Path
          * @return size of the file
          */
         public static long getInternalFileSize(final String strFilePath) {

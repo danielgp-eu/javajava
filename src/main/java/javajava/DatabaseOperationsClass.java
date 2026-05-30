@@ -618,7 +618,7 @@ public final class DatabaseOperationsClass {
              * @param metaData metadata from SQL query
              * @param columnNumber number of current column
              * @return Properties
-             * @throws SQLException
+             * @throws SQLException in case of any SQL error
              */
             private static Properties captureMetadataIntoProperties(final ResultSetMetaData metaData, final int columnNumber) throws SQLException {
                 final Properties colProperties = new Properties();

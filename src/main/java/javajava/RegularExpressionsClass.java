@@ -75,9 +75,9 @@ public final class RegularExpressionsClass {
     public static final String STR_MAVEN_PKG = "MavenPackage";
 
     /**
-     * Convert aging Date into human readable String
+     * Convert aging Date into human-readable String
      * @param ageString input String
-     * @return String in human readable format
+     * @return String in human-readable format
      */
     public static String convertAgingDateIntoHumanReadableString(final String ageString) {
         final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
@@ -94,9 +94,9 @@ public final class RegularExpressionsClass {
     }
 
     /**
-     * Convert aging Time into human readable String
+     * Convert aging Time into human-readable String
      * @param ageString input String
-     * @return String in human readable format
+     * @return String in human-readable format
      */
     public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
         final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
