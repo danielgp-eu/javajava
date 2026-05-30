@@ -1,5 +1,7 @@
 package javajava;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +34,10 @@ class EnvironmentCapturingAssembleClassTests {
     @DisplayName("Simple test to if environment details gather results into valid JSON")
     void testComputePercentageSafelySimple() {
         final String handled = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoJson();
-        assertTrue(isValid(handled), String.format("JSON produced by environment gathering logic does not seem to be valid... %s", handled));
+        assertAll("Get zone info returns valid record for known zone",
+                () -> assertNotNull(handled, "Environment should not be null"),
+                () -> assertTrue(isValid(handled), String.format("JSON produced by environment gathering logic does not seem to be valid... %s", handled))
+        );
     }
 
     /**
