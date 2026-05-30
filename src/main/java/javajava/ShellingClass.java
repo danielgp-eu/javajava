@@ -114,7 +114,8 @@ public final class ShellingClass {
         setProcessCaptureNeed(true);
         executeShellUtility("WHOAMI", "/UPN", "");
         String strUser = strProcOut;
-        if (strUser.startsWith("ERROR:")) {
+        if ((strUser == null)
+                || strUser.startsWith("ERROR:")) {
             final String strFeedback = "ERROR: Unable to get User Principal Name (UPN), hence will get regular User Name";
             LogExposureClass.LOGGER.error(strFeedback);
             executeShellUtility("WHOAMI", "", "");
