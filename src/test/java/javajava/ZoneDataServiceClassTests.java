@@ -11,6 +11,7 @@ import java.util.SequencedMap;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -49,7 +50,7 @@ class ZoneDataServiceClassTests {
     void testGetZoneInfoReturnsValidRecordForKnownZone() {
         final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
         assertAll("Get zone info returns valid record for known zone",
-                () -> assertTrue(zoneInfo != null, "Zone info should not be null for valid zone"),
+                () -> assertNotNull(zoneInfo, "Zone info should not be null for valid zone"),
                 () -> assertEquals(AMERICA_NY, zoneInfo.zoneId(), "Zone ID should match")
         );
     }
@@ -59,7 +60,7 @@ class ZoneDataServiceClassTests {
     void testGetZoneInfoIncludesCountryCodes() {
         final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Europe/Berlin");
         assertAll("Get zone info includes country codes",
-                () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                () -> assertNotNull(zoneInfo, ZONE_INFO_NOT_NUL),
                 () -> assertTrue(!zoneInfo.countryCodes().isEmpty(), "Country codes should not be empty")
         );
     }
@@ -69,7 +70,7 @@ class ZoneDataServiceClassTests {
     void testGetZoneInfoIncludesCountryNames() {
         final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Asia/Tokyo");
         assertAll("Get zone info includes country names",
-                () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                () -> assertNotNull(zoneInfo, "Zone info should not be null for country"),
                 () -> assertTrue(!zoneInfo.countryNames().isEmpty(), "Country names should not be empty")
         );
     }
@@ -79,7 +80,7 @@ class ZoneDataServiceClassTests {
     void testGetZoneInfoIncludesCurrentUtcOffset() {
         final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Los_Angeles");
         assertAll("Get zone info includes current UTC offset",
-                () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                () -> assertNotNull(zoneInfo, ZONE_INFO_NOT_NUL),
                 () -> assertTrue(zoneInfo.friendlyOffset().startsWith("UTC"), "Offset should start with UTC")
         );
     }
@@ -120,7 +121,7 @@ class ZoneDataServiceClassTests {
     void testGetZoneInfoForSouthernHemisphereZone() {
         final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Australia/Melbourne");
         assertAll("Get zone info for southern hemisphere zone",
-                () -> assertTrue(zoneInfo != null, "Zone info should not be null for southern hemisphere"),
+                () -> assertNotNull(zoneInfo, "Zone info should not be null for southern hemisphere"),
                 () -> assertTrue(zoneInfo.latitude() < 0, "Southern hemisphere zones should have negative latitude")
         );
     }
@@ -137,7 +138,7 @@ class ZoneDataServiceClassTests {
         void testGetZoneInfoIncludesCoordinates() {
             final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
             assertAll("Get zone info includes latitude and longitude coordinates",
-                    () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                    () -> assertNotNull(zoneInfo, "Zone info should not be null for coordinates"),
                     () -> assertTrue(zoneInfo.latitude() != 0.0 || zoneInfo.longitude() != 0.0, "Coordinates should be non-zero")
             );
         }
@@ -147,7 +148,7 @@ class ZoneDataServiceClassTests {
         void testGetZoneInfoCoordinatesAreWithinValidRange() {
             final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Denver");
             assertAll("Zone info coordinates are within valid range",
-                    () -> assertTrue(zoneInfo != null, ZONE_INFO_NOT_NUL),
+                    () -> assertNotNull(zoneInfo, "Zone info should not be null for coordinates"),
                     () -> assertTrue(zoneInfo.latitude() >= -90 && zoneInfo.latitude() <= 90, "Latitude should be between -90 and 90"),
                     () -> assertTrue(zoneInfo.longitude() >= -180 && zoneInfo.longitude() <= 180, "Longitude should be between -180 and 180")
             );
