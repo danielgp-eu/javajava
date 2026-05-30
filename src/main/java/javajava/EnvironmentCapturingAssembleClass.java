@@ -103,7 +103,11 @@ public final class EnvironmentCapturingAssembleClass {
         if (strEnvironment != null) {
             strJsonString.append(",\"Environment\":").append(strEnvironment);
         }
-        return strJsonString.append('}').toString();
+        String strReturn = strJsonString.append('}').toString();
+        if (strReturn == null) {
+            strReturn = "";
+        }
+        return strReturn;
     }
 
     /**

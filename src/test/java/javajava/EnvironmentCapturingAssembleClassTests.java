@@ -34,7 +34,7 @@ class EnvironmentCapturingAssembleClassTests {
 
     @Test
     @DisplayName("Simple test to if environment details gather results into valid JSON")
-    void testComputePercentageSafelySimple() {
+    void testPackageCurrentEnvironmentDetailsIntoJson() {
         final String handled = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoJson();
         assertTrue(isValid(handled), String.format("JSON produced by environment gathering logic does not seem to be valid... %s", handled));
     }
