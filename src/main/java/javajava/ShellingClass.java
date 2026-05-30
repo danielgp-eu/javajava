@@ -121,6 +121,9 @@ public final class ShellingClass {
             executeShellUtility("WHOAMI", "", "");
             strUser = strProcOut;
         }
+        if (strUser == null) {
+            strUser = "";
+        }
         return strUser;
     }
 

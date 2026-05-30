@@ -247,12 +247,12 @@ public final class BasicStructuresClass {
      */
     public static float computePercentageSafely(final long numerator, final long denominator) {
         long denominatorUsed = denominator;
-        if (denominator == 0) {
+        if (denominatorUsed == 0) {
             denominatorUsed = 100;
             final String strFeedback = String.format("Denominator is 0 hence Percentage calculation with Numerator %s is not possible and will return same numerator...", numerator);
             LogExposureClass.LOGGER.error(strFeedback);
         }
-        final double percentageExact = (float) numerator / denominatorUsed * 100;
+        final double percentageExact = (float) numerator * 100 / denominatorUsed;
         return (float) new BigDecimal(Double.toString(percentageExact))
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();

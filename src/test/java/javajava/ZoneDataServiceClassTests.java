@@ -1,30 +1,27 @@
 package javajava;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.SequencedMap;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 /**
  * ZoneDataServiceClass testing
  */
 @DisplayName("ZoneDataServiceClass unit testing")
 class ZoneDataServiceClassTests {
+    /** Constant for America/New_York */
+    private static final String AMERICA_NY = "America/New_York";
     /** Constant for Calculated Not Equal to Expected */
     private static final String ORIG_NQ_EXPCT = "calculated result is not equal to expected result";
     /** Constant for Zone Info should not be null */
     private static final String ZONE_INFO_NOT_NUL = "Zone info should not be null";
-    /** Constant for America/New_York */
-    private static final String AMERICA_NY = "America/New_York";
 
     @Test
     @DisplayName("Loaded time zones are properly sorted with UTC offsets")
@@ -42,7 +39,7 @@ class ZoneDataServiceClassTests {
     @DisplayName("Get zone info returns null for non-existent zone")
     void testGetZoneInfoForNonExistentZoneReturnsNull() {
         final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Invalid/Zone_That_Does_Not_Exist");
-        assertEquals(null, zoneInfo, ORIG_NQ_EXPCT);
+        assertNull(zoneInfo, ORIG_NQ_EXPCT);
     }
 
     @Test
@@ -171,8 +168,8 @@ class ZoneDataServiceClassTests {
     class TestSupportedZones{
 
         @Test
-        @DisplayName("Load supported time zones preserves insertion order for UTC zones")
-        void loadSupportedTimeZonesPreservesOrderForUtcZones() {
+        @DisplayName("Load supported time zones returns at least five zones")
+        void loadSupportedTimeZonesReturnsAtLeastFiveZones() {
             final SequencedMap<String, String> timeZones = ZoneDataServiceClass.loadSupportedTimeZones();
             final List<String> keysList = new ArrayList<>(timeZones.keySet());
             assertTrue(keysList.size() >= 5, "Should have at least 5 supported zones");

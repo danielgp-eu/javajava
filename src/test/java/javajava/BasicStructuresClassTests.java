@@ -21,7 +21,7 @@ class BasicStructuresClassTests {
     /** String for Original not equal to Expected */
     private static final String ORIG_NQ_EXPCT = "\"%s\" is not equal to \"%s\"";
     /** Constant for first */
-    private static final String STR_FIRST = "first"; 
+    private static final String STR_FIRST = "first";
 
     @Test
     @DisplayName("Simple test to verify that 51 is same as 51 divided by 100")
@@ -306,7 +306,7 @@ class BasicStructuresClassTests {
             final List<String> order = Arrays.asList(STR_FIRST);
             final SequencedMap<Object, Object> result = BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, order);
             final List<Object> keys = new ArrayList<>(result.keySet());
-            assertAll("Convert map of strings into list of properties creates correct structure",
+            assertAll("Sort properties puts unspecified keys at end",
                     () -> assertEquals(STR_FIRST, keys.get(0), "Specified key should come first"),
                     () -> assertEquals("unspecified", keys.get(1), "Unspecified key should come last")
             );
