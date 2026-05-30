@@ -1,6 +1,10 @@
 package javajava;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+import java.util.Properties;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,10 +37,17 @@ class EnvironmentCapturingAssembleClassTests {
     }
 
     @Test
-    @DisplayName("Simple test to if environment details gather results into valid JSON")
+    @DisplayName("Simple test to check if environment details gathering results returns a valid JSON")
     void testPackageCurrentEnvironmentDetailsIntoJson() {
         final String handled = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoJson();
         assertTrue(isValid(handled), String.format("JSON produced by environment gathering logic does not seem to be valid... %s", handled));
+    }
+
+    @Test
+    @DisplayName("Additional test to check if environment details gathering results returns a valid JSON")
+    void testPackageCurrentEnvironmentDetailsIntoListOfProperties() {
+        final List<Properties> handled = EnvironmentCapturingAssembleClass.packageCurrentEnvironmentDetailsIntoListOfProperties();
+        assertNotNull(handled, String.format("Environment gathering logic should not be null... %s", handled));
     }
 
     /**

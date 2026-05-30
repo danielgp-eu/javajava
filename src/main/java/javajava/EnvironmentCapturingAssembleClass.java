@@ -32,7 +32,7 @@ public final class EnvironmentCapturingAssembleClass {
      * Hardware details gathered
      * @return Map
      */
-    private static Map<String, Object> gatherHarwareDetails() {
+    private static Map<String, Object> gatherHardwareDetails() {
         return Map.of(
                 "CPU", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutCentralProcessorUnit()),
                 "GPU", JsonOperationsClass.getMapIntoJsonString(HardwareClass.getDetailsAboutGraphicCards()),
@@ -81,7 +81,7 @@ public final class EnvironmentCapturingAssembleClass {
         final StringBuilder strJsonString = new StringBuilder(1000).append('{');
         final String strFeedback = "Capturing information...";
         LogExposureClass.LOGGER.info(strFeedback);
-        final String strHardware = JsonOperationsClass.getMapIntoJsonString(gatherHarwareDetails());
+        final String strHardware = JsonOperationsClass.getMapIntoJsonString(gatherHardwareDetails());
         if (strHardware != null) {
             strJsonString.append("\"Hardware\":").append(strHardware);
         }
@@ -103,11 +103,7 @@ public final class EnvironmentCapturingAssembleClass {
         if (strEnvironment != null) {
             strJsonString.append(",\"Environment\":").append(strEnvironment);
         }
-        String strReturn = strJsonString.append('}').toString();
-        if (strReturn == null) {
-            strReturn = "";
-        }
-        return strReturn;
+        return strJsonString.append('}').toString();
     }
 
     /**
