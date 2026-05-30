@@ -78,28 +78,26 @@ public final class EnvironmentCapturingAssembleClass {
      * @return String
      */
     public static String packageCurrentEnvironmentDetailsIntoJson() {
-        final StringBuilder strJsonString = new StringBuilder();
+        final StringBuilder strJsonString = new StringBuilder().append('{');
         final String strFeedback = "Capturing information...";
         LogExposureClass.LOGGER.info(strFeedback);
         final String strHardware = "\"Hardware\":" + JsonOperationsClass.getMapIntoJsonString(gatherHarwareDetails());
+        strJsonString.append(strHardware);
         final String strFeedbackH = "I just captured Hardware information...";
         LogExposureClass.LOGGER.debug(strFeedbackH);
         final String strSoftware = "\"Software\":" + JsonOperationsClass.getMapIntoJsonString(gatherSoftwareDetails());
+        strJsonString.append(',').append(strSoftware);
         final String strFeedbackS = "I just captured Software information...";
         LogExposureClass.LOGGER.debug(strFeedbackS);
         final String strApps = ProjectClass.ApplicationSubClass.getApplicationDetails();
+        if (strApps != null) {
+            strJsonString.append(',').append(strApps);
+        }
         final String strEnvironment = "\"Environment\":" + JsonOperationsClass.getMapIntoJsonString(gatherEnvironmentDetails());
         final String strFeedbackEnv = "I just captured Environment information...";
         LogExposureClass.LOGGER.debug(strFeedbackEnv);
-        return strJsonString.append('{')
-                .append(strHardware)
-                .append(',')
-                .append(strSoftware)
-                .append(',')
-                .append(strApps)
-                .append(',')
-                .append(strEnvironment)
-                .append('}').toString();
+        strJsonString.append(',').append(strEnvironment);
+        return strJsonString.append('}').toString();
     }
 
     /**
