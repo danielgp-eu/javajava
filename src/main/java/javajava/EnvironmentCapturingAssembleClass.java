@@ -15,8 +15,13 @@ public final class EnvironmentCapturingAssembleClass {
      * @return Map
      */
     private static Map<String, Object> gatherEnvironmentDetails() {
+        String strComputer = System.getenv("COMPUTERNAME");
+        if (strComputer == null) {
+            strComputer = System.getenv("HOSTNAME");
+        }
+        final String userAccount = ShellingClass.getCurrentUserAccount();
         return Map.of(
-                "Computer", System.getenv("COMPUTERNAME") != null ? System.getenv("COMPUTERNAME") : System.getenv("HOSTNAME"),
+                "Computer", strComputer != null ? strComputer : "---",
                 "Country", System.getProperty("user.country", "---"),
                 "Country.Format", System.getProperty("user.country.format", "---"),
                 "Language", System.getProperty("user.language", "---"),
@@ -25,7 +30,7 @@ public final class EnvironmentCapturingAssembleClass {
                 "Name", System.getProperty("user.name", "---"),
                 "Timezone", System.getProperty("user.timezone", "---"),
                 "Username", System.getenv("USERNAME") != null ? System.getenv("USERNAME") : System.getProperty("user.name", "---"),
-                "User Account", ShellingClass.getCurrentUserAccount());
+                "User Account", userAccount != null ? userAccount : "---"));
     }
 
     /**
