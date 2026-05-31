@@ -18,21 +18,22 @@ import java.util.regex.Pattern;
  * Regular Expressions things
  */
 public final class RegularExpressionsClass {
-    /**
-     * Patterns Map
-     */
+    /** Version Patterns Map */
+    public static final String REGEXP_VERSION = "^\\d{1,2}\\.\\d{1,3}(|.\\d{1,3}|.\\d{1,3}.\\d{1,12})(|\\.(Alpha\\d{1,2}|Beta\\d{1,2}|CR\\d{1,2}|Final|RC\\d{1,2})|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
+    /** Patterns Map */
     public static final Map<String, Map<String, String>> MAP_PATTERNS = Map.of(
             RegularExpressionsClass.STR_AGING_DATE, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<years>\\d{4})-(?<months>(0\\d{1}|1[0-1]{1}))-(?<days>([0-2]{1}\\d{1}|30))"),
             RegularExpressionsClass.STR_AGING_TS, Map.of(RegularExpressionsClass.STR_REG_EXP, "[+-](?<yearsTS>\\d{4})-(?<monthsTS>(0\\d{1}|1[0-1]{1}))-(?<daysTS>([0-2]{1}\\d{1}|30))\\s(?<hoursTS>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutesTS>[0-5]{1}\\d{1})\\:(?<secondsTS>[0-5]{1}\\d{1})"),
             RegularExpressionsClass.STR_AGING_TIME, Map.of(RegularExpressionsClass.STR_REG_EXP, "(?<hours>([0-1]\\d{1}|2[0-3]{1}))\\:(?<minutes>[0-5]{1}\\d{1})\\:(?<seconds>[0-5]{1}\\d{1})"),
             "decimal", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+\\.\\d+-?"),
-            "long", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d{1,18}-?"),
             BasicStructuresClass.STR_JUST_DATE, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy",
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy",
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}\\d{1}))"),
+            "long", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d{1,18}-?"),
             RegularExpressionsClass.STR_MAVEN_PKG, Map.of(RegularExpressionsClass.STR_REG_EXP, "[0-9a-z]+\\.[0-9a-z\\-\\.]+\\:[0-9a-z\\-\\.]+",
-                    "URL", "<a href=\"https://repo1.maven.org/maven2/%s/%s/\" target=\"_blank\">%s</a>"),
+                    "URL", "https://repo1.maven.org/maven2/%s/%s/",
+                    "HTMLlink", "<a href=\"%s\" target=\"_blank\">%s</a>"),
             "numeric", Map.of(RegularExpressionsClass.STR_REG_EXP, "-?\\d+(\\.\\d+)?-?"),
             BasicStructuresClass.STR_TIMESTAMP, Map.of(BasicStructuresClass.STR_INPUT, "yyyy-MM-dd HH:mm:ss",
                     BasicStructuresClass.STR_OUTPUT_LONG, "EEEE, dd MMMM yyyy HH:mm:ss",
@@ -43,6 +44,7 @@ public final class RegularExpressionsClass {
                     BasicStructuresClass.STR_OUTPUT_SHORT, "EEE, dd MMM yyyy HH:mm:ss.SSS",
                     RegularExpressionsClass.STR_REG_EXP, "(1|2)\\d{3}\\-((01|03|05|07|08|10|12)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|3[0-1]{1})|(04|06|09|11)\\-(0{1}[1-9]{1}|[1-2]{1}\\d{1}|30)|02\\-(0[1-9]{1}|[1-2]{1}[0-9]{1}))\\s([0-1]\\d{1}|2[0-3]{1})\\:[0-5]{1}\\d{1}\\:[0-5]{1}\\d{1}\\.\\d{3}")
             );
+
     /**
      * Regex for Latitude: Sign, 2 digits (deg), 2 digits (min), 
      * optional 2 digits (sec)
@@ -73,6 +75,16 @@ public final class RegularExpressionsClass {
      * string constant
      */
     public static final String STR_MAVEN_PKG = "MavenPackage";
+
+    /**
+     * building Central Maven Repository URL
+     * @param inPackage input package
+     * @return String as URL
+     */
+    public static String buildCentralMavenRepositoryUniformResourceLocator(final String inPackage) {
+        final String[] urlParts = inPackage.split(":");
+        return String.format(MAP_PATTERNS.get(STR_MAVEN_PKG).get("URL"), urlParts[0].replace('.', '/'), urlParts[1]);
+    }
 
     /**
      * Convert aging Date into human-readable String
@@ -238,8 +250,8 @@ public final class RegularExpressionsClass {
                         if (text.contains("compliance-snowflake")) {
                             return text;
                         } else {
-                            final String[] urlParts = text.split(":");
-                            return String.format(MAP_PATTERNS.get(STR_MAVEN_PKG).get("URL"), urlParts[0].replace('.', '/'), urlParts[1], text);
+                            final String strURL = buildCentralMavenRepositoryUniformResourceLocator(text);
+                            return String.format(MAP_PATTERNS.get(STR_MAVEN_PKG).get("HTMLlink"), strURL, text);
                         }
                     }
                     case STR_AGING_TS -> {
@@ -283,7 +295,11 @@ public final class RegularExpressionsClass {
         public static boolean isStringActuallySomething(final String inputString, final String mapIdentifier) {
             boolean bolReturn = false;
             if (inputString != null) {
-                final Pattern pattern = Pattern.compile(MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP));
+                String regularExpression = REGEXP_VERSION;
+                if (!"version".equalsIgnoreCase(mapIdentifier)) {
+                    regularExpression = MAP_PATTERNS.get(mapIdentifier).get(STR_REG_EXP);
+                }
+                final Pattern pattern = Pattern.compile(regularExpression);
                 bolReturn = pattern.matcher(inputString).matches();
             }
             return bolReturn;

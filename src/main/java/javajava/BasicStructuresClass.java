@@ -684,6 +684,15 @@ public final class BasicStructuresClass {
             return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, STR_TS_MSEC);
         }
 
+        /**
+         * Check if String is actually a Version
+         * @param inputString string to evaluate
+         * @return True if given String is actually Version
+         */
+        public static boolean isStringActuallyVersion(final String inputString) {
+            return RegularExpressionsClass.ValidationSubClass.isStringActuallySomething(inputString, "version");
+        }
+
         // Private constructor to prevent instantiation
         private StringEvaluationSubClass() {
             // intentionally blank
