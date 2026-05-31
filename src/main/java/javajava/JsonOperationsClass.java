@@ -22,13 +22,37 @@ import tools.jackson.core.JsonToken;
 import tools.jackson.core.ObjectReadContext;
 import tools.jackson.core.ObjectWriteContext;
 import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * JSON handling
  */
 public final class JsonOperationsClass {
+
+    /**
+     * check if input JSON is valid
+     * @param json input JSON
+     * @return true if valid JSON content is seen
+     */
+    public static boolean isJsonValid(final String inJson) {
+        final ObjectMapper mapper = JsonMapper.builder()
+                .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                .build();
+        boolean bolReturn = true;
+        try {
+            if (inJson == null) {
+                bolReturn = false;
+            } else {
+                mapper.readTree(inJson);
+            }
+        } catch (JacksonException _) {
+            bolReturn = false;
+        }
+        return bolReturn;
+    }
 
     /**
      * Load all JSON nodes from String
