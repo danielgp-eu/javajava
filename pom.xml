@@ -64,6 +64,7 @@
         <sqlite-jdbc.version>3.53.1.0</sqlite-jdbc.version>
         <undertow-core.version>2.4.1.Final</undertow-core.version>
         <!-- Build Plugin versions -->
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
         <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
         <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
@@ -456,7 +457,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.10.0</version>
+                <version>${central-publishing-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
