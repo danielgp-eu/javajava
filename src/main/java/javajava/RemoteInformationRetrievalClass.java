@@ -5,7 +5,13 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Locale;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,7 +24,7 @@ import org.xml.sax.SAXException;
 /**
  * XML management
  */
-public final class ExtensibleMarkupLanguageClass {
+public final class RemoteInformationRetrievalClass {
 
     /**
      * building Central Maven Repository as URL
@@ -28,7 +34,7 @@ public final class ExtensibleMarkupLanguageClass {
     private static URL buildMavenCentralRepositoryUniformResourceLocatorFromPackage(final String inPackage) {
         final String strWebSite = RegularExpressionsClass.buildCentralMavenRepositoryUniformResourceLocator(inPackage) + "maven-metadata.xml";
         final String strFeedback = String.format("Uniform Resource Locator from Central Maven Repository for %s package is: %s", inPackage, strWebSite);
-        LogExposureClass.LOGGER.error(strFeedback);
+        LogExposureClass.LOGGER.info(strFeedback);
         return buildUniformResourceLocatorFromString(strWebSite);
     }
 
@@ -88,10 +94,63 @@ public final class ExtensibleMarkupLanguageClass {
             docBuilderFactory.setExpandEntityReferences(false);
             doc = parseDocumentFromInputStram(inStream, docBuilderFactory);
         } catch (ParserConfigurationException e) {
-            final String strFeedback = String.format("ParserConfigurationException Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+            final String strFeedback = String.format("Parser Configuration Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return doc;
+    }
+
+    /**
+     * capture remote file attributes
+     * @param strRemoteFileUrl URL for remote file
+     * @return multiple attributes as Properties
+     */
+    public static Properties getRemoteFileAttributes(final String strRemoteFileUrl) {
+        final Properties fileProperties = new Properties();
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            final HttpRequest request = HttpRequest.newBuilder(URI.create(strRemoteFileUrl))
+                    .method("HEAD", HttpRequest.BodyPublishers.noBody())
+                    .build();
+            final HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+            final String lastModified = response.headers()
+                    .firstValue("Last-Modified")
+                    .orElse("");
+            if (!lastModified.isBlank() ) {
+                fileProperties.put("Last Modified", TimingClass.ConversionSubClass.convertTimeFormat(lastModified, DateTimeFormatter.RFC_1123_DATE_TIME, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+            }
+            fileProperties.put("Size", response.headers()
+                    .firstValueAsLong("Content-Length")
+                    .orElse(-1L));
+            client.close();
+            final String fileChecksum = getRemoteFileContent(strRemoteFileUrl + ".sha256");
+            if (!lastModified.isBlank() ) {
+                fileProperties.put("Checksum SHA-256", fileChecksum.trim().toLowerCase(Locale.ENGLISH));
+            }
+        } catch (IOException | InterruptedException e) {
+            final String strFeedback = String.format("Exception Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
+        }
+        return fileProperties;
+    }
+
+    /**
+     * capture remote file content
+     * @param strRemoteFileUrl URL for remote file
+     * @return content file as String
+     */
+    public static String getRemoteFileContent(final String strRemoteFileUrl) {
+        String fileContent = "";
+        try (HttpClient client = HttpClient.newHttpClient()) {
+            fileContent = client.send(
+                    HttpRequest.newBuilder(URI.create(strRemoteFileUrl)).GET().build(),
+                    HttpResponse.BodyHandlers.ofString()
+            ).body();
+            client.close();
+        } catch (IOException | InterruptedException e) {
+             final String strFeedback = String.format("Exception Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+             LogExposureClass.LOGGER.error(strFeedback);
+         }
+        return fileContent;
     }
 
     /**
@@ -113,7 +172,7 @@ public final class ExtensibleMarkupLanguageClass {
     }
 
     // Private constructor to prevent instantiation
-    private ExtensibleMarkupLanguageClass() {
+    private RemoteInformationRetrievalClass() {
         // intentionally blank
     }
 

@@ -344,7 +344,7 @@ class CaptureChecksumsOfFilesFromFoldersIntoCsvFile implements Runnable {
             final LocalDateTime startComputeTime = LocalDateTime.now();
             FileStatisticsClass.captureFileStatisticsFromFolder(strFolder, outCsvFile);
             final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
-            final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, outCsvFile, objDuration.toString(), TimingClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+            final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, outCsvFile, objDuration.toString(), TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
             LogExposureClass.LOGGER.info(strFeedback);
         }
     }
@@ -506,6 +506,18 @@ class ExperimentalFeature implements Runnable {
     @Override
     public void run() {
         // no-op
+        final String strPackage = "com.github.oshi:oshi-core-ffm";
+        final String strVersion = RemoteInformationRetrievalClass.getLatestVersionFromMavenCentralRepository(strPackage);
+        final String strFeedback = String.format("For package %s latest version is: %s", strPackage, strVersion);
+        LogExposureClass.LOGGER.info(strFeedback);
+        final String strWebSite = RegularExpressionsClass.buildCentralMavenRepositoryUniformResourceLocator(strPackage);
+        final String[] packageParts = strPackage.split(":");
+        final String strRemoteFileUrl = String.format("%s%s/%s-%s.jar", strWebSite, strVersion, packageParts[1], strVersion);
+        final String strFeedback2 = String.format("Remote file is: %s", strRemoteFileUrl);
+        LogExposureClass.LOGGER.info(strFeedback2);
+        final Properties urlAttributes = RemoteInformationRetrievalClass.getRemoteFileAttributes(strRemoteFileUrl);
+        final String strFeedback3 = String.format("Retrieved attributes are: %s", urlAttributes);
+        LogExposureClass.LOGGER.info(strFeedback3);
     }
 
     /**

@@ -58,7 +58,7 @@ public final class SunClass {
         final ZonedDateTime sunset = calculateSunSetOrRise(nowZ, false);
         OUT_PROPERTIES.put("Sunset", sunset.format(formatterTime));
         final Duration objDurationSun = Duration.between(sunrise, sunset);
-        OUT_PROPERTIES.put("Daylight time", TimingClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
+        OUT_PROPERTIES.put("Daylight time", TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
         enhanceSunStatistics(nowZ, sunrise, sunset);
         return OUT_PROPERTIES;
     }
@@ -148,12 +148,12 @@ public final class SunClass {
         }
         OUT_PROPERTIES.put("Sun situation", strSunSituation);
         OUT_PROPERTIES.put("Current Situation", strCrtSituation);
-        OUT_PROPERTIES.put("Prior event", String.format(strPriorEvent, TimingClass.convertNanosecondsIntoSomething(objDurationPrior, BasicStructuresClass.STR_TM_HUMAN)));
-        OUT_PROPERTIES.put("Next event", String.format(strNextEvent, TimingClass.convertNanosecondsIntoSomething(objDurationNext, BasicStructuresClass.STR_TM_HUMAN)));
+        OUT_PROPERTIES.put("Prior event", String.format(strPriorEvent, TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationPrior, BasicStructuresClass.STR_TM_HUMAN)));
+        OUT_PROPERTIES.put("Next event", String.format(strNextEvent, TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationNext, BasicStructuresClass.STR_TM_HUMAN)));
         final Duration objDurationPriorN = Duration.between(sunsetPrior, sunrise);
-        OUT_PROPERTIES.put("Prior night", TimingClass.convertNanosecondsIntoSomething(objDurationPriorN, BasicStructuresClass.STR_TM_HUMAN));
+        OUT_PROPERTIES.put("Prior night", TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationPriorN, BasicStructuresClass.STR_TM_HUMAN));
         final Duration objDurationNextN = Duration.between(sunset, sunriseNext);
-        OUT_PROPERTIES.put("Next night", TimingClass.convertNanosecondsIntoSomething(objDurationNextN, BasicStructuresClass.STR_TM_HUMAN));
+        OUT_PROPERTIES.put("Next night", TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationNextN, BasicStructuresClass.STR_TM_HUMAN));
     }
 
     /**

@@ -11,7 +11,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
+import java.time.temporal.UnsupportedTemporalTypeException;
 import java.time.temporal.WeekFields;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,66 +73,6 @@ public final class TimingClass {
             LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
         }
         return lastModifTime;
-    }
-
-    /**
-     * Convert Nanoseconds to a more digestible string
-     * 
-     * @param duration actual duration in nanoseconds
-     * @param strRule rule to use for conversion
-     * @return String
-     */
-    @NonNull
-    public static String convertNanosecondsIntoSomething(@NonNull final Duration duration, @NonNull final String strRule) {
-        final StringBuilder strFinalString = new StringBuilder(100);
-        final String[] arrayStrings;
-        String strFinalOne = null;
-        switch (strRule) {
-            case "HumanReadableTime":
-                final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
-                arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
-                strFinalOne = "Nanosecond";
-                break;
-            case "TimeClockClassic":
-                arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};
-                break;
-            case "TimeClock":
-                arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO, BasicStructuresClass.STR_DOT_THREE};
-                strFinalOne = "Millisecond";
-                break;
-            default:
-                final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                throw new UnsupportedOperationException(strFeedbackErr);
-        }
-        String strFinalPart = "";
-        if (strFinalOne != null) {
-            strFinalPart = getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]);
-        }
-        return strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
-                .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
-                .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
-                .append(getDurationWithCustomRules(duration, BasicStructuresClass.STR_SECOND, arrayStrings[2]))
-                .append(strFinalPart)
-                .toString()
-                .trim();
-    }
-
-    /**
-     * converts a Date from one format to another
-     *
-     * @param inDate input Date
-     * @param inTimeFormat input Time Format
-     * @param outTimeFormat output Time Format
-     * @return String
-     */
-    @NonNull
-    public static String convertTimeFormat(@NonNull final String inDate, @NonNull final String inTimeFormat, @NonNull final String outTimeFormat) {
-        // Define input and output formatters
-        final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat, Locale.US);
-        final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat, Locale.US);
-        // Parse and format
-        final LocalDate date = LocalDate.parse(inDate, inputFormatter);
-        return date.format(outputFormatter);
     }
 
     /**
@@ -310,8 +252,111 @@ public final class TimingClass {
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
-            , convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
-            , convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime")
+            , ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
+    }
+
+    /**
+     * Converting Time
+     */
+    public static final class ConversionSubClass {
+
+        /**
+         * Convert Nanoseconds to a more digestible string
+         * 
+         * @param duration actual duration in nanoseconds
+         * @param strRule rule to use for conversion
+         * @return String
+         */
+        @NonNull
+        public static String convertNanosecondsIntoSomething(@NonNull final Duration duration, @NonNull final String strRule) {
+            final StringBuilder strFinalString = new StringBuilder(100);
+            final String[] arrayStrings;
+            String strFinalOne = null;
+            switch (strRule) {
+                case "HumanReadableTime":
+                    final String strFinalRule = BasicStructuresClass.STR_TM_FRM_SP;
+                    arrayStrings = new String[] {strFinalRule, strFinalRule, strFinalRule, strFinalRule};
+                    strFinalOne = "Nanosecond";
+                    break;
+                case "TimeClockClassic":
+                    arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO};
+                    break;
+                case "TimeClock":
+                    arrayStrings = new String[] {BasicStructuresClass.STR_TWO_NON_ZERO, BasicStructuresClass.STR_TWO, BasicStructuresClass.STR_SLMN_TWO, BasicStructuresClass.STR_DOT_THREE};
+                    strFinalOne = "Millisecond";
+                    break;
+                default:
+                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strRule, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+            }
+            String strFinalPart = "";
+            if (strFinalOne != null) {
+                strFinalPart = getDurationWithCustomRules(duration, strFinalOne, arrayStrings[3]);
+            }
+            return strFinalString.append(getDurationWithCustomRules(duration, "Day", arrayStrings[0]))
+                    .append(getDurationWithCustomRules(duration, "Hour", arrayStrings[1]))
+                    .append(getDurationWithCustomRules(duration, "Minute", arrayStrings[2]))
+                    .append(getDurationWithCustomRules(duration, BasicStructuresClass.STR_SECOND, arrayStrings[2]))
+                    .append(strFinalPart)
+                    .toString()
+                    .trim();
+        }
+
+        /**
+         * converts a Date from one format to another
+         *
+         * @param inDate input Date
+         * @param inTimeFormat input Time Format
+         * @param outTimeFormat output Time Format
+         * @return String
+         */
+        @NonNull
+        public static String convertTimeFormat(@NonNull final String inDate, @NonNull final String inTimeFormat, @NonNull final String outTimeFormat) {
+            String outDate = ""; 
+            try {
+                final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat, Locale.US);
+                final LocalDate date = LocalDate.parse(inDate, inputFormatter);
+                final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat, Locale.US);
+                outDate = date.format(outputFormatter);
+            } catch (DateTimeParseException e) {
+                final String strFeedback = String.format("Error parsing  %s", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            return outDate;
+        }
+
+        /**
+         * converts a Date from one format to another
+         *
+         * @param inDate input Date
+         * @param inTimeFormat input Time Format
+         * @param outTimeFormat output Time Format
+         * @return String
+         */
+        @NonNull
+        public static String convertTimeFormat(@NonNull final String inDate, @NonNull final DateTimeFormatter inTimeFormat, @NonNull final DateTimeFormatter outTimeFormat) {
+            String outDate = ""; 
+            try {
+                final ZonedDateTime zonedDateTime = ZonedDateTime.parse(inDate, inTimeFormat);
+                outDate = zonedDateTime.format(outTimeFormat);
+            } catch (DateTimeParseException e) {
+                final String strFeedback = String.format("Error parsing %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            } catch (UnsupportedTemporalTypeException e) {
+                final String strFeedback = String.format("Unsupported Temporal time for %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedback);
+            }
+            return outDate;
+        }
+
+        /**
+         * Constructor
+         */
+        private ConversionSubClass() {
+            // intentionally blank
+        }
+
     }
 
     /**

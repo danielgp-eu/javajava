@@ -34,7 +34,7 @@ public final class JsonOperationsClass {
 
     /**
      * check if input JSON is valid
-     * @param json input JSON
+     * @param inJson input JSON
      * @return true if valid JSON content is seen
      */
     public static boolean isJsonValid(final String inJson) {
