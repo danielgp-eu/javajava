@@ -313,17 +313,9 @@ public final class TimingClass {
          */
         @NonNull
         public static String convertTimeFormat(@NonNull final String inDate, @NonNull final String inTimeFormat, @NonNull final String outTimeFormat) {
-            String outDate = ""; 
-            try {
-                final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat, Locale.US);
-                final LocalDate date = LocalDate.parse(inDate, inputFormatter);
-                final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat, Locale.US);
-                outDate = date.format(outputFormatter);
-            } catch (DateTimeParseException e) {
-                final String strFeedback = String.format("Error parsing  %s", Arrays.toString(e.getStackTrace()));
-                LogExposureClass.LOGGER.error(strFeedback);
-            }
-            return outDate;
+            final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern(inTimeFormat, Locale.US);
+            final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outTimeFormat, Locale.US);
+            return convertTimeFormat(inDate, inputFormatter, outputFormatter);
         }
 
         /**
