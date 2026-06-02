@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -515,9 +516,13 @@ class ExperimentalFeature implements Runnable {
         final String strRemoteFileUrl = String.format("%s%s/%s-%s.jar", strWebSite, strVersion, packageParts[1], strVersion);
         final String strFeedback2 = String.format("Remote file is: %s", strRemoteFileUrl);
         LogExposureClass.LOGGER.info(strFeedback2);
-        final Properties urlAttributes = RemoteInformationRetrievalClass.getRemoteFileAttributes(strRemoteFileUrl);
-        final String strFeedback3 = String.format("Retrieved attributes are: %s", urlAttributes);
+        final Properties urlAttributes = RemoteInformationRetrievalClass.requestHttp(strRemoteFileUrl, "AttributesFromHeader");
+        final String strFeedback3 = String.format("Retrieved attributes from header are: %s", urlAttributes);
         LogExposureClass.LOGGER.info(strFeedback3);
+        final String strChecksumUrl = strRemoteFileUrl + ".sha256";
+        final String checksumValue = RemoteInformationRetrievalClass.requestHttp(strChecksumUrl, BasicStructuresClass.STR_CONTENT).getOrDefault(BasicStructuresClass.STR_CONTENT, "MISSING").toString().trim().toLowerCase(Locale.ENGLISH);
+        final String strFeedback4 = String.format("SHA-256 from %s has content: %s", strChecksumUrl, checksumValue);
+        LogExposureClass.LOGGER.info(strFeedback4);
     }
 
     /**

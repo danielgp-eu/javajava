@@ -45,6 +45,10 @@ public final class BasicStructuresClass {
     /**
      * Dependencies value
      */
+    public static final String STR_CONTENT = "Content";
+    /**
+     * Dependencies value
+     */
     public static final String STR_DEPENDENCIES = "Dependencies";
     /**
      * String for internal ETL

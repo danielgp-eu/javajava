@@ -6,11 +6,13 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.http.HttpClient;
+import java.net.http.HttpOption;
+import java.net.http.HttpOption.Http3DiscoveryMode;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -25,6 +27,11 @@ import org.xml.sax.SAXException;
  * XML management
  */
 public final class RemoteInformationRetrievalClass {
+    /** HTTP client constant */
+    private static final HttpClient CLIENT = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_3)
+            .connectTimeout(Duration.ofSeconds(5))
+            .build();
 
     /**
      * building Central Maven Repository as URL
@@ -52,6 +59,15 @@ public final class RemoteInformationRetrievalClass {
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return urlReturn;
+    }
+
+    /**
+     * expose to Logs HTTP response version
+     * @param response version of used HTTP protocol
+     */
+    private static void exposeHttpResponseVersion(final HttpResponse<?> response) {
+        final String strFeedbackErr = String.format("Response protocol version was %s", response.version().toString());
+        LogExposureClass.LOGGER.info(strFeedbackErr);
     }
 
     /**
@@ -101,67 +117,6 @@ public final class RemoteInformationRetrievalClass {
     }
 
     /**
-     * capture remote file attributes
-     * @param strRemoteFileUrl URL for remote file
-     * @return multiple attributes as Properties
-     */
-    public static Properties getRemoteFileAttributes(final String strRemoteFileUrl) {
-        final Properties fileProperties = new Properties();
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            final HttpRequest request = HttpRequest.newBuilder(URI.create(strRemoteFileUrl))
-                    .method("HEAD", HttpRequest.BodyPublishers.noBody())
-                    .build();
-            final HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
-            final String lastModified = response.headers()
-                    .firstValue("Last-Modified")
-                    .orElse("");
-            if (!lastModified.isBlank() ) {
-                fileProperties.put("Last Modified", TimingClass.ConversionSubClass.convertTimeFormat(lastModified, DateTimeFormatter.RFC_1123_DATE_TIME, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-            }
-            fileProperties.put("Size", response.headers()
-                    .firstValueAsLong("Content-Length")
-                    .orElse(-1L));
-        } catch (IOException e) {
-            final String strFeedback = String.format("Input/Output Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
-            LogExposureClass.LOGGER.error(strFeedback);
-        } catch (InterruptedException ei) {
-            final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
-            LogExposureClass.LOGGER.warn(strFeedback);
-            /* Clean up whatever needs to be handled before interrupting  */
-            Thread.currentThread().interrupt();
-        }
-        final String fileChecksum = getRemoteFileContent(strRemoteFileUrl + ".sha256");
-        if (!fileChecksum.isBlank() ) {
-            fileProperties.put("Checksum SHA-256", fileChecksum.trim().toLowerCase(Locale.ENGLISH));
-        }
-        return fileProperties;
-    }
-
-    /**
-     * capture remote file content
-     * @param strRemoteFileUrl URL for remote file
-     * @return content file as String
-     */
-    public static String getRemoteFileContent(final String strRemoteFileUrl) {
-        String fileContent = "";
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            fileContent = client.send(
-                    HttpRequest.newBuilder(URI.create(strRemoteFileUrl)).GET().build(),
-                    HttpResponse.BodyHandlers.ofString()
-            ).body();
-        } catch (IOException e) {
-             final String strFeedback = String.format("Input/Output Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
-             LogExposureClass.LOGGER.error(strFeedback);
-         } catch (InterruptedException ei) {
-             final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
-             LogExposureClass.LOGGER.warn(strFeedback);
-             /* Clean up whatever needs to be handled before interrupting  */
-             Thread.currentThread().interrupt();
-         }
-        return fileContent;
-    }
-
-    /**
      * parse Doc from Input Stream
      * @param inStream Input Stream
      * @param docBuilderFactory DocumentBuilderFactory
@@ -177,6 +132,64 @@ public final class RemoteInformationRetrievalClass {
             LogExposureClass.LOGGER.error(strFeedback);
         }
         return doc;
+    }
+
+    /**
+     * Unified method to handle different remote file requests
+     * @param strRemoteFileUrl input remote file URL
+     * @param inWhat input Method
+     * @return Properties with one or multiple values
+     */
+    public static Properties requestHttp(final String strRemoteFileUrl, final String inWhat) {
+        final Properties fileProperties = new Properties();
+        final URI inputUri = URI.create(strRemoteFileUrl);
+        try {
+            final HttpRequest.Builder builder = HttpRequest.newBuilder(inputUri)
+                    .setOption(HttpOption.H3_DISCOVERY, Http3DiscoveryMode.ANY)
+                    .timeout(Duration.ofSeconds(10));
+            switch(inWhat) {
+                case "AttributesFromHeader":
+                    final HttpRequest request = builder
+                        .method("HEAD", HttpRequest.BodyPublishers.noBody())
+                        .build();
+                    final HttpResponse<Void> responseHeader = CLIENT
+                            .send(request, HttpResponse.BodyHandlers.discarding());
+                    exposeHttpResponseVersion(responseHeader);
+                    final String lastModified = responseHeader.headers()
+                            .firstValue("Last-Modified")
+                            .orElse("");
+                    if (!lastModified.isBlank() ) {
+                        fileProperties.put("Last Modified", TimingClass.ConversionSubClass.convertTimeFormat(lastModified, DateTimeFormatter.RFC_1123_DATE_TIME, DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                    }
+                    fileProperties.put("Size", responseHeader.headers()
+                            .firstValueAsLong("Content-Length")
+                            .orElse(-1L));
+                    break;
+                case BasicStructuresClass.STR_CONTENT:
+                    final HttpRequest requestContent = builder
+                        .GET()
+                        .build();
+                    final HttpResponse<String> responseFull = CLIENT
+                            .send(requestContent, HttpResponse.BodyHandlers.ofString());
+                    exposeHttpResponseVersion(responseFull);
+                    final String fileContent = responseFull.body();
+                    if (!fileContent.isBlank()) {
+                        fileProperties.put(BasicStructuresClass.STR_CONTENT, fileContent);
+                    }
+                    break;
+                default:
+                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(inWhat, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.warn(strFeedback);
+        } catch (IOException e) {
+            final String strFeedback = String.format("Input/Output Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+            LogExposureClass.LOGGER.error(strFeedback);
+        }
+        return fileProperties;
     }
 
     // Private constructor to prevent instantiation
