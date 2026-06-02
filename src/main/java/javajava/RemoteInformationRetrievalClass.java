@@ -121,14 +121,18 @@ public final class RemoteInformationRetrievalClass {
             fileProperties.put("Size", response.headers()
                     .firstValueAsLong("Content-Length")
                     .orElse(-1L));
-            client.close();
-            final String fileChecksum = getRemoteFileContent(strRemoteFileUrl + ".sha256");
-            if (!lastModified.isBlank() ) {
-                fileProperties.put("Checksum SHA-256", fileChecksum.trim().toLowerCase(Locale.ENGLISH));
-            }
-        } catch (IOException | InterruptedException e) {
-            final String strFeedback = String.format("Exception Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+        } catch (IOException e) {
+            final String strFeedback = String.format("Input/Output Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
             LogExposureClass.LOGGER.error(strFeedback);
+        } catch (InterruptedException ei) {
+            final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
+            LogExposureClass.LOGGER.warn(strFeedback);
+            /* Clean up whatever needs to be handled before interrupting  */
+            Thread.currentThread().interrupt();
+        }
+        final String fileChecksum = getRemoteFileContent(strRemoteFileUrl + ".sha256");
+        if (!fileChecksum.isBlank() ) {
+            fileProperties.put("Checksum SHA-256", fileChecksum.trim().toLowerCase(Locale.ENGLISH));
         }
         return fileProperties;
     }
@@ -145,10 +149,14 @@ public final class RemoteInformationRetrievalClass {
                     HttpRequest.newBuilder(URI.create(strRemoteFileUrl)).GET().build(),
                     HttpResponse.BodyHandlers.ofString()
             ).body();
-            client.close();
-        } catch (IOException | InterruptedException e) {
-             final String strFeedback = String.format("Exception Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
+        } catch (IOException e) {
+             final String strFeedback = String.format("Input/Output Exception while attempting to read remote XML from an URL as %s", Arrays.toString(e.getStackTrace()));
              LogExposureClass.LOGGER.error(strFeedback);
+         } catch (InterruptedException ei) {
+             final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
+             LogExposureClass.LOGGER.warn(strFeedback);
+             /* Clean up whatever needs to be handled before interrupting  */
+             Thread.currentThread().interrupt();
          }
         return fileContent;
     }
