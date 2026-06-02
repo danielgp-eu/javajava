@@ -103,57 +103,6 @@ public final class TimingClass {
     }
 
     /**
-     * get number for Duration
-     * 
-     * @param duration actual duration in nanoseconds
-     * @param strWhichPart which part of Date or Time to use for conversion
-     * @return final part of Date or Time
-     */
-    private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhichPart) {
-        return switch (strWhichPart) {
-            case "Day" -> duration.toDaysPart();
-            case "Hour" -> duration.toHoursPart();
-            case "Millisecond" -> duration.toMillisPart();
-            case "Minute" -> duration.toMinutesPart();
-            case "Nanosecond" -> duration.toNanosPart();
-            case BasicStructuresClass.STR_SECOND -> duration.toSecondsPart();
-            default -> {
-                final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                throw new UnsupportedOperationException(strFeedbackErr);
-            }
-        };
-    }
-
-    /**
-     * outputs partial duration
-     * 
-     * @param duration actual duration in nanoseconds
-     * @param strWhichPart which time part to compute
-     * @param strHow controls output format
-     * @return String
-     */
-    @NonNull
-    private static String getDurationWithCustomRules(@NonNull final Duration duration, @NonNull final String strWhichPart, @NonNull final String strHow) {
-        final long lngNumber = getDurationPartNumber(duration, strWhichPart);
-        String strReturn = "";
-        if (lngNumber > 0
-                || !strHow.endsWith("IfGreaterThanZero")) {
-            final String strFormats = TIME_FORMATS.get(strHow);
-            if ((strFormats == null) || strFormats.isEmpty()) {
-                final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
-                throw new UnsupportedOperationException(strFeedbackErr);
-            }
-            if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
-                final String strPart = lngNumber == 1 ? strWhichPart : strWhichPart + "s";
-                strReturn = String.format(strFormats, lngNumber, strPart);
-            } else {
-                strReturn = String.format(strFormats, lngNumber);
-            }
-        }
-        return strReturn;
-    }
-
-    /**
      * Zone Friendly logic
      * @param zoneId zone identifier
      * @return String
@@ -340,6 +289,57 @@ public final class TimingClass {
                 LogExposureClass.LOGGER.error(strFeedback);
             }
             return outDate;
+        }
+
+        /**
+         * get number for Duration
+         * 
+         * @param duration actual duration in nanoseconds
+         * @param strWhichPart which part of Date or Time to use for conversion
+         * @return final part of Date or Time
+         */
+        private static long getDurationPartNumber(@NonNull final Duration duration, @NonNull final String strWhichPart) {
+            return switch (strWhichPart) {
+                case "Day" -> duration.toDaysPart();
+                case "Hour" -> duration.toHoursPart();
+                case "Millisecond" -> duration.toMillisPart();
+                case "Minute" -> duration.toMinutesPart();
+                case "Nanosecond" -> duration.toNanosPart();
+                case BasicStructuresClass.STR_SECOND -> duration.toSecondsPart();
+                default -> {
+                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strWhichPart, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+                }
+            };
+        }
+
+        /**
+         * outputs partial duration
+         * 
+         * @param duration actual duration in nanoseconds
+         * @param strWhichPart which time part to compute
+         * @param strHow controls output format
+         * @return String
+         */
+        @NonNull
+        private static String getDurationWithCustomRules(@NonNull final Duration duration, @NonNull final String strWhichPart, @NonNull final String strHow) {
+            final long lngNumber = getDurationPartNumber(duration, strWhichPart);
+            String strReturn = "";
+            if (lngNumber > 0
+                    || !strHow.endsWith("IfGreaterThanZero")) {
+                final String strFormats = TIME_FORMATS.get(strHow);
+                if ((strFormats == null) || strFormats.isEmpty()) {
+                    final String strFeedbackErr = LogExposureClass.getUnsupportedFeatures(strHow, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)));
+                    throw new UnsupportedOperationException(strFeedbackErr);
+                }
+                if (BasicStructuresClass.STR_TM_FRM_SP.equalsIgnoreCase(strHow)) {
+                    final String strPart = lngNumber == 1 ? strWhichPart : strWhichPart + "s";
+                    strReturn = String.format(strFormats, lngNumber, strPart);
+                } else {
+                    strReturn = String.format(strFormats, lngNumber);
+                }
+            }
+            return strReturn;
         }
 
         /**
