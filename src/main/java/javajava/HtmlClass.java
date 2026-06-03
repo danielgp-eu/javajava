@@ -47,7 +47,7 @@ public final class HtmlClass {
      */
     public static String buildGeographicalCoordinatesFromTimeZone(final String sessionTimeZone) {
         final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
-        return zInfo.latitude() + "," + zInfo.longitude();
+        return zInfo == null ? "0,0" : zInfo.latitude() + "," + zInfo.longitude();
     }
 
     /**
@@ -69,10 +69,12 @@ public final class HtmlClass {
             try (InputStream inStream = HtmlClass.class.getResourceAsStream(internalFile)) {
                 final String strFeedback2 = String.format("Input Stream is: %s", inStream);
                 LogExposureClass.LOGGER.debug(strFeedback2);
+                assert inStream != null;
                 infoStrings[1] = String.format(STRING_IMPORTANT, String.format(Locale.US, strThousandSep, inStream.transferTo(OutputStream.nullOutputStream())));
                 final URL resourceUrl = HtmlClass.class.getResource(internalFile);
                 final String strFeedback3 = String.format("URI is: %s", resourceUrl);
                 LogExposureClass.LOGGER.debug(strFeedback3);
+                assert resourceUrl != null;
                 final long lastModified = resourceUrl.openConnection().getLastModified();
                 final String strLastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault()).toString().replace("T"," ");
                 infoStrings[2] = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss"));
