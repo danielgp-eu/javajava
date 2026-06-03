@@ -6,10 +6,11 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.StringJoiner;
+import java.util.SequencedMap;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,15 +95,22 @@ public final class RegularExpressionsClass {
     public static String convertAgingDateIntoHumanReadableString(final String ageString) {
         final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
         final Matcher matcher = agePattern.matcher(ageString);
-        final StringJoiner result = new StringJoiner(", ");
+        final List<String> resultDate = new ArrayList<>(); 
         if (matcher.matches()) {
-            result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("years")), "year", "years"));
-            result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("months")), "month", "months"));
-            result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("days")), "day", "days"));
+            final SequencedMap<String, String> sequencedMapDate = new LinkedHashMap<>();
+            sequencedMapDate.put("years", "year");
+            sequencedMapDate.put("months", "month");
+            sequencedMapDate.put("days", "day");
+            sequencedMapDate.forEach((strPlural, strSingular) -> {
+                final int intValue = Integer.parseInt(matcher.group(strPlural));
+                if (intValue != 0) {
+                    resultDate.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                }
+            });
         } else {
-            result.add(ageString);
+            resultDate.add(ageString);
         }
-        return result.toString().replaceAll("^[,\\s]+", "");
+        return resultDate.toString().replaceAll("[\\[\\]]", "");
     }
 
     /**
@@ -113,15 +121,22 @@ public final class RegularExpressionsClass {
     public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
         final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
         final Matcher matcher = agePattern.matcher(ageString);
-        final StringJoiner result = new StringJoiner(", ");
+        final List<String> resultTime = new ArrayList<>(); 
         if (matcher.matches()) {
-            result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("hours")), "hour", "hours"));
-            result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("minutes")), "minute", "minutes"));
-            result.add(numberWithSuffixIfNonZero(Integer.parseInt(matcher.group("seconds")), "second", "seconds"));
+            final SequencedMap<String, String> sequencedMapTime = new LinkedHashMap<>();
+            sequencedMapTime.put("hours", "hour");
+            sequencedMapTime.put("minutes", "minute");
+            sequencedMapTime.put("seconds", "second");
+            sequencedMapTime.forEach((strPlural, strSingular) -> {
+                final int intValue = Integer.parseInt(matcher.group(strPlural));
+                if (intValue != 0) {
+                    resultTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                }
+            });
         } else {
-            result.add(ageString);
+            resultTime.add(ageString);
         }
-        return result.toString().replaceAll("^[,\\s]+", "");
+        return resultTime.toString().replaceAll("[\\[\\]]", "");
     }
 
     /**
@@ -264,7 +279,7 @@ public final class RegularExpressionsClass {
                         final String outString = convertAgingDateIntoHumanReadableString(text);
                         return outString.isEmpty() ? "TODAY" : outString;
                     }
-                    case null, default -> {
+                    default -> {
                         final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT), Locale.US);
                         // Convert based on the specific group rules
                         final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
