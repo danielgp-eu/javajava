@@ -56,17 +56,19 @@ public final class ZoneDataServiceClass {
      * IANA zone logic
      */
     private static void loadIanaZones() {
-        try (InputStream inputStream = ZoneDataServiceClass.class.getResourceAsStream(TZ_FILE);
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-                BufferedReader bReader = new BufferedReader(inputStreamReader)) {
-            bReader.lines()
-                .filter(line -> !line.startsWith("#") && !line.isBlank())
-                .forEach(line -> {
-                    final String[] parts = line.split("\t");
-                    if (parts.length >= LINE_W_COORDINATE) {
-                        processLine(parts[0], parts[1], parts[2]);
-                    }
-                });
+        try (InputStream inputStream = ZoneDataServiceClass.class.getResourceAsStream(TZ_FILE)) {
+            assert inputStream != null;
+            try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                 BufferedReader bReader = new BufferedReader(inputStreamReader)) {
+                bReader.lines()
+                    .filter(line -> !line.startsWith("#") && !line.isBlank())
+                    .forEach(line -> {
+                        final String[] parts = line.split("\t");
+                        if (parts.length >= LINE_W_COORDINATE) {
+                            processLine(parts[0], parts[1], parts[2]);
+                        }
+                    });
+            }
         } catch (IOException ei) {
             final Path ptPrjProps = Path.of(TZ_FILE);
             final String strFeedback = String.format(FileOperationsClass.I18N_FILE_FND_ERR, ptPrjProps.getParent(), ptPrjProps.getFileName());
