@@ -80,18 +80,18 @@ class BasicStructuresClassTests {
     @Test
     @DisplayName("Counting 3 named parameters within a dummy query")
     void testCountNamedParametersWithinQuery() {
-        final String strHystack = "SELECT {Field1} FROM table WHERE {Field 2} = {Value_to_filter};";
+        final String strHaystack = "SELECT {Field1} FROM table WHERE {Field 2} = {Value_to_filter};";
         final int intOriginal = 3;
-        final int handled = BasicStructuresClass.countNamedParametersWithinQuery(strHystack);
+        final int handled = BasicStructuresClass.countNamedParametersWithinQuery(strHaystack);
         assertEquals(intOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, intOriginal));
     }
 
     @Test
     @DisplayName("Counting 3 positional type parameters within a dummy query")
     void testCountPositionalTypeParametersWithinQuery() {
-        final String strHystack = "SELECT %s FROM table WHERE %s = %d;";
+        final String strHaystack = "SELECT %s FROM table WHERE %s = %d;";
         final int intOriginal = 3;
-        final int handled = BasicStructuresClass.countPositionalTypeParametersWithinQuery(strHystack);
+        final int handled = BasicStructuresClass.countPositionalTypeParametersWithinQuery(strHaystack);
         assertEquals(intOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, intOriginal));
     }
 
