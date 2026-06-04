@@ -33,12 +33,12 @@ public final class HtmlClass {
      * Application Details
      * @return Content
      */
-    public static gg.jte.Content buildApplicationDetail() {
+    public static String buildApplicationDetail() {
         final Model prjModel = ProjectClass.getProjectModel();
         final String appDetails = String.format("%s&trade; v.%s &copy; by %s", prjModel.getName(), prjModel.getVersion(), prjModel.getDevelopers().getFirst().getName());
         final String strFeedback = String.format("I have just build application details: %s", appDetails);
         LogExposureClass.LOGGER.info(strFeedback);
-        return output -> output.writeContent(appDetails);
+        return appDetails;
     }
 
     /**
@@ -77,7 +77,12 @@ public final class HtmlClass {
                 assert resourceUrl != null;
                 final long lastModified = resourceUrl.openConnection().getLastModified();
                 final String strLastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(lastModified), ZoneId.systemDefault()).toString().replace("T"," ");
-                infoStrings[2] = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, "yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss"));
+                final String[] strInOut = {"yyyy-MM-dd HH:mm:ss", "EEE, dd MMM yyyy HH:mm:ss"};
+                if (strLastModified.contains(".")) {
+                    strInOut[0] = "yyyy-MM-dd HH:mm:ss.SSS";
+                    strInOut[1] = "EEE, dd MMM yyyy HH:mm:ss.SSS";
+                }
+                infoStrings[2] = String.format(STRING_IMPORTANT, TimingClass.LocalizationSubClass.convertTimestampFriendly(strLastModified, strInOut[0], strInOut[1]));
             } catch (IOException ex) {
                 LogExposureClass.exposeProjectModel(Arrays.toString(ex.getStackTrace()));
             }
@@ -86,32 +91,31 @@ public final class HtmlClass {
     }
 
     /**
-     * Building Time-Zone select
-     * @return Content
+     * Building Time-Zone select as String
+     * @return String w. TZ select
      */
-    public static gg.jte.Content buildMenu(final SequencedMap<String, Map<String, String>> inMapMenu) {
+    public static String buildMenuString(final SequencedMap<String, Map<String, String>> inMapMenu) {
         final StringBuilder strMenuContent = new StringBuilder(1000);
         inMapMenu.forEach((strKey, mapValue) -> {
             if (!mapValue.getOrDefault(BasicStructuresClass.STR_MENU, "").isEmpty()) {
                 strMenuContent.append(String.format("<li><a href=\"?page=%s\"><i class=\"%s\"></i>%s</a></li>", strKey, mapValue.get(BasicStructuresClass.STR_ICON), mapValue.get(BasicStructuresClass.STR_MENU)));
             }
         });
-        final String htmlString = strMenuContent.toString();
-        return output -> output.writeContent(htmlString);
+        return strMenuContent.toString();
     }
 
     /**
      * Building Time-Zone select
      * @return Content
      */
-    public static gg.jte.Content buildTimeZoneSelect(final String inTimeZone) {
+    public static String buildTimeZoneSelect(final String inTimeZone) {
         final SequencedMap<String, String> sortedTimeZones = ZoneDataServiceClass.loadSupportedTimeZones();
         final Properties selectProps = new Properties();
         selectProps.put("Name", "TZ");
         selectProps.put("Id", "TZ");
         selectProps.put("Default", inTimeZone);
         selectProps.put("Size", 1);
-        return output -> output.writeContent(SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps));
+        return SelectInputSubClass.buildSelectInput(sortedTimeZones, selectProps);
     }
 
     /**

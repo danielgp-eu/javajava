@@ -20,6 +20,10 @@ public final class EnvironmentCapturingAssembleClass {
         if (strComputer == null) {
             strComputer = System.getenv("HOSTNAME");
         }
+        String username = System.getenv("USERNAME");
+        if (username == null) {
+            username = System.getProperty("user.name", strInsteadOfNull);
+        }
         final String userAccount = ShellingClass.getCurrentUserAccount();
         return Map.of(
                 "Computer", strComputer != null ? strComputer : strInsteadOfNull,
@@ -30,8 +34,8 @@ public final class EnvironmentCapturingAssembleClass {
                 "Home", System.getProperty("user.home", strInsteadOfNull).replace("\\", "\\\\"),
                 "Name", System.getProperty("user.name", strInsteadOfNull),
                 "Timezone", System.getProperty("user.timezone", strInsteadOfNull),
-                "Username", System.getenv("USERNAME") != null ? System.getenv("USERNAME") : System.getProperty("user.name", strInsteadOfNull),
-                "User Account", userAccount != null ? userAccount : strInsteadOfNull);
+                "Username", username,
+                "User Account", userAccount);
     }
 
     /**

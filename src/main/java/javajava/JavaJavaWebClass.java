@@ -83,6 +83,14 @@ public final class JavaJavaWebClass {
     }
 
     /**
+     * Getter for MAP_MENU
+     * @return SequencedMap
+     */
+    public static SequencedMap<String, Map<String, String>> getMenu() {
+        return MAP_MENU;
+    }
+
+    /**
      * expose Software Release details from internal DB
      * @return String software releases details
      */
@@ -152,7 +160,8 @@ public final class JavaJavaWebClass {
             title = menuEntry != null ? menuEntry.getOrDefault(BasicStructuresClass.STR_TITLE, page) : page;
         }
         UndertowClass.TemplateRenderingSubClass.packParameter("title", title);
-        UndertowClass.TemplateRenderingSubClass.packParameter("menu", HtmlClass.buildMenu(MAP_MENU));
+        final gg.jte.Content myMenu = output -> output.writeContent(HtmlClass.buildMenuString(MAP_MENU));
+        UndertowClass.TemplateRenderingSubClass.packParameter("menu", myMenu);
         UndertowClass.TemplateRenderingSubClass.packParameter("content", handleBodyContent());
         UndertowClass.TemplateRenderingSubClass.packCommonParameters();
     }

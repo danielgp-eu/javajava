@@ -329,10 +329,12 @@ public final class UndertowClass {
          */
         public static void packCommonParameters() {
             final String sessionTimeZone = UndertowClass.SessionSubClass.getSession().getAttribute("TZ").toString();
-            packParameter("timeZoneSelect", HtmlClass.buildTimeZoneSelect(sessionTimeZone));
+            final gg.jte.Content selectTimeZones = output -> output.writeContent(HtmlClass.buildTimeZoneSelect(sessionTimeZone));
+            packParameter("timeZoneSelect", selectTimeZones);
             packParameter("currentPageQuery", getCurrentPageQuery());
             packParameter("geoCoordinates", HtmlClass.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
-            packParameter("appDetails", HtmlClass.buildApplicationDetail());
+            final gg.jte.Content myApp = output -> output.writeContent(HtmlClass.buildApplicationDetail());
+            packParameter("appDetails", myApp);
             packParameter("timeNow", TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone));
         }
 

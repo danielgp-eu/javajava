@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.nio.file.Path;
+
 /**
  * HtmlClass tests
  */
@@ -35,12 +37,14 @@ class HtmlClassTests {
         mapValues.put("tz1", "Timezone One");
         mapValues.put("tz2", "Timezone Two");
         final java.util.Properties props = new java.util.Properties();
+        props.put("Label", "Time Zones");
         props.put("Name", "TZ");
         props.put("Id", "TZ");
         props.put("Default", "tz1");
         props.put("Size", "1");
         final String html = HtmlClass.SelectInputSubClass.buildSelectInput(mapValues, props);
         assertAll("Select HTML correctness",
+                () -> assertTrue(html.contains("<label for=\"TZ"), "Label should exist point to actual select id"),
                 () -> assertTrue(html.contains("<select"), "HTML should contain select tag"),
                 () -> assertTrue(html.contains("id=\"TZ\""), "Select should contain provided id"),
                 () -> assertTrue(html.contains("value=\"tz1\"") && html.contains(">Timezone One<"), "Option for tz1 should be present"),
@@ -49,8 +53,40 @@ class HtmlClassTests {
     }
 
     @Test
+    @DisplayName("HtmlClass.buildFileInfoBox produces div with time zones")
+    void buildFileInfoBox() {
+        final Path fileName = Path.of("/pom.xml");
+        final String myInfoBox = HtmlClass.buildFileInfoBox(fileName);
+        assertAll("Select HTML correctness",
+                () -> assertTrue(myInfoBox.contains("<div class=\"infoBox\""), "HTML should contain div tag with infoBox class"),
+                () -> assertTrue(myInfoBox.contains("bytes, last modified time-stamp on"), "Select contains final sequence text pieces")
+        );
+    }
+
+    @Test
+    @DisplayName("HtmlClass.buildMenuString produces select with time zones")
+    void buildMenuString() {
+        final java.util.SequencedMap<String, java.util.Map<String, String>> inMapMenu = JavaJavaWebClass.getMenu();
+        final String myMenu = HtmlClass.buildMenuString(inMapMenu);
+        assertAll("Select HTML correctness",
+                () -> assertTrue(myMenu.contains("<li>"), "HTML should contain li tag"),
+                () -> assertTrue(myMenu.contains("<a href=\"?page=home\""), "Select should contain provided id")
+        );
+    }
+
+    @Test
+    @DisplayName("HtmlClass.buildTimeZoneSelect produces select with time zones")
+    void buildTimeZoneSelect() {
+        final String strHtml = HtmlClass.buildTimeZoneSelect("Europe/Bucharest");
+        assertAll("Select HTML correctness from " + strHtml,
+                () -> assertTrue(strHtml.contains("<select"), "HTML should contain select tag"),
+                () -> assertTrue(strHtml.contains("id=\"TZ\""), "Select should contain provided id")
+        );
+    }
+
+    @Test
     @DisplayName("TableSubClass.getListOfSequencedMapIntoHtmlTable generates table rows, headers and tabs when New Tab feature is used")
-    void getListOfSequencedMapIntoHtmlTableProducesTableAndTabs() {
+    void testGetListOfSequencedMapIntoHtmlTableProducesTableAndTabs() {
         final java.util.SequencedMap<Object, Object> rec1 = new java.util.LinkedHashMap<>();
         rec1.put("Category", "A");
         rec1.put("Name", "Item1");
@@ -61,7 +97,7 @@ class HtmlClassTests {
         rec2.put("Value", "");
         final java.util.List<java.util.SequencedMap<Object, Object>> records = java.util.List.of(rec1, rec2);
         final java.util.Properties features = new java.util.Properties();
-        features.put(javajava.BasicStructuresClass.STR_NEW_TAB, "Category");
+        features.put(BasicStructuresClass.STR_NEW_TAB, "Category");
         features.put("Counter", "1");
         final String html = HtmlClass.TableSubClass.getListOfSequencedMapIntoHtmlTable(records, features);
         assertAll("HTML table with tabs and counter",
