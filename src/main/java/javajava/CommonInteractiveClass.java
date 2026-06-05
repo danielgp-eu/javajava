@@ -1,6 +1,7 @@
 package javajava;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.apache.maven.model.Model;
 
@@ -34,7 +35,7 @@ public final class CommonInteractiveClass {
     public static void shutMeDown(final String inOperation) {
         final String strFeedbackExit = String.format("Exiting with code %s", exitCode);
         LogExposureClass.LOGGER.info(strFeedbackExit);
-        final LocalDateTime finishTimeStamp = LocalDateTime.now();
+        final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
         final String strFeedbackEnd = TimingClass.logDuration(startDateTime,
                 finishTimeStamp,
                 String.format("Entire operation %s completed", inOperation));
@@ -85,7 +86,7 @@ public final class CommonInteractiveClass {
      * Setter for Start DateTime
      */
     public static void setStartDateTime() {
-        startDateTime = LocalDateTime.now();
+        startDateTime = LocalDateTime.now(ZoneId.systemDefault());
     }
 
     /**

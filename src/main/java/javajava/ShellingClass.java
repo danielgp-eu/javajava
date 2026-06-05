@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -56,7 +57,7 @@ public final class ShellingClass {
      * @param strOutLineSep line separator for the output
      */
     public static void executeShell(final ProcessBuilder builder, final String strOutLineSep) {
-        startTimestamp = LocalDateTime.now();
+        startTimestamp = LocalDateTime.now(ZoneId.systemDefault());
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
         try (Process process = builder.start()) {
             // Read stdout and stderr asynchronously with CompletableFuture
@@ -172,7 +173,7 @@ public final class ShellingClass {
         } else {
             strCaptureMessage = "Process execution w/o output captured completed with exit code %d";
         }
-        final LocalDateTime finishTimeStamp = LocalDateTime.now();
+        final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
         final String strFeedback = TimingClass.logDuration(startTimestamp,
                 finishTimeStamp,
                 String.format(strCaptureMessage, exitCode));

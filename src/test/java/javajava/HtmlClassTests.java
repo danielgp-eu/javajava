@@ -13,6 +13,13 @@ import java.nio.file.Path;
 class HtmlClassTests {
 
     @Test
+    @DisplayName("buildApplicationDetail should be returned as String")
+    void buildApplicationDetail() {
+        final String appDetail = HtmlClass.buildApplicationDetail();
+        assertTrue(appDetail.contains(" &copy; by "), "Application detail should have Copyright symbol followed by");
+    }
+
+    @Test
     @DisplayName("buildGeographicalCoordinatesFromTimeZone returns coordinates for known zone")
     void buildGeographicalCoordinatesKnownZoneReturnsCoordinates() {
         final String coords = HtmlClass.buildGeographicalCoordinatesFromTimeZone("Europe/London");
@@ -90,11 +97,23 @@ class HtmlClassTests {
         final java.util.SequencedMap<Object, Object> rec1 = new java.util.LinkedHashMap<>();
         rec1.put("Category", "A");
         rec1.put("Name", "Item1");
-        rec1.put("Value", "10");
+        rec1.put("Quantity", "10");
+        rec1.put("Price", "1.99");
+        rec1.put("Overall", "22147483649");
+        rec1.put("When", "2026-01-01");
+        rec1.put("Due", "2026-01-29 23:12:05");
+        rec1.put("Comments", "");
+        rec1.put("Obs.", "-");
         final java.util.SequencedMap<Object, Object> rec2 = new java.util.LinkedHashMap<>();
         rec2.put("Category", "B");
         rec2.put("Name", "Item2");
-        rec2.put("Value", "");
+        rec2.put("Quantity", "15");
+        rec1.put("Price", "0.9");
+        rec1.put("Overall", "");
+        rec1.put("When", "2026-06-01");
+        rec1.put("Due", "NULL");
+        rec1.put("Comments", "2026-06-26 23:59:59.555");
+        rec1.put("Obs.", "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem placerat in id cursus mi pretium tellus duis convallis tempus leo eu aenean sed diam urna tempor pulvinar vivamus fringilla lacus nec metus bibendum egestas iaculis massa nisl malesuada lacinia integer nunc posuere ut hendrerit semper vel class aptent taciti sociosqu ad litora torquent per conubia nostra inceptos himenaeos orci varius natoque penatibus et magnis dis parturient montes nascetur ridiculus mus donec rhoncus eros lobortis nulla molestie mattis scelerisque maximus eget fermentum odio phasellus non purus est efficitur laoreet mauris pharetra vestibulum fusce dictum risus.");
         final java.util.List<java.util.SequencedMap<Object, Object>> records = java.util.List.of(rec1, rec2);
         final java.util.Properties features = new java.util.Properties();
         features.put(BasicStructuresClass.STR_NEW_TAB, "Category");

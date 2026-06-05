@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.file.Path;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -342,9 +343,9 @@ class CaptureChecksumsOfFilesFromFoldersIntoCsvFile implements Runnable {
         final String[] inFolders = optFolderNames.getFolderNames();
         final String outCsvFile = optOutFileName.getOutFileName();
         for (final String strFolder : inFolders) {
-            final LocalDateTime startComputeTime = LocalDateTime.now();
+            final ZonedDateTime startComputeTime = ZonedDateTime.now(ZoneId.systemDefault());
             FileStatisticsClass.captureFileStatisticsFromFolder(strFolder, outCsvFile);
-            final Duration objDuration = Duration.between(startComputeTime, LocalDateTime.now());
+            final Duration objDuration = Duration.between(startComputeTime, ZonedDateTime.now(ZoneId.systemDefault()));
             final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, outCsvFile, objDuration.toString(), TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
             LogExposureClass.LOGGER.info(strFeedback);
         }

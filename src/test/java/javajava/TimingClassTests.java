@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,10 +16,10 @@ import org.junit.jupiter.api.Test;
  */
 @DisplayName("TimingClass unit testing")
 class TimingClassTests {
-    /**
-     * String format for assertion when actual/original is not equal to expected
-     */
+    /** String format for assertion when actual/original is not equal to expected */
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
+    /** fixed Clock for predictable results */
+    private static final java.time.Clock CLOCK_FIXED = java.time.Clock.fixed(Instant.parse("2022-12-12T22:22:22Z"), java.time.ZoneId.of("UTC"));
 
     @Test
     void testGetIsoYearWeek() {
@@ -30,7 +31,7 @@ class TimingClassTests {
 
     @Test
     void testGetDaysAgoWithMillisecondsPrecision() {
-        final Instant startNow = Instant.now();
+        final Instant startNow = Instant.now(CLOCK_FIXED);
         final long expected = startNow.minusMillis(TimingClass.DAY_MILLISECS).toEpochMilli();
         final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 1);
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
@@ -38,7 +39,7 @@ class TimingClassTests {
 
     @Test
     void testGetDaysAgoWithMillisecondsPrecision_zeroDays() {
-        final Instant startNow = Instant.now();
+        final Instant startNow = Instant.now(CLOCK_FIXED);
         final long expected = startNow.toEpochMilli();
         final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, 0);
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
@@ -46,7 +47,7 @@ class TimingClassTests {
 
     @Test
     void testGetDaysAgoWithMillisecondsPrecision_negativeDays() {
-        final Instant startNow = Instant.now();
+        final Instant startNow = Instant.now(CLOCK_FIXED);
         final int intDaysLimit = -1;
         final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
         final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
@@ -55,7 +56,7 @@ class TimingClassTests {
 
     @Test
     void testGetDaysAgoWithMillisecondsPrecision_largeDays() {
-        final Instant startNow = Instant.now();
+        final Instant startNow = Instant.now(CLOCK_FIXED);
         final int intDaysLimit = 30;
         final long expected = startNow.minusMillis((long) TimingClass.DAY_MILLISECS * intDaysLimit).toEpochMilli();
         final long handled = TimingClass.getDaysAgoWithMillisecondsPrecision(startNow, intDaysLimit);
@@ -67,7 +68,7 @@ class TimingClassTests {
         final String strDateIso8601 = "2026-02-08";
         final String timeContinuous = "150934";
         final LocalDateTime handled = TimingClass.getLocalDateTimeFromStrings(strDateIso8601, timeContinuous);
-        final LocalDateTime expected = LocalDateTime.of(2026, 2, 8, 15, 9, 34);
+        final LocalDateTime expected = LocalDateTime.of(2026, Month.FEBRUARY, 8, 15, 9, 34);
         assertEquals(expected, handled, String.format(ORIG_NQ_EXPCT, handled, expected));
     }
 
@@ -81,7 +82,7 @@ class TimingClassTests {
 
     @Test
     void testLogDuration() {
-        final Instant startNow = Instant.now();
+        final Instant startNow = Instant.now(CLOCK_FIXED);
         final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(33), ZoneOffset.systemDefault());
         final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
         final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT33S", "33 Seconds", "00:00:33.000");
@@ -91,7 +92,7 @@ class TimingClassTests {
 
     @Test
     void testLogDuration2() {
-        final Instant startNow = Instant.now();
+        final Instant startNow = Instant.now(CLOCK_FIXED);
         final LocalDateTime startTimeStamp = LocalDateTime.ofInstant(startNow.minusSeconds(60 * 60).minusSeconds(33), ZoneOffset.systemDefault());
         final LocalDateTime finishTimeStamp = LocalDateTime.ofInstant(startNow, ZoneOffset.systemDefault());
         final String strExpected = String.format("Finished within a duration of %s (which is %s | %s)", "PT1H33S", "1 Hour 33 Seconds", "01:00:33.000");

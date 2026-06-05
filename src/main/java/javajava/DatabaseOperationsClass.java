@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,7 +83,7 @@ public final class DatabaseOperationsClass {
     public static ResultSet executeCustomQuery(final Statement objStatement, final String strPurpose, final String strQueryToUse, final Properties objProperties) {
         ResultSet resultSet = null;
         if (strQueryToUse != null) {
-            final LocalDateTime startTimeStamp = LocalDateTime.now();
+            final LocalDateTime startTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
             final String strFeedbackAtmpt = String.format("Will attempt to execute %s query which is defined as: %s", strPurpose, strQueryToUse);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
@@ -94,7 +95,7 @@ public final class DatabaseOperationsClass {
                 final String strFeedback = String.format("Statement execution for %s has failed with following error: %s", strPurpose, e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
             }
-            final LocalDateTime finishTimeStamp = LocalDateTime.now();
+            final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
             final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format("Finished executing SQL query %s", strPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }
@@ -110,7 +111,7 @@ public final class DatabaseOperationsClass {
      */
     public static void executeQueryWithoutResultSet(final Statement objStatement, final String strPurpose, final String strQueryToUse) {
         if (strQueryToUse != null) {
-            final LocalDateTime startTimeStamp = LocalDateTime.now();
+            final LocalDateTime startTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
             final String strFeedbackAtmpt = String.format("Will attempt to execute %s query", strPurpose);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
             try {
@@ -125,7 +126,7 @@ public final class DatabaseOperationsClass {
                 final String strFeedbackErr = String.format("SQL query execution for %s purpose has failed: %s... %s", strPurpose, e.getLocalizedMessage(), Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedbackErr);
             }
-            final LocalDateTime finishTimeStamp = LocalDateTime.now();
+            final LocalDateTime finishTimeStamp = LocalDateTime.now(ZoneId.systemDefault());
             final String strFeedbackEnd = TimingClass.logDuration(startTimeStamp, finishTimeStamp, String.format("SQL query execution finished for %s purpose", strPurpose));
             LogExposureClass.LOGGER.debug(strFeedbackEnd);
         }

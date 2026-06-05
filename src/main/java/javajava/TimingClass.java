@@ -83,7 +83,7 @@ public final class TimingClass {
      */
     @NonNull
     public static String getCurrentTimestamp(@NonNull final String strDtTmPattern) {
-        final LocalDateTime nowI = LocalDateTime.now();
+        final LocalDateTime nowI = LocalDateTime.now(ZoneId.systemDefault());
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern, Locale.US);
         return formatter.format(nowI);
     }
@@ -192,12 +192,15 @@ public final class TimingClass {
      * log a duration
      * 
      * @param startTimeStamp times-tamp value seen at start
+     * @param finishTimeStamp times-tamp value seen at stop
      * @param strPartial prefix for feedback
      * @return String
      */
     @NonNull
     public static String logDuration(@NonNull final LocalDateTime startTimeStamp, @NonNull final LocalDateTime finishTimeStamp, @NonNull final String strPartial) {
-        final Duration objDuration = Duration.between(startTimeStamp, finishTimeStamp);
+        final ZonedDateTime zStartTimeStamp = ZonedDateTime.of(startTimeStamp, ZoneId.systemDefault());
+        final ZonedDateTime zStopTimeStamp = ZonedDateTime.of(finishTimeStamp, ZoneId.systemDefault());
+        final Duration objDuration = Duration.between(zStartTimeStamp, zStopTimeStamp);
         return String.format("%s within a duration of %s (which is %s | %s)"
             , strPartial
             , objDuration.toString()
