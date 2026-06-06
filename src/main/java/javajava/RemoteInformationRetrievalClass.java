@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jspecify.annotations.NonNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -50,7 +51,7 @@ public final class RemoteInformationRetrievalClass {
      * @param strWebSite input URL as String
      * @return URL
      */
-    public static URL buildUniformResourceLocatorFromString(final String strWebSite) {
+    public static URL buildUniformResourceLocatorFromString(@NonNull final String strWebSite) {
         URL urlReturn = null;
         try {
             urlReturn = URI.create(strWebSite).toURL();
@@ -78,6 +79,7 @@ public final class RemoteInformationRetrievalClass {
     public static String getLatestVersionFromMavenCentralRepository(final String inPackage) {
         final URL url = buildMavenCentralRepositoryUniformResourceLocatorFromPackage(inPackage);
         String strLatestVersion = "";
+        assert url != null;
         try (InputStream inStream = url.openStream()) {
             final Document doc = getDocumentFromInputStream(inStream);
             if (doc != null) {

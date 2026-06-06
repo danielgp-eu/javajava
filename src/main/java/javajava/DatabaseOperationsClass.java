@@ -594,6 +594,7 @@ public final class DatabaseOperationsClass {
             final String strQueryToUse = rsProperties.get("QueryToUse").toString();
             final String strFetchType = rsProperties.get("FetchType").toString();
             try (ResultSet rsStandard = executeCustomQuery(objStatement, strPurpose, strQueryToUse, queryProperties)) {
+                assert rsStandard != null;
                 listReturn = switch (strFetchType) {
                     case "Structure" -> getResultSetColumnStructure(rsStandard);
                     case STR_VALUES -> getResultSetColumnValuesWithNullCheck(rsStandard);
@@ -776,12 +777,14 @@ public final class DatabaseOperationsClass {
          * @param givenProperties Connection Properties
          */
         public static void performMySqlPreDefinedAction(final String strWhich, final Properties givenProperties) {
-            try (Connection objConnection = getMySqlConnection(givenProperties, "mysql");
-                Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
-                final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "purpose " + strWhich, STR_VALUES);
-                if (!listProps.isEmpty()) {
-                    final String strFeedback = listProps.toString();
-                    LogExposureClass.LOGGER.info(strFeedback);
+            try (Connection objConnection = getMySqlConnection(givenProperties, "mysql")) {
+                assert objConnection != null;
+                try (Statement objStatement = ConnectivitySubClass.createSqlStatement(STR_DB_MYSQL, objConnection)) {
+                    final List<Properties> listProps = getMySqlPreDefinedInformation(objStatement, strWhich, "purpose " + strWhich, STR_VALUES);
+                    if (!listProps.isEmpty()) {
+                        final String strFeedback = listProps.toString();
+                        LogExposureClass.LOGGER.info(strFeedback);
+                    }
                 }
             } catch(SQLException e) {
                 final String strFeedbackErr = String.format("Error %s", Arrays.toString(e.getStackTrace()));
@@ -869,10 +872,13 @@ public final class DatabaseOperationsClass {
         public static List<Properties> getSqLiteResultSetValues(final String strQueryPurpose, final String strQuery) {
             final Properties objProperties = new Properties();
             List<Properties> listReturn = new ArrayList<>();
-            try (Connection objConnection = getSqLiteConnection(internalDatabase);
-                 Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);
-                 ResultSet rsCols = executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
-                listReturn = DatabaseOperationsClass.ResultSettingSubClass.getResultSetColumnValues(rsCols);
+            try (Connection objConnection = getSqLiteConnection(internalDatabase)) {
+                assert objConnection != null;
+                try (Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection);
+                    ResultSet rsCols = executeCustomQuery(objStatement, strQueryPurpose, strQuery, objProperties)) {
+                    assert rsCols != null;
+                    listReturn = DatabaseOperationsClass.ResultSettingSubClass.getResultSetColumnValues(rsCols);
+                }
             } catch(SQLException e){
                 final String strFeedback = String.format("%s connection has failed at %s: %s", BasicStructuresClass.STR_SQLITE, StackWalker.getInstance().walk(frames -> frames.findFirst().map(frame -> frame.getClassName() + "." + frame.getMethodName()).orElse(LogExposureClass.STR_I18N_UNKN)), e.getLocalizedMessage());
                 LogExposureClass.LOGGER.error(strFeedback);
@@ -1042,10 +1048,13 @@ public final class DatabaseOperationsClass {
          * @param objProps object properties
          */
         public static void performSnowflakePreDefinedAction(final String strAction, final Properties objProps) {
-            try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString());
-                Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
-                executeSnowflakeBootstrapQuery(objStatement);
-                getSnowflakePreDefinedInformation(objStatement, strAction, STR_VALUES);
+            try (Connection objConnection = getSnowflakeConnection(objProps, objProps.get("databaseName").toString())) {
+                assert objConnection != null;
+                try (Statement objStatement =
+                        DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(STR_SNOWFLAKE, objConnection)) {
+                    executeSnowflakeBootstrapQuery(objStatement);
+                    getSnowflakePreDefinedInformation(objStatement, strAction, STR_VALUES);
+                }
             } catch(SQLException e) {
                 final String strFeedback = String.format("Error \"%s\"", Arrays.toString(e.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);

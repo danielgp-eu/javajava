@@ -52,14 +52,25 @@ public final class SunClass {
         OUT_PROPERTIES.put("Division Name", arrayLocPieces[2]);
         OUT_PROPERTIES.put("Place Name", arrayLocPieces[1]);
         OUT_PROPERTIES.put("Local Timestamp", nowZ.format(formatter));
-        final ZonedDateTime sunrise = calculateSunSetOrRise(nowZ, true);
         final DateTimeFormatter formatterTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSS z", Locale.US);
-        OUT_PROPERTIES.put("Sunrise", sunrise.format(formatterTime));
+        final ZonedDateTime sunrise = calculateSunSetOrRise(nowZ, true);
+        if (sunrise != null) {
+            OUT_PROPERTIES.put("Sunrise", sunrise.format(formatterTime));
+        } else {
+            OUT_PROPERTIES.put("Sunrise", "Sun does not rise on this date at this location");
+        }
         final ZonedDateTime sunset = calculateSunSetOrRise(nowZ, false);
-        OUT_PROPERTIES.put("Sunset", sunset.format(formatterTime));
-        final Duration objDurationSun = Duration.between(sunrise, sunset);
-        OUT_PROPERTIES.put("Daylight time", TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
-        enhanceSunStatistics(nowZ, sunrise, sunset);
+        if (sunset != null) {
+            OUT_PROPERTIES.put("Sunset", sunset.format(formatterTime));
+        } else {
+            OUT_PROPERTIES.put("Sunset", "Sun does not set on this date at this location");
+        }
+        if ((sunrise != null)
+            && (sunset != null)) {
+            final Duration objDurationSun = Duration.between(sunrise, sunset);
+            OUT_PROPERTIES.put("Daylight time", TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDurationSun, BasicStructuresClass.STR_TM_HUMAN));
+            enhanceSunStatistics(nowZ, sunrise, sunset);
+        }
         return OUT_PROPERTIES;
     }
 

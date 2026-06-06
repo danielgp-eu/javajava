@@ -25,10 +25,6 @@ public final class ShellingClass {
      */
     private static LocalDateTime startTimestamp;
     /**
-     * Process error
-     */
-    private static String strProcErr;
-    /**
      * Process standard output
      */
     private static String strProcOut;
@@ -69,7 +65,7 @@ public final class ShellingClass {
             );
             final int exitCode = process.waitFor();
             CompletableFuture.allOf(stdoutFuture, stderrFuture).join();
-            setProcessResults(stdoutFuture, stderrFuture, exitCode);
+            setProcessResults(stdoutFuture, exitCode);
             process.destroy();
         } catch (IOException ex) {
             final String strFeedback = String.format("Process execution failed: %s", Arrays.toString(ex.getStackTrace()));
@@ -80,18 +76,6 @@ public final class ShellingClass {
             /* Clean up whatever needs to be handled before interrupting  */
             Thread.currentThread().interrupt();
         }
-    }
-
-    /**
-     * Executes a shells command without any output captured
-     *
-     * @param strCommand command to execute
-     * @param strParameters command parameters
-     */
-    public static void executeShellUtility(final String strCommand, final String strParameters) {
-        final ProcessBuilder builder = buildProcessForExecution(strCommand, strParameters);
-        setProcessCaptureNeed(false);
-        executeShell(builder, " ");
     }
 
     /**
@@ -129,41 +113,22 @@ public final class ShellingClass {
     }
 
     /**
-     * Getter for Process Output
-     * @return String Process Output content
-     */
-    public static String getProcessError() {
-        return strProcErr;
-    }
-
-    /**
-     * Getter for Process Output
-     * @return String Process Output content
-     */
-    public static String getProcessOutput() {
-        return strProcOut;
-    }
-
-    /**
      * Setter for Process output and error
      * @param stdoutFuture Process output
-     * @param stderrFuture Process error
      * @param exitCode process execution exit code
      */
     private static void setProcessResults(
             final CompletableFuture<String> stdoutFuture,
-            final CompletableFuture<String> stderrFuture,
             final int exitCode) {
         final String strCaptureMessage;
         if (needProcCapture) {
             try {
                 strProcOut = stdoutFuture.get();
-                strProcErr = stderrFuture.get();
             } catch (InterruptedException ei) {
-                final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
-                LogExposureClass.LOGGER.warn(strFeedback);
                 /* Clean up whatever needs to be handled before interrupting  */
                 Thread.currentThread().interrupt();
+                final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
+                LogExposureClass.LOGGER.warn(strFeedback);
             } catch (ExecutionException ee) {
                 final String strFeedback = String.format("Execution exception tracing %s", Arrays.toString(ee.getStackTrace()));
                 LogExposureClass.LOGGER.error(strFeedback);

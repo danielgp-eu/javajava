@@ -32,7 +32,7 @@ public final class TimingClass {
     /**
      * String constant
      */
-    public static final int DAY_MILLISECS = 24 * 60 * 60 * 1000;
+    public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
     /**
      * Map with predefined time format patterns
      * used for duration and timestamp formatting.
@@ -162,7 +162,7 @@ public final class TimingClass {
      * @return milliseconds in the past
      */
     public static long getDaysAgoWithMillisecondsPrecision(@NonNull final Instant refTimestamp, final long intDaysLimit) {
-        return refTimestamp.minusMillis(intDaysLimit * DAY_MILLISECS).toEpochMilli();
+        return refTimestamp.minusMillis(intDaysLimit * DAY_MILLISECONDS).toEpochMilli();
     }
 
     /**
@@ -282,7 +282,12 @@ public final class TimingClass {
         public static String convertTimeFormat(@NonNull final String inDate, @NonNull final DateTimeFormatter inTimeFormat, @NonNull final DateTimeFormatter outTimeFormat) {
             String outDate = ""; 
             try {
-                final ZonedDateTime zonedDateTime = ZonedDateTime.parse(inDate, inTimeFormat);
+                final ZonedDateTime zonedDateTime;
+                if (BasicStructuresClass.StringEvaluationSubClass.isStringActuallyDate(inDate)) {
+                    zonedDateTime = LocalDate.parse(inDate, inTimeFormat).atStartOfDay(ZoneId.systemDefault());
+                } else {
+                    zonedDateTime = LocalDateTime.parse(inDate, inTimeFormat).atZone(ZoneId.systemDefault());
+                }
                 outDate = zonedDateTime.format(outTimeFormat);
             } catch (DateTimeParseException e) {
                 final String strFeedback = String.format("Error parsing %s with following details: %s", inDate, Arrays.toString(e.getStackTrace()));
@@ -361,11 +366,11 @@ public final class TimingClass {
         /**
          * Input time zone variable
          */
-        private static String inputTimeZone = System.getProperty("user.timezone");
+        private static String inputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
         /**
          * Output time zone variable
          */
-        private static String outputTimeZone = System.getProperty("user.timezone");
+        private static String outputTimeZone = System.getProperty("user.timezone", "Europe/Bucharest");
 
         /**
          * Convert time-stamp
@@ -411,7 +416,7 @@ public final class TimingClass {
          * @return replaced text
          */
         public static String replacePatterns(final String inString) {
-            return RegularExpressionsClass.replacePatternsWithTimeZones(inString, inputTimeZone, outputTimeZone);
+            return RegularExpressionsClass.replacePatternsWithTimeZones(inString);
         }
 
         /**

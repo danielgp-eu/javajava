@@ -76,9 +76,15 @@ public final class JsonOperationsClass {
      * @return JsonNode
      */
     public static JsonNode getJsonFileNodes(final Path jsonFile) {
-        final JsonNode jsonRootNode;
+        final boolean validFile =
+                RegularExpressionsClass.ValidationSubClass.isFileNameValid(jsonFile.getFileName().toString());
+        if (!validFile) {
+            final String strFeedback = String.format("Invalid file name: %s", jsonFile.getFileName().toString());
+            LogExposureClass.LOGGER.error(strFeedback);
+            throw new IllegalArgumentException("Invalid file name");
+        }
         final ObjectMapper objectMapper = new ObjectMapper();
-        jsonRootNode = objectMapper.readTree(jsonFile);
+        final JsonNode jsonRootNode = objectMapper.readTree(jsonFile);
         final String strFeedback = String.format("JSON information has been loaded: %s", jsonFile.toString());
         LogExposureClass.LOGGER.debug(strFeedback);
         return jsonRootNode;

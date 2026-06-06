@@ -1,16 +1,11 @@
 package javajava;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.SequencedMap;
+import java.util.StringJoiner;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,55 +83,20 @@ public final class RegularExpressionsClass {
     }
 
     /**
-     * Convert aging Date into human-readable String
-     * @param ageString input String
-     * @return String in human-readable format
+     * Building Regular Expression patterns
+     * @return String of patterns with Regular Expressions
      */
-    public static String convertAgingDateIntoHumanReadableString(final String ageString) {
-        final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
-        final Matcher matcher = agePattern.matcher(ageString);
-        final List<String> resultDate = new ArrayList<>(); 
-        if (matcher.matches()) {
-            final SequencedMap<String, String> sequencedMapDate = new LinkedHashMap<>();
-            sequencedMapDate.put("years", "year");
-            sequencedMapDate.put("months", "month");
-            sequencedMapDate.put("days", "day");
-            sequencedMapDate.forEach((strPlural, strSingular) -> {
-                final int intValue = Integer.parseInt(matcher.group(strPlural));
-                if (intValue != 0) {
-                    resultDate.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
-                }
-            });
-        } else {
-            resultDate.add(ageString);
-        }
-        return resultDate.toString().replaceAll("[\\[\\]]", "");
-    }
-
-    /**
-     * Convert aging Time into human-readable String
-     * @param ageString input String
-     * @return String in human-readable format
-     */
-    public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
-        final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
-        final Matcher matcher = agePattern.matcher(ageString);
-        final List<String> resultTime = new ArrayList<>(); 
-        if (matcher.matches()) {
-            final SequencedMap<String, String> sequencedMapTime = new LinkedHashMap<>();
-            sequencedMapTime.put("hours", "hour");
-            sequencedMapTime.put("minutes", "minute");
-            sequencedMapTime.put("seconds", "second");
-            sequencedMapTime.forEach((strPlural, strSingular) -> {
-                final int intValue = Integer.parseInt(matcher.group(strPlural));
-                if (intValue != 0) {
-                    resultTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
-                }
-            });
-        } else {
-            resultTime.add(ageString);
-        }
-        return resultTime.toString().replaceAll("[\\[\\]]", "");
+    private static String buildRegExpForMassReplace() {
+        final SequencedMap<String, String> sortedRegExp = new LinkedHashMap<>();
+        sortedRegExp.put(STR_MAVEN_PKG, "");
+        sortedRegExp.put(STR_AGING_TS, "");
+        sortedRegExp.put(STR_AGING_DATE, "");
+        sortedRegExp.put(BasicStructuresClass.STR_TS_MSEC, "");
+        sortedRegExp.put(BasicStructuresClass.STR_TIMESTAMP, "");
+        sortedRegExp.put(BasicStructuresClass.STR_JUST_DATE, "key");
+        final StringJoiner sjRegExp = new StringJoiner("|");
+        sortedRegExp.forEach((key, _) -> sjRegExp.add(String.format("(?<%s>%s)", key, MAP_PATTERNS.get(key).get(STR_REG_EXP))));
+        return sjRegExp.toString();
     }
 
     /**
@@ -227,32 +187,12 @@ public final class RegularExpressionsClass {
     }
 
     /**
-     * Number with Suffix If Non-Zero
-     * @param inNumber number to evaluate
-     * @param strSingular singular suffix
-     * @param strPlural plural suffix
-     * @return number with suffix or empty if number is zero
-     */
-    private static String numberWithSuffixIfNonZero(final int inNumber, final String strSingular, final String strPlural) {
-        return switch(inNumber) {
-            case 0  -> "";
-            case 1  -> inNumber + " " + strSingular;
-            default -> inNumber + " " + strPlural;
-        };
-    }
-
-    /**
      * Replace patterns within large Text
      * @param inString original text
      * @return replaced text
      */
-    public static String replacePatternsWithTimeZones(final String inString, final String inputTimeZone, final String outputTimeZone) {
-        final String strRegExp = "(?<MavenPackage>" + MAP_PATTERNS.get(STR_MAVEN_PKG).get(STR_REG_EXP) + ")"
-                + "|" + "(?<agingTimestamp>" + MAP_PATTERNS.get(STR_AGING_TS).get(STR_REG_EXP) + ")"
-                + "|" + "(?<agingDate>" + MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP) + ")"
-                + "|" + "(?<timestampWithMilliseconds>" + MAP_PATTERNS.get(BasicStructuresClass.STR_TS_MSEC).get(STR_REG_EXP) + ")"
-                + "|" + "(?<timestamp>" + MAP_PATTERNS.get(BasicStructuresClass.STR_TIMESTAMP).get(STR_REG_EXP) + ")"
-                + "|" + "(?<justDate>" + MAP_PATTERNS.get(BasicStructuresClass.STR_JUST_DATE).get(STR_REG_EXP) + ")";
+    public static String replacePatternsWithTimeZones(final String inString) {
+        final String strRegExp = buildRegExpForMassReplace();
         final Pattern pattern = Pattern.compile(strRegExp);
         final Matcher matcher = pattern.matcher(inString);
         return matcher.replaceAll(matchResult -> {
@@ -272,28 +212,102 @@ public final class RegularExpressionsClass {
                     case STR_AGING_TS -> {
                         final String strDate = text.substring(0, 11);
                         final String strTime = text.substring(12, 20);
-                        return convertAgingDateIntoHumanReadableString(strDate)
-                                + "<br/>" + convertAgingTimeIntoHumanReadableString(strTime);
+                        return ConversionSubClass.convertAgingDateIntoHumanReadableString(strDate)
+                                + "<br/>" + ConversionSubClass.convertAgingTimeIntoHumanReadableString(strTime);
                     }
                     case STR_AGING_DATE -> {
-                        final String outString = convertAgingDateIntoHumanReadableString(text);
+                        final String outString = ConversionSubClass.convertAgingDateIntoHumanReadableString(text);
                         return outString.isEmpty() ? "TODAY" : outString;
                     }
                     default -> {
-                        final DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT), Locale.US);
-                        // Convert based on the specific group rules
-                        final ZonedDateTime sourceTime = BasicStructuresClass.STR_JUST_DATE.equals(matchedGroup) ?
-                                LocalDate.parse(text, inputFormat).atStartOfDay(ZoneId.of(inputTimeZone))
-                                : LocalDateTime.parse(text, inputFormat).atZone(ZoneId.of(inputTimeZone));
-                        final DateTimeFormatter outputFormat = DateTimeFormatter.ofPattern(MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT), Locale.US);
-                        final ZonedDateTime targetTime = sourceTime.withZoneSameInstant(ZoneId.of(outputTimeZone));
-                        return targetTime.format(outputFormat);
+                        return TimingClass.ConversionSubClass.convertTimeFormat(text,
+                                MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_INPUT),
+                                MAP_PATTERNS.get(matchedGroup).get(BasicStructuresClass.STR_OUTPUT_SHORT));
                     }
                 }
             } catch (IllegalStateException _) {
                 return matchResult.group(); // Fallback if parsing fails
             }
         });
+    }
+
+    /**
+     * Conversion logic using Regular Expressions
+     */
+    public static final class ConversionSubClass {
+
+        /**
+         * Convert aging Date into human-readable String
+         * @param ageString input String
+         * @return String in human-readable format
+         */
+        public static String convertAgingDateIntoHumanReadableString(final String ageString) {
+            final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_DATE).get(STR_REG_EXP));
+            final Matcher matcher = agePattern.matcher(ageString);
+            final List<String> resultDate = new ArrayList<>(); 
+            if (matcher.matches()) {
+                final SequencedMap<String, String> sequencedMapDate = new LinkedHashMap<>();
+                sequencedMapDate.put("years", "year");
+                sequencedMapDate.put("months", "month");
+                sequencedMapDate.put("days", "day");
+                sequencedMapDate.forEach((strPlural, strSingular) -> {
+                    final int intValue = Integer.parseInt(matcher.group(strPlural));
+                    if (intValue != 0) {
+                        resultDate.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                    }
+                });
+            } else {
+                resultDate.add(ageString);
+            }
+            return resultDate.toString().replaceAll("[\\[\\]]", "");
+        }
+
+        /**
+         * Convert aging Time into human-readable String
+         * @param ageString input String
+         * @return String in human-readable format
+         */
+        public static String convertAgingTimeIntoHumanReadableString(final String ageString) {
+            final Pattern agePattern = Pattern.compile(MAP_PATTERNS.get(STR_AGING_TIME).get(STR_REG_EXP));
+            final Matcher matcher = agePattern.matcher(ageString);
+            final List<String> resultTime = new ArrayList<>(); 
+            if (matcher.matches()) {
+                final SequencedMap<String, String> sequencedMapTime = new LinkedHashMap<>();
+                sequencedMapTime.put("hours", "hour");
+                sequencedMapTime.put("minutes", "minute");
+                sequencedMapTime.put("seconds", "second");
+                sequencedMapTime.forEach((strPlural, strSingular) -> {
+                    final int intValue = Integer.parseInt(matcher.group(strPlural));
+                    if (intValue != 0) {
+                        resultTime.add(numberWithSuffixIfNonZero(intValue, strSingular, strPlural));
+                    }
+                });
+            } else {
+                resultTime.add(ageString);
+            }
+            return resultTime.toString().replaceAll("[\\[\\]]", "");
+        }
+
+        /**
+         * Number with Suffix If Non-Zero
+         * @param inNumber number to evaluate
+         * @param strSingular singular suffix
+         * @param strPlural plural suffix
+         * @return number with suffix or empty if number is zero
+         */
+        private static String numberWithSuffixIfNonZero(final int inNumber, final String strSingular, final String strPlural) {
+            return switch(inNumber) {
+                case 0  -> "";
+                case 1  -> inNumber + " " + strSingular;
+                default -> inNumber + " " + strPlural;
+            };
+        }
+
+        // Private constructor to prevent instantiation
+        private ConversionSubClass() {
+            // intentionally blank
+        }
+
     }
 
     /**

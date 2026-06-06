@@ -46,7 +46,7 @@ public final class HtmlClass {
      * @return String
      */
     public static String buildGeographicalCoordinatesFromTimeZone(final String sessionTimeZone) {
-        final ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
+        final ZoneDataServiceClass.ZoneInfoRecord zInfo = ZoneDataServiceClass.get(sessionTimeZone);
         return zInfo == null ? "0,0" : zInfo.latitude() + "," + zInfo.longitude();
     }
 
@@ -155,7 +155,7 @@ public final class HtmlClass {
             if (!objFeatures.getOrDefault("Label", "").toString().isEmpty()) {
                 outHtml.add(buildLabelTag(objFeatures));
             }
-            manageAdditionalAttribuesAndDefaults(objFeatures);
+            manageAdditionalAttributesAndDefaults(objFeatures);
             outHtml.add(String.format("<select name=\"%s\" id=\"%s\"%s>", objFeatures.get("Name"), objFeatures.get("Id"), additionalAttrib));
             mapValues.forEach((strValue, strText) -> {
                 String strSelected = "";
@@ -169,7 +169,7 @@ public final class HtmlClass {
             return String.join("", outHtml);
         }
 
-        private static void manageAdditionalAttribuesAndDefaults(final Properties objFeatures) {
+        private static void manageAdditionalAttributesAndDefaults(final Properties objFeatures) {
             final String defaultValue = objFeatures.getOrDefault("Default", "").toString();
             String[] defaultVals = {defaultValue};
             if (!objFeatures.getOrDefault(BasicStructuresClass.STR_MULTIPLE, "").toString().isEmpty()) {

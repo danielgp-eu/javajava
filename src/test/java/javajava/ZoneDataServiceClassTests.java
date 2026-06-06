@@ -38,14 +38,14 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get zone info returns null for non-existent zone")
     void testGetZoneInfoForNonExistentZoneReturnsNull() {
-        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Invalid/Zone_That_Does_Not_Exist");
+        final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Invalid/Zone_That_Does_Not_Exist");
         assertNull(zoneInfo, ORIG_NQ_EXPCT);
     }
 
     @Test
     @DisplayName("Get zone info returns valid record for known zone")
     void testGetZoneInfoReturnsValidRecordForKnownZone() {
-        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
+        final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
         assertAll("Get zone info returns valid record for known zone",
                 () -> assertNotNull(zoneInfo, "Zone info should not be null for valid zone"),
                 () -> assertEquals(AMERICA_NY, zoneInfo.zoneId(), "Zone ID should match")
@@ -55,7 +55,7 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get zone info includes country codes")
     void testGetZoneInfoIncludesCountryCodes() {
-        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Europe/Berlin");
+        final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Europe/Berlin");
         assertAll("Get zone info includes country codes",
                 () -> assertNotNull(zoneInfo, ZONE_INFO_NOT_NUL),
                 () -> assertTrue(!zoneInfo.countryCodes().isEmpty(), "Country codes should not be empty")
@@ -65,7 +65,7 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get zone info includes country names")
     void testGetZoneInfoIncludesCountryNames() {
-        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Asia/Tokyo");
+        final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Asia/Tokyo");
         assertAll("Get zone info includes country names",
                 () -> assertNotNull(zoneInfo, "Zone info should not be null for country"),
                 () -> assertTrue(!zoneInfo.countryNames().isEmpty(), "Country names should not be empty")
@@ -75,7 +75,7 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get zone info includes current UTC offset")
     void testGetZoneInfoIncludesCurrentUtcOffset() {
-        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Los_Angeles");
+        final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Los_Angeles");
         assertAll("Get zone info includes current UTC offset",
                 () -> assertNotNull(zoneInfo, ZONE_INFO_NOT_NUL),
                 () -> assertTrue(zoneInfo.friendlyOffset().startsWith("UTC"), "Offset should start with UTC")
@@ -85,15 +85,15 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get all zones returns non-empty collection")
     void testGetAllZonesReturnsNonEmpty() {
-        final Collection<ZoneInfoRecord> allZones = ZoneDataServiceClass.getAll();
+        final Collection<ZoneDataServiceClass.ZoneInfoRecord> allZones = ZoneDataServiceClass.getAll();
         assertTrue(!allZones.isEmpty(), "All zones collection should not be empty");
     }
 
     @Test
     @DisplayName("Get all zones returns cached zones with current offsets")
     void testGetAllZonesReturnsCachedZonesWithOffsets() {
-        final Collection<ZoneInfoRecord> allZones = ZoneDataServiceClass.getAll();
-        for (final ZoneInfoRecord zoneRecord : allZones) {
+        final Collection<ZoneDataServiceClass.ZoneInfoRecord> allZones = ZoneDataServiceClass.getAll();
+        for (final ZoneDataServiceClass.ZoneInfoRecord zoneRecord : allZones) {
             assertAll("Get all zones returns cached zones with current offsets",
                     () -> assertTrue(zoneRecord.friendlyOffset().startsWith("UTC"), "Each zone should have UTC offset"),
                     () -> assertTrue(!zoneRecord.zoneId().isEmpty(), "Each zone should have a zone ID")
@@ -104,8 +104,8 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get zone info multiple calls return consistent data")
     void testGetZoneInfoMultipleCallsReturnConsistentData() {
-        final ZoneInfoRecord firstCall = ZoneDataServiceClass.get("Europe/London");
-        final ZoneInfoRecord secondCall = ZoneDataServiceClass.get("Europe/London");
+        final ZoneDataServiceClass.ZoneInfoRecord firstCall = ZoneDataServiceClass.get("Europe/London");
+        final ZoneDataServiceClass.ZoneInfoRecord secondCall = ZoneDataServiceClass.get("Europe/London");
         assertAll("Get zone info multiple calls return consistent data",
                 () -> assertEquals(firstCall.zoneId(), secondCall.zoneId(), "Zone ID should be consistent"),
                 () -> assertEquals(firstCall.latitude(), secondCall.latitude(), "Latitude should be consistent"),
@@ -116,7 +116,7 @@ class ZoneDataServiceClassTests {
     @Test
     @DisplayName("Get zone info for southern hemisphere zone")
     void testGetZoneInfoForSouthernHemisphereZone() {
-        final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Australia/Melbourne");
+        final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("Australia/Melbourne");
         assertAll("Get zone info for southern hemisphere zone",
                 () -> assertNotNull(zoneInfo, "Zone info should not be null for southern hemisphere"),
                 () -> assertTrue(zoneInfo.latitude() < 0, "Southern hemisphere zones should have negative latitude")
@@ -133,7 +133,7 @@ class ZoneDataServiceClassTests {
         @Test
         @DisplayName("Get zone info includes latitude and longitude coordinates")
         void testGetZoneInfoIncludesCoordinates() {
-            final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
+            final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get(AMERICA_NY);
             assertAll("Get zone info includes latitude and longitude coordinates",
                     () -> assertNotNull(zoneInfo, "Zone info should not be null for coordinates"),
                     () -> assertTrue(zoneInfo.latitude() != 0.0 || zoneInfo.longitude() != 0.0, "Coordinates should be non-zero")
@@ -143,7 +143,7 @@ class ZoneDataServiceClassTests {
         @Test
         @DisplayName("Zone info coordinates are within valid range")
         void testGetZoneInfoCoordinatesAreWithinValidRange() {
-            final ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Denver");
+            final ZoneDataServiceClass.ZoneInfoRecord zoneInfo = ZoneDataServiceClass.get("America/Denver");
             assertAll("Zone info coordinates are within valid range",
                     () -> assertNotNull(zoneInfo, "Zone info should not be null for coordinates"),
                     () -> assertTrue(zoneInfo.latitude() >= -90 && zoneInfo.latitude() <= 90, "Latitude should be between -90 and 90"),
