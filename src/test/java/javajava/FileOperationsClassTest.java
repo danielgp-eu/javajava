@@ -67,7 +67,7 @@ class FileOperationsClassTest {
 
     @Test
     @DisplayName("checkFileExistanceAndReadability returns OK property for readable file")
-    void checkFileExistanceAndReadabilityReturnsOKForReadableFile() throws IOException {
+    void TestCheckFileExistanceAndReadabilityReturnsOKForReadableFile() throws IOException {
         final Path tempFile = Files.createTempFile("fileops-ok-", ".tmp");
         try {
             Files.writeString(tempFile, "payload", StandardCharsets.UTF_8);
@@ -88,9 +88,9 @@ class FileOperationsClassTest {
         final Path baseDir = Files.createTempDirectory("fileops-recursive-");
         try {
             final Path nested = Files.createDirectory(baseDir.resolve("nestedFolder"));
-            final Path file1 = Files.createFile(nested.resolve("A.java"));
-            final Path file2 = Files.createFile(nested.resolve("B.java"));
-            final Path file3 = Files.createFile(nested.resolve("C.txt"));
+            Files.createFile(nested.resolve("A.java"));
+            Files.createFile(nested.resolve("B.java"));
+            Files.createFile(nested.resolve("C.txt"));
             final Properties folderProps = FileOperationsClass.StatisticsSubClass .getFolderStatisticsRecursive(nested.toString(), new Properties());
             assertAll("getSpecificFilesFromFolderRecursive finds files with given extension recursively",
                     () -> assertEquals(3L, folderProps.get("TOTAL_OBJECTS"), "Should find exactly 3 objects"),
@@ -111,9 +111,9 @@ class FileOperationsClassTest {
         final Path baseDir = Files.createTempDirectory("fileops-recursive-");
         try {
             final Path nested = Files.createDirectory(baseDir.resolve("nested"));
-            final Path file1 = Files.createFile(baseDir.resolve("A.java"));
-            final Path file2 = Files.createFile(nested.resolve("B.java"));
-            final Path file3 = Files.createFile(baseDir.resolve("C.txt"));
+            Files.createFile(baseDir.resolve("A.java"));
+            Files.createFile(nested.resolve("B.java"));
+            Files.createFile(baseDir.resolve("C.txt"));
             final List<Path> found = FileOperationsClass.RetrievingSubClass.getSpecificFilesFromFolderRecursive(baseDir, "java");
             final List<String> names = found.stream().map(p -> p.getFileName().toString()).toList();
             assertAll("getSpecificFilesFromFolderRecursive finds files with given extension recursively",

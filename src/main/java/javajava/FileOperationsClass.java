@@ -886,7 +886,7 @@ public final class FileOperationsClass {
     /**
      * Statistics
      */
-    public final class StatisticsSubClass {
+    public static final class StatisticsSubClass {
         /**
          * Checksum algorithms
          */

@@ -180,7 +180,7 @@ public final class WebClass {
     /**
      * Handling Software releases logic
      */
-    public final class SoftwareReleasesSubClass {
+    public static final class SoftwareReleasesSubClass {
         /**
          * Internal database name
          */
