@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +53,7 @@ public final class FileOperationsClass {
             try (BufferedWriter writer = Files.newBufferedWriter(outCsvFile, StandardCharsets.UTF_8)) {
                 writer.write("Path;File;Imported;Timestamp");
                 writer.newLine();
-                final List<Path> arrayFiles = FileStatisticsClass.RetrievingSubClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
+                final List<Path> arrayFiles = RetrievingSubClass.getSpecificFilesFromFolderRecursive(inJavaSources, "java");
                 arrayFiles.forEach(crtFileName -> {
                     try (BufferedReader reader = Files.newBufferedReader(crtFileName, StandardCharsets.UTF_8)) {
                         String line = reader.readLine();  // Initialize the variable outside the loop
@@ -647,6 +649,461 @@ public final class FileOperationsClass {
             // intentionally blank
         }
 
+    }
+
+    /**
+     * File Content Reading
+     */
+    public static final class RetrievingSubClass {
+
+        /**
+         * Checking if a file exists and is readable
+         * @param fileSize file size
+         * @param strFileName file name
+         * @return Properties
+         */
+        public static Properties checkFileExistanceAndReadability(final long fileSize, final String strFileName) {
+            final Properties propertiesReturn = new Properties();
+            switch(String.valueOf(fileSize)) {
+                case "-1":
+                    propertiesReturn.put("NOT_READABLE", String.format("Given file %s is NOT a readable file...", strFileName));
+                    break;
+                case "-2":
+                    propertiesReturn.put("NOT_A_FILE", String.format("Given file %s is not really a file...", strFileName));
+                    break;
+                case "-3":
+                    propertiesReturn.put("DOES_NOT_EXIST", String.format("Given file %s does NOT exist...", strFileName));
+                    break;
+                case "-99":
+                    propertiesReturn.put("NULL_FILE_NAME", "Given file %s does NOT exist...");
+                    break;
+                default:
+                    propertiesReturn.put("OK", strFileName);
+                    break;
+            }
+            return propertiesReturn;
+        }
+
+        /**
+         * Checking if a file exists and is readable
+         * @param strFileName file name
+         * @return Properties
+         */
+        public static Properties checkFileExistanceAndReadability(final String strFileName) {
+            final long fileSize = getFileSizeIfFileExistsAndIsReadable(strFileName);
+            return checkFileExistanceAndReadability(fileSize, strFileName);
+        }
+
+        /**
+         * Getting current user
+         * 
+         * @return File
+         */
+        public static File getCurrentUserFolder() {
+            return new File(System.getProperty("user.home"));
+        }
+
+        /**
+         * Gets file size if exits and is readable
+         * @param strFileName file name
+         * @return long
+         */
+        public static long getFileSizeIfFileExistsAndIsReadable(final String strFileName) {
+            final long fileSize;
+            if (strFileName == null) {
+                fileSize = -99;
+            } else {
+                final File fileGiven = new File(strFileName);
+                if (fileGiven.exists()) {
+                    if (fileGiven.isFile()) {
+                        if (fileGiven.canRead()) {
+                            fileSize = fileGiven.length();
+                        } else {
+                            fileSize = -1;
+                        }
+                    } else {
+                        fileSize = -2;
+                    }
+                } else {
+                    fileSize = -3;
+                }
+            }
+            return fileSize;
+        }
+
+        /**
+         * get internal file size from Disk or inside Jar
+         * @param strFilePath  input Path
+         * @return size of the file
+         */
+        public static long getInternalFileSize(final String strFilePath) {
+            final String strFilePathDisk = ProjectClass.getCurrentFolder() + "/src/main/resources" + strFilePath;
+            long fileSizeActual = getFileSizeIfFileExistsAndIsReadable(strFilePathDisk);
+            if (ProjectClass.isRunningFromJar()
+                    || fileSizeActual < 0) {
+                try (InputStream inStream = Objects.requireNonNull(DatabaseOperationsClass.class.getResourceAsStream(strFilePath), "Resource not found: " + strFilePath)) {
+                    // transferTo returns the number of bytes transferred (Java 9+)
+                    fileSizeActual = inStream.transferTo(OutputStream.nullOutputStream());
+                } catch (IOException ei) {
+                    LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
+                }
+            }
+            return fileSizeActual;
+        }
+
+        /**
+         * Get list of files from a given folder that may have sub-folders
+         * @param inFolderName folder name to look into
+         * @param strExtension extension to isolate
+         * @return List of Strings
+         */
+        public static List<Path> getSpecificFilesFromFolderRecursive(final Path inFolderName, final String strExtension) {
+            List<Path> arrayFiles = List.of();
+            try (Stream<Path> stream = Files.walk(inFolderName)) {
+                arrayFiles = stream
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith(strExtension))
+                    .toList();
+            } catch (IOException ei) {
+                final String strFeedbackErr = String.format(I18N_FILE_FND_ERR, strExtension, inFolderName);
+                LogExposureClass.exposeInputOutputException(strFeedbackErr, Arrays.toString(ei.getStackTrace()));
+            }
+            return arrayFiles;
+        }
+
+        /**
+         * Get list of sub-folders from a given folder
+         * 
+         * @param strFolderName folder name to look into
+         * @return List of String
+         */
+        public static List<String> getSubFoldersFromFolder(final String strFolderName) {
+            final String strFeedbackAtmpt = String.format("Will attempt to get all sub-folders from within \"%s\" folder...", strFolderName);
+            LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
+            final List<String> arraySubFolders = new java.util.ArrayList<>();
+            final Path directory = java.nio.file.Paths.get(strFolderName);
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
+                for (final Path entry : stream) {
+                    if (Files.isDirectory(entry)) {
+                        arraySubFolders.add(entry.toString());
+                    }
+                }
+            } catch (IOException ex) {
+                final String strFeedbackErr = String.format("Error encountered when attempting to get sub-folders from %s folder... %s", strFolderName, Arrays.toString(ex.getStackTrace()));
+                LogExposureClass.LOGGER.debug(strFeedbackErr);
+            }
+            return arraySubFolders;
+        }
+
+        /**
+         * Constructor
+         */
+        private RetrievingSubClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * File Content Reading
+     */
+    public static final class RetrievingCompactOrRegularFileSubClass {
+        /**
+         * String constant Minified
+         */
+        private static final String STR_MINIFIED = "Minified";
+        /**
+         * String constant PrettyPrint
+         */
+        private static final String STR_PRTY_PRNT = "PrettyPrint";
+
+        /**
+         * Establish pre-extensions for Regular and Compact file name
+         * @param strFilePattern file pattern to use
+         * @return Properties
+         */
+        private static Properties establishRegularOrCompactFileName(final String strFilePattern) {
+            final Properties propsFile = new Properties();
+            propsFile.put(STR_MINIFIED, String.format(strFilePattern, ".min"));
+            propsFile.put(STR_PRTY_PRNT, String.format(strFilePattern, ""));
+            return propsFile;
+        }
+
+        /**
+         * read Main configuration file
+         * @param strFilePattern file pattern to use
+         * @return String
+         */
+        public static String getJsonConfigurationFile(final String strFilePattern) {
+            final Properties propsFile = establishRegularOrCompactFileName(strFilePattern);
+            String strFileJson = null;
+            final Properties propsMinified = RetrievingSubClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_MINIFIED));
+            for(final Entry<Object, Object> eMinified : propsMinified.entrySet()) {
+                final boolean isItOk = "OK".equals(eMinified.getKey());
+                if (isItOk) {
+                    strFileJson = eMinified.getValue().toString();
+                } else {
+                    final Properties propsPreety = RetrievingSubClass.checkFileExistanceAndReadability(propsFile.getProperty(STR_PRTY_PRNT));
+                    for(final Entry<Object, Object> ePreety : propsPreety.entrySet()) {
+                        final boolean isItOk2 = "OK".equals(ePreety.getKey());
+                        strFileJson = getJsonFileName(isItOk2, ePreety, propsFile);
+                    }
+                }
+            }
+            return strFileJson;
+        }
+
+        /**
+         * Getting JSON file name
+         * @param isItOk2 file check result
+         * @param ePreety file name
+         * @param propsFile file Properties
+         * @return String
+         */
+        private static String getJsonFileName(final boolean isItOk2, final Entry<Object, Object> ePreety, final Properties propsFile) {
+            final String strFileJson;
+            if (isItOk2) {
+                strFileJson = ePreety.getValue().toString();
+            } else {
+                final String strFeedback = String.format("Configuration file was NOT found (not as %s, nor %s)..."
+                    , propsFile.getProperty(STR_MINIFIED, "")
+                    , propsFile.getProperty(STR_PRTY_PRNT, ""));
+                LogExposureClass.LOGGER.error(strFeedback);
+                throw new IllegalArgumentException(strFeedback);
+            }
+            return strFileJson;
+        }
+
+        /**
+         * Constructor
+         */
+        private RetrievingCompactOrRegularFileSubClass() {
+            // intentionally blank
+        }
+
+    }
+
+    /**
+     * Statistics
+     */
+    public final class StatisticsSubClass {
+        /**
+         * Checksum algorithms
+         */
+        private static String[] listAlgorithms = {"SHA-256", "SHA-512", "SHA3-256", "SHA3-512"};
+        /**
+         * file statistics
+         */
+        private static final List<Properties> FILE_STATISTICS = new java.util.ArrayList<>();
+
+        /**
+         * A simple record to hold our results
+         */
+        /* default */ record FolderStatsRecord(long fileCount, long folderCount, long totalSize) {
+            /* default */ static FolderStatsRecord empty() { return new FolderStatsRecord(0, 0, 0); }
+            /* default */ FolderStatsRecord add(final FolderStatsRecord other) {
+                return new FolderStatsRecord(
+                    this.fileCount + other.fileCount,
+                    this.folderCount + other.folderCount,
+                    this.totalSize + other.totalSize
+                );
+            }
+        }
+
+        /**
+         * Get statistics for all files within a given folder
+         * @param strFolderName input folder name
+         */
+        public static void captureFileStatisticsFromFolder(final String strFolderName, final String outCsvFile) {
+            try (BufferedWriter writer = Files.newBufferedWriter(Path.of(outCsvFile), StandardCharsets.UTF_8)) {
+                writer.write("Folder;File;Size;Last Modified Time");
+                for(final String crtAlgo: listAlgorithms) {
+                    writer.write(';' + crtAlgo);
+                }
+                writer.newLine();
+                gatherFileStatisticsFromFolderIntoFile(strFolderName, writer);
+            } catch (IOException ei) {
+                LogExposureClass.exposeInputOutputException(Arrays.toString(ei.getStackTrace()));
+            }
+        }
+
+        /**
+         * Compute checksum for a given file
+         * @param file input file
+         * @param algorithm checksum algorithm name
+         * @return String
+         */
+        public static String computeSingleChecksum(final Path file, final String algorithm) {
+            java.security.MessageDigest digest = null;
+            try {
+                digest = java.security.MessageDigest.getInstance(algorithm);
+            } catch (java.security.NoSuchAlgorithmException e) {
+                final String strFeedbackErr = String.format("Checksum algorithm %s is not available.... %s", algorithm, Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+            final StringBuilder sbChecksumValue = new StringBuilder();
+            try (InputStream istrmFile = Files.newInputStream(file);
+                    java.security.DigestInputStream dis = new java.security.DigestInputStream(istrmFile, digest)) {
+                // Read and discard all data while updating the digest
+                dis.transferTo(OutputStream.nullOutputStream());
+            } catch (IOException e) {
+                final String strFeedbackErr = String.format("Error when attempting to get content of file \"%s\": %s", "*", Arrays.toString(e.getStackTrace()));
+                LogExposureClass.LOGGER.error(strFeedbackErr);
+            }
+            assert digest != null;
+            final byte[] hashBytes = digest.digest();
+            for (final byte byteVar : hashBytes) {
+                sbChecksumValue.append(String.format("%02x", byteVar));
+            }
+            return sbChecksumValue.toString();
+        }
+
+        /**
+         * Compute all known checksums for a given file
+         * @param file input file
+         * @return Properties checksum values
+         */
+        private static Properties computeFileMultipleChecksumsIntoProperties(final Path file) {
+            final Properties fileProperties = new Properties();
+            try(java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
+                executor.submit(() -> {
+                    for (final String algo : listAlgorithms) {
+                        fileProperties.put(algo, computeSingleChecksum(file, algo));
+                    }
+                });
+                executor.shutdown();
+                executor.awaitTermination(Long.MAX_VALUE, java.util.concurrent.TimeUnit.NANOSECONDS);
+            } catch (InterruptedException ei) {
+                final String strFeedback = String.format("Execution was interrupted... %s", Arrays.toString(ei.getStackTrace()));
+                LogExposureClass.LOGGER.warn(strFeedback);
+                /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            }
+            return fileProperties;
+        }
+
+        /**
+         * performs statistics for all files within a given folder
+         * @param strFolderName input folder name
+         */
+        private static void gatherFileStatisticsFromFolder(final String strFolderName) {
+            final Path folder = java.nio.file.Paths.get(strFolderName);
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
+                for (final Path file : stream) {
+                    if (Files.isDirectory(file)) {
+                        gatherFileStatisticsFromFolder(file.toString());
+                    } else if (Files.isRegularFile(file)) {
+                        FILE_STATISTICS.add(getSingleFileStatistic(file));
+                    }
+                }
+            } catch (IOException ei) {
+                final String strFeedback = String.format(I18N_FILE_FND_ERR, "*", strFolderName);
+                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            }
+        }
+
+        /**
+         * performs statistics for all files within a given folder
+         * @param strFolderName input folder name
+         */
+        private static void gatherFileStatisticsFromFolderIntoFile(final String strFolderName, final BufferedWriter writer) {
+            final List<Properties> crtFileStatistics = getFileStatisticsIntoListOfProperties(strFolderName);
+            crtFileStatistics.forEach(fileProperties -> {
+                try {
+                    writer.write(fileProperties.get("Folder").toString()
+                            + ';' + fileProperties.get("File").toString()
+                            + ';' + fileProperties.get("Size").toString()
+                            + ';' + fileProperties.get("Last Modified Time").toString());
+                    for (final String algo : listAlgorithms) {
+                        writer.write(';' + fileProperties.get(algo).toString());
+                    }
+                    writer.newLine();
+                } catch (IOException ei) {
+                    final String strFeedback = "Error writing files statistics";
+                    LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+                }
+            });
+        }
+
+        /**
+         * performs statistics for all files within a given folder
+         * @param strFolderName input folder name
+         */
+        public static List<Properties> getFileStatisticsIntoListOfProperties(final String strFolderName) {
+            if (!FILE_STATISTICS.isEmpty()) {
+                FILE_STATISTICS.clear();
+            }
+            gatherFileStatisticsFromFolder(strFolderName);
+            return FILE_STATISTICS;
+        }
+
+        /**
+         * get Folder statistics recursively
+         * @param strFolderName folder name
+         * @param pathProps path properties
+         * @return Properties
+         */
+        public static Properties getFolderStatisticsRecursive(final String strFolderName, final Properties pathProps) {
+            final Path directory = java.nio.file.Paths.get(strFolderName.replace("\"", ""));
+            // use DirectoryStream to list files which are present in specific
+            try (Stream<Path> stream = Files.walk(directory)) {
+                final FolderStatsRecord stats = stream
+                    .map(path -> {
+                        if (Files.isDirectory(path)) {
+                            // Don't count the root directory itself as a sub-folder
+                            return path.equals(directory) ? FolderStatsRecord.empty() : new FolderStatsRecord(0, 1, 0);
+                        } else {
+                            try {
+                                return new FolderStatsRecord(1, 0, Files.size(path));
+                            } catch (IOException e) {
+                                final String strFeedback = String.format("Input/Output exception on %s folder encountered on %s", strFolderName, Arrays.toString(e.getStackTrace()));
+                                LogExposureClass.LOGGER.debug(strFeedback);
+                                return FolderStatsRecord.empty();
+                            }
+                        }
+                    })
+                    .reduce(FolderStatsRecord.empty(), FolderStatsRecord::add);
+                pathProps.put("TOTAL_OBJECTS", stats.folderCount() + stats.fileCount());
+                pathProps.put("DIRECTORIES", stats.folderCount());
+                pathProps.put("FILES", stats.fileCount());
+                pathProps.put("SIZE_BYTES", stats.totalSize());
+            } catch (IOException ei) {
+                final Path foderName = Path.of(strFolderName);
+                final String strFeedback = String.format(I18N_FILE_FND_ERR, foderName.getParent(), foderName.getFileName());
+                LogExposureClass.exposeInputOutputException(strFeedback, Arrays.toString(ei.getStackTrace()));
+            }
+            return pathProps;
+        }
+
+        /**
+         * Determining single file statistics
+         * @param file in scope
+         * @return Properties with relevant statistics
+         */
+        private static Properties getSingleFileStatistic(final Path file) {
+            final Properties fileProperties = new Properties();
+            fileProperties.put("Folder", file.getParent().toString());
+            fileProperties.put("File", file.getFileName().toString());
+            fileProperties.put("Size [bytes]", file.toFile().length());
+            fileProperties.put("Last Modified Time", TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(file));
+            fileProperties.putAll(computeFileMultipleChecksumsIntoProperties(file));
+            return fileProperties;
+        }
+
+        /**
+         * Setter for checksum algorithms
+         * @param inAlgorithms char
+         */
+        public static void setChecksumAlgorithms(final String... inAlgorithms) {
+            listAlgorithms = inAlgorithms;
+        }
+
+        /**
+         * Constructor
+         */
+        private StatisticsSubClass() {
+            // intentionally blank
+        }
     }
 
     /**

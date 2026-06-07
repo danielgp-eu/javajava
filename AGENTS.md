@@ -48,6 +48,8 @@ Purpose: help an AI agent become productive immediately in this repository by su
 
 7) Where to look for tests and quality checks
 - Unit tests: `src/test/java/javajava/` (JUnit 6). Look for parameterized tests and example fixtures.
+- Unit tests: `src/test/java/javajava/` (JUnit Jupiter / JUnit 6). Tests use the `org.junit.jupiter.*` API and the 
+  pom property `junit-jupiter.version` controls the version. Look for parameterized tests and example fixtures.
 - Coverage enforcement: JaCoCo plugin in `pom.xml` (see `<prepare-agent>` and `<report>` goals).
 
 8) Notes & gotchas

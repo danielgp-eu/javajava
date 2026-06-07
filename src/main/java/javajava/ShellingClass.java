@@ -43,7 +43,7 @@ public final class ShellingClass {
             builder.command(strCommand, strParameters);
         }
         LogExposureClass.exposeProcessBuilder(builder.command().toString());
-        builder.directory(FileStatisticsClass.RetrievingSubClass.getCurrentUserFolder());
+        builder.directory(FileOperationsClass.RetrievingSubClass.getCurrentUserFolder());
         return builder;
     }
 

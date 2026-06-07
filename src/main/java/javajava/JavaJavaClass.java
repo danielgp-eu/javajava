@@ -230,7 +230,7 @@ class ArchiveFolders implements Runnable {
         final String[] inFolders = optFolderNames.getFolderNames();
         for (final String strFolder : inFolders) {
             propFolder.clear();
-            final Properties folderProps = FileStatisticsClass.getFolderStatisticsRecursive(strFolder, propFolder);
+            final Properties folderProps = FileOperationsClass.StatisticsSubClass.getFolderStatisticsRecursive(strFolder, propFolder);
             ArchivingClass.setArchivingDir(strFolder);
             ArchivingClass.setArchiveNameWithinDestinationFolder(optFolderDest.getFolderDestination());
             ArchivingClass.archiveFolderAs7z();
@@ -339,12 +339,12 @@ class CaptureChecksumsOfFilesFromFoldersIntoCsvFile implements Runnable {
     @Override
     public void run() {
         final String[] inAlgorithms = {"SHA-256", "SHA3-256"};
-        FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
+        FileOperationsClass.StatisticsSubClass.setChecksumAlgorithms(inAlgorithms);
         final String[] inFolders = optFolderNames.getFolderNames();
         final String outCsvFile = optOutFileName.getOutFileName();
         for (final String strFolder : inFolders) {
             final ZonedDateTime startComputeTime = ZonedDateTime.now(ZoneId.systemDefault());
-            FileStatisticsClass.captureFileStatisticsFromFolder(strFolder, outCsvFile);
+            FileOperationsClass.StatisticsSubClass.captureFileStatisticsFromFolder(strFolder, outCsvFile);
             final Duration objDuration = Duration.between(startComputeTime, ZonedDateTime.now(ZoneId.systemDefault()));
             final String strFeedback = String.format("For the folder %s calculated checksums are stored in the file %s operation completed in %s (which means %s | %s)", strFolder, outCsvFile, objDuration.toString(), TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "HumanReadableTime"), TimingClass.ConversionSubClass.convertNanosecondsIntoSomething(objDuration, "TimeClock"));
             LogExposureClass.LOGGER.info(strFeedback);
@@ -668,7 +668,7 @@ class GetSubFoldersFromFolders implements Runnable {
     public void run() {
         final String[] inFolders = optFolderNames.getFolderNames();
         for (final String strFolder : inFolders) {
-            final List<String> arraySubFolders = FileStatisticsClass.RetrievingSubClass.getSubFoldersFromFolder(strFolder);
+            final List<String> arraySubFolders = FileOperationsClass.RetrievingSubClass.getSubFoldersFromFolder(strFolder);
             final String strFeedback = String.format("Considering folder %s following sub-folders were found: %s", strFolder, arraySubFolders);
             LogExposureClass.LOGGER.info(strFeedback);
         }
@@ -724,9 +724,9 @@ class JavaJavaWebUserInterface implements Runnable {
     public void run() {
         UndertowClass.setWebPort(String.valueOf(portNumber));
         DatabaseOperationsClass.SpecificSqLiteSubClass.setInternalDatabase(strDbReleases);
-        SoftwareReleasesClass.setReleasesDatabase(strDbReleases);
-        JavaJavaWebClass.setFolderNamesForChecksumExposure(optFolderNames.getFolderNames());
-        UndertowClass.setRootHandler(JavaJavaWebClass.handleWebContent());
+        WebClass.SoftwareReleasesSubClass.setReleasesDatabase(strDbReleases);
+        WebClass.setFolderNamesForChecksumExposure(optFolderNames.getFolderNames());
+        UndertowClass.setRootHandler(WebClass.handleWebContent());
         UndertowClass.runWebServer();
     }
 
@@ -765,13 +765,14 @@ class JsonSplit implements Runnable {
      * CommonInteractiveClass.FileNameOptionMixinClass to this command
      */
     @Mixin
-    private final CommonInteractiveClass.InFileNameOptionMixinClass optFileNames = new CommonInteractiveClass.InFileNameOptionMixinClass();
+    private static final CommonInteractiveClass.InFileNameOptionMixinClass OPT_FILE_NAMES =
+            new CommonInteractiveClass.InFileNameOptionMixinClass();
     /**
      * adds the options defined in 
      * CommonInteractiveClass.FolderDestinationOptionMixinClass to this command
      */
     @Mixin
-    private static final CommonInteractiveClass.FolderDestinationOptionMixinClass optFolderDest = new CommonInteractiveClass.FolderDestinationOptionMixinClass();
+    private static final CommonInteractiveClass.FolderDestinationOptionMixinClass OPT_FOLDER_DEST = new CommonInteractiveClass.FolderDestinationOptionMixinClass();
     /**
      * size of Split threshold (optional)
      */
@@ -798,11 +799,11 @@ class JsonSplit implements Runnable {
 
     @Override
     public void run() {
-        final String[] inFiles = optFileNames.getInFileNames();
+        final String[] inFiles = OPT_FILE_NAMES.getInFileNames();
         for (final String strFileName : inFiles) {
             setFileSize(strFileName);
             if (fileSize <= 0) {
-                final Properties propertiesReturn = FileStatisticsClass.RetrievingSubClass.checkFileExistanceAndReadability(fileSize, strFileName);
+                final Properties propertiesReturn = FileOperationsClass.RetrievingSubClass.checkFileExistanceAndReadability(fileSize, strFileName);
                 final String strFeedback = String.format("There is something not right with given file name... %s", propertiesReturn);
                 LogExposureClass.LOGGER.error(strFeedback);
             } else {
@@ -822,13 +823,13 @@ class JsonSplit implements Runnable {
         final String strFeedback = String.format("File %s has a size of %s bytes which compared to split file threshold of %s bytes is %s%% bigger, hence split IS required and will be performed!", strFileName, fileSize, sizeThreshold, Math.abs(sizeDifference));
         LogExposureClass.LOGGER.info(strFeedback);
         JsonOperationsClass.ArraySubClass.setInputJsonFile(strFileName);
-        JsonOperationsClass.ArraySubClass.setDestinationFolder(optFolderDest.getFolderDestination());
+        JsonOperationsClass.ArraySubClass.setDestinationFolder(OPT_FOLDER_DEST.getFolderDestination());
         JsonOperationsClass.ArraySubClass.setRelevantField(strField);
         if (bucketLength != 0) {
             JsonOperationsClass.ArraySubClass.setBucketLength(bucketLength);
         }
         final String destPattern = JsonOperationsClass.ArraySubClass.buildDestinationFileName("x").replaceAll("x.json", ".*.json");
-        FileOperationsClass.DeletingSubClass.deleteFilesMatchingPatternFromFolder(optFolderDest.getFolderDestination(), destPattern); // clean slate to avoid inheriting old content
+        FileOperationsClass.DeletingSubClass.deleteFilesMatchingPatternFromFolder(OPT_FOLDER_DEST.getFolderDestination(), destPattern); // clean slate to avoid inheriting old content
         JsonOperationsClass.ArraySubClass.splitJsonIntoSmallerGrouped(); // actual logic
     }
 
@@ -836,7 +837,7 @@ class JsonSplit implements Runnable {
      * Setter for fileSize
      */
     private static void setFileSize(final String strFileName) {
-        fileSize = FileStatisticsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
+        fileSize = FileOperationsClass.RetrievingSubClass.getFileSizeIfFileExistsAndIsReadable(strFileName);
     }
 
     /**

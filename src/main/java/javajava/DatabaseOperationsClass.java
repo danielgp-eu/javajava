@@ -176,7 +176,7 @@ public final class DatabaseOperationsClass {
      */
     public static String getPreDefinedQuery(final String strDatabaseType, final String strFileName) {
         String strFilePath = String.format("/SQL/%s/%s.sql", strDatabaseType, strFileName);
-        final long fileSizeActual = FileStatisticsClass.RetrievingSubClass.getInternalFileSize(strFilePath);
+        final long fileSizeActual = FileOperationsClass.RetrievingSubClass.getInternalFileSize(strFilePath);
         final String strFeedback = String.format("Relevant query file is %s which has a size of %s bytes", strFilePath, fileSizeActual);
         LogExposureClass.LOGGER.debug(strFeedback);
         final long fileSizeLimit = 10;

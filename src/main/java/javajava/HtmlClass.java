@@ -60,7 +60,7 @@ public final class HtmlClass {
                String.format(STRING_IMPORTANT, fileName),
                String.format(STRING_IMPORTANT, String.format(Locale.US, strThousandSep, fileName.toFile().length())),
                String.format(STRING_IMPORTANT, TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(fileName)),
-               String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), FileStatisticsClass.computeSingleChecksum(fileName, "SHA-256"))
+               String.format(STRING_IMPORTANT.replace(";\"", ";font-size:0.7rem;\""), FileOperationsClass.StatisticsSubClass.computeSingleChecksum(fileName, "SHA-256"))
         };
         if (!Files.exists(fileName)) {
             final String strFeedback = String.format("Given file %s was not found on disk and statistics for it are %s, hence will be looking for it within JAR", fileName, Arrays.toString(infoStrings));
@@ -208,7 +208,7 @@ public final class HtmlClass {
         /**
          * variable for HTML Table
          */
-        private static final List<String> htmlTableLines = new ArrayList<>();
+        private static final List<String> LIST_TABLE_LINES = new ArrayList<>();
         /**
          * Time Zone variable
          */
@@ -243,7 +243,7 @@ public final class HtmlClass {
             if (strTimeZone == null) {
                 setTimeZone(System.getProperty("user.timezone"));
             }
-            htmlTableLines.clear();
+            LIST_TABLE_LINES.clear();
             strTableHeader = "";
             rememberKey = getRememberKey(objFeatures);
             useCounter = !objFeatures.getOrDefault("Counter", "").toString().isEmpty();
@@ -251,7 +251,7 @@ public final class HtmlClass {
                 processRecord(recordMap);
             }
             finish();
-            return String.join("", htmlTableLines);
+            return String.join("", LIST_TABLE_LINES);
         }
 
         /**
@@ -259,9 +259,9 @@ public final class HtmlClass {
          */
         public static void finish() {
             if (!strTableHeader.isEmpty()) {
-                htmlTableLines.add("</tbody></table>");
+                LIST_TABLE_LINES.add("</tbody></table>");
                 if (!rememberKey.isEmpty()) {
-                    htmlTableLines.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", currentTabValue));
+                    LIST_TABLE_LINES.add(String.format("</div><!-- %s --></div><!-- tabStandard -->", currentTabValue));
                 }
             }
         }
@@ -288,15 +288,15 @@ public final class HtmlClass {
             final String valueForTab = valObj == null ? "null" : valObj.toString();
             final String prev = currentTabValue == null ? "" : currentTabValue;
             if (!valueForTab.equalsIgnoreCase(prev)) {
-                if (htmlTableLines.isEmpty()) {
+                if (LIST_TABLE_LINES.isEmpty()) {
                     // first tab: open tab container
-                    htmlTableLines.add("<div id=\"tabStandard\" class=\"tabber\">");
+                    LIST_TABLE_LINES.add("<div id=\"tabStandard\" class=\"tabber\">");
                 } else if (currentTabValue != null) {
                     // close previous tab's table
-                    htmlTableLines.add(String.format("</tbody></table></div><!-- %s -->", currentTabValue));
+                    LIST_TABLE_LINES.add(String.format("</tbody></table></div><!-- %s -->", currentTabValue));
                 }
                 // open new tab with header
-                htmlTableLines.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, strTableHeader));
+                LIST_TABLE_LINES.add(String.format("<div class=\"tabbertab\" title=\"%s\">%s", valueForTab, strTableHeader));
                 currentTabValue = valueForTab;
                 rowCounter = 0;
             }
@@ -317,7 +317,7 @@ public final class HtmlClass {
                 rowCounter++;
                 recordMap.put("#", String.valueOf(rowCounter));
             }
-            htmlTableLines.add(RowSubSubClass.buildTableBodyRow(recordMap));
+            LIST_TABLE_LINES.add(RowSubSubClass.buildTableBodyRow(recordMap));
         }
 
         /**
@@ -444,8 +444,8 @@ public final class HtmlClass {
              * ensuring Table Header is appended
              */
             private static void ensureHeaderAppended() {
-                if (htmlTableLines.isEmpty()) {
-                    htmlTableLines.add(strTableHeader);
+                if (LIST_TABLE_LINES.isEmpty()) {
+                    LIST_TABLE_LINES.add(strTableHeader);
                     rowCounter = 0;
                 }
             }

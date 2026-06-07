@@ -1,6 +1,9 @@
 package javajava;
 
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,7 +16,7 @@ import javajava.HtmlClass.TableSubClass;
 /**
  * Web interface class
  */
-public final class JavaJavaWebClass {
+public final class WebClass {
     /**
      * Menu
      */
@@ -69,10 +72,10 @@ public final class JavaJavaWebClass {
      */
     private static String getFileHashingAsHtmlTable() {
         final String[] inAlgorithms = {"SHA-256"};
-        FileStatisticsClass.setChecksumAlgorithms(inAlgorithms);
+        FileOperationsClass.StatisticsSubClass.setChecksumAlgorithms(inAlgorithms);
         final List<Properties> foldersStatistics = new ArrayList<>();
         for(final String crtFolderName: strFolderNames) {
-            final List<Properties> crtFileStatistics = FileStatisticsClass.getFileStatisticsIntoListOfProperties(crtFolderName);
+            final List<Properties> crtFileStatistics = FileOperationsClass.StatisticsSubClass.getFileStatisticsIntoListOfProperties(crtFolderName);
             foldersStatistics.addAll(crtFileStatistics);
         }
         final List<String> desiredOrder = List.of("Folder", "File", "Size [bytes]", "Last Modified Time", "SHA-256");
@@ -97,7 +100,7 @@ public final class JavaJavaWebClass {
     private static String getSoftwareReleasesIntoHtmlTable() {
         final Properties objFeatures = new Properties();
         objFeatures.put(BasicStructuresClass.STR_NEW_TAB, "Profile");
-        final List<Properties> softwareReleases = SoftwareReleasesClass.consolidateSoftwareReleases();
+        final List<Properties> softwareReleases = SoftwareReleasesSubClass.consolidateSoftwareReleases();
         final List<String> desiredOrder = List.of("Organization", "Product", "Version", "Date", "Files");
         final List<SequencedMap<Object, Object>> orderedList = softwareReleases.stream()
                 .map(prop -> BasicStructuresClass.ListAndMapSubClass.sortProperties(prop, desiredOrder))
@@ -175,6 +178,92 @@ public final class JavaJavaWebClass {
     }
 
     /**
+     * Handling Software releases logic
+     */
+    public final class SoftwareReleasesSubClass {
+        /**
+         * Internal database name
+         */
+        private static String releasesDatabase;
+
+        /**
+         * expose Software Release details from internal DB
+         * @return List software releases details
+         */
+        public static List<Properties> consolidateSoftwareReleases() {
+            final List<Properties> softwareReleases = new ArrayList<>();
+            final List<Properties> resultReleases = getSoftwareReleasesFromDatabase();
+            resultReleases.forEach( recordProperties -> {
+                final Properties newProperties = new Properties();
+                newProperties.put("Organization", String.format("%s<div style=\"text-align:right;\">[%s]</div>", recordProperties.get("OrganizationName"), recordProperties.get("OrganizationId")));
+                newProperties.put("Product", String.format("<a href=\"%s\" target=\"_blank\"><span style=\"float:left;\">%s<br/>[%s]</span><span style=\"float:right;text-align:right;\">%s<br/>[%s]</span></a>", recordProperties.get("Releases"), recordProperties.get("ProductName"), recordProperties.get("ProductId"), recordProperties.get("BranchName"), recordProperties.get("BranchId")));
+                newProperties.put("Version", String.format("%s<div style=\"text-align:right;\">[%s]</div>", recordProperties.get("Latest release version"), recordProperties.get("VersionId")));
+                final String agingDays = recordProperties.get("Latest release aging days").toString().replace("\\.0", ""); 
+                newProperties.put("Date", String.format("%s<br>==> %s", recordProperties.get("Latest release date"), recordProperties.get("Latest release aging full").toString()));
+                newProperties.put("Files", String.format("%s [%s]<br/>==> %s [%s]", recordProperties.get("File Kit Name"), recordProperties.get("File Kit Id"), recordProperties.get("File Installed Name"), recordProperties.get("File Installed Id")));
+                newProperties.put("Profile", recordProperties.get("Profile Name"));
+                newProperties.put(BasicStructuresClass.STR_ROW_STYLE, establishRowStyle(agingDays));
+                softwareReleases.add(newProperties);
+            });
+            return softwareReleases;
+        }
+
+        /**
+         * Row Style logic
+         * @param agingDays number of days
+         * @return String row style
+         */
+        private static String establishRowStyle(final String agingDays) {
+            String strRowColor = "#fff";
+            if (!agingDays.isEmpty()) {
+                final long[] longRanges = {14, 30, 90};
+                final long longAging = Long.parseLong(agingDays.replaceAll(".0$", ""));
+                if (longAging <= longRanges[0]) {
+                    strRowColor = "#51ff6d";
+                } else if (longAging <= longRanges[1]) {
+                    strRowColor = "#ccffe8";
+                } else if (longAging <= longRanges[2]) {
+                    strRowColor = "#fdffcc";
+                }
+            }
+            return String.format("background-color:%s;", strRowColor);
+        }
+
+        /**
+         * expose Software Release details from internal DB
+         * @return List software releases details
+         */
+        private static List<Properties> getSoftwareReleasesFromDatabase() {
+            List<Properties> resultReleases = new ArrayList<>();
+            try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteConnection(releasesDatabase);
+                    Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
+                final Properties rsProperties = new Properties();
+                rsProperties.put("Purpose", "Software Releases");
+                rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
+                rsProperties.put("FetchType", "Values");
+                resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
+            } catch (SQLException e) {
+                final String strFeedbackErr = String.format("%s connection has failed %s", BasicStructuresClass.STR_SQLITE, e.getLocalizedMessage());
+                LogExposureClass.LOGGER.debug(strFeedbackErr);
+            }
+            return resultReleases;
+        }
+
+        /**
+         * Setter for releasesDatabase
+         */
+        public static void setReleasesDatabase(final String inDatabase) {
+            releasesDatabase = inDatabase;
+        }
+
+        // Private constructor to prevent instantiation
+        private SoftwareReleasesSubClass() {
+            // intentional empty
+        }
+
+    }
+
+    /**
      * List and Maps management
      */
     public static final class SqLiteStatisticsSubClass {
@@ -244,7 +333,7 @@ public final class JavaJavaWebClass {
 
     }
 
-    private JavaJavaWebClass() {
+    private WebClass() {
         // intentionally blank
     }
 

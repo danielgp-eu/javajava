@@ -7,7 +7,7 @@
 
     <groupId>io.github.danielgp-eu</groupId>
     <artifactId>javajava</artifactId>
-    <version>2.5.2-SNAPSHOT</version>
+    <version>2.5.2</version>
     <packaging>jar</packaging>
 
     <name>JavaJava</name>
@@ -49,6 +49,8 @@
         <maven.compiler.release>26</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.organization>danielgp-eu</sonar.organization>
+        <!-- Dependencies & Plugin versions -->
+        <jacoco.version>0.8.15</jacoco.version>
         <!-- Dependencies versions -->
         <jackson-databind.version>3.1.4</jackson-databind.version>
         <jackson-dataformat-xml.version>3.1.4</jackson-dataformat-xml.version>
@@ -57,8 +59,7 @@
         <jte.version>3.2.4</jte.version>
         <log4j-slf4j2-impl.version>2.26.0</log4j-slf4j2-impl.version>
         <maven-model.version>3.9.16</maven-model.version>
-        <org.jacoco.agent.version>0.8.14</org.jacoco.agent.version>
-        <oshi-core-ffm.version>7.2.1</oshi-core-ffm.version>
+        <oshi-core-ffm.version>7.3.0</oshi-core-ffm.version>
         <picocli.version>4.7.7</picocli.version>
         <plexus-interpolation.version>1.29</plexus-interpolation.version>
         <sqlite-jdbc.version>3.53.2.0</sqlite-jdbc.version>
@@ -67,7 +68,6 @@
         <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <cyclonedx-maven-plugin.version>2.9.1</cyclonedx-maven-plugin.version>
         <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
-        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <maven-antrun-plugin.version>3.2.0</maven-antrun-plugin.version>
         <maven-assembly-plugin.version>3.8.0</maven-assembly-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
@@ -147,7 +147,7 @@
         <dependency>
             <groupId>org.jacoco</groupId>
             <artifactId>org.jacoco.agent</artifactId>
-            <version>${org.jacoco.agent.version}</version>
+            <version>${jacoco.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Source: https://jspecify.dev/ -->
@@ -319,7 +319,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
+                <version>${jacoco.version}</version>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>

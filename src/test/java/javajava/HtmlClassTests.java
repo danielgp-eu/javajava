@@ -73,7 +73,7 @@ class HtmlClassTests {
     @Test
     @DisplayName("HtmlClass.buildMenuString produces select with time zones")
     void buildMenuString() {
-        final java.util.SequencedMap<String, java.util.Map<String, String>> inMapMenu = JavaJavaWebClass.getMenu();
+        final java.util.SequencedMap<String, java.util.Map<String, String>> inMapMenu = WebClass.getMenu();
         final String myMenu = HtmlClass.buildMenuString(inMapMenu);
         assertAll("Select HTML correctness",
                 () -> assertTrue(myMenu.contains("<li>"), "HTML should contain li tag"),
