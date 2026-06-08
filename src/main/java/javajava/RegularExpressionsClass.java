@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  * Regular Expressions things
  */
 public final class RegularExpressionsClass {
+    /** Regular Expression for Prompt Parameters within SQL Query */
+    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
     /** Version Patterns Map */
     public static final String REGEXP_VERSION = "^\\d{1,2}\\.\\d{1,3}(|.\\d{1,3}|.\\d{1,3}.\\d{1,12})(|\\.(Alpha\\d{1,2}|Beta\\d{1,2}|CR\\d{1,2}|Final|RC\\d{1,2})|-(alpha|alpha-|Beta|beta|beta-|M|pre1|RC|rc|rc-)\\d{1,2})$";
     /** Patterns Map */
@@ -107,7 +109,7 @@ public final class RegularExpressionsClass {
      */
     public static int countOccurrences(final String haystack, final String needleType) {
         final Pattern pattern = switch(needleType) {
-            case "NamedParameters" -> Pattern.compile(BasicStructuresClass.STR_PRMTR_RGX);
+            case "NamedParameters" -> Pattern.compile(STR_PRMTR_RGX);
             case "ComplexPositionalTypeParameters" -> Pattern.compile("%(|[1-9]\\$)(|,\\d{1,3}|\\+|\\(|,)(|\\.[1-9]|\\d{1,2})[abcdefghnostx]");
             case "PositionalTypeParameters" -> Pattern.compile("%[ACEGHSTXacdefghostx]");
             default -> Pattern.compile(".*");

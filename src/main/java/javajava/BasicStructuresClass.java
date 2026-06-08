@@ -155,10 +155,6 @@ public final class BasicStructuresClass {
      */
     public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
     /**
-     * Regular Expression for Prompt Parameters within SQL Query
-     */
-    public static final String STR_PRMTR_RGX = "\\{[0-9A-Za-z_\\s\\-]{2,50}\\}";
-    /**
      * string constant
      */
     public static final String STR_RANGE_LMTS = "Range Limits";
@@ -537,7 +533,7 @@ public final class BasicStructuresClass {
         private static String convertPromptParameters(final String strOriginalQ, final String type) {
             final String strFeedbackStrt = String.format("Original query is: \"%s\"", strOriginalQ);
             LogExposureClass.LOGGER.debug(strFeedbackStrt);
-            final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, STR_PRMTR_RGX);
+            final List<String> listMatches = RegularExpressionsClass.extractMatches(strOriginalQ, RegularExpressionsClass.STR_PRMTR_RGX);
             String strFinalQ = strOriginalQ;
             if (Q_MARK_PARAM.equalsIgnoreCase(type)) {
                 for (final String currentPrmtName : listMatches) {
