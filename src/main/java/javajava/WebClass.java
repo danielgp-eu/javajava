@@ -17,6 +17,8 @@ import javajava.HtmlClass.TableSubClass;
  * Web interface class
  */
 public final class WebClass {
+    /** Constant for "Software Releases" */
+    public static final String STR_SOFT_RELEASES = "Software Releases";
     /**
      * Menu
      */
@@ -27,8 +29,8 @@ public final class WebClass {
                     BasicStructuresClass.STR_TITLE, "JavaJava")),
             Map.entry(BasicStructuresClass.STR_SOFTWARE_RLS, Map.of(
                     BasicStructuresClass.STR_ICON, "fa-brands fa-dev",
-                    BasicStructuresClass.STR_MENU, "Software Releases",
-                    BasicStructuresClass.STR_TITLE, "Software Releases")),
+                    BasicStructuresClass.STR_MENU, STR_SOFT_RELEASES,
+                    BasicStructuresClass.STR_TITLE, STR_SOFT_RELEASES)),
             Map.entry(BasicStructuresClass.STR_TS, Map.of(
                     BasicStructuresClass.STR_ICON, "fa-solid fa-square-poll-horizontal",
                     BasicStructuresClass.STR_MENU, "SQLite Table Statistics",
@@ -238,7 +240,7 @@ public final class WebClass {
             try (Connection objConnection = DatabaseOperationsClass.SpecificSqLiteSubClass.getSqLiteConnection(releasesDatabase);
                     Statement objStatement = DatabaseOperationsClass.ConnectivitySubClass.createSqlStatement(BasicStructuresClass.STR_SQLITE, objConnection)) {
                 final Properties rsProperties = new Properties();
-                rsProperties.put("Purpose", "Software Releases");
+                rsProperties.put("Purpose", STR_SOFT_RELEASES);
                 rsProperties.put("QueryToUse", DatabaseOperationsClass.getPreDefinedQuery(BasicStructuresClass.STR_SQLITE, "ReleasesListProductBranches"));
                 rsProperties.put("FetchType", "Values");
                 resultReleases = DatabaseOperationsClass.ResultSettingSubClass.getResultSetStandardized(objStatement, rsProperties, new Properties());
