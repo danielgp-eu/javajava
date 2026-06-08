@@ -76,33 +76,6 @@ public final class TimingClass {
     }
 
     /**
-     * Get current time formatted as needed/desired 
-     * 
-     * @param strDtTmPattern Date and time pattern to use
-     * @return String
-     */
-    @NonNull
-    public static String getCurrentTimestamp(@NonNull final String strDtTmPattern) {
-        final LocalDateTime nowI = LocalDateTime.now(ZoneId.systemDefault());
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern, Locale.US);
-        return formatter.format(nowI);
-    }
-
-    /**
-     * Get current time formatted as needed/desired with specified Time Zone
-     * 
-     * @param strDtTmPattern Date and time pattern to use
-     * @param strZoneName time zone name
-     * @return String
-     */
-    @NonNull
-    public static String getCurrentTimestamp(@NonNull final String strDtTmPattern, @NonNull final String strZoneName) {
-        final ZonedDateTime nowI = ZonedDateTime.now(ZoneId.of(strZoneName));
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(strDtTmPattern, Locale.US);
-        return formatter.format(nowI);
-    }
-
-    /**
      * Zone Friendly logic
      * @param zoneId zone identifier
      * @return String
@@ -166,16 +139,6 @@ public final class TimingClass {
     }
 
     /**
-     * Returns X days ago with milliseconds ago limit
-     * @param cutoff milliseconds in the past
-     * @return string corresponding to entry point
-     */
-    @NonNull
-    public static String getDaysAgoWithMillisecondsPrecisionAsString(final long cutoff) {
-        return Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim();
-    }
-
-    /**
      * Converts a string with ISO 8601 date as input into String as yyyy-MM (MonthName)
      * @param strDateIso8601 date as yyyy-MM-dd (a.k.a. ISO 8601 format type)
      * @return String as yyyy-MM (MonthName)
@@ -184,7 +147,8 @@ public final class TimingClass {
     public static String getYearMonthWithFullName(@NonNull final String strDateIso8601) {
         final LocalDate inLocalDate = LocalDate.parse(strDateIso8601);
         return strDateIso8601.substring(0, 7)
-                + " (" + inLocalDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+                + " ("
+                + inLocalDate.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH)
                 + ")";
     }
 
@@ -381,8 +345,7 @@ public final class TimingClass {
             final ZonedDateTime inTimeStamp = convertStringIntoZonedDateTime(strTimeStamp, inputFormat);
             ZonedDateTime outTime = inTimeStamp;
             if (!inputTimeZone.equalsIgnoreCase(outputTimeZone)) {
-                final ZoneId outZone = ZoneId.of(outputTimeZone);
-                outTime = inTimeStamp.withZoneSameInstant(outZone);
+                outTime = inTimeStamp.withZoneSameInstant(ZoneId.of(outputTimeZone));
             }
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat, Locale.US);
             return outTime.format(formatter);

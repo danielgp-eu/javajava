@@ -1,14 +1,5 @@
 package javajava;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.Map;
-import java.util.Properties;
-import java.util.SequencedMap;
-import java.util.concurrent.ConcurrentHashMap;
-
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.output.Utf8ByteOutput;
@@ -29,6 +20,14 @@ import io.undertow.util.HeaderMap;
 import io.undertow.util.Headers;
 import io.undertow.util.Sessions;
 import io.undertow.util.StatusCodes;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Undertow common class
@@ -335,7 +334,9 @@ public final class UndertowClass {
             packParameter("geoCoordinates", HtmlClass.buildGeographicalCoordinatesFromTimeZone(sessionTimeZone));
             final gg.jte.Content myApp = output -> output.writeContent(HtmlClass.buildApplicationDetail());
             packParameter("appDetails", myApp);
-            packParameter("timeNow", TimingClass.getCurrentTimestamp("EEE, dd MMM yyyy HH:mm:ss", sessionTimeZone));
+            final String dtNow = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss", Locale.US)
+                    .format(ZonedDateTime.now(ZoneId.of(sessionTimeZone)));
+            packParameter("timeNow", dtNow);
         }
 
         /**

@@ -1,7 +1,8 @@
 package javajava;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -9,6 +10,8 @@ import java.time.ZoneOffset;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for {@link TimingClass}, covering ISO year/week formatting, date/time
@@ -20,6 +23,23 @@ class TimingClassTests {
     private static final String ORIG_NQ_EXPCT = "calculated \"%s\" is not equal to expected \"%s\"";
     /** fixed Clock for predictable results */
     private static final java.time.Clock CLOCK_FIXED = java.time.Clock.fixed(Instant.parse("2022-12-12T22:22:22Z"), java.time.ZoneId.of("UTC"));
+
+    @Test
+    void testConvertTimestampFriendly() {
+        TimingClass.LocalizationSubClass.setInputTimeZone("UTC");
+        TimingClass.LocalizationSubClass.setOutputTimeZone("America/New_York");
+        final String strOriginal = "2026-02-08 15:09:34";
+        final String handled = TimingClass.LocalizationSubClass.convertTimestampFriendly(strOriginal, "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm:ss");
+        assertNotEquals(strOriginal, handled, String.format(ORIG_NQ_EXPCT, handled, strOriginal));
+    }
+
+    @Test
+    void testGetFileLastModifiedTimeAsHumanReadableFormat() throws IOException {
+        final Path tempFile = Files.createTempFile("test-file-", ".txt");
+        final String handled = TimingClass.getFileLastModifiedTimeAsHumanReadableFormat(tempFile);
+        assertTrue(BasicStructuresClass.StringEvaluationSubClass.isStringActuallyTimestampWithMilliseconds(handled),
+                "Last Modified timestamp is not a timestamp with milliseconds");
+    }
 
     @Test
     void testGetIsoYearWeek() {

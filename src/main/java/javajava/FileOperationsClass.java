@@ -1,29 +1,14 @@
 package javajava;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -50,6 +35,8 @@ public final class FileOperationsClass {
          */
         public static void extractImportStatementsFromJavaSourceFilesIntoCsvFile(final Path inJavaSources, final Path outCsvFile) {
             final String strImport = "import ";
+            final String dtNow = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
+                    .format(ZonedDateTime.now((ZoneId.systemDefault())));
             try (BufferedWriter writer = Files.newBufferedWriter(outCsvFile, StandardCharsets.UTF_8)) {
                 writer.write("Path;File;Imported;Timestamp");
                 writer.newLine();
@@ -63,7 +50,7 @@ public final class FileOperationsClass {
                                 writer.write(crtFileName.getParent().toString()
                                         + ';' + crtFileName.getFileName().toString()
                                         + ';' + line.replace(strImport, "").replace(";", "")
-                                        + ';' + TimingClass.getCurrentTimestamp("yyyy-MM-dd HH:mm:ss.SSS"));
+                                        + ';' + dtNow);
                                 writer.newLine();
                             }
                             line = reader.readLine();  // Update the variable within the loop, not in the condition
@@ -426,9 +413,9 @@ public final class FileOperationsClass {
              * @param intOlderLimit older days limit
              */
             public static void deleteFilesOlderThanGivenDays(final String strFolderName, final long intOlderLimit) {
-                final Instant now = Instant.now(); // For timestamps
-                final long cutoff = TimingClass.getDaysAgoWithMillisecondsPrecision(now, intOlderLimit);
-                final String strFeedback = String.format("Will attempt to remove all files older than \"%s\" from within \"%s\" folder...", TimingClass.getDaysAgoWithMillisecondsPrecisionAsString(cutoff), strFolderName);
+                final long cutoff = TimingClass.getDaysAgoWithMillisecondsPrecision(Instant.now(), intOlderLimit);
+                final String strFeedback = String.format("Will attempt to remove all files older than \"%s\" from within \"%s\" folder...",
+                        Instant.ofEpochMilli(cutoff).toString().replaceAll("[TZ]", " ").trim(), strFolderName);
                 LogExposureClass.LOGGER.debug(strFeedback);
                 final Path directory = Path.of(strFolderName);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
