@@ -35,7 +35,7 @@ public final class TimingClass {
     public static final int DAY_MILLISECONDS = 24 * 60 * 60 * 1000;
     /**
      * Map with predefined time format patterns
-     * used for duration and timestamp formatting.
+     * used for duration and time-stamp formatting.
      */
     private static final Map<String, String> TIME_FORMATS;
 
@@ -408,15 +408,6 @@ public final class TimingClass {
             final LocalDate outDate = LocalDate.parse(strDate, DateTimeFormatter.ofPattern(inputFormat, Locale.US));
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(outputFormat, Locale.US);
             return outDate.format(formatter);
-        }
-
-        /**
-         * Replace patterns within large Text
-         * @param inString original text
-         * @return replaced text
-         */
-        public static String replacePatterns(final String inString) {
-            return RegularExpressionsClass.replacePatternsWithTimeZones(inString);
         }
 
         /**

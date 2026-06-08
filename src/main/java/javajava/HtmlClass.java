@@ -398,7 +398,7 @@ public final class HtmlClass {
                     cellStyle = CSS_TEXT_RIGHT;
                     strValue = TimingClass.LocalizationSubClass.convertTimestampFriendly(strValue, "yyyy-MM-dd HH:mm:ss.SSS", "EEE, dd MMM yyyy HH:mm:ss.SSS");
                 } else if (strValue.length() >= LARGE_STRING) {
-                    strValue = TimingClass.LocalizationSubClass.replacePatterns(strValue);
+                    strValue = RegularExpressionsClass.replacePatternsWithTimeZones(strValue);
                 }
                 return Map.of(
                         BasicStructuresClass.STR_STYLE, cellStyle,

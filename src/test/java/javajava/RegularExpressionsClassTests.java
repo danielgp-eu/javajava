@@ -29,6 +29,20 @@ class RegularExpressionsClassTests {
         assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
     }
 
+    @Test
+    void testReplacePatterns() {
+        final String largeContent = """
+Started on 2026-03-25.
+Log at 2026-03-25 10:00:00.
+High precision at 2026-12-25 14:30:05.123.""";
+        final String handled = RegularExpressionsClass.replacePatternsWithTimeZones(largeContent);
+        final String strExpected = """
+Started on Wed, 25 Mar 2026.
+Log at Wed, 25 Mar 2026 10:00:00.
+High precision at Fri, 25 Dec 2026 14:30:05.123.""";
+        assertEquals(strExpected, handled, String.format(ORIG_NQ_EXPCT, handled, strExpected));
+    }
+
     /**
      * Constructor
      */
