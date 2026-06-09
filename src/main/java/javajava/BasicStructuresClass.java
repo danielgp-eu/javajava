@@ -26,217 +26,113 @@ import java.util.stream.Collectors;
  * Handling basic structures: numbers, lists, maps, strings
  */
 public final class BasicStructuresClass {
-    /**
-     * Constant for non or single/one
-     */
+    /** Constant for non or single/one */
 	/* default */ public static final String ARITY_NONE_OR_ONE = "0..1";
-    /**
-     * arity one or more
-     */
+    /** arity one or more */
     /* default */ public static final String ARITY_ONE_OR_MORE = "1..*";
-    /**
-     * default Locale
-     */
+    /** One as string */
+    /* default */ public static final String ARITY_ONLY_ONE = "1";
+    /** default Locale */
     public static final String DEFAULT_LOCALE = "en-US";
-    /**
-     * string constant
-     */
+    /** "Active Pixels" constant */
     public static final String STR_ACTV_PXLS = "Active Pixels";
-    /**
-     * Dependencies value
-     */
+    /** Content constant */
     public static final String STR_CONTENT = "Content";
-    /**
-     * Dependencies value
-     */
+    /** Dependencies constant */
     public static final String STR_DEPENDENCIES = "Dependencies";
-    /**
-     * String for internal ETL
-     */
+    /** String for internal ETL */
     public static final String STR_DOT_THREE = "DotAndThreeDigitNumber";
-    /**
-     * String for internal Environment
-     */
+    /** String for internal Environment */
     public static final String STR_ENV = "Environment";
-    /**
-     * String for internal Environment Details
-     */
+    /** String for internal Environment Details */
     public static final String STR_ENV_DTLS = "EnvironmentDetails";
-    /**
-     * String for internal Executing query successful
-     */
+    /** String for internal Executing query successful */
     public static final String STR_EXEC_QRY_OK = "Executing %s query was successful!";
-    /**
-     * Constant for File Hashing
-     */
+    /** Constant for File Hashing */
     public static final String STR_FILE_HASHING = "FileHashing";
-    /**
-     * Firmware string
-     */
+    /** Firmware string */
     public static final String STR_FIRMWARE = "Firmware";
-    /**
-     * Icon string
-     */
-    public static final String STR_ICON = "icon";
-    /**
-     * Input string
-     */
-    public static final String STR_INPUT = "Input";
-    /**
-     * Just Date string
-     */
-    public static final String STR_JUST_DATE = "justDate";
-    /**
-     * Locale constant
-     */
-    public static final String STR_LOCALE = "Locale";
-    /**
-     * Localization constant
-     */
-    public static final String STR_LOCALIZATION = "Localization";
-    /**
-     * Mainboard constant
-     */
-    public static final String STR_MAINBOARD = "Mainboard";
-    /**
-     * Manufacturer string
-     */
-    public static final String STR_MANUFACTURER = "Manufacturer";
-    /**
-     * Menu string
-     */
-    public static final String STR_MENU = "menu";
-    /**
-     * Model string constant
-     */
-    public static final String STR_MODEL = "Model";
-    /**
-     * string constant
-     */
-    public static final String STR_MONITOR_NAME = "Monitor Name";
-    /**
-     * Multiple constant
-     */
-    public static final String STR_MULTIPLE = "multiple";
-    /**
-     * standard String
-     */
-    public static final String STR_NAME = "Name";
-    /**
-     * standard String
-     */
-    public static final String STR_NULL = "NULL";
-    /**
-     * Named Character
-     */
-    public static final String STR_NAMED_PARAM = "NamedParameter";
-    /**
-     * new tab and table feature
-     */
-    public static final String STR_NEW_TAB = "New Tab and Table on column value change";
-    /**
-     * One as string
-     */
-    public static final String STR_ONE = "1";
-    /**
-     * Output string
-     */
-    public static final String STR_OUTPUT_LONG = "Output Long";
-    /**
-     * Output string
-     */
-    public static final String STR_OUTPUT_SHORT = "Output Short";
-    /**
-     * string constant
-     */
-    public static final String STR_PHYSC_DIM = "Physical Dimensions";
-    /**
-     * string constant
-     */
-    public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
-    /**
-     * string constant
-     */
-    public static final String STR_RANGE_LMTS = "Range Limits";
-    /**
-     * string constant
-     */
-    public static final String STR_ROW_STYLE = "RowStyle";
-    /**
-     * String for Second
-     */
-    public static final String STR_SECOND = "Second";
-    /**
-     * String for internal ETL
-     */
-    public static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
-    /**
-     * Database Snowflake
-     */
-    public static final String STR_SNOWFLAKE = "Snowflake";
-    /**
-     * Constant for Software Releases
-     */
-    public static final String STR_SOFTWARE_RLS = "SoftwareReleases";
-    /**
-     * string constant
-     */
-    public static final String STR_SRL_NUM = "Serial Number";
-    /**
-     * Database SQLite
-     */
-    public static final String STR_SQLITE = "SQLite";
-    /**
-     * 
-     */
-    public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
-    /**
-     * System constant
-     */
-    public static final String STR_SYSTEM = "System";
-    /**
-     * Style constant
-     */
-    public static final String STR_STYLE = "style";
-    /**
-     * Table constant
-     */
-    public static final String STR_TABLE = "Table";
-    /**
-     * Time-stamp constant
-     */
-    public static final String STR_TIMESTAMP = "timestamp";
-    /**
-     * Time-stamp constant
-     */
-    public static final String STR_TS_MSEC = "timestampWithMilliseconds";
-    /**
-     * Title constant
-     */
-    public static final String STR_TITLE = "title";
-    /**
-     * string constant
-     */
+    /** HumanReadableTime constant */
     public static final String STR_TM_HUMAN = "HumanReadableTime";
-    /**
-     * Table Statistics constant
-     */
+    /** Icon string */
+    public static final String STR_ICON = "icon";
+    /** Input string */
+    public static final String STR_INPUT = "Input";
+    /** Just Date string */
+    public static final String STR_JUST_DATE = "justDate";
+    /** Locale constant */
+    public static final String STR_LOCALE = "Locale";
+    /** Localization constant */
+    public static final String STR_LOCALIZATION = "Localization";
+    /** Mainboard constant */
+    public static final String STR_MAINBOARD = "Mainboard";
+    /** Manufacturer string */
+    public static final String STR_MANUFACTURER = "Manufacturer";
+    /** Menu string */
+    public static final String STR_MENU = "menu";
+    /** Model string constant */
+    public static final String STR_MODEL = "Model";
+    /** string constant */
+    public static final String STR_MONITOR_NAME = "Monitor Name";
+    /** Multiple constant */
+    public static final String STR_MULTIPLE = "multiple";
+    /** Name constant */
+    public static final String STR_NAME = "Name";
+    /** NULL constant */
+    public static final String STR_NULL = "NULL";
+    /** NamedParameter constant */
+    public static final String STR_NAMED_PARAM = "NamedParameter";
+    /** new tab and table feature */
+    public static final String STR_NEW_TAB = "New Tab and Table on column value change";
+    /** Output Long constant */
+    public static final String STR_OUTPUT_LONG = "Output Long";
+    /** Output Short constant */
+    public static final String STR_OUTPUT_SHORT = "Output Short";
+    /** "Physical Dimensions" constant */
+    public static final String STR_PHYSC_DIM = "Physical Dimensions";
+    /** "Preferred Timing Clock" constant */
+    public static final String STR_PRFRD_TM_CLCK = "Preferred Timing Clock";
+    /** "Range Limits" constant */
+    public static final String STR_RANGE_LMTS = "Range Limits";
+    /** "RowStyle" constant */
+    public static final String STR_ROW_STYLE = "RowStyle";
+    /** String for Second */
+    public static final String STR_SECOND = "Second";
+    /** String for internal ETL */
+    public static final String STR_SLMN_TWO = "SemicolumnAndTwoDigitNumber";
+    /** Database Snowflake */
+    public static final String STR_SNOWFLAKE = "Snowflake";
+    /** Constant for Software Releases */
+    public static final String STR_SOFTWARE_RLS = "SoftwareReleases";
+    /** "Serial Number" constant */
+    public static final String STR_SRL_NUM = "Serial Number";
+    /** Database SQLite */
+    public static final String STR_SQLITE = "SQLite";
+    /** internal rule constant for timing computation */
+    public static final String STR_TM_FRM_SP = "SpaceTwoDigitNumberAndSpaceAndSuffixOnlyIfGreaterThanZero";
+    /** System constant */
+    public static final String STR_SYSTEM = "System";
+    /** Style constant */
+    public static final String STR_STYLE = "style";
+    /** Table constant */
+    public static final String STR_TABLE = "Table";
+    /** Table Statistics constant */
     public static final String STR_TS = "TableStatistics";
-    /**
-     * String for internal ETL
-     */
+    /** Time-stamp constant */
+    public static final String STR_TIMESTAMP = "timestamp";
+    /** Time-stamp constant */
+    public static final String STR_TS_MSEC = "timestampWithMilliseconds";
+    /** Title constant */
+    public static final String STR_TITLE = "title";
+    /** String for internal ETL */
     public static final String STR_TWO = "TwoDigitNumber";
-    /**
-     * String for internal ETL
-     */
+    /** String for internal ETL */
     public static final String STR_TWO_NON_ZERO = "TwoDigitNumberOnlyIfGreaterThanZero";
-    /**
-     * Version string
-     */
+    /** Vendor string */
+    public static final String STR_VENDOR = "Vendor";
+    /** Version string */
     public static final String STR_VERSION = "Version";
-    /**
-     * Yes string
-     */
+    /** Yes string */
     public static final String STR_YES = "YES";
 
     /**

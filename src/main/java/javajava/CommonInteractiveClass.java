@@ -105,7 +105,7 @@ public final class CommonInteractiveClass {
         @Option(
                 names = {"-fldDst", "--folderDestination"},
                 description = "Destination Folder where archives will be created",
-                arity = BasicStructuresClass.STR_ONE,
+                arity = BasicStructuresClass.ARITY_ONLY_ONE,
                 required = true)
         private static String strDestFolder;
 

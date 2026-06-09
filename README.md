@@ -185,8 +185,3 @@ To avoid a pesky warning at execution time a VM Attribute having the value `--en
 * JavaJavaWebUserInterface                      --databaseReleases (1)
                                                     --port (1)
                                                         --folderName (1..*) FolderNameOptionMixinClass
-* JsonSplit                                     --inFileName (1..*) InFileNameOptionMixinClass
-                                                    --folderDestination (1) FolderDestinationOptionMixinClass
-                                                        --splitSize (0..1)
-                                                            --field (1)
-                                                                --bucketLength (0..1)
