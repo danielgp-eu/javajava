@@ -36,7 +36,7 @@ public final class FileOperationsClass {
         public static void extractImportStatementsFromJavaSourceFilesIntoCsvFile(final Path inJavaSources, final Path outCsvFile) {
             final String strImport = "import ";
             final String dtNow = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS", Locale.US)
-                    .format(ZonedDateTime.now((ZoneId.systemDefault())));
+                    .format(ZonedDateTime.now(ZoneId.systemDefault()));
             try (BufferedWriter writer = Files.newBufferedWriter(outCsvFile, StandardCharsets.UTF_8)) {
                 writer.write("Path;File;Imported;Timestamp");
                 writer.newLine();
@@ -767,8 +767,8 @@ public final class FileOperationsClass {
         public static List<String> getSubFoldersFromFolder(final String strFolderName) {
             final String strFeedbackAtmpt = String.format("Will attempt to get all sub-folders from within \"%s\" folder...", strFolderName);
             LogExposureClass.LOGGER.debug(strFeedbackAtmpt);
-            final List<String> arraySubFolders = new java.util.ArrayList<>();
-            final Path directory = java.nio.file.Paths.get(strFolderName);
+            final List<String> arraySubFolders = new ArrayList<>();
+            final Path directory = Paths.get(strFolderName);
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
                 for (final Path entry : stream) {
                     if (Files.isDirectory(entry)) {
@@ -881,7 +881,7 @@ public final class FileOperationsClass {
         /**
          * file statistics
          */
-        private static final List<Properties> FILE_STATISTICS = new java.util.ArrayList<>();
+        private static final List<Properties> FILE_STATISTICS = new ArrayList<>();
 
         /**
          * A simple record to hold our results
@@ -974,7 +974,7 @@ public final class FileOperationsClass {
          * @param strFolderName input folder name
          */
         private static void gatherFileStatisticsFromFolder(final String strFolderName) {
-            final Path folder = java.nio.file.Paths.get(strFolderName);
+            final Path folder = Paths.get(strFolderName);
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(folder)) {
                 for (final Path file : stream) {
                     if (Files.isDirectory(file)) {
@@ -1031,7 +1031,7 @@ public final class FileOperationsClass {
          * @return Properties
          */
         public static Properties getFolderStatisticsRecursive(final String strFolderName, final Properties pathProps) {
-            final Path directory = java.nio.file.Paths.get(strFolderName.replace("\"", ""));
+            final Path directory = Paths.get(strFolderName.replace("\"", ""));
             // use DirectoryStream to list files which are present in specific
             try (Stream<Path> stream = Files.walk(directory)) {
                 final FolderStatsRecord stats = stream
